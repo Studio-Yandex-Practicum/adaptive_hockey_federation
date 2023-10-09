@@ -23,10 +23,11 @@ git clone https://github.com/Studio-Yandex-Practicum/adaptive_hockey_federation.
 cd adaptive_hockey_federation
 ```
 
-##### Установить зависимости
+##### СОбрать образ и запустить приложение из Dockerfile
 
 ```shell
-poetry install --with dev --with test
+docker build -t adaptive-hockey-federation .
+docker run --name adaptive-hockey-federation -it -p 8000:8000 adaptive-hockey-federation
 ```
 
 ## Локальный запуск
