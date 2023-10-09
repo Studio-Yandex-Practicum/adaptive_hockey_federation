@@ -35,5 +35,3 @@ poetry install --with dev --with test
 cd adaptive_hockey_federation
 python manage.py runserver
 ```
-
-###  **TODO** 
