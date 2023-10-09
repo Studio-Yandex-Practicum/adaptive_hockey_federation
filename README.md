@@ -31,4 +31,9 @@ poetry install --with dev --with test
 
 ## Локальный запуск
 
+```shell
+cd adaptive_hockey_federation
+python manage.py runserver
+```
+
 ###  **TODO** 
