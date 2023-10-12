@@ -1,42 +1,42 @@
 import re
-from collections import defaultdict as dd
+import tempfile
 from datetime import date
 from urllib.parse import urlencode
 
 import docx
 import requests
+
 from adaptive_hockey_federation.core.user_card import HockeyData
 
 NAME = '[И|и][М|м][Я|я]'
 SURNAME = '[Ф|ф][А|а][М|м][И|и][Л|л][И|и][Я|я]'
 DATE_OF_BIRTH = '[Д|д][А|а][Т|т][А|а]'
-BIRTH_CERTIFICATE = '[С|с][В|в].+?[В|в][О|о]'
-PASSPORT = '[П|п][А|а][С|с][П|п][О|о][Р|р][Т|т]'
+TEAM = '[К|к][О|о][М|м][А|а][Н|н][Д|д][А|а]'
+PATRONYMIC = '[О|о][Т|т][Ч|ч][Е|е][С|с][Т|т][В|в][О|о]'
+BIRTH_CERTIFICATE = '([С|с][В|в].+?[В|в][О|о])|([С|с][В|в]..[О|о].[Р|р])'
+PASSPORT = '([П|п][А|а][С|с][П|п][О|о][Р|р][Т|т])'
 POSITION = '[П|п][О|о][З|з][И|и][Ц|ц][И|и][Я|я]'
 PLAYER_NUMBER = '[И|и][Г|г].+[Н|н][О|о][М|м][Е|е][Р|р]'
 ASSISTANT = '[А|а][С|с][С|с][И|и][С|с][Т|т][Е|е][Н|н][Т|т]'
 CAPTAIN = '[К|к][А|а][П|п][И|и][Т|т][А|а][Н|н]'
 
+YANDEX_API = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
+DOWNLOAD_URL = 'https://disk.yandex.ru/i/ZRusBovQDTl5zw'
 
-main_data = dd(list)
 
-
-def read_file() -> docx:
-    """Функция загружает файл по ссылке в рабочий каталог,
-    находит таблицы в документе и возвращает объект
+def read_file_columns(ya_api: str, download_url: str) -> list[docx]:
+    """Функция загружает данные из примера во временный файл,
+    находит таблицы в нем и возвращает список объектов
     docx с данными каждого столбца.
     """
-    base_url = (
-        'https://cloud-api.yandex.net/v1/disk/public/resources/download?'
-    )
-    public_key = 'https://disk.yandex.ru/i/ZRusBovQDTl5zw'
-    work_url = base_url + urlencode(dict(public_key=public_key))
+    work_url = ya_api + urlencode(dict(public_key=download_url))
     response = requests.get(work_url)
     download_url = response.json()['href']
     download_response = requests.get(download_url)
-    with open('work_file.docx', 'wb') as file:
+    with tempfile.TemporaryFile() as file:
         file.write(download_response.content)
-    document = docx.Document('work_file.docx')
+        document = docx.Document(file)
+        file.close()
     all_columns = []
     for table in document.tables:
         for index, column in enumerate(table.columns):
@@ -45,178 +45,262 @@ def read_file() -> docx:
     return all_columns
 
 
-def columns_parser(columns: list[docx], column_name: str) -> list[str]:
+def read_file_text(ya_api: str, download_url: str) -> list[str]:
+    """Функция загружает данные из примера во временный файл и
+    находит весь текст в нем.
+    """
+    work_url = ya_api + urlencode(dict(public_key=download_url))
+    response = requests.get(work_url)
+    download_url = response.json()['href']
+    download_response = requests.get(download_url)
+    with tempfile.TemporaryFile() as file:
+        file.write(download_response.content)
+        document = docx.Document(file)
+        file.close()
+    text = []
+    for paragraph in document.paragraphs:
+        for run in paragraph.runs:
+            text.append(run.text)
+
+    return text
+
+
+def columns_parser(columns: list[docx], regular_expression: str) -> list[str]:
     """Функция находит столбец по названию и списком выводит содержимое
     каждой ячейки этого столбца.
     """
     column_data = []
     for column in columns:
         cell_text = list(cell.text for cell in column.cells)
-        if re.search(column_name, cell_text[0]):
+        if re.search(regular_expression, cell_text[0]):
             for text in cell_text[1:]:
-                column_data.append(text)
+                if not text:
+                    column_data.append(None)
+                else:
+                    column_data.append(text)
 
     return column_data
 
 
-def find_user_names(columns: list[docx], user_name: str) -> None:
+def find_names(columns: list[docx], regular_expression: str) -> list[str]:
     """Функция парсит в искомом столбце имена. Если имя записано
     вместе с фамилией и отчеством, то функция опирается на шаблон ФИО
     (имя идет после фамилии на втором месте).
     """
-    names_list = columns_parser(columns, user_name)
-    index = 0
+    names_list = columns_parser(columns, regular_expression)
+    names_list_clear = []
     for name in names_list:
-        index += 1
-        if len((str(name).split())) > 1:
-            main_data[index].append(str(name).split()[1])
+        if len(name.split()) > 1:
+            names_list_clear.append(name.split()[1])
         else:
-            main_data[index].append(name)
+            names_list_clear.append(name)
+
+    return names_list_clear
 
 
-def find_user_surnames(columns: list[docx], user_surname: str) -> None:
+def find_surnames(columns: list[docx], regular_expression: str) -> list[str]:
     """Функция парсит в искомом столбце фамилии. Если фамилия записана
     вместе с именем и отчеством, то функция опирается на шаблон ФИО
     (фамилия идет на первом месте).
     """
-    surnames_list = columns_parser(columns, user_surname)
-    index = 0
+    surnames_list = columns_parser(columns, regular_expression)
+    surnames_list_clear = []
     for surname in surnames_list:
-        index += 1
-        if len((str(surname).split())) > 1:
-            main_data[index].append(str(surname).split()[0])
+        if len(surname.split()) > 1:
+            surnames_list_clear.append(surname.split()[0])
         else:
-            main_data[index].append(surname)
+            surnames_list_clear.append(surname)
+
+    return surnames_list_clear
 
 
-def find_user_dates_of_birth(columns: list[docx], date_of_birth: str) -> None:
+def find_dates_of_birth(
+        columns: list[docx],
+        regular_expression: str
+) -> list[date]:
     """Функция парсит в искомом столбце дату рождения
     и опирается на шаблон дд.мм.гггг.
     """
-    dates_list = columns_parser(columns, date_of_birth)
-    index = 0
-    for user_date in dates_list:
-        index += 1
-        day, month, year = str(user_date).split('.')
-        main_data[index].append(date(int(year), int(month), int(day)))
+    dates_of_birth_list = columns_parser(columns, regular_expression)
+    dates_of_birth_list_clear = []
+    for date_of_birth in dates_of_birth_list:
+        day, month, year = date_of_birth.split('.')
+        dates_of_birth_list_clear.append(date(int(year), int(month), int(day)))
+
+    return dates_of_birth_list_clear
 
 
-def find_birth_certificate(columns: list[docx], passport: str) -> None:
+def find_team(text: list[str], regular_expression: str) -> str:
+    """Функция парсит название команды.
+    """
+    team = ''
+    for index, txt in enumerate(text):
+        if re.search(regular_expression, txt):
+            team = text[index + 2]
+
+    return team
+
+
+def find_patronymics(
+        columns: list[docx],
+        regular_expression: str
+) -> list[str]:
+    """Функция парсит в искомом столбце отчества. Если отчество записано
+    вместе с именем и фамилией, то функция опирается на шаблон ФИО
+    (отчество идет на последнем месте).
+    """
+    patronymics_list = columns_parser(columns, regular_expression)
+    patronymics_list_clear = []
+    for patronymic in patronymics_list:
+        if len(patronymic.split()) > 1:
+            patronymics_list_clear.append(patronymic.split()[2])
+        else:
+            patronymics_list_clear.append(patronymic)
+
+    return patronymics_list_clear
+
+
+def find_birth_certificates(
+        columns: list[docx],
+        regular_expression: str
+) -> list[str]:
     """Функция парсит в искомом столбце данные свидетельства о рождении.
     """
-    birth_certificates_list = columns_parser(columns, passport)
-    index = 0
-    for user_birth_certificate in birth_certificates_list:
-        index += 1
-        if re.search(BIRTH_CERTIFICATE, user_birth_certificate):
-            text = re.sub(BIRTH_CERTIFICATE, '', user_birth_certificate)
-            main_data[index].append(str(text).replace('\n', ''))
+    birth_certificates_list = columns_parser(columns, regular_expression)
+    birth_certificates_list_clear = []
+    for birth_certificate in birth_certificates_list:
+        if re.search(regular_expression, birth_certificate):
+            text = re.sub(regular_expression, '', birth_certificate)
+            birth_certificates_list_clear.append(text.replace('\n', ' '))
         else:
-            main_data[index].append(None)
+            birth_certificates_list_clear.append(None)
+
+    return birth_certificates_list_clear
 
 
-def find_passports(columns: list[docx], passport: str) -> None:
+def find_passports(columns: list[docx], regular_expression: str) -> list[str]:
     """Функция парсит в искомом столбце данные паспорта.
     """
-    passports_list = columns_parser(columns, passport)
-    index = 0
-    for user_passport in passports_list:
-        index += 1
-        if re.search(PASSPORT, user_passport):
-            text = re.sub(PASSPORT, '', user_passport)
-            main_data[index].append(str(text).replace('\n', ''))
+    passports_list = columns_parser(columns, regular_expression)
+    passports_list_clear = []
+    for passport in passports_list:
+        if re.search(regular_expression, passport):
+            text = re.sub(regular_expression, '', passport)
+            passports_list_clear.append(text.replace('\n', ' '))
         else:
-            main_data[index].append(None)
+            passports_list_clear.append(None)
+
+    return passports_list_clear
 
 
-def find_positions(columns: list[docx], position: str) -> None:
+def find_positions(columns: list[docx], regular_expression: str) -> list[str]:
     """Функция парсит в искомом столбце позицию игрока на поле.
     """
-    positions_list = columns_parser(columns, position)
-    index = 0
-    for user_position in positions_list:
-        index += 1
-        main_data[index].append(user_position)
+    positions_list = columns_parser(columns, regular_expression)
+    positions_list_clear = []
+    for position in positions_list:
+        positions_list_clear.append(position)
+
+    return positions_list_clear
 
 
-def find_players_number(columns: list[docx], player_number: str) -> None:
+def find_players_number(
+        columns: list[docx],
+        regular_expression: str
+) -> list[int]:
     """Функция парсит в искомом столбце номер игрока.
     """
-    players_number_list = columns_parser(columns, player_number)
-    index = 0
-    for number in players_number_list:
-        index += 1
-        if len(number) > 2:
-            main_data[index].append(int(number[:2]))
+    players_number_list = columns_parser(columns, regular_expression)
+    players_number_list_clear = []
+    for player_number in players_number_list:
+        if len(player_number) > 2:
+            players_number_list_clear.append(int(player_number[:2]))
         else:
-            main_data[index].append(int(number))
+            players_number_list_clear.append(int(player_number))
+
+    return players_number_list_clear
 
 
-def find_is_assistants(columns: list[docx], is_assistant: str) -> None:
+def find_is_assistants(
+        columns: list[docx],
+        regular_expression: str
+) -> list[bool]:
     """Функция парсит в искомом столбце информацию,
     является ли игрок ассистентом.
     """
-    is_assistants_list = columns_parser(columns, is_assistant)
-    index = 0
-    for assistant in is_assistants_list:
-        index += 1
-        if re.search(ASSISTANT, assistant):
-            main_data[index].append(True)
+    is_assistants_list = columns_parser(columns, regular_expression)
+    is_assistants_list_clear = []
+    for is_assistant in is_assistants_list:
+        if re.search(regular_expression, is_assistant):
+            is_assistants_list_clear.append(True)
         else:
-            main_data[index].append(False)
+            is_assistants_list_clear.append(False)
+
+    return is_assistants_list_clear
 
 
-def find_is_captain(columns: list[docx], is_captain: str) -> None:
+def find_is_captain(
+        columns: list[docx],
+        regular_expression: str
+) -> list[bool]:
     """Функция парсит в искомом столбце информацию,
     является ли игрок капитаном.
     """
-    is_captain_list = columns_parser(columns, is_captain)
-    index = 0
-    for captain in is_captain_list:
-        index += 1
-        if re.search(CAPTAIN, captain):
-            main_data[index].append(True)
+    is_captain_list = columns_parser(columns, regular_expression)
+    is_captain_list_clear = []
+    for is_captain in is_captain_list:
+        if re.search(regular_expression, is_captain):
+            is_captain_list_clear.append(True)
         else:
-            main_data[index].append(False)
+            is_captain_list_clear.append(False)
+
+    return is_captain_list_clear
 
 
-if __name__ == '__main__':
-    columns_from_file = read_file()
-    find_user_names(columns_from_file, NAME)
-    find_user_surnames(columns_from_file, SURNAME)
-    find_user_dates_of_birth(
+def parser() -> list[HockeyData]:
+    """Функция собирает все данные об игроке
+    и передает их в dataclass.
+    """
+    hockey_data = []
+    columns_from_file = read_file_columns(YANDEX_API, DOWNLOAD_URL)
+    text_from_file = read_file_text(YANDEX_API, DOWNLOAD_URL)
+    names = find_names(columns_from_file, NAME)
+    surnames = find_surnames(columns_from_file, SURNAME)
+    dates_of_birth = find_dates_of_birth(
         columns_from_file,
         DATE_OF_BIRTH
     )
-    find_birth_certificate(
+    team = find_team(text_from_file, TEAM)
+    patronymics = find_patronymics(columns_from_file, PATRONYMIC)
+    birth_certificates = find_birth_certificates(
         columns_from_file,
-        PASSPORT
+        BIRTH_CERTIFICATE
     )
-    find_passports(columns_from_file, PASSPORT)
-    find_positions(columns_from_file, POSITION)
-    find_players_number(columns_from_file, PLAYER_NUMBER)
-    find_is_assistants(columns_from_file, ASSISTANT)
-    find_is_captain(columns_from_file, CAPTAIN)
+    passports = find_passports(columns_from_file, PASSPORT)
+    positions = find_positions(columns_from_file, POSITION)
+    players_number = find_players_number(columns_from_file, PLAYER_NUMBER)
+    is_assistants = find_is_assistants(columns_from_file, ASSISTANT)
+    is_captain = find_is_captain(columns_from_file, CAPTAIN)
 
-    for key, value in main_data.items():
-        (
-            name,
-            surname,
-            birth_of_date,
-            birth_certificate,
-            passport, position,
-            player_number,
-            assistant,
-            captain
-        ) = value
-        FromDocxAdditionalUserInfo(
-            name,
-            surname,
-            birth_of_date,
-            birth_certificate,
-            passport,
-            position,
-            player_number,
-            assistant,
-            captain
+    for index in range(len(names)):
+        hockey_data.append(
+            HockeyData(
+                names[index],
+                surnames[index],
+                dates_of_birth[index],
+                team,
+                patronymics[index],
+                birth_certificates[index],
+                passports[index],
+                positions[index],
+                players_number[index],
+                is_assistants[index],
+                is_captain[index]
+            )
         )
+
+    return hockey_data
+
+
+if __name__ == '__main__':
+    parser()

@@ -9,9 +9,11 @@ packages = [{ include = "adaptive_hockey_federation" }]
 [tool.poetry.dependencies]
 python = "^3.11"
 django = "^4.2.6"
-click = "^8.1.7"
-python-docx = "^0.8.11"
 requests = "^2.31.0"
+
+[tool.poetry.group.parser]
+python-docx = "^0.8.11"
+click = "^8.1.7"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"

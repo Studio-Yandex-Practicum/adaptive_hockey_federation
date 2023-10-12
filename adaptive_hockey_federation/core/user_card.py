@@ -16,6 +16,7 @@ class BaseUserInfo:
 class HockeyData(BaseUserInfo):
     """Класс с необязательными полями из документов формата docx.
     """
+    patronymic: str = None
     birth_certificate: str = None
     passport: str = None
     position: str = None
