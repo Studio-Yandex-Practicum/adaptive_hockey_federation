@@ -9,10 +9,11 @@ class BaseUserInfo:
     name: str
     surname: str
     date_of_birth: date
+    team: str
 
 
 @dataclass
-class FromDocxAdditionalUserInfo(BaseUserInfo):
+class HockeyData(BaseUserInfo):
     """Класс с необязательными полями из документов формата docx.
     """
     birth_certificate: str = None

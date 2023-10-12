@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 
 import docx
 import requests
-from user_card import FromDocxAdditionalUserInfo
+from adaptive_hockey_federation.core.user_card import HockeyData
 
 NAME = '[И|и][М|м][Я|я]'
 SURNAME = '[Ф|ф][А|а][М|м][И|и][Л|л][И|и][Я|я]'
