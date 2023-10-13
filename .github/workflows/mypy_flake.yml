@@ -16,7 +16,7 @@ jobs:
     - name: Install dependencies
       run: | 
         python -m pip install --no-cache-dir poetry==1.4.2 \
-        && poetry export --without-hashes --without dev,test -f requirements.txt -o requirements.txt
+        && poetry export --without-hashes --without dev,test -f requirements.txt -o requirements.txt \
         && python -m pip install --no-cache-dir -r requirements.txt
 
     - name: Test with flake8 and django tests
