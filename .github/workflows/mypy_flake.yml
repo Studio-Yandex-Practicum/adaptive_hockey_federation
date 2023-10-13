@@ -15,9 +15,9 @@ jobs:
 
     - name: Install dependencies
       run: | 
-        python -m pip install --upgrade pip 
-        pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
-        pip install -r requirements.txt 
+        python -m pip install --no-cache-dir poetry==1.6.1 \
+        && poetry config virtualenvs.in-project true \
+        && poetry install --without dev --with test
 
     - name: Test with flake8 and django tests
       run: |
