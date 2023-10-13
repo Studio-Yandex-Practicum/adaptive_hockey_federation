@@ -20,6 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Mypy
     steps:
+      - name: Install dependencies
+        run: | 
+          python -m pip install django-stubs
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run Mypy
