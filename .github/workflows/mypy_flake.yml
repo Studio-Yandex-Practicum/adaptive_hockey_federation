@@ -21,4 +21,5 @@ jobs:
 
     - name: Test with flake8 and django tests
       run: |
-        flake8 adaptive_hockey_federation
+        poetry install \
+        && flake8 adaptive_hockey_federation
