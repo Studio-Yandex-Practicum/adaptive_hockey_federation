@@ -36,3 +36,11 @@ docker run --name adaptive-hockey-federation -it -p 8000:8000 adaptive-hockey-fe
 cd adaptive_hockey_federation
 python manage.py runserver
 ```
+
+## Собрать приложения в контейнеры при помощи Docker-compose:
+
+```shell
+docker-compose up -d --build
+```
+
+Django-проект и Nginx запустятся в контейнерах, при помощи инструкций в entrypoint.sh через 10 секунд добавится статика

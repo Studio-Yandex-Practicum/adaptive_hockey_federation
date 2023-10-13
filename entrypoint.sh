@@ -2,7 +2,12 @@
 
 sleep 10
 
-python manage.py migrate
+source app/.venv/bin/activate
+
+#python manage.py migrate
+
 python manage.py collectstatic  --noinput
+mv /static/* /app/static/
+
 
 exec "$@"
