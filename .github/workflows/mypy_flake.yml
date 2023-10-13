@@ -18,6 +18,7 @@ jobs:
         python -m pip install --no-cache-dir poetry==1.6.1 \
         && poetry config virtualenvs.in-project true \
         && poetry install --without dev --with test
+        && poetry shell
 
     - name: Test with flake8 and django tests
       run: |
