@@ -18,6 +18,7 @@ flake8 = "^6.1.0"
 flake8-isort = "^6.1.0"
 mypy = "^1.5.1"
 flake8-django = "^1.4"
+django-stubs = "^4.2.4"
 
 
 [tool.isort]
@@ -27,3 +28,11 @@ include_trailing_comma = true
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+mypy_path = ./adaptive_hockey_federation
+
+[tool.django-stubs]
+django_settings_module = "adaptive_hockey_federation.settings"
