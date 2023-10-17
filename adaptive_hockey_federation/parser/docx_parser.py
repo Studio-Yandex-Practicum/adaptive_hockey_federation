@@ -28,12 +28,12 @@ def load_file(ya_api: str, download_url: str) -> docx:
     """Функция загружает данные из файла по ссылке.
     """
     response = requests.get(
-        ya_api + urlencode(dict(public_key=download_url))
+        ya_api + urlencode(dict(public_key=download_url)),
     )
     download_response = requests.get(response.json()['href'])
     with tempfile.TemporaryFile() as file:
         file.write(download_response.content)
-    return docx.Document(file)
+        return docx.Document(file)
 
 
 def read_file_columns(file: docx) -> list[docx]:
@@ -106,7 +106,7 @@ def find_surnames(columns: list[docx], regular_expression: str) -> list[str]:
 
 def find_dates_of_birth(
         columns: list[docx],
-        regular_expression: str
+        regular_expression: str,
 ) -> list[date]:
     """Функция парсит в искомом столбце дату рождения
     и опирается на шаблон дд.мм.гггг.
@@ -131,7 +131,7 @@ def find_team(text: list[str], regular_expression: str) -> str:
 
 def find_patronymics(
         columns: list[docx],
-        regular_expression: str
+        regular_expression: str,
 ) -> list[str]:
     """Функция парсит в искомом столбце отчества. Если отчество записано
     вместе с именем и фамилией, то функция опирается на шаблон ФИО
@@ -148,7 +148,7 @@ def find_patronymics(
 
 def find_birth_certificates(
         columns: list[docx],
-        regular_expression: str
+        regular_expression: str,
 ) -> list[str]:
     """Функция парсит в искомом столбце данные свидетельства о рождении.
     """
@@ -185,7 +185,7 @@ def find_positions(columns: list[docx], regular_expression: str) -> list[str]:
 
 def find_players_number(
         columns: list[docx],
-        regular_expression: str
+        regular_expression: str,
 ) -> list[int]:
     """Функция парсит в искомом столбце номер игрока.
     """
@@ -200,7 +200,7 @@ def find_players_number(
 
 def find_is_assistants(
         columns: list[docx],
-        regular_expression: str
+        regular_expression: str,
 ) -> list[bool]:
     """Функция парсит в искомом столбце информацию,
     является ли игрок ассистентом.
@@ -216,7 +216,7 @@ def find_is_assistants(
 
 def find_is_captain(
         columns: list[docx],
-        regular_expression: str
+        regular_expression: str,
 ) -> list[bool]:
     """Функция парсит в искомом столбце информацию,
     является ли игрок капитаном.
@@ -240,13 +240,13 @@ def parser(file: docx) -> list[HockeyData]:
     surnames = find_surnames(columns_from_file, SURNAME)
     dates_of_birth = find_dates_of_birth(
         columns_from_file,
-        DATE_OF_BIRTH
+        DATE_OF_BIRTH,
     )
     team = find_team(text_from_file, TEAM)
     patronymics = find_patronymics(columns_from_file, PATRONYMIC)
     birth_certificates = find_birth_certificates(
         columns_from_file,
-        BIRTH_CERTIFICATE
+        BIRTH_CERTIFICATE,
     )
     passports = find_passports(columns_from_file, PASSPORT)
     positions = find_positions(columns_from_file, POSITION)
@@ -266,7 +266,7 @@ def parser(file: docx) -> list[HockeyData]:
             positions[index],
             players_number[index],
             is_assistants[index],
-            is_captain[index]
+            is_captain[index],
         )
         for index in range(len(names))
     ]

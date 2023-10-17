@@ -11,10 +11,6 @@ python = "^3.11"
 django = "^4.2.6"
 requests = "^2.31.0"
 
-[tool.poetry.group.parser]
-python-docx = "^0.8.11"
-click = "^8.1.7"
-
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
 
@@ -24,6 +20,11 @@ flake8-isort = "^6.1.0"
 mypy = "^1.5.1"
 flake8-django = "^1.4"
 
+
+
+[tool.poetry.group.parser.dependencies]
+python-docx = "^1.0.1"
+click = "^8.1.7"
 
 [tool.isort]
 multi_line_output = 3
