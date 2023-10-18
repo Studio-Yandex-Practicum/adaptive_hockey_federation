@@ -1,12 +1,8 @@
+from parser.exception import ExceptionForFlake8
 from typing import Dict, List, Tuple
 
 import openpyxl
-
-from adaptive_hockey_federation.core.user_card import (
-    ExcelDataCoach_1,
-    ExcelDataPlayer_1,
-)
-from adaptive_hockey_federation.parser.exception import ExceptionForFlake8
+from core.user_card import ExcelDataCoach_1, ExcelDataPlayer_1
 
 WORKBOOK_PATH = 'adaptive_hockey_federation/parser/Состав команды.xlsx'
 

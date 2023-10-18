@@ -1,12 +1,8 @@
+from parser.exception import ExceptionForFlake8
 from typing import Dict, List
 
 import openpyxl
-
-from adaptive_hockey_federation.core.user_card import (
-    ExcelData_2,
-    ExcelDataFirstSheet_2,
-)
-from adaptive_hockey_federation.parser.exception import ExceptionForFlake8
+from core.user_card import ExcelData_2, ExcelDataFirstSheet_2
 
 WORKBOOK_PATH = ('adaptive_hockey_federation/parser/'
                  'Копия Сводная таблица по командам с классами ЛТ.xlsx')
