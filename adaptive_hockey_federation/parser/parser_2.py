@@ -6,6 +6,7 @@ from adaptive_hockey_federation.core.user_card import (
     ExcelData_2,
     ExcelDataFirstSheet_2,
 )
+from adaptive_hockey_federation.parser.exception import ExceptionForFlake8
 
 WORKBOOK_PATH = ('adaptive_hockey_federation/parser/'
                  'Копия Сводная таблица по командам с классами ЛТ.xlsx')
@@ -77,7 +78,7 @@ def get_players(
         if i[0] is not None:
             try:
                 koeff = (i[3] + i[4] + i[5] + i[6] + i[7]) / 5
-            except:
+            except ExceptionForFlake8:
                 koeff = None
             player_dict = {
                 'Команда': team_name,
