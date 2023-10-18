@@ -308,6 +308,22 @@ files = [
 et-xmlfile = "*"
 
 [[package]]
+name = "openpyxl-stubs"
+version = "0.1.25"
+description = "Type stubs for openpyxl"
+optional = false
+python-versions = "*"
+files = [
+    {file = "openpyxl-stubs-0.1.25.tar.gz", hash = "sha256:108b112df072f7645ca356eacdd5730b1bd986c67ae33366a4a13c6879c369e7"},
+    {file = "openpyxl_stubs-0.1.25-py3-none-any.whl", hash = "sha256:db29f7804993b4a46b155fc4be45314c14538cb475b00591d8096e5af486abf1"},
+]
+
+[package.dependencies]
+mypy = ">=0.720"
+openpyxl = ">=3.0.0"
+typing-extensions = ">=3.7.4"
+
+[[package]]
 name = "packaging"
 version = "23.2"
 description = "Core utilities for Python packages"
@@ -498,4 +514,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4fac9b9f969d147b501b405bee8823000b5929d2331d6e508708ebea2e5cf084"
+content-hash = "7d271aacac69b9c861f13155cb9ac29000e1d0c51c346ed4391ab0c5531f4f54"
