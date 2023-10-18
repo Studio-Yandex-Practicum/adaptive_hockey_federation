@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import openpyxl
 
@@ -31,13 +31,12 @@ def get_players(
     player_list = []
     for user in lst:
         user_dict = {
-            'Команда': None,
+            'Команда': team_name,
             'Имя': None,
             'Фамилия': None,
             'Дата рождения': None,
             'Позиция': None,
             'Класс': None}
-        user_dict['Команда'] = team_name
         user_dict = build_dict(user_dict, user, 'Имя', 0)
         user_dict = build_dict(user_dict, user, 'Фамилия', 1)
         user_dict = build_dict(user_dict, user, 'Дата рождения', 2)
@@ -55,12 +54,11 @@ def get_coaches(
     coach_list = []
     for coach in lst:
         user_coach_dict = {
-            'Команда': None,
+            'Команда': team_name,
             'Имя': None,
             'Фамилия': None,
             'Роль': None
         }
-        user_coach_dict['Команда'] = team_name
         user_coach_dict = build_dict(user_coach_dict, coach, 'Имя', 0)
         user_coach_dict = build_dict(user_coach_dict, coach, 'Фамилия', 1)
         user_coach_dict = build_dict(user_coach_dict, coach, 'Роль', 3)
@@ -74,11 +72,14 @@ def get_coaches(
     return coach_list
 
 
-def parse_team_composition(sheet) -> List:
-    lst = []
+def parse_team_composition(sheet) -> Tuple[
+        List[ExcelDataPlayer_1],
+        List[ExcelDataCoach_1]
+]:
+    lst: List[Any] = []
     team_name = sheet['F1'].value
     for i in range(5, sheet.max_row):
-        user_list = []
+        user_list: List[Any] = []
         for col in sheet.iter_cols(2, sheet.max_column - 1):
             value = col[i].value
             if value != 'РУКОВОДИТЕЛИ':
@@ -92,7 +93,7 @@ def parse_team_composition(sheet) -> List:
 def to_list_of_classes(
         lst: List,
         team_name: str
-) -> Tuple[ExcelDataCoach_1, ExcelDataPlayer_1]:
+) -> Tuple[List[ExcelDataPlayer_1], List[ExcelDataCoach_1]]:
     index = lst.index(1)
     coaches_list = get_coaches(team_name, lst[index + 3: len(lst)])
     coaches = []

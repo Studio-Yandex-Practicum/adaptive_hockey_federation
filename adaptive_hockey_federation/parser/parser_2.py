@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import openpyxl
 
@@ -22,7 +22,7 @@ def parse_first_sheet(sheet) -> List:
     return get_players_first_sheet(lst)
 
 
-def get_players_first_sheet(lst: List) -> List[Dict]:
+def get_players_first_sheet(lst: List) -> List[ExcelDataFirstSheet_2]:
     result_list = []
     for i in lst:
         player_dict = {
@@ -71,7 +71,7 @@ def parse_sheets(sheet) -> List:
 def get_players(
         lst: List,
         team_name: str
-) -> List[Dict]:
+) -> List[ExcelData_2]:
     player_list = []
     for i in lst:
         if i[0] is not None:
@@ -97,7 +97,7 @@ def get_players(
 
 
 def to_list_of_classes(
-        player_list: List[Dict]
+        player_list: List[Dict[Any, Any]]
 ) -> List[ExcelData_2]:
     players = []
     for i in player_list:
