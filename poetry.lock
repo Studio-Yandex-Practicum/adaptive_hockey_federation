@@ -357,6 +357,17 @@ doc = ["sphinx"]
 test = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "types-openpyxl"
+version = "3.1.0.24"
+description = "Typing stubs for openpyxl"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "types-openpyxl-3.1.0.24.tar.gz", hash = "sha256:a8f4d594f75ca2b5194a4178ab46c63d0993db26a7e6bb972aa56cbf7d5d544f"},
+    {file = "types_openpyxl-3.1.0.24-py3-none-any.whl", hash = "sha256:8f5ea051e1870ae688f3ed075c4f9297eeb62c53897c694282bf0467c278100c"},
+]
+
+[[package]]
 name = "types-pytz"
 version = "2023.3.1.1"
 description = "Typing stubs for pytz"
@@ -487,4 +498,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "e68c8af0bd1211dfade1e583eb717eed13b46590d48a7425dd8130ccb22d6c75"
+content-hash = "4fac9b9f969d147b501b405bee8823000b5929d2331d6e508708ebea2e5cf084"
