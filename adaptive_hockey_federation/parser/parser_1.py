@@ -1,8 +1,12 @@
-from parser.exception import ExceptionForFlake8
 from typing import Dict, List, Tuple
 
 import openpyxl
-from core.user_card import ExcelDataCoach_1, ExcelDataPlayer_1
+
+from adaptive_hockey_federation.core.user_card import (
+    ExcelDataCoach_1,
+    ExcelDataPlayer_1,
+)
+from adaptive_hockey_federation.parser.exception import ExceptionForFlake8
 
 WORKBOOK_PATH = 'adaptive_hockey_federation/parser/Состав команды.xlsx'
 
@@ -88,7 +92,7 @@ def parse_team_composition(sheet) -> List:
 def to_list_of_classes(
         lst: List,
         team_name: str
-) -> Tuple[List[ExcelDataCoach_1, ExcelDataPlayer_1]]:
+) -> Tuple[ExcelDataCoach_1, ExcelDataPlayer_1]:
     index = lst.index(1)
     coaches_list = get_coaches(team_name, lst[index + 3: len(lst)])
     coaches = []

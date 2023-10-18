@@ -1,8 +1,11 @@
-from parser.exception import ExceptionForFlake8
 from typing import Dict, List
 
 import openpyxl
-from core.user_card import ExcelData_2, ExcelDataFirstSheet_2
+
+from adaptive_hockey_federation.core.user_card import (
+    ExcelData_2,
+    ExcelDataFirstSheet_2,
+)
 
 WORKBOOK_PATH = ('adaptive_hockey_federation/parser/'
                  'Копия Сводная таблица по командам с классами ЛТ.xlsx')
@@ -72,9 +75,9 @@ def get_players(
     player_list = []
     for i in lst:
         if i[0] is not None:
-            try:
+            if i[3] and i[4] and i[5] and i[6] and i[7]:
                 koeff = (i[3] + i[4] + i[5] + i[6] + i[7]) / 5
-            except ExceptionForFlake8:
+            else:
                 koeff = None
             player_dict = {
                 'Команда': team_name,
