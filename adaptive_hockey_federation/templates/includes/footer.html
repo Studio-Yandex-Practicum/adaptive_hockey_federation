@@ -1,3 +1,34 @@
-<div>
-  <p>Footer</p> 
+{% load static %}
+
+<div class="footer-copyright text-center py-3">
+  <nav class="navbar navbar-light" style="background-color: var(--colour-second)">
+    <div class="container py-2">
+      <div class="nav nav-pills justify-content-start">
+        <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+          <i class="bi bi-caret-right-fill"></i>
+        </button>
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <i class="bi bi-caret-left-fill"></i>
+              </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <i class="bi bi-caret-right-fill"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <ul class="nav nav-pills justify-content-end">
+        {% include "includes/button.html" with name="+ Пользователь" %}
+        {% include "includes/button.html" with name="Выгрузить" %}
+      </ul>
+    </div>
+  </nav>   
 </div>

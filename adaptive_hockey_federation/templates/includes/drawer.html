@@ -1,0 +1,22 @@
+{% load static %}
+  <div class="offcanvas offcanvas-start" style="background-color: var(--colour-first)" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+    
+    <div class="offcanvas-body">
+      <ul class="nav-list" style="list-style-type:none">
+        <div class="logo-img p-5">
+          <img src="{% static 'img/example.jpg' %}" width="150" height="50">
+        </div>
+        <li>{% include "includes/button.html" with name="Пользователи" %}</li>
+        <li>{% include "includes/button.html" with name="Команды" %}</li>
+        <li>{% include "includes/button.html" with name="Соревнования" %}</li>
+        <li>{% include "includes/button.html" with name="Аналитика" %}</li>
+        <li>{% include "includes/button.html" with name="Выгрузки" %}</li>
+      </ul>
+    </div>
+
+    <div class="offcanvas-footer p-5">
+      <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
+        <i class="bi bi-caret-left-fill"></i>
+      </button>
+    </div>
+  </div>
