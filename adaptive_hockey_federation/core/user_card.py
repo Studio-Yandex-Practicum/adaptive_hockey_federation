@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import Optional
 
 
 @dataclass
@@ -16,10 +17,10 @@ class BaseUserInfo:
 class HockeyData(BaseUserInfo):
     """Класс с необязательными полями из документов формата docx.
     """
-    patronymic: str = None
-    birth_certificate: str = None
-    passport: str = None
-    position: str = None
-    player_number: int = None
+    patronymic: Optional[str]
+    birth_certificate: Optional[str]
+    passport: Optional[str]
+    position: Optional[str]
+    player_number: Optional[int]
     is_assistant: bool = False
     is_captain: bool = False
