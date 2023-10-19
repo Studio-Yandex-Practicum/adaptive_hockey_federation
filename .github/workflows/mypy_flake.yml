@@ -25,4 +25,6 @@ jobs:
       - name: Run Mypy
         uses: jashparekh/mypy-action@v2
         with:
-          requirements: django-stubs django
+          requirements: 
+            - django-stubs django
+            - types-openpyxl
