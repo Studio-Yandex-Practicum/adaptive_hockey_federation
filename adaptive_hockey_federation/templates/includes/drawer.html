@@ -1,10 +1,9 @@
-{% load static %}
-  <div class="offcanvas offcanvas-start" style="background-color: var(--colour-first)" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+  <div class="offcanvas offcanvas-start" style="background-color: #6f42c1" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
     
     <div class="offcanvas-body">
       <ul class="nav-list" style="list-style-type:none">
         <div class="logo-img p-5">
-          <img src="{% static 'img/example.jpg' %}" width="150" height="50">
+          <img src="https://paraicehockey.ru/wp-content/uploads/2022/02/FAH_q.png" width="150" height="150">
         </div>
         <li>{% include "includes/button.html" with name="Пользователи" %}</li>
         <li>{% include "includes/button.html" with name="Команды" %}</li>

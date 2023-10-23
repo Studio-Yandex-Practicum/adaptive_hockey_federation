@@ -6,7 +6,7 @@ app_name = 'main'
 
 
 urlpatterns = [
-    path('users', views.users, name='users'),
+    path('users/', views.users, name='users'),
     path('teams/<int:id>/', views.teams_id, name='teams_id'),
     path('teams/', views.teams, name='teams'),
     path(
