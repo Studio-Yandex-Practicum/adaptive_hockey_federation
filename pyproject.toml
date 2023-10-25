@@ -30,9 +30,3 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.mypy]
-plugins = ["mypy_django_plugin.main"]
-mypy_path = "./adaptive_hockey_federation"
-
-[tool.django-stubs]
-django_settings_module = "adaptive_hockey_federation.settings"
