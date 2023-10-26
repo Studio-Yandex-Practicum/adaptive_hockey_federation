@@ -11,7 +11,7 @@
       {% endblock %}
     </title>
   </head>
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <header>
       {% include 'includes/header.html' %}
     </header>
@@ -20,7 +20,7 @@
       Основной текст
     {% endblock %}  
     </main>
-    <footer>
+    <footer class="mt-auto">
       {% include 'includes/footer.html' %}
     </footer>
     {% include 'includes/drawer.html' %}
