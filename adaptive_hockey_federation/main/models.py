@@ -13,6 +13,9 @@ class Team(models.Model):
         verbose_name = 'Команда'
         verbose_name_plural = 'Команды'
 
+    def __str__(self):
+        return self.name
+
 
 class Position(models.Model):
     """Позиция в команде
@@ -25,6 +28,9 @@ class Position(models.Model):
     class Meta:
         verbose_name = 'Позиция'
         verbose_name_plural = 'Позиции'
+
+    def __str__(self):
+        return self.name
 
 
 class BaseUserInfo(models.Model):
@@ -44,7 +50,6 @@ class BaseUserInfo(models.Model):
     )
     surname: models.CharField(
         max_length=56,
-        verbose_name='Фамилия'
     )
     date_of_birth = models.DateTimeField(
         verbose_name='Дата рождения'
@@ -63,3 +68,6 @@ class BaseUserInfo(models.Model):
         max_length=255,
         choices=CLS_CHOICES,
         default=None)
+
+    def __str__(self):
+        return self.name
