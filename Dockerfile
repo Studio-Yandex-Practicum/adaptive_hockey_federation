@@ -13,4 +13,4 @@ FROM python:3.11-slim-bullseye
 COPY --from=builder /app /app
 COPY adaptive_hockey_federation/ ./
 
-CMD ["gunicorn", "adaptive_hockey_federation.wsgi:application", "--bind", "0:8000" ]
+CMD ["/app/.venv/bin/gunicorn", "adaptive_hockey_federation.wsgi:application", "--bind", "0:8000" ]

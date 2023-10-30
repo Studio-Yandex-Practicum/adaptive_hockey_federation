@@ -1,5 +1,7 @@
-<a href="#">
-  <button type="button" class="btn btn-info border border-white" role="button" data-bs-toggle="button">
-    {{ name }}
-  </button>
-</a>
+{% with request.path as current_url_name %}
+  <a href="{{ url_name }}"
+    class="nav-link border border-white bg-cyan-300 hover:bg-violet-950 text-white p-2 w-44 text-left
+    {% if current_url_name  == url_name %}bg-violet-950{% endif %}">
+      {{ name }}
+  </a>
+{% endwith %}
