@@ -270,7 +270,44 @@ def find_positions(columns: list[docx], regular_expression: str) -> list[str]:
     ]
 
 
-def parser(file: docx) -> list[HockeyData]:
+def find_numeric_statuses(file: docx) -> list[list[str]]:
+    numeric_statuses_list = []
+    for table in file.tables:
+        for row in table.rows:
+            txt = row.cells[1].text.title()
+            txt = re.sub(r'\W|Коляс.+|Здоровый', ' ', txt)
+            if len(txt.split()) <= 4:
+                try:
+                    numeric_status = row.cells[4].text
+                    numeric_status = re.sub(r'\D', '', numeric_status)
+                    if numeric_status:
+                        if len(txt.split()) == 2:
+                            txt += ' Отчество отсутствует'
+                        numeric_statuses_list.append(
+                            txt.split()[:3] + [numeric_status]
+                        )
+                except IndexError:
+                    pass
+
+    return numeric_statuses_list
+
+
+def numeric_status_check(
+        name: str,
+        surname: str,
+        patronymics: str,
+        statuses: list[list[str]],
+) -> Optional[int]:
+    for status in statuses:
+        if surname == status[0]:
+            if name == status[1]:
+                if patronymics.split()[0] == status[2]:
+                    return int(status[3])
+
+    return None
+
+
+def parser(file: docx, numeric_statuses: list[list[str]]) -> list[HockeyData]:
     """Функция собирает все данные об игроке
     и передает их в dataclass.
     """
@@ -296,6 +333,12 @@ def parser(file: docx) -> list[HockeyData]:
             team,
             players_number[index],
             positions[index],
+            numeric_status_check(
+                names[index],
+                surnames[index],
+                patronymics[index],
+                numeric_statuses,
+            ),
         )
         for index in range(len(names))
     ]
@@ -303,6 +346,13 @@ def parser(file: docx) -> list[HockeyData]:
 
 if __name__ == '__main__':
     files_dir = '/Users/frost/dev/adaptive_hockey_federation/Именная заявка/'
+    numeric_status_file = (
+        '/Users/frost/dev/adaptive_hockey_federation/'
+        'Числовые статусы следж-хоккей 02.10.203.docx'
+    )
+    numeric_statuses = find_numeric_statuses(
+        docx.Document(numeric_status_file)
+    )
     for root, directories, files in os.walk(files_dir):
         for file in files:
             if file.startswith('~'):
@@ -316,4 +366,7 @@ if __name__ == '__main__':
                     )
                     and file != 'ФАХ Сияжар Взрослые.docx'
                 ):
-                    parser(docx.Document(os.path.join(root, file)))
+                    parser(
+                        docx.Document(os.path.join(root, file)),
+                        numeric_statuses,
+                    )

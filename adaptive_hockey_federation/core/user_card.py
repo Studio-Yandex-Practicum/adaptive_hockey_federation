@@ -21,4 +21,3 @@ class HockeyData(BaseUserInfo):
     """Класс с необязательными полями из документов формата docx.
     """
     numeric_status: Optional[int] = None
-    player_class: Optional[str] = None
