@@ -1,7 +1,7 @@
 {% with request.resolver_match.view_name as view_name %}
 
-  <li class="nav-item dropdown mt-3">
-    <a class="nav-link dropdown-toggle border border-primary bg-white w-auto text-slate-400" href="#" 
+  <li class="nav-item dropdown place-self-center p-0">
+    <a class="nav-link dropdown-toggle border border-primary bg-white w-44 text-slate-400 p-1.5 text-end" href="#" 
     role="button" data-bs-toggle="dropdown" aria-expanded="false">
       {% if view_name  == 'main:users' %}Роль{% endif %}
       {% if view_name  == 'main:teams' %}Команда{% endif %}
