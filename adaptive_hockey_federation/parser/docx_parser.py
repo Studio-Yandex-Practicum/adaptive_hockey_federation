@@ -296,7 +296,7 @@ def parser(file: docx) -> list[HockeyData]:
             team,
             players_number[index],
             positions[index],
-        ).printy()
+        )
         for index in range(len(names))
     ]
 
