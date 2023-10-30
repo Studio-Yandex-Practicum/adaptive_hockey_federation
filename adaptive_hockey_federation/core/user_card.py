@@ -27,45 +27,8 @@ class HockeyData(BaseUserInfo):
 
 
 @dataclass
-class ExcelDataPlayer_1(BaseUserInfo):
-    """Класс с необязательными полями из таблицы "Состав команды.xlsx".
-       Информация об игроках.
-    """
-    position: Union[str, None]
-    classification: Union[str, None]
-
-
-@dataclass
-class ExcelDataCoach_1:
-    """Класс с необязательными полями из таблицы "Состав команды.xlsx".
-       Информация о руководительском составе.
-    """
-    name: Union[str, None]
-    surname: Union[str, None]
-    team: Union[str, None]
-    role: Union[str, None]
-
-
-@dataclass
-class ExcelData_2(BaseUserInfo):
+class ExcelData(BaseUserInfo):
     """Класс с необязательными полями из таблицы
-       "Копия Сводная таблица по командам с классами ЛТ.xlsx".
-       Информация из всех листов, кроме первого
+       "Реестр классов ХДН.xlsx".
     """
     classification: Union[float, None]
-    riding_face_forward: Union[float, None]
-    riding_backwards: Union[float, None]
-    cast: Union[float, None]
-    dribbling: Union[float, None]
-    team_hockey: Union[float, None]
-    result: Union[float, None]
-
-
-@dataclass
-class ExcelDataFirstSheet_2(BaseUserInfo):
-    """Класс с необязательными полями из таблицы
-       "Копия Сводная таблица по командам с классами ЛТ.xlsx".
-       Информация из первого листа.
-    """
-    classification: Union[str, None]
-    revision: Union[int, None]
