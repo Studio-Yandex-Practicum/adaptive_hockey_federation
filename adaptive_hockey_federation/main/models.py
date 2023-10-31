@@ -6,7 +6,7 @@ class Team(models.Model):
     """
     name = models.CharField(
         max_length=256,
-        verbose_name='Название'
+        verbose_name='Название',
     )
 
     class Meta:
@@ -22,7 +22,7 @@ class Position(models.Model):
     """
     name = models.CharField(
         max_length=256,
-        verbose_name='Название'
+        verbose_name='Название',
     )
 
     class Meta:
@@ -46,28 +46,33 @@ class BaseUserInfo(models.Model):
     ]
     name = models.CharField(
         max_length=56,
-        verbose_name='Имя'
+        verbose_name='Имя',
     )
-    surname: models.CharField(
+    surname = models.CharField(
         max_length=56,
     )
     date_of_birth = models.DateTimeField(
-        verbose_name='Дата рождения'
+        verbose_name='Дата рождения',
     )
     team = models.ForeignKey(
-        Team, on_delete=models.SET_NULL,
-        blank=True, null=True,
-        verbose_name='Команда'
+        to=Team,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Команда',
     )
     position = models.ForeignKey(
-        Team, on_delete=models.SET_NULL,
-        blank=True, null=True,
-        verbose_name='Позиция'
+        to=Team,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Позиция',
     )
     classification = models.CharField(
         max_length=255,
         choices=CLS_CHOICES,
-        default=None)
+        default=None,
+    )
 
     def __str__(self):
         return self.name
