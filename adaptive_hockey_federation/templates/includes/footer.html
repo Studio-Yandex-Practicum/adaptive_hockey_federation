@@ -1,31 +1,36 @@
-<div class="footer-copyright text-center py-3">
-  <nav class="navbar navbar-light" style="background-color: #0dcaf0">
-    <div class="container py-2">
+<div class="footer-copyright">
+  <nav class="navbar navbar-light" style="background-color: #64c2d1;">
+    <div class="container">
       <div class="nav nav-pills justify-content-start">
-        <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-          <i class="bi bi-caret-right-fill"></i>
+        <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" 
+        aria-controls="staticBackdrop">
+          <i class="bi bi-caret-right-fill fs-3" style="color: white;"></i>
         </button>
-        <nav aria-label="Page navigation example">
-          <ul class="pagination">
+        <nav aria-label="Page navigation example" class="p-2">
+          <ul class="pagination ps-8">
             <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous">
-                <i class="bi bi-caret-left-fill"></i>
+              <a class="page-link bg-[#64c2d1] me-1" href="#" aria-label="Previous">
+                <i class="bi bi-caret-left-fill" style="color: #340061;"></i>
               </a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">1</a></li>
+            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">2</a></li>
+            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">3</a></li>
             <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next">
-                <i class="bi bi-caret-right-fill"></i>
+              <a class="page-link bg-[#64c2d1]" href="#" aria-label="Next">
+                <i class="bi bi-caret-right-fill" style="color: #340061;"></i>
               </a>
             </li>
           </ul>
         </nav>
       </div>
       <ul class="nav nav-pills justify-content-end">
-        {% include "includes/button.html" with name="+ Пользователь" %}
-        {% include "includes/button.html" with name="Выгрузить" %}
+        {% with request.resolver_match.view_name as view_name %} 
+          {% if view_name  == 'main:users' %}{% include "includes/button.html" with name="+ Пользователь" %}{% endif %}
+          {% if view_name  == 'main:teams' %}{% include "includes/button.html" with name="+ Команда" %}{% endif %}
+          {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
+          {% if view_name  != 'main:unloads' %}{% include "includes/button.html" with name="Выгрузить" %}{% endif %}
+        {% endwith %}
       </ul>
     </div>
   </nav>   

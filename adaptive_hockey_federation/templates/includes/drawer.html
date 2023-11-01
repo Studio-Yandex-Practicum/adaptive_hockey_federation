@@ -1,21 +1,41 @@
-  <div class="offcanvas offcanvas-start" style="background-color: #6f42c1" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
-    
-    <div class="offcanvas-body">
-      <ul class="nav-list" style="list-style-type:none">
-        <div class="logo-img p-5">
-          <img src="https://paraicehockey.ru/wp-content/uploads/2022/02/FAH_q.png" width="150" height="150">
+<div class="offcanvas offcanvas-start" style="background-color: #340061;" data-bs-backdrop="static" tabindex="-1" 
+id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+  
+  <div class="offcanvas-body mx-auto">
+    <ul class="nav-list" style="list-style-type:none">
+      <div class="container py-5">
+        <div class="row">
+          <div class="col-4 flex justify-end">
+            <span class="logo-img">
+              <img src="https://paraicehockey.ru/wp-content/uploads/2022/02/FAH_q.png" width="100" height="100">
+            </span>
+          </div>
+          <div class="col text-white flex justify-start">
+            Мир хокея<br>для особенных<br>детей
+          </div>
         </div>
-        <li>{% include "includes/button.html" with name="Пользователи" %}</li>
-        <li>{% include "includes/button.html" with name="Команды" %}</li>
-        <li>{% include "includes/button.html" with name="Соревнования" %}</li>
-        <li>{% include "includes/button.html" with name="Аналитика" %}</li>
-        <li>{% include "includes/button.html" with name="Выгрузки" %}</li>
-      </ul>
-    </div>
-
-    <div class="offcanvas-footer p-5">
-      <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
-        <i class="bi bi-caret-left-fill"></i>
-      </button>
-    </div>
+      </div>
+      <li class="nav-item py-2">
+        {% url 'main:users' as url_name %}{% include "includes/button.html" with name="Пользователи" %}
+      </li>
+      <li class="nav-item py-2">
+        {% url 'main:teams' as url_name %}{% include "includes/button.html" with name="Команды" %}
+      </li>
+      <li class="nav-item py-2">
+        {% url 'main:competitions' as url_name %}{% include "includes/button.html" with name="Соревнования" %}
+      </li>
+      <li class="nav-item py-2">
+        {% url 'main:analytics' as url_name %}{% include "includes/button.html" with name="Аналитика" %}
+      </li>
+      <li class="nav-item py-2">
+        {% url 'main:unloads' as url_name %}{% include "includes/button.html" with name="Выгрузки" %}
+      </li>
+    </ul> 
   </div>
+
+  <div class="offcanvas-footer pb-5">
+    <button type="button" class="btn ps-16" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="bi bi-caret-left-fill fs-3" style="color: white;"></i>
+    </button>
+  </div>
+</div>
