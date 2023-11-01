@@ -21,6 +21,12 @@ flake8-django = "^1.4"
 django-stubs = "^4.2.4"
 
 
+
+[tool.poetry.group.parser.dependencies]
+python-docx = "^1.0.1"
+click = "^8.1.7"
+requests = "^2.31.0"
+
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
