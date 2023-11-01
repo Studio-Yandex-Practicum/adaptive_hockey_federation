@@ -1,0 +1,19 @@
+{% with request.resolver_match.view_name as view_name %}
+
+  <li class="nav-item dropdown place-self-center p-0">
+    <a class="nav-link dropdown-toggle border border-primary bg-white w-44 text-slate-400 p-1.5 text-end" href="#" 
+    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      {% if view_name  == 'main:users' %}Роль{% endif %}
+      {% if view_name  == 'main:teams' %}Команда{% endif %}
+      {% if view_name  == 'main:competitions' %}Соревнование{% endif %}
+      {% if view_name  == 'main:analytics' %}Аналитика{% endif %}
+      {% if view_name  == 'main:unloads' %}Выгрузка{% endif %}
+    </a>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#">1</a></li>
+      <li><a class="dropdown-item" href="#">2</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="#">...</a></li>
+    </ul>
+  </li>
+{% endwith %}
