@@ -155,4 +155,6 @@ cython_debug/
 # PyCharm
 .idea/
 
+# Static
 static/
+
