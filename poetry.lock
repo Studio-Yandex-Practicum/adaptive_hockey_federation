@@ -222,6 +222,17 @@ django = "*"
 typing-extensions = "*"
 
 [[package]]
+name = "et-xmlfile"
+version = "1.1.0"
+description = "An implementation of lxml.xmlfile for the standard library"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "et_xmlfile-1.1.0-py3-none-any.whl", hash = "sha256:a2ba85d1d6a74ef63837eed693bcb89c3f752169b0e3e7ae5b16ca5e1b3deada"},
+    {file = "et_xmlfile-1.1.0.tar.gz", hash = "sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c"},
+]
+
+[[package]]
 name = "flake8"
 version = "6.1.0"
 description = "the modular source code checker: pep8 pyflakes and co"
@@ -536,6 +547,36 @@ files = [
 ]
 
 [[package]]
+name = "openpyxl"
+version = "3.1.2"
+description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "openpyxl-3.1.2-py2.py3-none-any.whl", hash = "sha256:f91456ead12ab3c6c2e9491cf33ba6d08357d802192379bb482f1033ade496f5"},
+    {file = "openpyxl-3.1.2.tar.gz", hash = "sha256:a6f5977418eff3b2d5500d54d9db50c8277a368436f4e4f8ddb1be3422870184"},
+]
+
+[package.dependencies]
+et-xmlfile = "*"
+
+[[package]]
+name = "openpyxl-stubs"
+version = "0.1.25"
+description = "Type stubs for openpyxl"
+optional = false
+python-versions = "*"
+files = [
+    {file = "openpyxl-stubs-0.1.25.tar.gz", hash = "sha256:108b112df072f7645ca356eacdd5730b1bd986c67ae33366a4a13c6879c369e7"},
+    {file = "openpyxl_stubs-0.1.25-py3-none-any.whl", hash = "sha256:db29f7804993b4a46b155fc4be45314c14538cb475b00591d8096e5af486abf1"},
+]
+
+[package.dependencies]
+mypy = ">=0.720"
+openpyxl = ">=3.0.0"
+typing-extensions = ">=3.7.4"
+
+[[package]]
 name = "packaging"
 version = "23.2"
 description = "Core utilities for Python packages"
@@ -619,6 +660,17 @@ files = [
 dev = ["build", "flake8"]
 doc = ["sphinx"]
 test = ["pytest", "pytest-cov"]
+
+[[package]]
+name = "types-openpyxl"
+version = "3.1.0.24"
+description = "Typing stubs for openpyxl"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "types-openpyxl-3.1.0.24.tar.gz", hash = "sha256:a8f4d594f75ca2b5194a4178ab46c63d0993db26a7e6bb972aa56cbf7d5d544f"},
+    {file = "types_openpyxl-3.1.0.24-py3-none-any.whl", hash = "sha256:8f5ea051e1870ae688f3ed075c4f9297eeb62c53897c694282bf0467c278100c"},
+]
 
 [[package]]
 name = "types-pytz"
@@ -768,4 +820,5 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "57c7bcf37672ae90db8ccb8f15333cc1103a7efd2937422a05bf1938ebaad099"
+content-hash = "7d271aacac69b9c861f13155cb9ac29000e1d0c51c346ed4391ab0c5531f4f54"
+
