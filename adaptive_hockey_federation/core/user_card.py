@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
-from typing import Union
+from typing import Optional, Union
 
 
 @dataclass
@@ -11,6 +11,8 @@ class BaseUserInfo:
     surname: Union[str, None]
     date_of_birth: Union[date, None]
     team: Union[str, None]
+    player_number: int
+    position: str
 
 
 @dataclass
@@ -32,3 +34,4 @@ class ExcelData(BaseUserInfo):
        "Реестр классов ХДН.xlsx".
     """
     classification: Union[float, None]
+    numeric_status: Optional[int] = None

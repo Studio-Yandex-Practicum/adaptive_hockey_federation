@@ -1,21 +1,23 @@
-<nav class="navbar navbar-light" style="background-color: #0dcaf0">
-  <div class="container py-2">
+<nav class="navbar navbar-light" style="background-color: #64c2d1;">
+  
+  <div class="container">
     <ul class="nav d-flex justify-content-start">
-      
-      <div class="border  border-white">
-        Username
+      <div class="border border-white rounded px-2">
+        <i class="bi bi-circle-fill fs-3" style="color: red;"></i>
+        <b class="text-xl" style="color: #340061;">Username</b>
       </div>
     </ul>
-    <ul class="nav d-flex justify-content-end">
-      {% include "includes/dropdown_button.html" with name="Роль" %}
-      <li class="nav-item">
-        <a class="nav-link" href="##">
-          <i class="bi bi-search"></i>
+    
+    <ul class="nav justify-content-end">
+      <li class="nav-item d-flex">
+        {% include "includes/dropdown_button.html" %}
+        <a class="nav-link border border-primary place-self-center bg-white p-0.5" href="##">
+          <i class="bi bi-search fs-5 p-1 bg-white" style="color: grey;"></i>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="##">
-          <i class="bi bi-box-arrow-right"></i>
+      <li class="nav-item ms-16">
+        <a class="nav-link p-0" href="##">
+          <i class="bi bi-box-arrow-right fs-1" style="color: white;"></i>
         </a>
       </li>
     </ul>
