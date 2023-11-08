@@ -49,4 +49,4 @@ jobs:
           poetry install
       - name: mypy
         run: |
-          poetry run mypy
+          poetry run mypy .
