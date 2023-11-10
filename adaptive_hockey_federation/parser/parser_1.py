@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 import openpyxl
 
-from adaptive_hockey_federation.core.user_card import ExcelData
+from adaptive_hockey_federation.core.user_card import ExcelData  # type: ignore
 
 WORKBOOK_PATH = ('adaptive_hockey_federation/parser/Реестр классов ХДН.xlsx')
 
@@ -34,23 +34,6 @@ def get_players(lst: List) -> List[ExcelData]:
     return to_list_of_classes(
         result_list
     )
-
-
-def to_list_of_classes(
-        player_list: List[Dict]
-) -> List[ExcelData]:
-    players = []
-    for i in player_list:
-        player = ExcelData(
-            team=i.get('Команда'),
-            name=i.get('Имя'),
-            surname=i.get('Фамилия'),
-            date_of_birth=i.get('Дата'),
-            classification=i.get('Класс'),
-            revision=i.get('Пересмотр (начало сезона)')
-        )
-        players.append(player)
-    return players
 
 
 def to_list_of_classes(
