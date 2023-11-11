@@ -1,6 +1,20 @@
 from django.shortcuts import render
 
 
+# пример рендера таблиц, удалить после реализации вьюх
+CONTEXT_EXAMPLE = {
+    'table_head': {
+        'id': 'Идентификатор',
+        'name': 'Имя',
+        'surname': 'Фамилия',
+    },
+    'table_data': [
+        {'id': 1, 'name': 'Иван', 'surname': 'Иванов'},
+        {'id': 2, 'name': 'Пётр', 'surname': 'Петров'},
+    ],
+}
+
+
 def users(request):
     return render(request, 'main/users.html')
 
@@ -10,7 +24,7 @@ def teams_id(request, id):
 
 
 def teams(request):
-    return render(request, 'main/teams.html')
+    return render(request, 'main/teams.html', CONTEXT_EXAMPLE)
 
 
 def competitions_id(request, id):

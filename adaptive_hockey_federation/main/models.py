@@ -62,7 +62,7 @@ class BaseUserInfo(models.Model):
         verbose_name='Команда',
     )
     position = models.ForeignKey(
-        to=Team,
+        to=Position,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
