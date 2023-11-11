@@ -1,13 +1,10 @@
-import os
 import re
 from datetime import date
 from typing import Optional
 
 import docx  # type: ignore
 
-from adaptive_hockey_federation.core.user_card import (  # type: ignore
-    HockeyData,
-)
+from adaptive_hockey_federation.core.user_card import BaseUserInfo
 
 NAME = '[И|и][М|м][Я|я]'
 SURNAME = '[Ф|ф][А|а][М|м][И|и][Л|л][И|и][Я|я]'
@@ -307,10 +304,14 @@ def numeric_status_check(
     return None
 
 
-def parser(file: docx, numeric_statuses: list[list[str]]) -> list[HockeyData]:
+def docx_parser(
+        path: str,
+        numeric_statuses: list[list[str]]
+) -> list[BaseUserInfo]:
     """Функция собирает все данные об игроке
     и передает их в dataclass.
     """
+    file = docx.Document(path)
     columns_from_file = read_file_columns(file)
     text_from_file = read_file_text(file)
     names = find_names(columns_from_file, NAME)
@@ -325,48 +326,20 @@ def parser(file: docx, numeric_statuses: list[list[str]]) -> list[HockeyData]:
     positions = find_positions(columns_from_file, POSITION)
 
     return [
-        HockeyData(
-            names[index],
-            surnames[index],
-            patronymics[index],
-            dates_of_birth[index],
-            team,
-            players_number[index],
-            positions[index],
-            numeric_status_check(
+        BaseUserInfo(
+            name=names[index],
+            surname=surnames[index],
+            date_of_birth=dates_of_birth[index],
+            team=team,
+            player_number=players_number[index],
+            position=positions[index],
+            numeric_status=numeric_status_check(
                 names[index],
                 surnames[index],
                 patronymics[index],
                 numeric_statuses,
             ),
+            patronymic=patronymics[index],
         )
         for index in range(len(names))
     ]
-
-
-if __name__ == '__main__':
-    files_dir = '/Users/frost/dev/adaptive_hockey_federation/Именная заявка/'
-    numeric_status_file = (
-        '/Users/frost/dev/adaptive_hockey_federation/'
-        'Числовые статусы следж-хоккей 02.10.203.docx'
-    )
-    numeric_statuses = find_numeric_statuses(
-        docx.Document(numeric_status_file)
-    )
-    for root, directories, files in os.walk(files_dir):
-        for file in files:
-            if file.startswith('~'):
-                pass
-            else:
-                if (
-                    file.endswith('.docx')
-                    and file != 'На мандатную комиссию.docx'
-                    and file != (
-                        'Именная заявка следж-хоккей Энергия Жизни Сочи.docx'
-                    )
-                    and file != 'ФАХ Сияжар Взрослые.docx'
-                ):
-                    parser(
-                        docx.Document(os.path.join(root, file)),
-                        numeric_statuses,
-                    )
