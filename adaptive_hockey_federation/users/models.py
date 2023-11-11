@@ -1,44 +1,61 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models  # noqa
+from django.db.models import (
+    CharField, DateTimeField, EmailField, ForeignKey, SET_NULL,
+)
+
+from adaptive_hockey_federation.main.models import Team
+
+NAME_MAX_LENGTH = 256
+EMAIL_MAX_LENGTH = 256
+PHONE_MAX_LENGTH = 20
+
+ROLE_USER = 'user'
+ROLE_AGENT = 'agent'
+ROLE_MODERATOR = 'moderator'
+ROLE_ADMIN = 'admin'
 
 ROLES_CHOICES = (
-    (settings.ROLE_USER, 'Пользователь'),
-    (settings.ROLE_MODERATOR, 'Модератор'),
-    (settings.ROLE_ADMIN, 'Администратор'),
+    (ROLE_USER, 'Пользователь'),
+    (ROLE_AGENT, 'Представитель команды'),
+    (ROLE_MODERATOR, 'Модератор'),
+    (ROLE_ADMIN, 'Администратор'),
 )
 
 
 class User(AbstractUser):
-    username = models.CharField(
+    username = CharField(
         unique=True,
-        max_length=settings.USERNAME_MAX_LENGTH,
-        validators=(
-            validate_non_reserved,
-            validate_username_allowed_chars
-        )
+        max_length=NAME_MAX_LENGTH,
     )
-    email = models.EmailField(
+    email = EmailField(
         unique=True,
-        max_length=settings.EMAIL_MAX_LENGTH
+        max_length=EMAIL_MAX_LENGTH,
     )
-    role = models.CharField(
+    phone = CharField(
+        max_length=PHONE_MAX_LENGTH,
+    )
+    role = CharField(
         choices=ROLES_CHOICES,
-        default=settings.ROLE_USER,
-        max_length=max(len(role) for role,_ in ROLES_CHOICES)
+        default=ROLE_USER,
+        max_length=max(len(role) for role, _ in ROLES_CHOICES)
     )
-    bio = models.TextField(blank=True, null=True)
-    confirmation_code = models.CharField(
-        max_length=settings.CONFIRMATION_CODE_LENGTH,
-        blank=True,
-        null=True
-    )
-    first_name = models.CharField(
-        max_length=settings.FIRST_NAME_MAX_LENGTH,
+    first_name = CharField(
+        max_length=NAME_MAX_LENGTH,
         blank=True,
         null=True,
     )
-    last_name = models.CharField(
-        max_length=settings.LAST_NAME_MAX_LENGTH,
+    last_name = CharField(
+        max_length=NAME_MAX_LENGTH,
+        blank=True,
+        null=True,
+    )
+    created = DateTimeField(
+        auto_now_add=True,
+    )
+    team = ForeignKey(
+        to=Team,
+        on_delete=SET_NULL,
+        verbose_name='Команда',
         blank=True,
         null=True,
     )
@@ -46,15 +63,19 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('username',)
+        ordering = ('username', 'created')
 
     def __str__(self):
         return self.username
 
     @property
+    def is_agent(self):
+        return self.role == ROLE_AGENT
+
+    @property
     def is_moderator(self):
-        return self.role == settings.ROLE_MODERATOR
+        return self.role == ROLE_MODERATOR
 
     @property
     def is_admin(self):
-        return (self.role == settings.ROLE_ADMIN) or self.is_staff
+        return (self.role == ROLE_ADMIN) or self.is_staff
