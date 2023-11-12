@@ -5,6 +5,11 @@ from django.db.models import (
     ForeignKey, ManyToManyField, Model, Q, SET_NULL, UniqueConstraint,
 )
 
+SEX_CHOICES = (
+    ('male', 'Мужской'),
+    ('female', 'Женский'),
+)
+
 NAME_FIELD_LENGTH = 256
 BASE_PERSONAL_FIELD_LENGTH = 256
 
@@ -168,6 +173,7 @@ class Anamnes(BaseUniqueName):
     """
     wheelchair = BooleanField(
         default=False,
+        verbose_name='На коляске'
     )
 
 
@@ -185,8 +191,8 @@ class BasePerson(Model):
     )
     patronymic = CharField(
         max_length=BASE_PERSONAL_FIELD_LENGTH,
-        verbose_name='Отчество',
         blank=True,
+        verbose_name='Отчество',
     )
 
     class Meta:
@@ -199,22 +205,31 @@ class BasePerson(Model):
 
 class Player(BasePerson):
     birth_date = DateField()
+    sex = CharField(
+        max_length=max(len(sex) for sex, _ in SEX_CHOICES),
+        choices=SEX_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name='Пол'
+    )
     anamnes = ForeignKey(
         to=Anamnes,
         on_delete=SET_NULL,
-        verbose_name='Дигноз или числовой статус',
         blank=True,
         null=True,
+        verbose_name='Дигноз или числовой статус',
     )
     qualification = ForeignKey(
         to=PlayerQualification,
         on_delete=SET_NULL,
         blank=True,
         null=True,
+        verbose_name='Разряд игрока'
     )
     team = ManyToManyField(
         to=Team,
         through='PlayerTeam',
+        verbose_name='Команда'
     )
 
     class Meta(BasePerson.Meta):
