@@ -11,8 +11,8 @@ class BaseUserInfo:
     surname: Union[str, None]
     date_of_birth: Union[date, None]
     team: Union[str, None]
-    player_number: int
-    position: str
+    position: Union[str, None]
+    player_number: Union[int, None]
 
 
 @dataclass
@@ -22,8 +22,6 @@ class HockeyData(BaseUserInfo):
     patronymic: Union[str, None]
     birth_certificate: Union[str, None]
     passport: Union[str, None]
-    position: Union[str, None]
-    player_number: Union[int, None]
     is_assistant: bool = False
     is_captain: bool = False
 
