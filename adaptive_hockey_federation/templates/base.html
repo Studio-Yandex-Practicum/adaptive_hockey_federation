@@ -1,38 +1,50 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>    
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>
-      {% block title %} 
+      {% block title %}
         Тут будет заголовок
       {% endblock %}
     </title>
+
+  <style>
+
+.content {
+	min-height: calc(100vh - 145px);
+}
+</style>
   </head>
 
   <body class="d-flex flex-column ">
-
-    <header>
-      {% include 'includes/header.html' %}
-    </header>
-    <div class="container-fluid text-center text-2xl">
-        <div class="row">
+    <div class="row">
+        <div class="col-auto px-0">
             {% include 'includes/drawer.html' %}
-                <div class="col ps-md-2 pt-2">
-                    <div class="page-header pt-3">
-                    {% block content %}#}
-                        Основной текст
-                    {% endblock %}
-                    </div>
+        </div>
+        <div class="col px-0">
+            <header>
+              {% include 'includes/header.html' %}
+            </header>
+            <div class="content container-fluid text-center text-2xl">
+                <div class="row">
+                        <div class="col ps-md-2 pt-2">
+                            <div class="page-header pt-3">
+                            {% block content %}#}
+                                Основной текст
+                            {% endblock %}
+                            </div>
+                        </div>
                 </div>
+            </div>
+            <footer>
+                {% include 'includes/footer.html' %}
+            </footer>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
         </div>
     </div>
-    <footer class="fixed-bottom">
-        {% include 'includes/footer.html' %}
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   </body>
 </html>
