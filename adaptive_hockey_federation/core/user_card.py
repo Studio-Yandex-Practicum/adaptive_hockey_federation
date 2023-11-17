@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Union
+from typing import Union
 
 
 @dataclass
