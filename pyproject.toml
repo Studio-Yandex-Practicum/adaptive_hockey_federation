@@ -13,6 +13,7 @@ openpyxl = "^3.1.2"
 types-openpyxl = "^3.1.0.24"
 openpyxl-stubs = "^0.1.25"
 click = "^8.1.7"
+wrapt = "^1.16.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"

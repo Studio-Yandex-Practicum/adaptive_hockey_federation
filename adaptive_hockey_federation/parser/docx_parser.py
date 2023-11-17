@@ -39,6 +39,24 @@ def read_file_text(file: docx) -> list[str]:
     ]
 
 
+def get_counter_for_columns_parser(
+        columns: list[docx]
+) -> int:
+    count = 0
+    for column in columns:
+        for index, cell in enumerate(column.cells):
+            if re.search(r'п/п', cell.text):
+                for cell in column.cells[index + 1:]:
+                    if cell.text and len(cell.text) < 4:
+                        count += 1
+                    else:
+                        break
+            else:
+                if count > 0:
+                    break
+    return count
+
+
 def columns_parser(
         columns: list[docx],
         regular_expression: str,
@@ -57,18 +75,7 @@ def columns_parser(
         for text in list(cell.text for cell in column.cells)[1:]
     ]
     if not output:
-        count = 0
-        for column in columns:
-            for index, cell in enumerate(column.cells):
-                if re.search(r'п/п', cell.text):
-                    for cell in column.cells[index + 1:]:
-                        if cell.text and len(cell.text) < 4:
-                            count += 1
-                        else:
-                            break
-                else:
-                    if count > 0:
-                        break
+        count = get_counter_for_columns_parser(columns)
         for column in columns:
             for index, cell in enumerate(column.cells):
                 if re.search(regular_expression, cell.text):
