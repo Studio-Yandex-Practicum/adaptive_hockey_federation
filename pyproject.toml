@@ -48,3 +48,7 @@ mypy_path = "./adaptive_hockey_federation"
 
 [tool.django-stubs]
 django_settings_module = "adaptive_hockey_federation.settings"
+
+
+[tool.poetry.scripts]
+parser = "adaptive_hockey_federation.parser.parser:parsing_file"
