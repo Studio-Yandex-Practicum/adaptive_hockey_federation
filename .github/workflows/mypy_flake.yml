@@ -1,30 +1,52 @@
-name: flake8 Lint
+name: CI
 
 on: [push, pull_request]
 
 jobs:
-  flake8-lint:
+  flake8:
     runs-on: ubuntu-latest
-    name: Проверка flake8
+    name: flake8
     steps:
-      - name: Check out source repository
-        uses: actions/checkout@v3
-      - name: Set up Python environment
+      - name: Установка Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
-      - name: flake8 Lint
-        uses: py-actions/flake8@v2
-
-  run_mypy:
-    runs-on: ubuntu-latest
-    name: Mypy
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Run Mypy
-        uses: jashparekh/mypy-action@v2
+          python-version: 3.11
+      
+      - name: Установка Poetry
+        uses: snok/install-poetry@v1
         with:
-          requirements: 
-            - django-stubs django
-            - types-openpyxl
+          poetry-version: 1.7.0
+      
+      - name: Извлечение репозитория
+        uses: actions/checkout@v4
+
+      - name: Установка зависимостей
+        run: |
+          poetry install
+
+      - name: flake8
+        run: |
+          poetry run flake8
+  mypy:
+    runs-on: ubuntu-latest
+    name: mypy
+    steps:
+      - name: Установка Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      
+      - name: Установка Poetry
+        uses: snok/install-poetry@v1
+        with:
+          poetry-version: 1.7.0
+      
+      - name: Извлечение репозитория
+        uses: actions/checkout@v4
+
+      - name: Установка зависимостей
+        run: |
+          poetry install
+      - name: mypy
+        run: |
+          poetry run mypy .
