@@ -1,9 +1,20 @@
+<script type="text/javascript">
+   function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+   }
+</script>
+
+
 <div class="footer-copyright">
   <nav class="navbar navbar-light" style="background-color: #64c2d1;">
     <div class="container">
       <div class="nav nav-pills justify-content-start">
-        <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" 
-        aria-controls="staticBackdrop">
+        <button onclick="toggle_visibility('sidebar');" class="btn" type="button"
+        aria-controls="staticBackdrop" aria-expanded="true">
           <i class="bi bi-caret-right-fill fs-3" style="color: white;"></i>
         </button>
         <nav aria-label="Page navigation example" class="p-2">
@@ -24,8 +35,8 @@
           </ul>
         </nav>
       </div>
-      <ul class="nav nav-pills justify-content-end">
-        {% with request.resolver_match.view_name as view_name %} 
+      <ul class="nav nav-pills ">
+        {% with request.resolver_match.view_name as view_name %}
           {% if view_name  == 'main:users' %}{% include "includes/button.html" with name="+ Пользователь" %}{% endif %}
           {% if view_name  == 'main:teams' %}{% include "includes/button.html" with name="+ Команда" %}{% endif %}
           {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
@@ -33,5 +44,5 @@
         {% endwith %}
       </ul>
     </div>
-  </nav>   
+  </nav>
 </div>
