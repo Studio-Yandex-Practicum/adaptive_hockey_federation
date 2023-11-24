@@ -1,8 +1,7 @@
-from datetime import date
-
 from django.db.models import (
-    BooleanField, CASCADE, CharField, CheckConstraint, DateField, F,
-    ForeignKey, ManyToManyField, Model, OneToOneField, Q, SET_NULL,
+    BooleanField, CASCADE, CharField, DateField, ForeignKey, ManyToManyField,
+    Model,
+    SET_NULL,
     UniqueConstraint,
 )
 
@@ -86,62 +85,7 @@ class Team(Model):
         ]
 
 
-class Competition(Model):
-    """
-    Модель для соревнований. Позже возможно будет добавлена связь с играми.
-    """
-    name = CharField(
-        max_length=NAME_FIELD_LENGTH,
-        unique_for_date='start_date',
-    )
-    start_date = DateField(
-        verbose_name='Дата начала состязания',
-    )
-    end_date = DateField(
-        verbose_name='Дата окончания состязания',
-    )
-    team = ManyToManyField(
-        to=Team,
-        related_name='competition_teams',
-        through='CompetitionTeam',
-    )
-    location = ForeignKey(
-        to=Location,
-        related_name='competitions',
-        on_delete=SET_NULL,
-        blank=True,
-        null=True,
-    )
-
-    @property
-    def is_active(self):
-        return self.end_date >= date.today()
-
-    class Meta:
-        verbose_name = 'Соревнование'
-        verbose_name_plural = 'Соревнования'
-        constraints = [
-            CheckConstraint(
-                check=Q(end_date__gt=F('start_date')),
-                name='dates_start_end_verification'
-            ),
-        ]
-
-
-class CompetitionTeam(Model):
-    team = ForeignKey(
-        to=Team,
-        related_name='competitions',
-        on_delete=CASCADE
-    )
-    competition = ForeignKey(
-        to=Competition,
-        related_name='teams',
-        on_delete=CASCADE
-    )
-
-
-class PlayerPosition(BaseUniqueName):
+class Position(BaseUniqueName):
     """
     Игровая позиция игрока в команде
     """
@@ -151,37 +95,7 @@ class PlayerPosition(BaseUniqueName):
         verbose_name_plural = 'Игровые позиции'
 
 
-class CoachPosition(BaseUniqueName):
-    """
-    Название должности тренера в команде
-    """
-
-    class Meta(BaseUniqueName.Meta):
-        verbose_name = 'Должность'
-        verbose_name_plural = 'Должности'
-
-
-class CoachQualification(BaseUniqueName):
-    """
-    Квалификационные категории тренера (высшая, первая, вторая)
-    """
-
-    class Meta(BaseUniqueName.Meta):
-        verbose_name = 'Квалификационная категория'
-        verbose_name_plural = 'Квалификационные категории'
-
-
-class PlayerQualification(BaseUniqueName):
-    """
-    Квалификационные категории игрока (спортивные разряды и прочее, наверное)
-    """
-
-    class Meta(BaseUniqueName.Meta):
-        verbose_name = 'Разряд игрока'
-        verbose_name_plural = 'Разряды игроков'
-
-
-class PlayerRole(BaseUniqueName):
+class Role(BaseUniqueName):
     """
     Роль игрока в команде (капитан, ассистент)
     """
@@ -211,17 +125,10 @@ class RespiratoryFailure(BaseUniqueName):
         verbose_name_plural = 'Классы ХДН'
 
 
-class HealthCard(BaseUniqueName):
+class PlayerRespiratoryFailure(BaseUniqueName):
     """
-    Медицинская информация игрока. Справки, если будут, привяжем сюда же.
+    Информация по хронической дыхательной недостаточности.
     """
-    anamnesis = ForeignKey(
-        to=Anamnesis,
-        on_delete=SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Диагноз',
-    )
     respiratory_failure = ForeignKey(
         to=RespiratoryFailure,
         on_delete=SET_NULL,
@@ -237,10 +144,6 @@ class HealthCard(BaseUniqueName):
         verbose_name='Пересмотр класса ХДН',
         blank=True,
         null=True,
-    )
-    wheelchair = BooleanField(
-        default=False,
-        verbose_name='На коляске'
     )
 
 
@@ -259,6 +162,7 @@ class BasePerson(Model):
     patronymic = CharField(
         max_length=BASE_PERSON_FIELD_LENGTH,
         blank=True,
+        null=True,
         verbose_name='Отчество',
     )
 
@@ -283,24 +187,28 @@ class Player(BasePerson):
         null=True,
         verbose_name='Пол'
     )
-    health_card = OneToOneField(
-        to=HealthCard,
-        on_delete=SET_NULL,
+    respiratory_failure = ManyToManyField(
+        to=RespiratoryFailure,
+        through='PlayerRespiratoryFailure',
         blank=True,
         null=True,
-        verbose_name='Медицинские данные',
-    )
-    qualification = ForeignKey(
-        to=PlayerQualification,
-        on_delete=SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Разряд игрока'
+        verbose_name='ХДН',
     )
     team = ManyToManyField(
         to=Team,
         through='PlayerTeam',
         verbose_name='Команда'
+    )
+    anamnesis = ForeignKey(
+        to=Anamnesis,
+        on_delete=SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Диагноз',
+    )
+    wheelchair = BooleanField(
+        default=False,
+        verbose_name='На коляске'
     )
 
     class Meta(BasePerson.Meta):
@@ -334,14 +242,14 @@ class PlayerTeam(Model):
         verbose_name='Команда',
     )
     position = ForeignKey(
-        to=PlayerPosition,
+        to=Position,
         on_delete=SET_NULL,
         blank=True,
         null=True,
         verbose_name='Позиция игрока',
     )
     role = ForeignKey(
-        to=PlayerRole,
+        to=Role,
         on_delete=SET_NULL,
         blank=True,
         null=True,
@@ -349,60 +257,4 @@ class PlayerTeam(Model):
     )
     number = CharField(
         verbose_name='Игровой номер',
-    )
-
-
-class Coach(BasePerson):
-    """
-    Тренер команды
-    """
-    position = ForeignKey(
-        to=CoachPosition,
-        on_delete=SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Должность тренера',
-    )
-    qualification = ForeignKey(
-        to=CoachQualification,
-        on_delete=SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Квалификационная категория тренера',
-    )
-    team = ManyToManyField(
-        to=Team,
-        through='CoachTeam',
-        verbose_name='Команда'
-    )
-
-    class Meta(BasePerson.Meta):
-        default_related_name = 'coaches'
-        verbose_name = 'Тренер'
-        verbose_name_plural = 'Тренеры'
-
-
-class CoachTeam(Model):
-    """
-    Связь "многие ко многим" тренера с командой.
-    """
-    coach = ForeignKey(
-        to=Coach,
-        related_name='teams',
-        on_delete=CASCADE,
-        verbose_name='Игрок',
-
-    )
-    team = ForeignKey(
-        to=Team,
-        related_name='coaches',
-        on_delete=CASCADE,
-        verbose_name='Команда',
-    )
-    position = ForeignKey(
-        to=CoachPosition,
-        on_delete=SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Должность тренера',
     )
