@@ -3,7 +3,7 @@ from django.db.models import (
     CharField, DateTimeField, EmailField, ForeignKey, SET_NULL,
 )
 
-from adaptive_hockey_federation.main.models import Team
+from main.models import Team
 
 NAME_MAX_LENGTH = 256
 EMAIL_MAX_LENGTH = 256
@@ -23,14 +23,14 @@ ROLES_CHOICES = (
 
 
 class User(AbstractUser):
-    username = CharField(
-        unique=True,
-        max_length=NAME_MAX_LENGTH,
-    )
-    email = EmailField(
-        unique=True,
-        max_length=EMAIL_MAX_LENGTH,
-    )
+    # username = CharField(
+    #     unique=True,
+    #     max_length=NAME_MAX_LENGTH,
+    # )
+    # email = EmailField(
+    #     unique=True,
+    #     max_length=EMAIL_MAX_LENGTH,
+    # )
     phone = CharField(
         max_length=PHONE_MAX_LENGTH,
     )
@@ -49,12 +49,13 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
-    created = DateTimeField(
-        auto_now_add=True,
-    )
+    # created = DateTimeField(
+    #     auto_now_add=True,
+    # )
     team = ForeignKey(
         to=Team,
         on_delete=SET_NULL,
+        related_name='users',
         verbose_name='Команда',
         blank=True,
         null=True,
@@ -63,7 +64,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('username', 'created')
+        ordering = ('username',)
 
     def __str__(self):
         return self.username
