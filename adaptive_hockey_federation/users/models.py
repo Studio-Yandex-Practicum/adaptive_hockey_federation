@@ -1,8 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import (
-    CharField, DateTimeField, EmailField, ForeignKey, SET_NULL,
-)
-
+from django.db.models import SET_NULL, CharField, ForeignKey
 from main.models import Team
 
 NAME_MAX_LENGTH = 256
@@ -23,14 +20,6 @@ ROLES_CHOICES = (
 
 
 class User(AbstractUser):
-    # username = CharField(
-    #     unique=True,
-    #     max_length=NAME_MAX_LENGTH,
-    # )
-    # email = EmailField(
-    #     unique=True,
-    #     max_length=EMAIL_MAX_LENGTH,
-    # )
     phone = CharField(
         max_length=PHONE_MAX_LENGTH,
     )
@@ -41,17 +30,14 @@ class User(AbstractUser):
     )
     first_name = CharField(
         max_length=NAME_MAX_LENGTH,
-        blank=True,
+        default='',
         null=True,
     )
     last_name = CharField(
         max_length=NAME_MAX_LENGTH,
-        blank=True,
+        default='',
         null=True,
     )
-    # created = DateTimeField(
-    #     auto_now_add=True,
-    # )
     team = ForeignKey(
         to=Team,
         on_delete=SET_NULL,

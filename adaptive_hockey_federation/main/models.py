@@ -1,8 +1,6 @@
 from django.db.models import (
     BooleanField, CASCADE, CharField, DateField, ForeignKey, ManyToManyField,
-    Model,
-    SET_NULL,
-    UniqueConstraint,
+    Model, SET_NULL, UniqueConstraint,
 )
 
 SEX_CHOICES = (
@@ -145,7 +143,7 @@ class BasePerson(Model):
     patronymic = CharField(
         max_length=BASE_PERSON_FIELD_LENGTH,
         blank=True,
-        null=True,
+        default='',
         verbose_name='Отчество',
     )
 

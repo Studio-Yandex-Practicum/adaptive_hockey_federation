@@ -1,8 +1,14 @@
 from django.contrib import admin
-
 from main.models import (
-    Anamnesis, Discipline, Health, Location, Player, Position,
-    RespiratoryFailure, Role, Team,
+    Anamnesis,
+    Discipline,
+    Health,
+    Location,
+    Player,
+    Position,
+    RespiratoryFailure,
+    Role,
+    Team,
 )
 
 
@@ -32,15 +38,8 @@ class PlayerInline(admin.TabularInline):
 @admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
     inlines = [TeamInline, HealthInline]
-    fieldsets = [
-        (
-            'Персональные данные',
-            {
-                'fields': ['name', 'surname', 'patronymic', 'birth_date']
-            }
-        ),
-    ]
-    list_display = ['name', 'surname', ]
+    fields = ['name', 'surname', 'patronymic', 'birth_date']
+    list_display = ['name', 'surname']
     search_fields = ['surname', 'name']
 
 
