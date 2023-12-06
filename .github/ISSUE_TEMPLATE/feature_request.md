@@ -1,8 +1,8 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: New feature
+about: Шаблон на реализацию нового функционала
 title: ''
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
