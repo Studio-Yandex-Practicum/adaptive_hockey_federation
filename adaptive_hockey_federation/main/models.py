@@ -1,6 +1,13 @@
 from django.db.models import (
-    BooleanField, CASCADE, CharField, DateField, ForeignKey, ManyToManyField,
-    Model, SET_NULL, UniqueConstraint,
+    CASCADE,
+    SET_NULL,
+    BooleanField,
+    CharField,
+    DateField,
+    ForeignKey,
+    ManyToManyField,
+    Model,
+    UniqueConstraint,
 )
 
 SEX_CHOICES = (
