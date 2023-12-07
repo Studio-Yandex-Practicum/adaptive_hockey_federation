@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
     'table_head': {
@@ -13,6 +12,10 @@ CONTEXT_EXAMPLE = {
         {'id': 2, 'name': 'Пётр', 'surname': 'Петров'},
     ],
 }
+
+
+def main(request):
+    return render(request, 'main/main.html')
 
 
 def users(request):

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% load user_filters %}
+{% block title %} Войти {% endblock %}
+{% block content %}
+{% if request.user.is_authenticated %}
+{% include 'users/includes/hello_auth_user.html' %}
+{% else %}
+{% include 'users/includes/open_divs.html' %}
+<div class="card-header">
+  Войти на сайт
+</div>
+<div class="card-body">
+  {% include 'includes/forms_errors.html' %}
+  <form method="post" action="{% url 'users:login' %}">
+  {% csrf_token %}
+  
+  {% for field in form %}
+    <div class="form-group row my-3"
+      {% if field.field.required %} 
+      aria-required="true"
+      {% else %}
+      aria-required="false"
+      {% endif %}
+    >
+      {% include 'users/includes/fields_form.html'%}
+    </div>
+  {% endfor %}
+  <div class="col-md-6 offset-md-4">
+    <button type="submit" class="btn btn-primary">
+      Войти
+    </button>
+    <a href="{% url 'users:password_reset_form' %}" class="btn btn-link">
+      Забыли пароль?
+    </a>
+  </div>
+  </form>
+</div>
+{% endif %}
+{% include 'users/includes/close_divs.html' %}
+{% endblock %} 
