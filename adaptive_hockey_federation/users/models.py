@@ -31,12 +31,10 @@ class User(AbstractUser):
     first_name = CharField(
         max_length=NAME_MAX_LENGTH,
         default='',
-        null=True,
     )
     last_name = CharField(
         max_length=NAME_MAX_LENGTH,
         default='',
-        null=True,
     )
     team = ForeignKey(
         to=Team,

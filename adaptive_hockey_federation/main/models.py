@@ -1,3 +1,4 @@
+from django.db import models
 from django.db.models import (
     CASCADE,
     SET_NULL,
@@ -172,10 +173,9 @@ class Player(BasePerson):
         max_length=max(len(sex) for sex, _ in SEX_CHOICES),
         choices=SEX_CHOICES,
         blank=True,
-        null=True,
         verbose_name='Пол'
     )
-    team = ManyToManyField(
+    team: models.ManyToManyField = ManyToManyField(
         to=Team,
         through='PlayerTeam',
         verbose_name='Команда'
@@ -216,7 +216,6 @@ class Health(Model):
     revision = CharField(
         max_length=NAME_FIELD_LENGTH,
         blank=True,
-        null=True,
         verbose_name='Пересмотр класса ХДН',
     )
     anamnesis = ForeignKey(
