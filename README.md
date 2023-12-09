@@ -10,7 +10,7 @@
 
    1.1. [Инструкции и ритуалы на проекте](docs/materials/instructions.md)
 
-   1.2. [ER - диаграмма сущностей](docs/)
+   1.2. [ER - диаграмма сущностей](docs/ER_Diagram.jpg)
 
    1.3. [Референс](https://www.youtube.com/watch?v=b0LMWiSynQs)
 
