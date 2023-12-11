@@ -24,7 +24,7 @@ class BaseUniqueName(Model):
     """
     Абстрактный класс с уникальным полем "Название" и методом отображения
     """
-    name = CharField(
+    name: models.CharField = CharField(
         max_length=NAME_FIELD_LENGTH,
         verbose_name='Название',
         unique=True,
@@ -63,15 +63,15 @@ class Team(Model):
     """
     Модель команды.
     """
-    name = CharField(max_length=NAME_FIELD_LENGTH, )
-    location = ForeignKey(
+    name: models.CharField = CharField(max_length=NAME_FIELD_LENGTH, )
+    location: models.ForeignKey = ForeignKey(
         to=Location,
         on_delete=SET_NULL,
         blank=True,
         null=True,
         verbose_name='Локация команды',
     )
-    discipline = ForeignKey(
+    discipline: models.ForeignKey = ForeignKey(
         to=Discipline,
         on_delete=SET_NULL,
         blank=True,
@@ -140,15 +140,15 @@ class BasePerson(Model):
     """
     Абстрактная модель с базовой персональной информацией
     """
-    name = CharField(
+    name: models.CharField = CharField(
         max_length=BASE_PERSON_FIELD_LENGTH,
         verbose_name='Имя',
     )
-    surname = CharField(
+    surname: models.CharField = CharField(
         max_length=BASE_PERSON_FIELD_LENGTH,
         verbose_name='Фамилия',
     )
-    patronymic = CharField(
+    patronymic: models.CharField = CharField(
         max_length=BASE_PERSON_FIELD_LENGTH,
         blank=True,
         default='',
@@ -168,8 +168,8 @@ class Player(BasePerson):
     Модель игрока. Связь с командой "многие ко многим" на случай включения
     игрока в сборную, помимо основного состава.
     """
-    birth_date = DateField()
-    sex = CharField(
+    birth_date: models.DateField = DateField()
+    sex: models.CharField = CharField(
         max_length=max(len(sex) for sex, _ in SEX_CHOICES),
         choices=SEX_CHOICES,
         blank=True,
@@ -197,35 +197,35 @@ class Health(Model):
     """
     Информация по хронической дыхательной недостаточности.
     """
-    player = ForeignKey(
+    player: models.ForeignKey = ForeignKey(
         to=Player,
         related_name='health',
         on_delete=CASCADE,
         verbose_name='Игрок',
     )
-    respiratory_failure = ForeignKey(
+    respiratory_failure: models.ForeignKey = ForeignKey(
         to=RespiratoryFailure,
         related_name='respiratory_failure_players',
         on_delete=CASCADE,
         verbose_name='Класс ХДН',
     )
-    is_permanent = BooleanField(
+    is_permanent: models.BooleanField = BooleanField(
         default=False,
         verbose_name='Класс ХДН подтверждён перманентно',
     )
-    revision = CharField(
+    revision: models.CharField = CharField(
         max_length=NAME_FIELD_LENGTH,
         blank=True,
         verbose_name='Пересмотр класса ХДН',
     )
-    anamnesis = ForeignKey(
+    anamnesis: models.ForeignKey = ForeignKey(
         to=Anamnesis,
         on_delete=SET_NULL,
         blank=True,
         null=True,
         verbose_name='Диагноз',
     )
-    wheelchair = BooleanField(
+    wheelchair: models.BooleanField = BooleanField(
         default=False,
         verbose_name='На коляске'
     )
@@ -240,34 +240,34 @@ class PlayerTeam(Model):
     Связь "многие ко многим" игрока с командой с добавлением данных игрока
     в этой команде.
     """
-    player = ForeignKey(
+    player: models.ForeignKey = ForeignKey(
         to=Player,
         related_name='player_teams',
         on_delete=CASCADE,
         verbose_name='Игрок',
 
     )
-    team = ForeignKey(
+    team: models.ForeignKey = ForeignKey(
         to=Team,
         related_name='team_players',
         on_delete=CASCADE,
         verbose_name='Команда',
     )
-    position = ForeignKey(
+    position: models.ForeignKey = ForeignKey(
         to=Position,
         on_delete=SET_NULL,
         blank=True,
         null=True,
         verbose_name='Позиция игрока',
     )
-    role = ForeignKey(
+    role: models.ForeignKey = ForeignKey(
         to=Role,
         on_delete=SET_NULL,
         blank=True,
         null=True,
         verbose_name='Статус игрока',
     )
-    number = CharField(
+    number: models.CharField = CharField(
         max_length=NAME_FIELD_LENGTH,
         verbose_name='Игровой номер',
     )

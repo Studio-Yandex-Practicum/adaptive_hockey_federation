@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.db.models import SET_NULL, CharField, ForeignKey
 from main.models import Team
 
@@ -20,23 +21,23 @@ ROLES_CHOICES = (
 
 
 class User(AbstractUser):
-    phone = CharField(
+    phone: models.CharField = CharField(
         max_length=PHONE_MAX_LENGTH,
     )
-    role = CharField(
+    role: models.CharField = CharField(
         choices=ROLES_CHOICES,
         default=ROLE_USER,
         max_length=max(len(role) for role, _ in ROLES_CHOICES)
     )
-    first_name = CharField(
+    first_name: models.CharField = CharField(
         max_length=NAME_MAX_LENGTH,
         default='',
     )
-    last_name = CharField(
+    last_name: models.CharField = CharField(
         max_length=NAME_MAX_LENGTH,
         default='',
     )
-    team = ForeignKey(
+    team: models.ForeignKey = ForeignKey(
         to=Team,
         on_delete=SET_NULL,
         related_name='users',
