@@ -1,104 +1,186 @@
 from django.contrib import admin
 from main.models import (
-    Anamnesis,
+    City,
+    Competition,
+    Diagnosis,
     Discipline,
-    Health,
-    Location,
+    Gender,
     Player,
+    PlayerTeam,
     Position,
-    RespiratoryFailure,
-    Role,
+    Qualification,
     Team,
+    TeamCompetition,
+    Trainer,
+    TrainerTeam,
 )
 
 
-class TeamInline(admin.TabularInline):
-    model = Team.players.through
-    extra = 0
-    verbose_name = 'Команда'
-    verbose_name_plural = 'Команды'
-    autocomplete_fields = ['team']
-
-
-class HealthInline(admin.TabularInline):
-    model = Health
-    extra = 0
-    verbose_name = 'Медицинская карта'
-    verbose_name_plural = 'Медицинская карта'
-
-
 class PlayerInline(admin.TabularInline):
-    model = Player.team.through
-    extra = 0
-    verbose_name = 'Игрок'
-    verbose_name_plural = 'Игроки'
-    autocomplete_fields = ['player']
+    model = PlayerTeam
 
 
-@admin.register(Player)
-class PlayerAdmin(admin.ModelAdmin):
-    inlines = [TeamInline, HealthInline]
-    fields = ['name', 'surname', 'patronymic', 'birth_date']
-    list_display = ['name', 'surname']
-    search_fields = ['surname', 'name']
+class TrainerInline(admin.TabularInline):
+    model = TrainerTeam
 
 
-@admin.register(Anamnesis)
-class AnamnesisAdmin(admin.ModelAdmin):
-    search_fields = ['name']
+class CityAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name'
+    )
+    search_fields = ('name',)
 
-    def get_model_perms(self, request):
-        """Прячем из меню админки данную модель"""
-        return {}
+
+class GenderAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name'
+    )
+    search_fields = ('name',)
 
 
-@admin.register(Discipline)
 class DisciplineAdmin(admin.ModelAdmin):
-    search_fields = ['name']
+    list_display = (
+        'pk',
+        'name'
+    )
+    search_fields = ('name',)
 
-    def get_model_perms(self, request):
-        """Прячем из меню админки данную модель"""
-        return {}
+
+class PositionAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name'
+    )
+    search_fields = ('name',)
+
+
+class QualificationAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name'
+    )
+    search_fields = ('name',)
+
+
+class TrainerTeamAdmin(admin.ModelAdmin):
+    list_display = (
+        'trainer',
+        'team',
+    )
+    search_fields = ('trainer', 'team',)
+
+
+class TrainerAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'surname',
+        'name',
+        'patronymic',
+        'description',
+    )
+    search_fields = ('pk', 'surname', 'name', 'patronymic', 'description',)
+
+
+class PlayerAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'surname',
+        'name',
+        'patronymic',
+        'date_of_birth',
+        'diagnosis',
+        'gender',
+        'identification_card',
+    )
+    search_fields = (
+        'pk',
+        'surname',
+        'name',
+        'patronymic',
+        'date_of_birth',
+        'diagnosis',
+        'gender',
+        'identification_card',
+    )
+
+
+class DiagnosisAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'class_name',
+        'is_wheeled',
+        'description',
+    )
+    search_fields = (
+        'pk', 'class_name', 'description',)
+
+
+class PlayerTeamAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'player',
+        'team',
+        'qualification',
+        'number',
+        'is_captain',
+        'is_assistent',
+    )
+    search_fields = (
+        'pk', 'player', 'team', 'qualification',)
+
+
+class CompetitionAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'city',
+        'number',
+        'date',
+        'duration',
+        'is_active',
+    )
+    search_fields = (
+        'pk', 'city', 'number', 'duration',)
+    list_filter = ('date',)
+
+
+class TeamCompetitionAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'team',
+        'competition',
+    )
+    search_fields = (
+        'pk', 'team', 'competition',)
 
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    autocomplete_fields = ['location', 'discipline']
-    inlines = [PlayerInline]
+    list_display = (
+        'name',
+        'city',
+        'discipline',
+        'composition',
+        'age',
+        'pk',
+    )
+    search_fields = [
+        'pk', 'name', 'city', 'discipline', 'composition', 'age']
+    autocomplete_fields = ['city', 'discipline']
+    inlines = [PlayerInline, TrainerInline]
 
 
-@admin.register(Location)
-class LocationAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-
-    def get_model_perms(self, request):
-        """Прячем из меню админки данную модель"""
-        return {}
-
-
-@admin.register(Position)
-class PositionAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-
-    def get_model_perms(self, request):
-        """Прячем из меню админки данную модель"""
-        return {}
-
-
-@admin.register(Role)
-class RoleAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-
-    def get_model_perms(self, request):
-        """Прячем из меню админки данную модель"""
-        return {}
-
-
-@admin.register(RespiratoryFailure)
-class RespiratoryFailureAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-
-    def get_model_perms(self, request):
-        """Прячем из меню админки данную модель"""
-        return {}
+admin.site.register(Diagnosis, DiagnosisAdmin)
+admin.site.register(Discipline, DisciplineAdmin)
+admin.site.register(Gender, GenderAdmin)
+admin.site.register(City, CityAdmin)
+admin.site.register(Player, PlayerAdmin)
+admin.site.register(Position, PositionAdmin)
+# admin.site.register(Team, TeamAdmin)
+admin.site.register(Qualification, QualificationAdmin)
+admin.site.register(PlayerTeam, PlayerTeamAdmin)
+admin.site.register(Trainer, TrainerAdmin)
+admin.site.register(TrainerTeam, TrainerTeamAdmin)
+admin.site.register(Competition, CompetitionAdmin)
+admin.site.register(TeamCompetition, TeamCompetitionAdmin)
