@@ -36,12 +36,12 @@
               <div class="form-popup" id="myForm">
                 <div class="form-container_reset">
                     <h1>Забыли пароль</h1>
-                    <form action="{% url 'users:login' %}" method="post">
+                    <form action="*" method="post">
                       {% csrf_token %}
                       <div class='reset_form_input'>
                         <input type="text" placeholder="Е-майл/Телефон" name="name" class="text_inbox"></div>
                       <div class='submit_button_email'>
-                        <button type="submit" class="btn cancel"  name="email_input">Подтвердить</button></div>
+                        <button type="button" class="btn cancel"  name="email_input">Подтвердить</button></div>
                     </form>
                     <form action="*" method="post">
                       {% csrf_token %}
