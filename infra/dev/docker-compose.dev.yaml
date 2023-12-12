@@ -1,0 +1,15 @@
+version: '3.8'
+name: ahf_dev
+
+services:
+  db:
+    container_name: anf_dev_db
+    image: postgres:13.0-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ../../.env
+
+volumes:
+  postgres_data:

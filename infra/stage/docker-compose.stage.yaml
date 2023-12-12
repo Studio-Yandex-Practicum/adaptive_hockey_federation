@@ -1,0 +1,27 @@
+version: '3.8'
+name: ahf_dev
+
+services:
+  site:
+    build: ../../.
+    restart: always
+    volumes:
+      - static_value:/app/static/
+      - media_value:/app/media/
+    env_file:
+      - ../../.env
+
+  nginx:
+    image: nginx:1.21.3-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ../../nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
+    depends_on:
+      - site
+
+volumes:
+  static_value:
+  media_value:
