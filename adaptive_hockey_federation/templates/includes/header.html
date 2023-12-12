@@ -1,35 +1,25 @@
 {% load static %}
-<nav class="top-menu" style="background-color: #64c2d1;">
+<nav class="navbar navbar-light" style="background-color: #64c2d1;">
 
-  <div class="nav justify-content-end">
+  <div class="container">
     <ul class="nav d-flex justify-content-start">
-      {% if request.user.is_authenticated %}
-      <div class="border border-white rounded px-2">
-        <i class="bi bi-circle-fill fs-3" style="color: black;"></i>
-        <a href="{% url 'users:profile' user.username %}">
-          <b class="text-xl" style="color: #340061;">{{ user.username }}</b>
-        </a>
-      </div>
       <div class="border border-white rounded px-2">
         <i class="bi bi-circle-fill fs-3" style="color: red;"></i>
-        <a href="{% url 'users:logout' %}">
-          <b class="text-xl" style="color: #340061;">Выйти</b>
-        </a>
+        <b class="text-xl" style="color: #340061;">{{ user.username }}</b>
       </div>
-      {% else %}
-      <div class="border border-white rounded px-2">
-        <i class="bi bi-circle-fill fs-3" style="color: green;"></i>
-        <a href="{% url 'users:login' %}">
-          <b class="text-xl" style="color: #340061;">Войти</b>
+    </ul>
+    <ul class="nav justify-content-end">
+      <li class="nav-item d-flex">
+
+        <a class="nav-link border border-primary place-self-center bg-white p-0.5" href="##">
+          <i class="bi bi-search fs-5 p-1 bg-white" style="color: grey;"></i>
         </a>
-      </div>
-      <div class="border border-white rounded px-2">
-        <i class="bi bi-circle-fill fs-3" style="color: blue;"></i>
-        <a  href="{% url 'users:signup' %}">
-          <b class="text-xl" style="color: #340061;">Регистрация</b>
+      </li>
+      <li class="nav-item ms-16">
+        <a  href={% url 'users:logout' %}>
+          <i class="bi bi-box-arrow-right fs-1" style="color: white;"></i>
         </a>
-      </div>
-      {% endif %}
+      </li>
     </ul>
   </div>
-</nav>   
+</nav>
