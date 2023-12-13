@@ -4,7 +4,7 @@ from typing import Optional
 
 import docx  # type: ignore
 
-from adaptive_hockey_federation.core.user_card import BaseUserInfo
+from adaptive_hockey_federation.parser.user_card import BaseUserInfo
 
 NAME = '[И|и][М|м][Я|я]'
 SURNAME = '[Ф|ф][А|а][М|м][И|и][Л|л][И|и][Я|я]'

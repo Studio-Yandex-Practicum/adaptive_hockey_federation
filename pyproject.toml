@@ -14,6 +14,7 @@ types-openpyxl = "^3.1.0.24"
 openpyxl-stubs = "^0.1.25"
 click = "^8.1.7"
 wrapt = "^1.16.0"
+pytest = "^6.2"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
@@ -49,7 +50,7 @@ mypy_path = "./adaptive_hockey_federation"
 
 [[tool.mypy.overrides]]
 module = [
-    "adaptive_hockey_federation.core.user_card",
+    "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
 ]
 ignore_missing_imports = true

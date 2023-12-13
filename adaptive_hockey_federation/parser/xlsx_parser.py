@@ -1,6 +1,6 @@
 import openpyxl
 
-from adaptive_hockey_federation.core.user_card import BaseUserInfo
+from adaptive_hockey_federation.parser.user_card import BaseUserInfo
 
 
 def xlsx_parser(path: str) -> list[BaseUserInfo]:
