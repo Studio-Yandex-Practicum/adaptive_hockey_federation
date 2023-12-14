@@ -14,7 +14,7 @@ types-openpyxl = "^3.1.0.24"
 openpyxl-stubs = "^0.1.25"
 click = "^8.1.7"
 wrapt = "^1.16.0"
-pytest = "^6.2"
+pytest-django = "^4.7.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
@@ -62,3 +62,7 @@ django_settings_module = "adaptive_hockey_federation.core.config.dev_settings"
 
 [tool.poetry.scripts]
 parser = "adaptive_hockey_federation.parser.parser:parsing_file"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "adaptive_hockey_federation.core.config.test_settings"
+python_files = ["test_*.py"]
