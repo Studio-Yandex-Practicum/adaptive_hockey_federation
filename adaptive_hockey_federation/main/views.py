@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
     'table_head': {

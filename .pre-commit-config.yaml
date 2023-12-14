@@ -1,0 +1,44 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        exclude: migrations/|.*settings(\.py|/)?
+        additional_dependencies:
+          - flake8-isort
+          - flake8-django
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.6.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+        - django-stubs
+
+  - repo: local
+    hooks:
+      - id: export-dev-dependencies
+        name: Export dev Dependencies
+        language: system
+        pass_filenames: false
+        entry: poetry export --without-hashes --dev --output requirements/develop.txt
+        files: ^(pyproject.toml|poetry.lock)$
+      - id: export-prod-dependencies
+        name: Export prod Dependencies
+        language: system
+        pass_filenames: false
+        entry: poetry export --without-hashes --output requirements/production.txt
+        files: ^(pyproject.toml|poetry.lock)$
