@@ -48,6 +48,9 @@ class Location(BaseUniqueName):
         verbose_name = 'Территория'
         verbose_name_plural = 'Территории'
 
+    def __str__(self):
+        return super().__str__()
+
 
 class Discipline(BaseUniqueName):
     """
@@ -57,6 +60,9 @@ class Discipline(BaseUniqueName):
     class Meta(BaseUniqueName.Meta):
         verbose_name = 'Дисциплина'
         verbose_name_plural = 'Дисциплины'
+
+    def __str__(self):
+        return super().__str__()
 
 
 class Team(Model):
@@ -77,6 +83,11 @@ class Team(Model):
         blank=True,
         null=True,
         verbose_name='Дисциплина команды',
+    )
+    players: models.ManyToManyField = ManyToManyField(
+        to='Player',
+        through='PlayerTeam',
+        verbose_name='Игроки',
     )
 
     class Meta:
@@ -105,6 +116,9 @@ class Position(BaseUniqueName):
         verbose_name = 'Игровая позиция'
         verbose_name_plural = 'Игровые позиции'
 
+    def __str__(self):
+        return super().__str__()
+
 
 class Role(BaseUniqueName):
     """
@@ -114,6 +128,9 @@ class Role(BaseUniqueName):
     class Meta(BaseUniqueName.Meta):
         verbose_name = 'Игровая позиция'
         verbose_name_plural = 'Игровые позиции'
+
+    def __str__(self):
+        return super().__str__()
 
 
 class Anamnesis(BaseUniqueName):
@@ -125,6 +142,9 @@ class Anamnesis(BaseUniqueName):
         verbose_name = 'Диагноз'
         verbose_name_plural = 'Диагнозы'
 
+    def __str__(self):
+        return super().__str__()
+
 
 class RespiratoryFailure(BaseUniqueName):
     """
@@ -134,6 +154,9 @@ class RespiratoryFailure(BaseUniqueName):
     class Meta(BaseUniqueName.Meta):
         verbose_name = 'Класс ХДН'
         verbose_name_plural = 'Классы ХДН'
+
+    def __str__(self):
+        return super().__str__()
 
 
 class BasePerson(Model):
@@ -191,6 +214,9 @@ class Player(BasePerson):
                 fields=['name', 'surname', 'patronymic', 'birth_date'],
             )
         ]
+
+    def __str__(self):
+        return f"{self.name} {self.surname}"
 
 
 class Health(Model):
@@ -271,3 +297,6 @@ class PlayerTeam(Model):
         max_length=NAME_FIELD_LENGTH,
         verbose_name='Игровой номер',
     )
+
+    def __str__(self) -> str:
+        return f"{self.team} {self.player}"

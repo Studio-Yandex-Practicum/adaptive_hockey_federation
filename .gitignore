@@ -158,4 +158,6 @@ cython_debug/
 # Static
 static/
 
+# Protected project files
 /adaptive_hockey_federation/parser/Именная заявка/
+resourses/
