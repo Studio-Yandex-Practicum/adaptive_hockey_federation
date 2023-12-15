@@ -109,6 +109,9 @@ class Position(BaseUniqueName):
         verbose_name = 'Игоровая позиция'
         verbose_name_plural = 'Игровые позиции'
 
+    def __str__(self):
+        return self.name
+
 
 class Qualification(BaseUniqueName):
     """
@@ -117,6 +120,9 @@ class Qualification(BaseUniqueName):
     class Meta:
         verbose_name = 'Квалификация'
         verbose_name_plural = 'Квалификации'
+
+    def __str__(self):
+        return self.name
 
 
 class Discipline(BaseUniqueName):
@@ -127,6 +133,9 @@ class Discipline(BaseUniqueName):
         verbose_name = 'Дисциплина'
         verbose_name_plural = 'Дисциплины'
 
+    def __str__(self):
+        return self.name
+
 
 class City(BaseUniqueName):
     """
@@ -135,6 +144,9 @@ class City(BaseUniqueName):
     class Meta:
         verbose_name = 'Город'
         verbose_name_plural = 'Города'
+
+    def __str__(self):
+        return self.name
 
 
 class Player(BasePerson):
@@ -175,6 +187,9 @@ class Player(BasePerson):
             )
         ]
 
+    def __str__(self):
+        return ' '.join([self.surname, self.name, self.patronymic])
+
 
 class Trainer(BasePerson):
     """
@@ -188,6 +203,9 @@ class Trainer(BasePerson):
     class Meta:
         verbose_name = 'Тренер'
         verbose_name_plural = 'Тренеры'
+
+    def __str__(self):
+        return ' '.join([self.surname, self.name, self.patronymic])
 
 
 class Team(models.Model):
