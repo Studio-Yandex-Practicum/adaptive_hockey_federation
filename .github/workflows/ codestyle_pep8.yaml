@@ -3,6 +3,31 @@ name: CI
 on: [push, pull_request]
 
 jobs:
+  isort:
+    runs-on: ubuntu-latest
+    name: isort
+    steps:
+      - name: Установка Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Установка Poetry
+        uses: snok/install-poetry@v1
+        with:
+          poetry-version: 1.5.0
+
+      - name: Извлечение репозитория
+        uses: actions/checkout@v4
+
+      - name: Установка зависимостей
+        run: |
+          poetry install
+
+      - name: isort
+        run: |
+          poetry run isort .
+
   flake8:
     runs-on: ubuntu-latest
     name: flake8
@@ -28,14 +53,6 @@ jobs:
         run: |
           poetry run flake8
 
-      - name: flake8-isort
-        run: |
-          poetry run flake8
-
-      - name: flake8-django
-        run: |
-          poetry run flake8
-
   mypy:
     runs-on: ubuntu-latest
     name: mypy
@@ -57,9 +74,5 @@ jobs:
         run: |
           poetry install
       - name: mypy
-        run: |
-          poetry run mypy .
-
-      - name: mypy-django
         run: |
           poetry run mypy .
