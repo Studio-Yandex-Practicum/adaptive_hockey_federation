@@ -82,9 +82,8 @@ def get_all_files(path: str) -> tuple[list[str], str | None]:
             if filename == NUMERIC_STATUSES:
                 numeric_statuses_filepath = os.path.join(dirpath, filename)
             file, extension = os.path.splitext(filename)
-            if (not file.startswith('~')
-                    and extension in FILES_EXTENSIONS
-                    and file not in FILES_BLACK_LIST):
+            if (not file.startswith('~') and extension
+                    in FILES_EXTENSIONS and file not in FILES_BLACK_LIST):
                 files.append(os.path.join(dirpath, filename))
     return files, numeric_statuses_filepath
 
