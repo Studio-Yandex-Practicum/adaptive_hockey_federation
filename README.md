@@ -17,6 +17,7 @@
 1. [БРИФ](https://docs.google.com/document/d/1iHkA4Al-H-ppALPJDLMhb_Dl-ciRHH2npM6YRa2HQwg/edit)
 
 
+   1.2. [ER - диаграмма сущностей](docs/ER_Diagram.jpg)
 
 1.1. [Инструкции и ритуалы на проекте](docs/materials/instructions.md)
 
