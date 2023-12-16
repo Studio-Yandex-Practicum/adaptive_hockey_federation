@@ -1,19 +1,20 @@
-FROM python:3.11-slim AS builder
+# Filename: Dockerfile
+# Full path: infra/dev/Dockerfile
+# Description: Dockerfile for local development environment
 
-RUN mkdir /app
+FROM python:3.11-slim
+
 WORKDIR /app
-COPY poetry.lock pyproject.toml ./
+COPY ./poetry.lock ./
+COPY ./pyproject.toml ./
 
 RUN python -m pip install --upgrade pip
 RUN python -m pip install --no-cache-dir poetry==1.7.1
 RUN poetry config virtualenvs.in-project true
-RUN poetry install --without dev --with test
+RUN poetry install --with dev
 
-FROM python:3.11-slim
-
-COPY entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-COPY --from=builder /app /app
 COPY adaptive_hockey_federation/ ./
 ENTRYPOINT ["/entrypoint.sh"]
 
