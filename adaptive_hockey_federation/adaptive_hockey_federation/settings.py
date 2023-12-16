@@ -1,14 +1,15 @@
 from pathlib import Path
 
-import environ
+# import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env(DEBUG=(bool, False))
+# env = environ.Env(DEBUG=(bool, False))
 
-env.read_env(BASE_DIR / '.env')
+# env.read_env(BASE_DIR / '.env')
 
-SECRET_KEY = env('SECRET_KEY')
+# SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = '12345678'
 
 DEBUG = True
 
@@ -61,7 +62,8 @@ WSGI_APPLICATION = 'adaptive_hockey_federation.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': env('ENGINE'),
+        # 'ENGINE': env('ENGINE'),
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -91,12 +93,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = BASE_DIR / 'static',
+STATICFILES_DIRS = BASE_DIR / 'staticfiles',
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+
+STATIC_ROOT = BASE_DIR / 'static'
 
 LOGIN_REDIRECT_URL = 'main:main'
 
@@ -110,7 +114,8 @@ LOGIN_URL = 'users:login'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
-RESOURSES_ROOT = os.path.join(BASE_DIR, 'resourses')
+# RESOURSES_ROOT = os.path.join(BASE_DIR, 'resourses')
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
