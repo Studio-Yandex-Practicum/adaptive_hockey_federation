@@ -1,10 +1,11 @@
+{% load static %}
 <nav class="navbar navbar-light" style="background-color: #64c2d1;">
 
   <div class="container">
     <ul class="nav d-flex justify-content-start">
       <div class="border border-white rounded px-2">
         <i class="bi bi-circle-fill fs-3" style="color: red;"></i>
-        <b class="text-xl" style="color: #340061;">Username</b>
+        <b class="text-xl" style="color: #340061;">{{ user.username }}</b>
       </div>
     </ul>
     <ul class="nav justify-content-end">
@@ -15,7 +16,7 @@
         </a>
       </li>
       <li class="nav-item ms-16">
-        <a class="nav-link p-0" href="##">
+        <a  href={% url 'users:logout' %}>
           <i class="bi bi-box-arrow-right fs-1" style="color: white;"></i>
         </a>
       </li>

@@ -1,9 +1,17 @@
 import os
 from pathlib import Path
 
+# import environ
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-))v)^p&_y!_-dsc7p)v%b@yi+#)k^34mp^ai8jc^9v)jpu2xn1'
+# env = environ.Env(DEBUG=(bool, False))
+
+# env.read_env(BASE_DIR / '.env')
+
+# SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = '12345678'
+
 DEBUG = True
 
 ALLOWED_HOSTS: list = ['*']
@@ -33,7 +41,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'adaptive_hockey_federation.urls'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+TEMPLATES_DIR = BASE_DIR / 'templates'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -54,6 +63,7 @@ WSGI_APPLICATION = 'adaptive_hockey_federation.wsgi.application'
 
 DATABASES = {
     'default': {
+        # 'ENGINE': env('ENGINE'),
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
@@ -83,13 +93,31 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_DIRS = BASE_DIR / 'staticfiles',
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
+STATIC_ROOT = BASE_DIR / 'static'
+
+LOGIN_REDIRECT_URL = 'main:main'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGIN_URL = 'users:login'
+
+MEDIA_ROOT = BASE_DIR / 'media'
 
 RESOURSES_ROOT = os.path.join(BASE_DIR, 'resourses')
 
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 AUTH_USER_MODEL = 'users.User'

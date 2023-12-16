@@ -1,0 +1,179 @@
+html {
+  background-color: #ECF1F5;
+}
+
+.header {
+  background-color: #ECF1F5;
+}
+.header-line{
+    display:inline-flex;
+    align-items:center;
+}
+
+.header-logo {
+    margin: 73px 84px;
+    z-index: 999;
+}
+
+.header-ellipse {
+    margin-top : -130px;
+    position: absolute;
+    margin-left: 240px;
+    z-index: 997;
+
+}
+
+.header-rect {
+    align-self: center;
+    position: absolute;
+    margin-left: 450px;
+    margin-top: -50px;
+    z-index: 996;
+}
+
+.header-text {
+    color: #340061;
+    position: relative;
+    z-index: 999;
+    text-decoration: none;
+    font-family: 'Segoe UI';
+    width: 262px;
+    height: 159px;
+    font-size: 40px;
+    margin-left: -60px
+        
+}
+
+.btns {
+  position: relative;
+  align-items: center;
+
+}
+.button_on {
+    background-color: #64C2D1;
+    color: #fff;
+    width: 240px;
+    height: 40px;
+    font-size: 22px;
+    text-align: center;
+    border-style: none;
+}
+
+.link-forget {
+    color: #E73259;
+    top: 40px;
+    position: absolute;
+    text-decoration: none;
+    left: 50px;
+
+}
+
+.button_out {
+    background-color: #E73259;
+    border-radius: 39px;
+    position: relative;
+    width: 240px;
+    height: 60px;
+    bottom: 50px;
+    font-size: 24px;
+    left: 80px;
+    border-color: #E73259;
+    .text {
+        color: #fff;
+        text-decoration: none;
+    }
+    
+}
+
+.open-button {
+    background-color: #ECF1F5;
+    color: #E73259;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.8;
+    position: relative;
+    bottom: 0px;
+    right: -30px;
+    width: 180px;
+  }
+  
+  .form-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 999;
+    border-radius: 10px;    
+  }
+  
+  .form-container_reset {
+    width: 700px;
+    height: 400px;
+    padding: 10px;
+    background-image: url("img/forma.jpg");
+    justify-content: center;
+    text-align: center;
+    
+  }
+  
+  .form-container_reset input[type=text] {
+    width: 40%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    border: none;
+    background: #f1f1f1;
+    
+  }
+  
+  .form-container_reset input[type=text]:focus {
+    background-color: #803e3e;
+    outline: none;
+  }
+  .form-container_reset .btn {
+    background-color: #64C2D1;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 30%;
+    margin-bottom:5px;
+    margin-top: 5px;
+    opacity: 0.8;
+    font-size: 15px;
+    font-weight: bold;
+    display: inline;
+    
+    
+  }
+
+
+  .reset_form_input {
+    margin: 0px;
+  }
+  .form-container_reset_reset .cancel {
+    background-color: #64C2D1;
+  }
+  
+  .form-container_reset .btn:hover, .open-button:hover {
+    opacity: 4;
+  }
+
+
+.form {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: 50px;
+}
+
+
+.text_inbox {
+  text-align: center;
+}
+
