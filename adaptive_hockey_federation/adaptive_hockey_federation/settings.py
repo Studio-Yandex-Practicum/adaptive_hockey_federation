@@ -1,14 +1,8 @@
 from pathlib import Path
 
-import environ
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env(DEBUG=(bool, False))
-
-env.read_env(BASE_DIR / '.env')
-
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = "SECRET_KEY"
 
 DEBUG = True
 
@@ -61,7 +55,7 @@ WSGI_APPLICATION = 'adaptive_hockey_federation.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': env('ENGINE'),
+        'ENGINE': "django.db.backends.sqlite3",
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -110,7 +104,7 @@ LOGIN_URL = 'users:login'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
-RESOURSES_ROOT = os.path.join(BASE_DIR, 'resourses')
+RESOURSES_ROOT = BASE_DIR / 'resourses'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
