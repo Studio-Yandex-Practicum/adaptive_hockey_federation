@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,12 +55,7 @@ WSGI_APPLICATION = 'adaptive_hockey_federation.wsgi.application'
 
 DATABASES = {
     'default': {
-<<<<<<< HEAD
         'ENGINE': "django.db.backends.sqlite3",
-=======
-        # 'ENGINE': env('ENGINE'),
-        'ENGINE': 'django.db.backends.sqlite3',
->>>>>>> 99dbd2de493716d603d53ce3ff926208c17e2c7c
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
