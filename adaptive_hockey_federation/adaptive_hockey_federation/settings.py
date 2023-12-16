@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 # import environ
@@ -114,7 +115,7 @@ LOGIN_URL = 'users:login'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# RESOURSES_ROOT = os.path.join(BASE_DIR, 'resourses')
+RESOURSES_ROOT = os.path.join(BASE_DIR, 'resourses')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
