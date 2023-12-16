@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 CHAR_FIELD_LENGTH = 256
 EMPTY_VALUE_DISPLAY = ''
 CLASS_FIELD_LENGTH = 10
+DEFAULT_VALUE = 0
 
 GENDER_CHOICES = (
     ('male', 'Мужской'),
@@ -219,9 +220,8 @@ class StaffTeamMember(models.Model):
     """
     staff_member = models.ForeignKey(
         StaffMember,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.SET_DEFAULT,
+        default=EMPTY_VALUE_DISPLAY,
         verbose_name=_('Сотрудник'),
         help_text=_('Сотрудник')
     )
@@ -264,25 +264,22 @@ class Team(BaseUniqueName):
     """
     city = models.ForeignKey(
         City,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.SET_DEFAULT,
+        default=EMPTY_VALUE_DISPLAY,
         verbose_name=_('Город откуда команда'),
         help_text=_('Город откуда команда')
     )
     staff_team_member = models.ForeignKey(
         StaffTeamMember,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.SET_DEFAULT,
+        default=EMPTY_VALUE_DISPLAY,
         verbose_name=_('Сотрудник команды'),
         help_text=_('Сотрудник команды')
     )
     discipline_name = models.ForeignKey(
         DisciplineName,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.SET_DEFAULT,
+        default=EMPTY_VALUE_DISPLAY,
         verbose_name=_('Дисциплина команды'),
         help_text=_('Дисциплина команды')
     )
@@ -318,7 +315,7 @@ class Player(BasePerson):
         related_name='player_diagnosis',
         verbose_name=_('Диагноз'),
         help_text=_('Диагноз'),
-        default=0
+        default=DEFAULT_VALUE
     )
     discipline = models.ForeignKey(
         Discipline,
@@ -347,9 +344,7 @@ class Player(BasePerson):
     )
     birthday = models.DateField(
         verbose_name=_('Дата рождения'),
-        help_text=_('Дата рождения'),
-        null=True,
-        blank=True
+        help_text=_('Дата рождения')
     )
     gender = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -372,7 +367,7 @@ class Player(BasePerson):
         help_text=_('Игровая позиция')
     )
     number = models.IntegerField(
-        default=0,
+        default=DEFAULT_VALUE,
         verbose_name=_('Номер игрока'),
         help_text=_('Номер игрока')
     )
