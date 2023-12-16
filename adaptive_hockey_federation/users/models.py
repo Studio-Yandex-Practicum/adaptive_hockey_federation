@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import SET_NULL, CharField, ForeignKey
+from django.utils.translation import gettext_lazy as _
 from main.models import Team
+
 
 NAME_MAX_LENGTH = 256
 EMAIL_MAX_LENGTH = 256
@@ -21,6 +23,8 @@ ROLES_CHOICES = (
 
 
 class User(AbstractUser):
+    username = None
+    email = models.EmailField(_("email address"), unique=True)
     phone: models.CharField = CharField(
         max_length=PHONE_MAX_LENGTH,
     )
@@ -45,14 +49,15 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('username',)
 
     def __str__(self):
-        return self.username
+        return self.first_name + self.last_name
 
     @property
     def is_agent(self):

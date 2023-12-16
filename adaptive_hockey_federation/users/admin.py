@@ -7,7 +7,6 @@ class UserAdmin(admin.ModelAdmin):
     # date_hierarchy = 'date_joined'
     list_display = (
         'id',
-        'username',
         'email',
         'phone',
         'first_name',
@@ -16,7 +15,6 @@ class UserAdmin(admin.ModelAdmin):
         'team',
     )
     fields = [
-        'username',
         'email',
         'phone',
         ('first_name', 'last_name'),
