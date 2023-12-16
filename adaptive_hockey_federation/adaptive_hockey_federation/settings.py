@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -55,7 +56,12 @@ WSGI_APPLICATION = 'adaptive_hockey_federation.wsgi.application'
 
 DATABASES = {
     'default': {
+<<<<<<< HEAD
         'ENGINE': "django.db.backends.sqlite3",
+=======
+        # 'ENGINE': env('ENGINE'),
+        'ENGINE': 'django.db.backends.sqlite3',
+>>>>>>> 99dbd2de493716d603d53ce3ff926208c17e2c7c
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -85,12 +91,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = BASE_DIR / 'static',
+STATICFILES_DIRS = BASE_DIR / 'staticfiles',
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+
+STATIC_ROOT = BASE_DIR / 'static'
 
 LOGIN_REDIRECT_URL = 'main:main'
 
@@ -105,6 +113,7 @@ LOGIN_URL = 'users:login'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 RESOURSES_ROOT = BASE_DIR / 'resourses'
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

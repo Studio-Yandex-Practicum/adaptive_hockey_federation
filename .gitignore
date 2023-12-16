@@ -157,3 +157,7 @@ cython_debug/
 
 /adaptive_hockey_federation/parser/Именная заявка/
 resourses/
+
+
+#Django static
+static/
