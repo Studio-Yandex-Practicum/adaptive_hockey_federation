@@ -155,7 +155,4 @@ cython_debug/
 # PyCharm
 .idea/
 
-# Static
-static/
-
 /adaptive_hockey_federation/parser/Именная заявка/
