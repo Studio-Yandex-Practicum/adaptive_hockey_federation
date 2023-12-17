@@ -220,8 +220,7 @@ class StaffTeamMember(models.Model):
     """
     staff_member = models.ForeignKey(
         StaffMember,
-        on_delete=models.SET_DEFAULT,
-        default=EMPTY_VALUE_DISPLAY,
+        on_delete=models.CASCADE,
         verbose_name=_('Сотрудник'),
         help_text=_('Сотрудник')
     )
@@ -264,22 +263,19 @@ class Team(BaseUniqueName):
     """
     city = models.ForeignKey(
         City,
-        on_delete=models.SET_DEFAULT,
-        default=EMPTY_VALUE_DISPLAY,
+        on_delete=models.CASCADE,
         verbose_name=_('Город откуда команда'),
         help_text=_('Город откуда команда')
     )
     staff_team_member = models.ForeignKey(
         StaffTeamMember,
-        on_delete=models.SET_DEFAULT,
-        default=EMPTY_VALUE_DISPLAY,
+        on_delete=models.CASCADE,
         verbose_name=_('Сотрудник команды'),
         help_text=_('Сотрудник команды')
     )
     discipline_name = models.ForeignKey(
         DisciplineName,
-        on_delete=models.SET_DEFAULT,
-        default=EMPTY_VALUE_DISPLAY,
+        on_delete=models.CASCADE,
         verbose_name=_('Дисциплина команды'),
         help_text=_('Дисциплина команды')
     )
@@ -315,7 +311,6 @@ class Player(BasePerson):
         related_name='player_diagnosis',
         verbose_name=_('Диагноз'),
         help_text=_('Диагноз'),
-        default=DEFAULT_VALUE
     )
     discipline = models.ForeignKey(
         Discipline,
@@ -324,7 +319,6 @@ class Player(BasePerson):
         related_name='player_disciplines',
         verbose_name=_('Дисциплина'),
         help_text=_('Дисциплина'),
-        default=EMPTY_VALUE_DISPLAY
     )
     team = models.ManyToManyField(
         Team,
