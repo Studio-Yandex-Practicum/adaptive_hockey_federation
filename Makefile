@@ -22,7 +22,7 @@ help:
 	@echo "	collectstatic   - $(SHELL_GREEN)Команда для сбора статики.$(SHELL_NC)"
 	@echo "	migrate         - $(SHELL_GREEN)Команда для применения к базе данных готовых миграций.$(SHELL_NC)"
 	@echo "	createsuperuser - $(SHELL_GREEN)Команда для создания супер-юзера.$(SHELL_NC)"
-	@echo "	run-d           - $(SHELL_GREEN)Команда для локального запуска контейнера postgres.$(SHELL_NC)"
+	@echo "	run-db           - $(SHELL_GREEN)Команда для локального запуска контейнера postgres.$(SHELL_NC)"
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)"
 	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных с помощью парсера.$(SHELL_NC)"
 	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)"
