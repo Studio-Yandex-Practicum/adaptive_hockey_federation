@@ -52,6 +52,7 @@ mypy_path = "./adaptive_hockey_federation"
 module = [
     "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
+    "adaptive_hockey_federation.core.config.dev_settings",
 ]
 ignore_missing_imports = true
 

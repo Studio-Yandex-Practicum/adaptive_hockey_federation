@@ -16,7 +16,7 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
-        exclude: migrations/|.*settings(\.py|/)?
+        exclude: migrations/|config/|.*settings(\.py|/)?
         additional_dependencies:
           - flake8-isort
           - flake8-django
