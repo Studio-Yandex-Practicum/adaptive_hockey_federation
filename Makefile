@@ -1,6 +1,7 @@
 # Определение переменных
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 MANAGE_DIR := $(PROJECT_DIR)/adaptive_hockey_federation/manage.py
+DJANGO_DIR := $(PROJECT_DIR)/adaptive_hockey_federation
 POETRY_RUN := poetry run python
 DJANGO_RUN := $(POETRY_RUN) $(MANAGE_DIR)
 SHELL_GREEN = \033[32m
@@ -22,6 +23,7 @@ help:
 	@echo "	createsuperuser - $(SHELL_GREEN)Команда для создания супер-юзера.$(SHELL_NC)"
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)"
 	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных с помощью парсера.$(SHELL_NC)"
+	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)"
 	@echo "	help            - $(SHELL_GREEN)Команда вызова справки.$(SHELL_NC)"
 	@echo "$(SHELL_YELLOW)Для запуска исполнения команд используйте данные ключи совместно с командой 'make', например 'make init-app'."
 	@echo "При запуске команды 'make' без какого либо ключа, происходит вызов справки.$(SHELL_NC)"
@@ -60,5 +62,10 @@ run:
 # Заполнение базы данных с помощью парсера.
 fill-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db
+
+# Прогон тестов с помощью pytest
+pytest:
+	cd $(DJANGO_DIR) && pytest
+
 
 .PHONY: help
