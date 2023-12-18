@@ -1,27 +1,17 @@
 from django.contrib import admin
 from main.models import (
     City,
-    Competition,
     Diagnosis,
     Discipline,
-    Gender,
+    DisciplineLevel,
+    DisciplineName,
+    Document,
+    Nosology,
     Player,
-    PlayerTeam,
-    Position,
-    Qualification,
+    StaffMember,
+    StaffTeamMember,
     Team,
-    TeamCompetition,
-    Trainer,
-    TrainerTeam,
 )
-
-
-class PlayerInline(admin.TabularInline):
-    model = PlayerTeam
-
-
-class TrainerInline(admin.TabularInline):
-    model = TrainerTeam
 
 
 class CityAdmin(admin.ModelAdmin):
@@ -30,57 +20,93 @@ class CityAdmin(admin.ModelAdmin):
         'name'
     )
     search_fields = ('name',)
+    ordering = ['name']
 
 
-class GenderAdmin(admin.ModelAdmin):
+class NosologyAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
         'name'
     )
     search_fields = ('name',)
+    ordering = ['name']
+
+
+class DiagnosisAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name',
+        'nosology'
+    )
+    search_fields = (
+        'pk', 'name', 'nosology',)
+    ordering = ['name']
+
+
+class DisciplineNameAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name'
+    )
+    search_fields = ('name',)
+    ordering = ['name']
+
+
+class DisciplineLevelAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'name'
+    )
+    search_fields = ('name',)
+    ordering = ['name']
 
 
 class DisciplineAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'name'
+        'discipline_name',
+        'discipline_level'
     )
-    search_fields = ('name',)
+    search_fields = ('discipline_name', 'discipline_level',)
+    ordering = ['discipline_name']
 
 
-class PositionAdmin(admin.ModelAdmin):
+class DocumentAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
-        'name'
+        'name',
+        'file'
     )
-    search_fields = ('name',)
+    search_fields = ('name', 'file',)
+    ordering = ['name']
 
 
-class QualificationAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'name'
-    )
-    search_fields = ('name',)
-
-
-class TrainerTeamAdmin(admin.ModelAdmin):
-    list_display = (
-        'trainer',
-        'team',
-    )
-    search_fields = ('trainer', 'team',)
-
-
-class TrainerAdmin(admin.ModelAdmin):
+class StaffMemberAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
         'surname',
         'name',
         'patronymic',
-        'description',
+        'phone'
     )
-    search_fields = ('pk', 'surname', 'name', 'patronymic', 'description',)
+    search_fields = ('pk', 'surname', 'name', 'patronymic', 'phone',)
+
+
+class StaffTeamMemberAdmin(StaffMemberAdmin):
+    list_display = (
+        'pk',
+        'staff_member',
+        'staff_position',
+        'qualification',
+        'notes'
+    )
+    search_fields = (
+        'pk',
+        'staff_member',
+        'staff_position',
+        'qualification',
+        'notes'
+    )
 
 
 class PlayerAdmin(admin.ModelAdmin):
@@ -89,98 +115,60 @@ class PlayerAdmin(admin.ModelAdmin):
         'surname',
         'name',
         'patronymic',
-        'date_of_birth',
-        'diagnosis',
+        'birthday',
         'gender',
-        'identification_card',
+        'diagnosis',
+        'discipline',
+        'level_revision',
+        'position',
+        'number',
+        'is_captain',
+        'is_assistent',
+        'identity_document',
     )
     search_fields = (
         'pk',
         'surname',
         'name',
         'patronymic',
-        'date_of_birth',
-        'diagnosis',
+        'birthday',
         'gender',
-        'identification_card',
-    )
-
-
-class DiagnosisAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'class_name',
-        'is_wheeled',
-        'description',
-    )
-    search_fields = (
-        'pk', 'class_name', 'description',)
-
-
-class PlayerTeamAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'player',
-        'team',
-        'qualification',
+        'diagnosis',
+        'discipline',
+        'level_revision',
+        'position',
         'number',
-        'is_captain',
-        'is_assistent',
+        'identity_document',
     )
-    search_fields = (
-        'pk', 'player', 'team', 'qualification',)
+    ordering = ['surname', 'name', 'patronymic', 'birthday']
 
 
-class CompetitionAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'city',
-        'number',
-        'date',
-        'duration',
-        'is_active',
-    )
-    search_fields = (
-        'pk', 'city', 'number', 'duration',)
-    list_filter = ('date',)
-
-
-class TeamCompetitionAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'team',
-        'competition',
-    )
-    search_fields = (
-        'pk', 'team', 'competition',)
-
-
-@admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     list_display = (
+        'pk',
         'name',
         'city',
-        'discipline',
-        'composition',
-        'age',
-        'pk',
+        'staff_team_member',
+        'discipline_name'
     )
-    search_fields = [
-        'pk', 'name', 'city', 'discipline', 'composition', 'age']
-    autocomplete_fields = ['city', 'discipline']
-    inlines = [PlayerInline, TrainerInline]
+    search_fields = (
+        'pk',
+        'name',
+        'city',
+        'staff_team_member',
+        'discipline_name'
+    )
+    ordering = ['name']
 
 
+admin.site.register(City, CityAdmin)
 admin.site.register(Diagnosis, DiagnosisAdmin)
 admin.site.register(Discipline, DisciplineAdmin)
-admin.site.register(Gender, GenderAdmin)
-admin.site.register(City, CityAdmin)
+admin.site.register(DisciplineLevel, DisciplineLevelAdmin)
+admin.site.register(DisciplineName, DisciplineNameAdmin)
+admin.site.register(Document, DocumentAdmin)
+admin.site.register(Nosology, NosologyAdmin)
 admin.site.register(Player, PlayerAdmin)
-admin.site.register(Position, PositionAdmin)
-# admin.site.register(Team, TeamAdmin)
-admin.site.register(Qualification, QualificationAdmin)
-admin.site.register(PlayerTeam, PlayerTeamAdmin)
-admin.site.register(Trainer, TrainerAdmin)
-admin.site.register(TrainerTeam, TrainerTeamAdmin)
-admin.site.register(Competition, CompetitionAdmin)
-admin.site.register(TeamCompetition, TeamCompetitionAdmin)
+admin.site.register(StaffTeamMember, StaffTeamMemberAdmin)
+admin.site.register(StaffMember, StaffMemberAdmin)
+admin.site.register(Team, TeamAdmin)
