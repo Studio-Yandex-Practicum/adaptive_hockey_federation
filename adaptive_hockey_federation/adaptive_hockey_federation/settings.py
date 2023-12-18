@@ -1,20 +1,22 @@
 import os
 from pathlib import Path
 
-# import environ
+import environ  # type: ignore
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# env = environ.Env(DEBUG=(bool, False))
+env = environ.Env(DEBUG=(bool, False))
 
-# env.read_env(BASE_DIR / '.env')
+env.read_env(BASE_DIR / '.env')
 
-# SECRET_KEY = env('SECRET_KEY')
-SECRET_KEY = '12345678'
+SECRET_KEY = env('SECRET_KEY')
+# SECRET_KEY = '12345678'
 
-DEBUG = True
+DEBUG = env('DEBUG')
+# DEBUG = True
 
-ALLOWED_HOSTS: list = ['*']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+# ALLOWED_HOSTS: list = ['*']
 
 
 INSTALLED_APPS = [
@@ -121,3 +123,7 @@ RESOURSES_ROOT = os.path.join(BASE_DIR, 'resourses')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+DJANGO_SUPERUSER_USERNAME = env('DJANGO_SUPERUSER_USERNAME')
+DJANGO_SUPERUSER_EMAIL = env('DJANGO_SUPERUSER_EMAIL')
+DJANGO_SUPERUSER_PASSWORD = env('DJANGO_SUPERUSER_PASSWORD')
