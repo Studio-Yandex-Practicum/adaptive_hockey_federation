@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
+from phonenumber_field.validators import validate_international_phonenumber
 
 from adaptive_hockey_federation.constants import (
     EMAIL_MAX_LENGTH,
@@ -52,8 +54,11 @@ class User(AbstractUser):
         verbose_name=_('Электронная почта'),
         help_text=_('Электронная почта'),
     )
-    phone = models.CharField(
-        max_length=12,
+    phone = PhoneNumberField(
+        blank=True,
+        validators=[validate_international_phonenumber],
+        verbose_name=_('Актуальный номер телефона'),
+        help_text=_('Номер телефона, допустимый формат - +7 ХХХ ХХХ ХХ ХХ'),
     )
 
     USERNAME_FIELD = 'email'
@@ -80,7 +85,6 @@ class User(AbstractUser):
             f'{self.first_name[:QUERY_SET_LENGTH]} '
             f'{self.patronymic[:QUERY_SET_LENGTH]} '
             f'{self.last_name[:QUERY_SET_LENGTH]}'
-
         )
 
     @property

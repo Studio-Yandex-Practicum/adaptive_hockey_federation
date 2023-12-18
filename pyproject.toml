@@ -14,6 +14,7 @@ types-openpyxl = "^3.1.0.24"
 openpyxl-stubs = "^0.1.25"
 click = "^8.1.7"
 wrapt = "^1.16.0"
+django-phonenumber-field = {extras = ["phonenumbers"], version = "^7.2.0"}
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"

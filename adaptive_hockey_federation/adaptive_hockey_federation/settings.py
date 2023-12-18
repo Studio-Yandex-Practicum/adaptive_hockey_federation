@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+PHONENUMBER_DEFAULT_REGION = 'RU'
+PHONENUMBER_DEFAULT_FORMAT = 'INTERNATIONAL'
 
 LANGUAGE_CODE = 'ru'
 
