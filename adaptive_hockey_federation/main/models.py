@@ -279,8 +279,7 @@ class Team(BaseUniqueName):
         verbose_name=_('Дисциплина команды'),
         help_text=_('Дисциплина команды')
     )
-    # models User
-    # curator = None
+    # TODO curator = User (model)
 
     class Meta:
         default_related_name = 'teams'
