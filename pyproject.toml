@@ -15,6 +15,7 @@ openpyxl-stubs = "^0.1.25"
 click = "^8.1.7"
 wrapt = "^1.16.0"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "^7.2.0"}
+pytest-django = "^4.7.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
@@ -51,16 +52,21 @@ mypy_path = "./adaptive_hockey_federation"
 
 [[tool.mypy.overrides]]
 module = [
-    "adaptive_hockey_federation.core.user_card",
+    "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
-    "phonenumber_field.*"
+    "phonenumber_field.*",
+    "adaptive_hockey_federation.core.config.dev_settings",
 ]
 ignore_missing_imports = true
 
 
 [tool.django-stubs]
-django_settings_module = "adaptive_hockey_federation.settings"
+django_settings_module = "adaptive_hockey_federation.core.config.dev_settings"
 
 
 [tool.poetry.scripts]
 parser = "adaptive_hockey_federation.parser.parser:parsing_file"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "adaptive_hockey_federation.core.config.test_settings"
+python_files = ["test_*.py"]

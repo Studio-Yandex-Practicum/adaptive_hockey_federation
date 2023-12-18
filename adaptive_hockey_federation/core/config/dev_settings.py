@@ -3,7 +3,7 @@ from pathlib import Path
 
 # import environ
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # env = environ.Env(DEBUG=(bool, False))
 
@@ -41,7 +41,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'adaptive_hockey_federation.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES_DIR = BASE_DIR / 'templates'
 
@@ -61,7 +61,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'adaptive_hockey_federation.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
