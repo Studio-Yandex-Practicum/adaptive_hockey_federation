@@ -4,7 +4,7 @@ MANAGE_DIR := $(PROJECT_DIR)/adaptive_hockey_federation/manage.py
 DJANGO_DIR := $(PROJECT_DIR)/adaptive_hockey_federation
 POETRY_RUN := poetry run python
 DJANGO_RUN := $(POETRY_RUN) $(MANAGE_DIR)
-COMPOSE_DEV_RUN := docker-compose -f $(PROJECT_DIR)/adaptive_hockey_federation/infra/dev/docker-compose.dev.yamlup -d
+COMPOSE_DEV_RUN := docker-compose -f $(PROJECT_DIR)/infra/dev/docker-compose.dev.yaml up -d
 SHELL_GREEN = \033[32m
 SHELL_YELLOW = \033[33m
 SHELL_NC := \e[0m
@@ -22,6 +22,7 @@ help:
 	@echo "	collectstatic   - $(SHELL_GREEN)Команда для сбора статики.$(SHELL_NC)"
 	@echo "	migrate         - $(SHELL_GREEN)Команда для применения к базе данных готовых миграций.$(SHELL_NC)"
 	@echo "	createsuperuser - $(SHELL_GREEN)Команда для создания супер-юзера.$(SHELL_NC)"
+	@echo "	run-d           - $(SHELL_GREEN)Команда для локального запуска контейнера postgres.$(SHELL_NC)"
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)"
 	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных с помощью парсера.$(SHELL_NC)"
 	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)"
@@ -55,9 +56,14 @@ createsuperuser:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser
 
 
+# Локальный запуск контейнера postgres.
+run-db:
+	cd $(PROJECT_DIR) && $(COMPOSE_DEV_RUN)
+
+
 # Локальный запуск сервера разработки.
 run:
-	cd $(PROJECT_DIR) && $(COMPOSE_DEV_RUN) && $(DJANGO_RUN) runserver
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver
 
 
 # Заполнение базы данных с помощью парсера.
