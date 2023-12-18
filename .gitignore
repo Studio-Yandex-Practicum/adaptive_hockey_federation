@@ -161,3 +161,7 @@ resourses/
 
 #Django static
 static/
+.DS_Store
+
+#Data JSON
+data.json

@@ -20,12 +20,13 @@ def xlsx_parser(path: str) -> list[BaseUserInfo]:
                 team=data.get('Команда'),
                 name=data.get('ФИО игрока').split()[0],  # type: ignore
                 surname=data.get('ФИО игрока').split()[1],  # type: ignore
-                date_of_birth=data.get('Дата рождения'),
+                date_of_birth=None,
+                # data.get('Дата рождения'),
                 player_number=data.get('Номер игрока'),
                 position=data.get('Позиция'),
                 classification=data.get('Класс'),
                 revision=data.get('Пересмотр (начало сезона)'),
                 numeric_status=None
             )
-            players.append(player)
+            players.append(player.__dict__)
     return players

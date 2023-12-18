@@ -1,3 +1,4 @@
+import json
 import os
 from pprint import pprint
 
@@ -63,7 +64,12 @@ def parsing_file(path: str, result: bool) -> None:
     if result:
         for data in results_list:
             pprint(data)
+
+    with open('data.json', 'w', encoding='utf8') as f:
+        json.dump(results_list, f, indent=4, ensure_ascii=False, skipkeys=True)
+
     results_list = list(set(results_list))
+
     click.echo(f'Успешно обработано {len(files)} файлов.')
     click.echo(f'Извлечено {len(results_list)} уникальных записей')
 
