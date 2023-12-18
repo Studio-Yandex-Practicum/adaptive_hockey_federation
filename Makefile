@@ -4,6 +4,7 @@ MANAGE_DIR := $(PROJECT_DIR)/adaptive_hockey_federation/manage.py
 DJANGO_DIR := $(PROJECT_DIR)/adaptive_hockey_federation
 POETRY_RUN := poetry run python
 DJANGO_RUN := $(POETRY_RUN) $(MANAGE_DIR)
+COMPOSE_DEV_RUN := docker-compose -f $(PROJECT_DIR)/adaptive_hockey_federation/infra/dev/docker-compose.dev.yamlup -d
 SHELL_GREEN = \033[32m
 SHELL_YELLOW = \033[33m
 SHELL_NC := \e[0m
@@ -56,7 +57,7 @@ createsuperuser:
 
 # Локальный запуск сервера разработки.
 run:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver
+	cd $(PROJECT_DIR) && $(COMPOSE_DEV_RUN) && $(DJANGO_RUN) runserver
 
 
 # Заполнение базы данных с помощью парсера.

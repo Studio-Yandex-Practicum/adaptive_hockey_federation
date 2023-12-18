@@ -1,3 +1,7 @@
+#filename: docker-compose.dev.yaml
+#full path: ./infra/dev/docker-compose.dev.yaml
+#description: docker-compose file for development environment
+
 version: '3.8'
 name: ahf_dev
 
