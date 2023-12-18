@@ -1,67 +1,109 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import SET_NULL, CharField, ForeignKey
-from main.models import Team
+from django.utils.translation import gettext_lazy as _
 
-NAME_MAX_LENGTH = 256
-EMAIL_MAX_LENGTH = 256
-PHONE_MAX_LENGTH = 20
-
-ROLE_USER = 'user'
-ROLE_AGENT = 'agent'
-ROLE_MODERATOR = 'moderator'
-ROLE_ADMIN = 'admin'
-
-ROLES_CHOICES = (
-    (ROLE_USER, 'Пользователь'),
-    (ROLE_AGENT, 'Представитель команды'),
-    (ROLE_MODERATOR, 'Модератор'),
-    (ROLE_ADMIN, 'Администратор'),
+from adaptive_hockey_federation.constants import (
+    EMAIL_MAX_LENGTH,
+    NAME_MAX_LENGTH,
+    QUERY_SET_LENGTH,
+    ROLE_ADMIN,
+    ROLE_AGENT,
+    ROLE_MODERATOR,
+    ROLES_CHOICES,
 )
+
+from .managers import CustomUserManager
 
 
 class User(AbstractUser):
-    phone: models.CharField = CharField(
-        max_length=PHONE_MAX_LENGTH,
-    )
-    role: models.CharField = CharField(
-        choices=ROLES_CHOICES,
-        default=ROLE_USER,
-        max_length=max(len(role) for role, _ in ROLES_CHOICES)
-    )
-    first_name: models.CharField = CharField(
+    """
+    Кастомная модель пользователя, поле 'username' исключено,
+    идентификатором является поле с адресом электронной почты.
+    """
+
+    username = None
+    first_name = models.CharField(
         max_length=NAME_MAX_LENGTH,
-        default='',
+        verbose_name=_('Имя'),
+        help_text=_('Имя'),
     )
-    last_name: models.CharField = CharField(
+    last_name = models.CharField(
         max_length=NAME_MAX_LENGTH,
-        default='',
+        verbose_name=_('Фамилия'),
+        help_text=_('Фамилия'),
     )
-    team: models.ForeignKey = ForeignKey(
-        to=Team,
-        on_delete=SET_NULL,
-        related_name='users',
-        verbose_name='Команда',
+    patronymic = models.CharField(
         blank=True,
-        null=True,
+        max_length=NAME_MAX_LENGTH,
+        verbose_name=_('Отчество'),
+        help_text=_('Отчество'),
+
     )
+    role = models.CharField(
+        choices=ROLES_CHOICES,
+        default=ROLE_AGENT,
+        max_length=max(len(role) for role, _ in ROLES_CHOICES),
+        verbose_name=_('Роль'),
+        help_text=_('Уровень прав доступа'),
+    )
+    email = models.EmailField(
+        max_length=EMAIL_MAX_LENGTH,
+        unique=True,
+        verbose_name=_('Электронная почта'),
+        help_text=_('Электронная почта'),
+    )
+    phone = models.CharField(
+        max_length=12,
+    )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('first_name', 'last_name', 'role',)
+
+    objects = CustomUserManager()
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-        ordering = ('username',)
+        verbose_name = _('Пользователь')
+        verbose_name_plural = _('Пользователи')
+        ordering = ('last_name',)
 
     def __str__(self):
-        return self.username
+        return self.email[:QUERY_SET_LENGTH].capitalize()
+
+    def get_username(self):
+        return (
+            f'{self.first_name[:QUERY_SET_LENGTH]} '
+            f'{self.last_name[:QUERY_SET_LENGTH]}'
+        )
+
+    def get_full_name(self):
+        return (
+            f'{self.first_name[:QUERY_SET_LENGTH]} '
+            f'{self.patronymic[:QUERY_SET_LENGTH]} '
+            f'{self.last_name[:QUERY_SET_LENGTH]}'
+
+        )
 
     @property
     def is_agent(self):
+        """
+        Представитель команды - имеет возможность редактировать данные детей в
+        своей команде. Просматривать некоторые данные по игрокам в других
+        командах (ФИО, возраст, спортивный класс, тип заболевания).
+        Выгружать формы по своей команде. Загружать сканы справок.
+        """
         return self.role == ROLE_AGENT
 
     @property
     def is_moderator(self):
+        """
+        Модератор - имеет возможности вносить данные по определенному ребенку,
+        не может добавлять новых пользователей и удалять детей, команды.
+        """
         return self.role == ROLE_MODERATOR
 
     @property
     def is_admin(self):
+        """
+        Администратор - имеет неограниченные права управления на проекте.
+        """
         return (self.role == ROLE_ADMIN) or self.is_staff
