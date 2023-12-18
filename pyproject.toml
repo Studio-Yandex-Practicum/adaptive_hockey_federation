@@ -19,6 +19,7 @@ django-phonenumber-field = {extras = ["phonenumbers"], version = "^7.2.0"}
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
 pre-commit = "3.5.0"
+django-extensions = "^3.2.3"
 
 [tool.poetry.group.test.dependencies]
 flake8 = "^6.1.0"
@@ -52,6 +53,7 @@ mypy_path = "./adaptive_hockey_federation"
 module = [
     "adaptive_hockey_federation.core.user_card",
     "adaptive_hockey_federation.parser.*",
+    "phonenumber_field.*"
 ]
 ignore_missing_imports = true
 

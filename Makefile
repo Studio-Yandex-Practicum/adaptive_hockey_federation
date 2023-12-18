@@ -59,7 +59,7 @@ run:
 
 # Запуск django shell
 shell:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) shell
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) shell_plus --plain
 
 
 # Заполнение базы данных с помощью парсера.
