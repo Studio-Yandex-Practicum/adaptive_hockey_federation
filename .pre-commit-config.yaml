@@ -28,6 +28,7 @@ repos:
         exclude: migrations/|config/|.*settings(\.py|/)?
         additional_dependencies:
         - django-stubs
+        - django-environ
 
   - repo: local
     hooks:

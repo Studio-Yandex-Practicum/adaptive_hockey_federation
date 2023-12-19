@@ -1,8 +1,7 @@
 import subprocess
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
-
-from adaptive_hockey_federation.core.config.dev_settings import RESOURSES_ROOT
 
 
 class Command(BaseCommand):
@@ -10,10 +9,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         run_parser = subprocess.getoutput(
-            f'poetry run parser -r -p {RESOURSES_ROOT}'
+            f'poetry run parser -r -p {settings.RESOURSES_ROOT}'
         )
         with open(
-            f'{RESOURSES_ROOT}/result.txt',
+            f'{settings.RESOURSES_ROOT}/result.txt',
             'w',
             encoding='utf-8',
         ) as file:
