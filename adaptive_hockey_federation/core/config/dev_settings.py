@@ -42,6 +42,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES_DIR = BASE_DIR / 'templates'
+FIXSTURES_DIR = BASE_DIR / 'core' / 'fixtures'
 
 TEMPLATES = [
     {

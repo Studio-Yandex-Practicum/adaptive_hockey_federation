@@ -395,13 +395,13 @@ class Player(BasePerson):
                     'birthday',
                 ]
             ),
-            models.UniqueConstraint(
-                name='player_position_number_unique',
-                fields=[
-                    'position',
-                    'number'
-                ]
-            )
+            # models.UniqueConstraint(
+            #     name='player_position_number_unique',
+            #     fields=[
+            #         'position',
+            #         'number'
+            #     ]
+            # )
         ]
 
     def __str__(self):
