@@ -26,6 +26,7 @@ help:
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)"
 	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных с помощью парсера.$(SHELL_NC)"
 	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)"
+	@echo "	shell           - $(SHELL_GREEN)Команда для запуска Django-shell_plus.$(SHELL_NC)"
 	@echo "	help            - $(SHELL_GREEN)Команда вызова справки.$(SHELL_NC)"
 	@echo "$(SHELL_YELLOW)Для запуска исполнения команд используйте данные ключи совместно с командой 'make', например 'make init-app'."
 	@echo "При запуске команды 'make' без какого либо ключа, происходит вызов справки.$(SHELL_NC)"
@@ -53,7 +54,7 @@ migrate:
 
 # Создание супер-юзера.
 createsuperuser:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser --no-input
 
 
 # Локальный запуск контейнера postgres.
@@ -64,6 +65,11 @@ run-db:
 # Локальный запуск сервера разработки.
 run:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver
+
+
+# Запуск django shell
+shell:
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) shell_plus --plain
 
 
 # Заполнение базы данных с помощью парсера.
