@@ -7,9 +7,11 @@ ROOT_DIR = BASE_DIR.parent
 env.read_env(ROOT_DIR / '.env')
 
 
-EXTERNAL_APPS += [
+DEV_APPS = [
     'django_extensions',
 ]
+
+INSTALLED_APPS += DEV_APPS
 
 DATABASES = {
     'default': {
