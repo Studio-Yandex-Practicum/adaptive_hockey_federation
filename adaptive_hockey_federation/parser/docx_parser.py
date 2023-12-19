@@ -324,10 +324,10 @@ def docx_parser(
     names = find_names(columns_from_file, NAME)
     surnames = find_surnames(columns_from_file, SURNAME)
     patronymics = find_patronymics(columns_from_file, PATRONYMIC)
-    # dates_of_birth = find_dates_of_birth(
-    #     columns_from_file,
-    #     DATE_OF_BIRTH,
-    # )
+    dates_of_birth = find_dates_of_birth(
+        columns_from_file,
+        DATE_OF_BIRTH,
+    )
     team = find_team(text_from_file, columns_from_file, TEAM)
     players_number = find_players_number(columns_from_file, PLAYER_NUMBER)
     positions = find_positions(columns_from_file, POSITION)
@@ -336,8 +336,7 @@ def docx_parser(
         BaseUserInfo(
             name=names[index],
             surname=surnames[index],
-            date_of_birth=None,
-            # dates_of_birth[index],
+            date_of_birth=dates_of_birth[index].isoformat(),
             team=team,
             player_number=players_number[index],
             position=positions[index],

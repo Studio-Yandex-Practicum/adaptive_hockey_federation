@@ -1,16 +1,11 @@
 import json
 import os
-import sqlite3
-from datetime import datetime
 from pprint import pprint
 
 import click
 import docx  # type: ignore
 
-from adaptive_hockey_federation.core.config.dev_settings import (
-    BASE_DIR,
-    FIXSTURES_DIR,
-)
+from adaptive_hockey_federation.core.config.dev_settings import FIXSTURES_DIR
 from adaptive_hockey_federation.parser.docx_parser import (
     docx_parser,
     find_numeric_statuses,
@@ -72,47 +67,8 @@ def parsing_file(path: str, result: bool) -> None:
             pprint(data)
 
     with open(FIXSTURES_DIR / 'data.json', 'w', encoding='utf8') as f:
-        json.dump(results_list, f, ensure_ascii=False, indent=4)
+        json.dump(results_list, f, ensure_ascii=False, indent=4, default=str)
 
-    conn = sqlite3.connect(BASE_DIR / 'db.sqlite3')
-    cursor = conn.cursor()
-    data = json.load(open(FIXSTURES_DIR / 'data.json'))
-    for item in data:
-        for key in item:
-            if item[key] is None:
-                item[key] = ''
-        cursor.execute('''
-            INSERT INTO main_player (
-                       surname,
-                       name,
-                       patronymic,
-                       birthday,
-                       gender,
-                       level_revision,
-                       position,
-                       number,
-                       is_captain,
-                       is_assistent,
-                       identity_document
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            item['surname'],
-            item['name'],
-            item['patronymic'],
-            datetime.today(),
-            '',
-            # gender,
-            item['revision'],
-            item['position'],
-            item['player_number'],
-            item['is_captain'],
-            item['is_assistant'],
-            item['passport']
-        )
-        )
-
-    conn.commit()
     results_list = list(results_list)
 
     click.echo(f'Успешно обработано {len(files)} файлов.')
