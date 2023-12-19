@@ -1,11 +1,3 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.core.mail import send_mail
-from django.db import models
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-from phonenumber_field.modelfields import PhoneNumberField
-from phonenumber_field.validators import validate_international_phonenumber
-
 from core.constants import (
     EMAIL_MAX_LENGTH,
     NAME_MAX_LENGTH,
@@ -15,8 +7,14 @@ from core.constants import (
     ROLE_MODERATOR,
     ROLES_CHOICES,
 )
-
-from .managers import CustomUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.mail import send_mail
+from django.db import models
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
+from phonenumber_field.validators import validate_international_phonenumber
+from users.managers import CustomUserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):

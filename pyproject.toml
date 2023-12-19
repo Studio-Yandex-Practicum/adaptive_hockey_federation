@@ -58,6 +58,7 @@ exclude = [
 module = [
     "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
+    "phonenumber_field.*",
 ]
 ignore_missing_imports = true
 
