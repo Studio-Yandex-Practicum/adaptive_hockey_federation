@@ -15,6 +15,7 @@ openpyxl-stubs = "^0.1.25"
 click = "^8.1.7"
 wrapt = "^1.16.0"
 pytest-django = "^4.7.0"
+django-environ = "^0.11.2"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
@@ -47,12 +48,14 @@ build-backend = "poetry.core.masonry.api"
 namespace_packages = false
 plugins = ["mypy_django_plugin.main"]
 mypy_path = "./adaptive_hockey_federation"
+exclude = [
+    "config",
+]
 
 [[tool.mypy.overrides]]
 module = [
     "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
-    "adaptive_hockey_federation.core.config.dev_settings",
 ]
 ignore_missing_imports = true
 
