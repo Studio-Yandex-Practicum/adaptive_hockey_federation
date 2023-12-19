@@ -60,7 +60,7 @@ createsuperuser:
 
 
 # Запуск локальногоконтейнера Postgres
-start-db: 
+start-db:
 	docker-compose -f $(DEV_DOCK_FILE) up -d; \
 	if [ $$? -ne 0 ]; \
     then \
@@ -76,7 +76,7 @@ stop-db:
 	fi
 
 # Очистка БД Postgres
-clear-db: 
+clear-db:
 	docker-compose -f $(DEV_DOCK_FILE) down --volumes; \
 	if [ $$? -ne 0 ]; \
     then \
