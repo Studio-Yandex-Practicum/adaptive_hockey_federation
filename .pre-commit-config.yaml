@@ -25,8 +25,11 @@ repos:
     rev: v1.6.0
     hooks:
       - id: mypy
+        exclude: migrations/|config/|.*settings(\.py|/)?
         additional_dependencies:
         - django-stubs
+        - django-environ
+        - django-phonenumber-field[phonenumbers]
 
   - repo: local
     hooks:

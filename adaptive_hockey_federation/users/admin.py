@@ -7,20 +7,16 @@ class UserAdmin(admin.ModelAdmin):
     # date_hierarchy = 'date_joined'
     list_display = (
         'id',
-        'username',
-        'email',
-        'phone',
         'first_name',
         'last_name',
         'role',
-        'team',
-    )
-    fields = [
-        'username',
         'email',
         'phone',
+    )
+    fields = [
         ('first_name', 'last_name'),
         'role',
-        'team',
+        'email',
+        'phone',
     ]
     empty_value_display = '-пусто-'
