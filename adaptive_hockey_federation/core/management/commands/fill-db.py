@@ -2,7 +2,7 @@ import subprocess
 
 from django.core.management.base import BaseCommand
 
-from adaptive_hockey_federation.settings import RESOURSES_ROOT
+from adaptive_hockey_federation.core.config.dev_settings import RESOURSES_ROOT
 
 
 class Command(BaseCommand):

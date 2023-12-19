@@ -1,137 +1,40 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-NAME_FIELD_LENGTH = 256
-EMPTY_VALUE_DISPLAY = '--пусто--'
+CHAR_FIELD_LENGTH = 256
+EMPTY_VALUE_DISPLAY = ''
 CLASS_FIELD_LENGTH = 10
+DEFAULT_VALUE = 0
+
+GENDER_CHOICES = (
+    ('male', 'Мужской'),
+    ('female', 'Женский'),
+)
+
+PLAYER_POSITION_CHOICES = (
+    ('striker', 'Нападающий'),
+    ('bobber', 'Поплавок'),
+    ('goalkeeper', 'Вратарь'),
+    ('defender', 'Защитник'),
+)
+
+STAFF_POSITION_CHOICES = (
+    ('trainer', 'тренер'),
+    ('other', 'другой'),
+)
 
 
 class BaseUniqueName(models.Model):
     name = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Название'),
-        help_text=_('Название'),
+        max_length=CHAR_FIELD_LENGTH,
+        verbose_name=_('Наименование'),
+        help_text=_('Наименование'),
         unique=True,
     )
 
     class Meta:
         ordering = ('name',)
         abstract = True
-
-    def __str__(self):
-        return self.name
-
-
-class BasePerson(models.Model):
-    """
-    Абстрактная модель с базовой персональной информацией.
-    """
-    surname = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Фамилия'),
-        help_text=_('Фамилия'),
-        default=EMPTY_VALUE_DISPLAY
-    )
-    name = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Имя'),
-        help_text=_('Имя'),
-        default=EMPTY_VALUE_DISPLAY
-    )
-    patronymic = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        blank=True,
-        verbose_name=_('Отчество'),
-        help_text=_('Отчество'),
-        default=EMPTY_VALUE_DISPLAY
-    )
-    date_of_birth = models.DateField(
-        verbose_name=_('Дата рождения'),
-        help_text=_('Дата рождения'),
-        null=True,
-        blank=True
-    )
-
-    class Meta:
-        ordering = ('surname', 'name', 'patronymic')
-        abstract = True
-
-    def __str__(self):
-        return ' '.join([self.surname, self.name, self.patronymic])
-
-
-class Diagnosis(models.Model):
-    """
-    Модель Диагноз.
-    """
-    class_name = models.CharField(
-        verbose_name=_('Класс'),
-        help_text=_('Класс'),
-        max_length=CLASS_FIELD_LENGTH,
-        unique=True
-    )
-    is_wheeled = models.BooleanField(
-        default=False,
-        verbose_name=_('На коляске'),
-        help_text=_('На коляске')
-    )
-    description = models.TextField(
-        verbose_name=_('Описание'),
-        help_text=_('Описание'),
-        blank=True
-    )
-
-    class Meta:
-        verbose_name = 'Диагноз'
-        verbose_name_plural = 'Диагнозы'
-
-    def __str__(self):
-        return self.class_name
-
-
-class Gender(BaseUniqueName):
-    """
-    Модель Пол.
-    """
-    class Meta:
-        verbose_name = 'Пол'
-        verbose_name_plural = 'Пол'
-
-    def __str__(self):
-        return self.name
-
-
-class Position(BaseUniqueName):
-    """
-    Модель Игоровая позиция.
-    """
-    class Meta:
-        verbose_name = 'Игоровая позиция'
-        verbose_name_plural = 'Игровые позиции'
-
-    def __str__(self):
-        return self.name
-
-
-class Qualification(BaseUniqueName):
-    """
-    Модель Квалификация.
-    """
-    class Meta:
-        verbose_name = 'Квалификация'
-        verbose_name_plural = 'Квалификации'
-
-    def __str__(self):
-        return self.name
-
-
-class Discipline(BaseUniqueName):
-    """
-    Модель Дисциплина.
-    """
-    class Meta:
-        verbose_name = 'Дисциплина'
-        verbose_name_plural = 'Дисциплины'
 
     def __str__(self):
         return self.name
@@ -149,102 +52,234 @@ class City(BaseUniqueName):
         return self.name
 
 
-class Player(BasePerson):
+class DisciplineName(BaseUniqueName):
     """
-    Модель игрока. Связь с командой "многие ко многим" на случай включения
-    игрока в сборную, помимо основного состава.
+    Модель название дисциплин
+    (следж-хоккей, хоккей для незрячих, спец. хоккей).
     """
-    diagnosis = models.ForeignKey(
-        Diagnosis,
+    class Meta:
+        verbose_name = 'Название дисциплины'
+        verbose_name_plural = 'Названия дисциплин'
+
+    def __str__(self):
+        return self.name
+
+
+class DisciplineLevel(BaseUniqueName):
+    """
+    Модель классификация, статусы дисциплин.
+    """
+    class Meta:
+        verbose_name = 'Классификация/статус дисциплины'
+        verbose_name_plural = 'Классификация/статусы дисциплин'
+
+    def __str__(self):
+        return self.name
+
+
+class Discipline(models.Model):
+    """
+    Модель Дисциплина.
+    """
+    discipline_name = models.ForeignKey(
+        DisciplineName,
         on_delete=models.CASCADE,
-        related_name='diagnosis',
-        verbose_name=_('Диагноз'),
-        help_text=_('Диагноз'),
-        default=0
+        max_length=CLASS_FIELD_LENGTH,
+        verbose_name=_('Название дисциплины'),
+        help_text=_('Название дисциплины'),
+        related_name='disciplines'
     )
-    gender = models.ForeignKey(
-        Gender,
+    discipline_level = models.ForeignKey(
+        DisciplineLevel,
         on_delete=models.CASCADE,
-        related_name='gender',
-        verbose_name=_('Пол'),
-        help_text=_('Пол'),
-        default=0
-    )
-    identification_card = models.TextField(
-        verbose_name=_('Удостоверение личности'),
-        help_text=_('Удостоверение личности'),
-        default=0
+        max_length=CLASS_FIELD_LENGTH,
+        verbose_name=_('Класс/статус'),
+        help_text=_('Класс/статус'),
+        related_name='disciplines'
     )
 
-    class Meta(BasePerson.Meta):
-        default_related_name = 'players'
-        verbose_name = 'Игрок'
-        verbose_name_plural = 'Игроки'
+    class Meta:
+        verbose_name = 'Дисциплина'
+        verbose_name_plural = 'Дисциплины'
         constraints = [
             models.UniqueConstraint(
-                name='player_unique',
-                fields=['name', 'surname', 'patronymic', 'date_of_birth']
+                name='discipline_name_level_unique',
+                fields=['discipline_name', 'discipline_level'],
             )
         ]
 
     def __str__(self):
-        return ' '.join([self.surname, self.name, self.patronymic])
+        return self.discipline_name.name
 
 
-class Trainer(BasePerson):
+class Nosology(BaseUniqueName):
     """
-    Модель Тренер.
+    Модель Нозология.
     """
-    description = models.TextField(
-        verbose_name=_('Описание'),
-        help_text=_('Описание')
+    class Meta:
+        verbose_name = 'Нозология'
+        verbose_name_plural = 'Нозология'
+
+    def __str__(self):
+        return self.name
+
+
+class Diagnosis(BaseUniqueName):
+    """
+    Модель Диагноз.
+    """
+    nosology = models.ForeignKey(
+        Nosology,
+        on_delete=models.CASCADE,
+        max_length=CLASS_FIELD_LENGTH,
+        verbose_name=_('Нозология'),
+        help_text=_('Нозология'),
+        related_name='diagnosis'
     )
 
     class Meta:
-        verbose_name = 'Тренер'
-        verbose_name_plural = 'Тренеры'
+        verbose_name = 'Диагноз'
+        verbose_name_plural = 'Диагнозы'
+
+    def __str__(self):
+        return self.name
+
+
+class Document(BaseUniqueName):
+    """
+    Модель Документы для загрузки.
+    """
+    file = models.FileField(
+        upload_to='documents',
+        max_length=CHAR_FIELD_LENGTH
+    )
+
+    class Meta:
+        verbose_name = 'Документ'
+        verbose_name_plural = 'Документы'
+
+    def __str__(self):
+        return self.name
+
+
+class BasePerson(models.Model):
+    """
+    Абстрактная модель с базовой персональной информацией.
+    """
+    surname = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        verbose_name=_('Фамилия'),
+        help_text=_('Фамилия'),
+        default=EMPTY_VALUE_DISPLAY
+    )
+    name = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        verbose_name=_('Имя'),
+        help_text=_('Имя'),
+        default=EMPTY_VALUE_DISPLAY
+    )
+    patronymic = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        blank=True,
+        verbose_name=_('Отчество'),
+        help_text=_('Отчество'),
+        default=EMPTY_VALUE_DISPLAY
+    )
+
+    class Meta:
+        ordering = ('surname', 'name', 'patronymic')
+        abstract = True
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
 
 
-class Team(models.Model):
+class StaffMember(BasePerson):
+    """
+    Модель сотрудник.
+    """
+    phone = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        blank=True,
+        default=EMPTY_VALUE_DISPLAY,
+        verbose_name=_('Номер телефона'),
+        help_text=_('Номер телефона')
+    )
+
+    class Meta:
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'
+
+    def __str__(self):
+        return ' '.join([self.surname, self.name, self.patronymic])
+
+
+class StaffTeamMember(models.Model):
+    """
+    Модель сотрудник команды.
+    """
+    staff_member = models.ForeignKey(
+        StaffMember,
+        on_delete=models.CASCADE,
+        verbose_name=_('Сотрудник'),
+        help_text=_('Сотрудник')
+    )
+    staff_position = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        choices=STAFF_POSITION_CHOICES,
+        default=EMPTY_VALUE_DISPLAY,
+        verbose_name=_('Статус сотрудника'),
+        help_text=_('Статус сотрудника')
+    )
+    qualification = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        default=EMPTY_VALUE_DISPLAY,
+        blank=True,
+        verbose_name=_('Квалификация'),
+        help_text=_('Квалификация')
+    )
+    notes = models.TextField(
+        default=EMPTY_VALUE_DISPLAY,
+        verbose_name=_('Описание'),
+        help_text=_('Описание'),
+        blank=True
+    )
+
+    class Meta:
+        verbose_name = 'Сотрудник команды'
+        verbose_name_plural = 'Сотрудники команды'
+
+    def __str__(self):
+        return ' '.join([
+            self.staff_member.surname,
+            self.staff_member.name,
+            self.staff_member.patronymic
+        ])
+
+
+class Team(BaseUniqueName):
     """
     Модель команды.
     """
-    name = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Название'),
-        help_text=_('Название')
-    )
     city = models.ForeignKey(
-        to=City,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        City,
+        on_delete=models.CASCADE,
         verbose_name=_('Город откуда команда'),
         help_text=_('Город откуда команда')
     )
-    discipline = models.ForeignKey(
-        to=Discipline,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+    staff_team_member = models.ForeignKey(
+        StaffTeamMember,
+        on_delete=models.CASCADE,
+        verbose_name=_('Сотрудник команды'),
+        help_text=_('Сотрудник команды')
+    )
+    discipline_name = models.ForeignKey(
+        DisciplineName,
+        on_delete=models.CASCADE,
         verbose_name=_('Дисциплина команды'),
         help_text=_('Дисциплина команды')
     )
-    composition = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Состав'),
-        help_text=_('Состав'),
-        default=EMPTY_VALUE_DISPLAY
-    )
-    age = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Возраст'),
-        help_text=_('Возраст'),
-        default=EMPTY_VALUE_DISPLAY
-    )
+    # TODO curator = User (model)
 
     class Meta:
         default_related_name = 'teams'
@@ -253,7 +288,7 @@ class Team(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name='team_city_unique',
-                fields=['name', 'city', 'discipline'],
+                fields=['name', 'city', 'discipline_name'],
             )
         ]
 
@@ -263,78 +298,71 @@ class Team(models.Model):
         return self.name
 
 
-class TrainerTeam(models.Model):
+class Player(BasePerson):
     """
-    Модель тренер - команда.
+    Модель игрока. Связь с командой "многие ко многим" на случай включения
+    игрока в сборную, помимо основного состава.
     """
-    trainer = models.ForeignKey(
-        to=Trainer,
-        on_delete=models.CASCADE,
-        verbose_name=_('Тренер команды'),
-        help_text=_('Тренер команды')
+    diagnosis = models.ForeignKey(
+        Diagnosis,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='player_diagnosis',
+        verbose_name=_('Диагноз'),
+        help_text=_('Диагноз'),
     )
-    team = models.ForeignKey(
-        to=Team,
-        on_delete=models.CASCADE,
-        verbose_name=_('Команда'),
-        help_text=_('Команда')
+    discipline = models.ForeignKey(
+        Discipline,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='player_disciplines',
+        verbose_name=_('Дисциплина'),
+        help_text=_('Дисциплина'),
     )
-
-    class Meta:
-        default_related_name = 'trainer_teams'
-        verbose_name = 'Тренер --> команда'
-        verbose_name_plural = 'Тренер --> команды'
-        constraints = [
-            models.UniqueConstraint(
-                name='trainer_teams_unique',
-                fields=['trainer', 'team']
-            )
-        ]
-
-    def __str__(self):
-        return str(self.trainer.id)
-
-
-class PlayerTeam(models.Model):
-    """
-    Связь "многие ко многим" игрока с командой с добавлением данных игрока
-    в этой команде.
-    """
-    player = models.ForeignKey(
-        to=Player,
-        related_name='player_teams',
-        on_delete=models.CASCADE,
-        verbose_name=_('Игрок'),
-        help_text=_('Игрок')
-
-    )
-    team = models.ForeignKey(
-        to=Team,
+    team = models.ManyToManyField(
+        Team,
         related_name='team_players',
-        on_delete=models.CASCADE,
         verbose_name=_('Команда'),
         help_text=_('Команда')
     )
-    position = models.ForeignKey(
-        to=Position,
-        on_delete=models.SET_NULL,
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.CASCADE,
+        related_name='player_documemts',
+        verbose_name=_('Документ'),
+        help_text=_('Документ'),
+        default=EMPTY_VALUE_DISPLAY,
         blank=True,
-        null=True,
-        verbose_name=_('Позиция игрока'),
-        help_text=_('Позиция игрока')
+        null=True
     )
-    qualification = models.ForeignKey(
-        to=Qualification,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('Квалификация игрока'),
-        help_text=_('Квалификация игрока')
+    birthday = models.DateField(
+        verbose_name=_('Дата рождения'),
+        help_text=_('Дата рождения')
     )
-    number = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Номер игорока'),
-        help_text=_('Номер игорока')
+    gender = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        choices=GENDER_CHOICES,
+        default=EMPTY_VALUE_DISPLAY,
+        verbose_name=_('Пол'),
+        help_text=_('Пол')
+    )
+    level_revision = models.TextField(
+        verbose_name=_('Уровень ревизии'),
+        help_text=_('Уровень ревизии'),
+        default=EMPTY_VALUE_DISPLAY,
+        blank=True
+    )
+    position = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        choices=PLAYER_POSITION_CHOICES,
+        default=EMPTY_VALUE_DISPLAY,
+        verbose_name=_('Игровая позиция'),
+        help_text=_('Игровая позиция')
+    )
+    number = models.IntegerField(
+        default=DEFAULT_VALUE,
+        verbose_name=_('Номер игрока'),
+        help_text=_('Номер игрока')
     )
     is_captain = models.BooleanField(
         default=False,
@@ -346,88 +374,35 @@ class PlayerTeam(models.Model):
         verbose_name=_('Ассистент'),
         help_text=_('Ассистент')
     )
-
-    class Meta:
-        verbose_name = 'Игрок команды'
-        verbose_name_plural = 'Игроки команды'
-
-    def __str__(self):
-        return str(self.player.id)
-
-
-class Competition(BaseUniqueName):
-    """
-    Модель Соревнования.
-    """
-    city = models.ForeignKey(
-        to=City,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('Город'),
-        help_text=_('Город')
-    )
-    number = models.CharField(
-        max_length=NAME_FIELD_LENGTH,
-        verbose_name=_('Номер соревнований'),
-        help_text=_('Номер соревнований')
-    )
-    date = models.DateField(
-        verbose_name=_('Дата соревнований'),
-        help_text=_('Дата соревнований')
-    )
-    duration = models.IntegerField(
-        default=0,
-        verbose_name=_('Длительность'),
-        help_text=_('Длительность')
-    )
-    is_active = models.BooleanField(
-        default=True,
-        verbose_name=_('Активно'),
-        help_text=_('Активно')
+    identity_document = models.TextField(
+        verbose_name=_('Удостоверение личности'),
+        help_text=_('Удостоверение личности'),
+        default=EMPTY_VALUE_DISPLAY,
+        blank=True
     )
 
-    class Meta:
-        verbose_name = 'Соревнование'
-        verbose_name_plural = 'Соревнования'
+    class Meta(BasePerson.Meta):
+        default_related_name = 'players'
+        verbose_name = 'Игрок'
+        verbose_name_plural = 'Игроки'
         constraints = [
             models.UniqueConstraint(
-                name='competitions_unique',
-                fields=['city', 'number', 'date']
+                name='player_unique',
+                fields=[
+                    'name',
+                    'surname',
+                    'patronymic',
+                    'birthday',
+                ]
+            ),
+            models.UniqueConstraint(
+                name='player_position_number_unique',
+                fields=[
+                    'position',
+                    'number'
+                ]
             )
         ]
 
     def __str__(self):
-        return str(self.city.id)
-
-
-class TeamCompetition(models.Model):
-    """
-    Модель команда - соревнование.
-    """
-    team = models.ForeignKey(
-        to=Team,
-        on_delete=models.CASCADE,
-        verbose_name=_('Команда'),
-        help_text=_('Команда')
-    )
-    competition = models.ForeignKey(
-        to=Competition,
-        on_delete=models.CASCADE,
-        verbose_name=_('Соревнование'),
-        help_text=_('Соревнование')
-    )
-
-    class Meta:
-        default_related_name = 'team_competitions'
-        verbose_name = 'Соревнование --> команда'
-        verbose_name_plural = 'Совревнования --> команды'
-        constraints = [
-            models.UniqueConstraint(
-                name='competition_teams_unique',
-                fields=['team', 'competition']
-            )
-        ]
-
-    def __str__(self):
-        return str(self.team.id)
+        return ' '.join([self.surname, self.name, self.patronymic])

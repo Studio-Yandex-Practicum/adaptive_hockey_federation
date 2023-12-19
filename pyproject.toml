@@ -14,12 +14,12 @@ types-openpyxl = "^3.1.0.24"
 openpyxl-stubs = "^0.1.25"
 click = "^8.1.7"
 wrapt = "^1.16.0"
+pytest-django = "^4.7.0"
 django-environ = "^0.11.2"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
 pre-commit = "3.5.0"
-django-environ = "^0.11.2"
 
 [tool.poetry.group.test.dependencies]
 flake8 = "^6.1.0"
@@ -51,15 +51,20 @@ mypy_path = "./adaptive_hockey_federation"
 
 [[tool.mypy.overrides]]
 module = [
-    "adaptive_hockey_federation.core.user_card",
+    "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
+    "adaptive_hockey_federation.core.config.*",
 ]
 ignore_missing_imports = true
 
 
 [tool.django-stubs]
-django_settings_module = "adaptive_hockey_federation.settings"
+django_settings_module = "adaptive_hockey_federation.core.config.dev_settings"
 
 
 [tool.poetry.scripts]
 parser = "adaptive_hockey_federation.parser.parser:parsing_file"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "adaptive_hockey_federation.core.config.test_settings"
+python_files = ["test_*.py"]
