@@ -21,7 +21,9 @@ DEFAULT_APPS = [
     'django.contrib.staticfiles',
 ]
 
-EXTERNAL_APPS = []
+EXTERNAL_APPS = [
+    'phonenumber_field',
+]
 
 LOCAL_APPS = [
     'main.apps.MainConfig',
@@ -112,3 +114,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+PHONENUMBER_DEFAULT_REGION = 'RU'
+
+PHONENUMBER_DEFAULT_FORMAT = 'INTERNATIONAL'

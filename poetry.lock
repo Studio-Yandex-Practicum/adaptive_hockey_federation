@@ -223,6 +223,39 @@ docs = ["furo (>=2021.8.17b43,<2021.9.dev0)", "sphinx (>=3.5.0)", "sphinx-notfou
 testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
+name = "django-extensions"
+version = "3.2.3"
+description = "Extensions for Django"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "django-extensions-3.2.3.tar.gz", hash = "sha256:44d27919d04e23b3f40231c4ab7af4e61ce832ef46d610cc650d53e68328410a"},
+    {file = "django_extensions-3.2.3-py3-none-any.whl", hash = "sha256:9600b7562f79a92cbf1fde6403c04fee314608fefbb595502e34383ae8203401"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
+name = "django-phonenumber-field"
+version = "7.2.0"
+description = "An international phone number field for django models."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django-phonenumber-field-7.2.0.tar.gz", hash = "sha256:20c7c5c449e33eed5fd45ef8d3dc668faabaeff3277eddd1892b262d686ba381"},
+    {file = "django_phonenumber_field-7.2.0-py3-none-any.whl", hash = "sha256:16778f2717ea2aecc6178beb0d6bc431c78c6a8b0474e1fa8face040efeb6e9e"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+phonenumbers = {version = ">=7.0.2", optional = true, markers = "extra == \"phonenumbers\""}
+
+[package.extras]
+phonenumbers = ["phonenumbers (>=7.0.2)"]
+phonenumberslite = ["phonenumberslite (>=7.0.2)"]
+
+[[package]]
 name = "django-stubs"
 version = "4.2.7"
 description = "Mypy stubs for Django"
@@ -680,6 +713,17 @@ files = [
 ]
 
 [[package]]
+name = "phonenumbers"
+version = "8.13.26"
+description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
+optional = false
+python-versions = "*"
+files = [
+    {file = "phonenumbers-8.13.26-py2.py3-none-any.whl", hash = "sha256:b2308c9c5750b8f10dd30d94547afd66bce60ac5e93aff227f95740557f32752"},
+    {file = "phonenumbers-8.13.26.tar.gz", hash = "sha256:937d70aeceb317f5831dfec28de855a60260ef4a9d551964bec8e7a7d0cf81cd"},
+]
+
+[[package]]
 name = "platformdirs"
 version = "4.1.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -1077,4 +1121,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "579c5490892cecc498998e665505c12a926ce8f05ea34c0697bfafc1905e7dfa"
+content-hash = "a4cf39f0df23459975d07dabbd5f677040103f3ce971823cd8dfd84d770a2a02"
