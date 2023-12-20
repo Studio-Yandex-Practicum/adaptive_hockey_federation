@@ -22,6 +22,7 @@ django-environ = "^0.11.2"
 isort = "^5.12.0"
 pre-commit = "3.5.0"
 django-extensions = "^3.2.3"
+factory-boy = "^3.3.0"
 
 [tool.poetry.group.test.dependencies]
 flake8 = "^6.1.0"
@@ -59,6 +60,7 @@ module = [
     "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
     "phonenumber_field.*",
+    "factory.*",
 ]
 ignore_missing_imports = true
 

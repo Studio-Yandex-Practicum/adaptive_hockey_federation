@@ -52,7 +52,7 @@ migrate:
 
 # Создание супер-юзера.
 createsuperuser:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser --no-input
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser
 
 
 # Локальный запуск сервера разработки.
@@ -68,6 +68,12 @@ shell:
 # Заполнение базы данных с помощью парсера.
 fill-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db
+
+
+#Заполнение базы данных фикстурами
+fixture-fill-db:
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --city --amount 2
+
 
 # Прогон тестов с помощью pytest
 pytest:
