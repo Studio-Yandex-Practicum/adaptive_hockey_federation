@@ -65,7 +65,6 @@ def parsing_file(path: str, result: bool) -> None:
     if result:
         for data in results_list:
             pprint(data)
-
     with open(FIXSTURES_DIR / 'data.json', 'w', encoding='utf8') as f:
         json.dump(results_list, f, ensure_ascii=False, indent=4, default=str)
 

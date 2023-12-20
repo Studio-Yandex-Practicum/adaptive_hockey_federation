@@ -336,7 +336,7 @@ def docx_parser(
         BaseUserInfo(
             name=names[index],
             surname=surnames[index],
-            date_of_birth=dates_of_birth[index].isoformat(),
+            date_of_birth=dates_of_birth[index],
             team=team,
             player_number=players_number[index],
             position=positions[index],
