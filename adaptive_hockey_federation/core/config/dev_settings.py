@@ -1,5 +1,3 @@
-import os
-
 from .base_settings import *
 
 ROOT_DIR = BASE_DIR.parent
@@ -22,8 +20,12 @@ INTERNAL_IPS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': env('POSTGRES_DB', default='postgres_db'),
+        'USER': env('POSTGRES_USER', default='postgres_user'),
+        'PASSWORD': env('POSTGRES_PASSWORD', default='postgres_password'),
+        'HOST': env('DB_HOST', default='localhost'),
+        'PORT': env('DB_PORT', default='5432')
     }
 }
 
