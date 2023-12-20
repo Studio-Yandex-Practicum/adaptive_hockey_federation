@@ -1,11 +1,10 @@
-import factory
+import factory  # type: ignore
 from django.contrib.auth import get_user_model
-from factory.django import DjangoModelFactory
 
 User = get_user_model()
 
 
-class UserFactory(DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
     """Фабрика создания тестовых юзеров"""
     class Meta:
         model = User

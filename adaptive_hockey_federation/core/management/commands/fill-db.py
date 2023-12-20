@@ -1,16 +1,15 @@
 import subprocess
 
-from django.conf import settings
-from django.core.management.base import BaseCommand
-
-from adaptive_hockey_federation.core.constants import (
+from core.constants import (
     DB_MESSAGE,
     ROLE_ADMIN,
     ROLE_AGENT,
     ROLE_MODERATOR,
     TEST_USERS_AMOUNT,
 )
-from adaptive_hockey_federation.users.factories import UserFactory
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from users.factories import UserFactory
 
 ROLES = [ROLE_AGENT, ROLE_MODERATOR, ROLE_ADMIN]
 
