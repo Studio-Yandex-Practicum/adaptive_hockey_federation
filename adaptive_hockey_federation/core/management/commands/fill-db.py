@@ -1,7 +1,10 @@
 import json
 import subprocess
 
-from core.config.base_settings import FIXSTURES_DIR, RESOURSES_ROOT
+from core.config.base_settings import (  # type: ignore
+    FIXSTURES_DIR,
+    RESOURSES_ROOT,
+)
 from django.core.management.base import BaseCommand
 from main.models import Player
 

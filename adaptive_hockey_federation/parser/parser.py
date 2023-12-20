@@ -4,8 +4,8 @@ from pprint import pprint
 
 import click
 import docx  # type: ignore
+from core.config.dev_settings import FIXSTURES_DIR  # type: ignore
 
-from adaptive_hockey_federation.core.config.dev_settings import FIXSTURES_DIR
 from adaptive_hockey_federation.parser.docx_parser import (
     docx_parser,
     find_numeric_statuses,
