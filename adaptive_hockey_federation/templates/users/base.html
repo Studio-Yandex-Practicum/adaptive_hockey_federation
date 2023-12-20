@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  {% load static %}
+  {% include 'users/includes/head.html' %}
+  <title>
+    {% block title %} {% endblock %}
+  </title>
+</head>
+<body>
+  <header>
+    {% include 'users/includes/header.html'%}
+  </header>
+  {% block content %}
+      Контент не подвезли
+  {% endblock %}
+  {% with request.resolver_match.view_name as view_name %}
+    {% if view_name == 'users:login'%}
+      {% include 'users/includes/footer.html'%}
+    {% endif %}
+  {% endwith %}
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
