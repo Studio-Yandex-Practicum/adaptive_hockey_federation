@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from main.models import Team
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -32,7 +33,11 @@ def teams_id(request, id):
 
 @login_required
 def teams(request):
-    return render(request, 'main/teams.html', CONTEXT_EXAMPLE)
+    list_teams = Team.objects.all
+    context = {
+        'teams': list_teams,
+    }
+    return render(request, 'main/teams.html', context)
 
 
 @login_required
