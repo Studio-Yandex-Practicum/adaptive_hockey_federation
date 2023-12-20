@@ -4,6 +4,7 @@ MANAGE_DIR := $(PROJECT_DIR)/adaptive_hockey_federation/manage.py
 DJANGO_DIR := $(PROJECT_DIR)/adaptive_hockey_federation
 POETRY_RUN := poetry run python
 DJANGO_RUN := $(POETRY_RUN) $(MANAGE_DIR)
+DEV_DOCK_FILE := $(PROJECT_DIR)/infra/dev/docker-compose.dev.yaml
 SHELL_GREEN = \033[32m
 SHELL_YELLOW = \033[33m
 SHELL_NC := \e[0m
@@ -21,9 +22,13 @@ help:
 	@echo "	collectstatic   - $(SHELL_GREEN)Команда для сбора статики.$(SHELL_NC)"
 	@echo "	migrate         - $(SHELL_GREEN)Команда для применения к базе данных готовых миграций.$(SHELL_NC)"
 	@echo "	createsuperuser - $(SHELL_GREEN)Команда для создания супер-юзера.$(SHELL_NC)"
+	@echo "	start-db        - $(SHELL_GREEN)Команда для запуска локального контейнера postgres.$(SHELL_NC)"
+	@echo "	stop-db         - $(SHELL_GREEN)Команда для остановки локального контейнера postgres.$(SHELL_NC)"
+	@echo "	clear-db        - $(SHELL_GREEN)Команда для очистки volume локального контейнера postgres.$(SHELL_NC)"
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)"
 	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных с помощью парсера.$(SHELL_NC)"
 	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)"
+	@echo "	shell           - $(SHELL_GREEN)Команда для запуска Django-shell_plus.$(SHELL_NC)"
 	@echo "	help            - $(SHELL_GREEN)Команда вызова справки.$(SHELL_NC)"
 	@echo "$(SHELL_YELLOW)Для запуска исполнения команд используйте данные ключи совместно с командой 'make', например 'make init-app'."
 	@echo "При запуске команды 'make' без какого либо ключа, происходит вызов справки.$(SHELL_NC)"
@@ -51,12 +56,42 @@ migrate:
 
 # Создание супер-юзера.
 createsuperuser:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser --no-input
+
+
+# Запуск локальногоконтейнера Postgres
+start-db:
+	docker-compose -f $(DEV_DOCK_FILE) up -d; \
+	if [ $$? -ne 0 ]; \
+    then \
+        docker compose -f $(DEV_DOCK_FILE) up -d; \
+    fi
+
+# Остановка контейнера Postgres
+stop-db:
+	docker-compose -f $(DEV_DOCK_FILE) down; \
+	if [ $$? -ne 0 ]; \
+    then \
+		docker compose -f $(DEV_DOCK_FILE) down; \
+	fi
+
+# Очистка БД Postgres
+clear-db:
+	docker-compose -f $(DEV_DOCK_FILE) down --volumes; \
+	if [ $$? -ne 0 ]; \
+    then \
+		docker compose -f $(DEV_DOCK_FILE) down --volumes; \
+	fi
 
 
 # Локальный запуск сервера разработки.
 run:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver
+
+
+# Запуск django shell
+shell:
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) shell_plus --plain
 
 
 # Заполнение базы данных с помощью парсера.
