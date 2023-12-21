@@ -9,9 +9,9 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    first_name = factory.Faker('first_name')
-    last_name = factory.Faker('last_name')
-    patronymic = factory.Faker('first_name')
-    email = factory.Faker('email')
-    phone = factory.Faker('phone_number')
-    password = '123456789'
+    first_name = factory.Faker('first_name', locale='ru_RU')
+    last_name = factory.Faker('last_name', locale='ru_RU')
+    patronymic = factory.Faker('first_name', locale='ru_RU')
+    email = factory.Faker('email', locale='ru_RU')
+    phone = factory.Faker('phone_number', locale='ru_RU')
+    password = factory.PostGenerationMethodCall('set_password', 'password')
