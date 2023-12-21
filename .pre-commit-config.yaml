@@ -21,15 +21,17 @@ repos:
           - flake8-isort
           - flake8-django
 
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v1.6.0
-  #   hooks:
-  #     - id: mypy
-  #       exclude: migrations/|config/|.*settings(\.py|/)?
-  #       additional_dependencies:
-  #       - django-stubs
-  #       - django-environ
-  #       - django-phonenumber-field[phonenumbers]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.6.0
+    hooks:
+      - id: mypy
+        exclude: migrations/|config/|.*settings(\.py|/)?
+        additional_dependencies:
+        - django-stubs
+        - django-environ
+        - django-phonenumber-field[phonenumbers]
+        - django_extensions
+        - psycopg2-binary
 
   - repo: local
     hooks:
