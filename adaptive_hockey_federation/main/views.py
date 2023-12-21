@@ -21,8 +21,8 @@ def main(request):
 
 
 @login_required
-def users(request):
-    return render(request, 'main/users.html')
+def players(request):
+    return render(request, 'main/players.html')
 
 
 @login_required
