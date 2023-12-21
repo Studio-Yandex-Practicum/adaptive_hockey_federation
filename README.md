@@ -524,9 +524,9 @@ cd  adaptive_hockey_federation
 ```bash
 cd  adaptive_hockey_federation
 ```
-2. Запустить сервер базы данных PostgreSQL (если не запущен)
+2. Запустить локально контейнер postgres (если не запущен)
 ```bash
-docker-compose -f infra/dev/docker-compose.dev.yaml up -d
+make start-db
 ```
 3. Для быстрого развёртывания проекта воспользуйтесь командой:
 ```bash
