@@ -101,6 +101,10 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 FIXSTURES_DIR = BASE_DIR / 'core' / 'fixtures'
 
+JSON_PARSER_FILE = 'data.json'
+
+FIXSTURES_FILE = FIXSTURES_DIR / JSON_PARSER_FILE
+
 RESOURSES_ROOT = BASE_DIR / 'resourses'
 
 LOGIN_REDIRECT_URL = 'main:main'
