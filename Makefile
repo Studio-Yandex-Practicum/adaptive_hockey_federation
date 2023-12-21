@@ -72,7 +72,8 @@ fill-db:
 
 #Заполнение базы данных фикстурами
 fixture-fill-db:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --city --amount 2
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --city
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --staff
 
 
 # Прогон тестов с помощью pytest
