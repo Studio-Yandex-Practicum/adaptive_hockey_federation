@@ -4,27 +4,6 @@
 {% endblock %}
 {% block content %}
   <div class="container">
-    <style>
-      table { border-collapse: collapse; }
-      table th, table td { padding: 5px; border: solid 1px #777; }
-      table th { background-color: lightblue; }
-    </style>
-    <table style="width: 100%">
-      <tr>
-        {% block header %}
-          <th>Наименование</th>
-          <th>Город</th>
-          <th>Сотрудник команды</th>
-          <th>Дисциплина команды</th>
-        {% endblock %}
-        {% for team in teams %}
-          <tr>
-            <td>{{ team.name }}</td>
-            <td>{{ team.city }}</td>
-            <td>{{ team.staff_team_member }}</td>
-            <td>{{ team.discipline_name }}</td>
-          </tr>
-        {% endfor %}
-    </table>
+    {% include 'includes/table.html' with table_head=table_head table_data=table_data %}
   </div>
 {% endblock %}
