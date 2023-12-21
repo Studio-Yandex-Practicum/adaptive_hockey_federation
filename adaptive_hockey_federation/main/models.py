@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from users.models import User
 
 CHAR_FIELD_LENGTH = 256
 EMPTY_VALUE_DISPLAY = ''
@@ -279,7 +280,12 @@ class Team(BaseUniqueName):
         verbose_name=_('Дисциплина команды'),
         help_text=_('Дисциплина команды')
     )
-    # TODO curator = User (model)
+    curator = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_('Куратор команды'),
+        help_text=_('Куратор команды')
+    )
 
     class Meta:
         default_related_name = 'teams'
