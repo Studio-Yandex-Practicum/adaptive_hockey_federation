@@ -67,7 +67,7 @@ shell:
 
 # Заполнение базы данных с помощью парсера.
 fill-db:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --parser
 
 
 #Заполнение базы данных фикстурами

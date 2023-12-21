@@ -57,4 +57,3 @@ class Command(BaseCommand):
             ) as file:
                 print(run_parser)
                 file.write(run_parser)
-        return 'ничего'
