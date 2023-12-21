@@ -8,19 +8,6 @@ from django.shortcuts import render
 User = get_user_model()
 
 
-CONTEXT_EXAMPLE = {
-    'table_head': {
-        'id': 'Идентификатор',
-        'name': 'Имя',
-        'surname': 'Фамилия',
-    },
-    'table_data': [
-        {'id': 1, 'name': 'Иван', 'surname': 'Иванов'},
-        {'id': 2, 'name': 'Пётр', 'surname': 'Петров'},
-    ],
-}
-
-
 @login_required
 def users_list(request):
     template = 'users/list.html'
