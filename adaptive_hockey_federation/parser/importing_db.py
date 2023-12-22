@@ -1,11 +1,10 @@
 import json
 import subprocess
 
-from core.config.base_settings import RESOURSES_ROOT  # type: ignore
 from main.models import Player
 
-from adaptive_hockey_federation.parser.user_card import \
-    BaseUserInfo  # type: ignore
+from adaptive_hockey_federation.core.config.base_settings import RESOURSES_ROOT
+from adaptive_hockey_federation.parser.user_card import BaseUserInfo
 
 
 def parse_file(file_path: str) -> list[BaseUserInfo]:

@@ -1,7 +1,9 @@
-from parser.importing_db import importing_parser_data_db
+from django.core.management.base import BaseCommand
 
-from core.config.base_settings import FIXSTURES_FILE  # type: ignore
-from django.core.management.base import BaseCommand  # type: ignore
+from adaptive_hockey_federation.core.config.dev_settings import FIXSTURES_FILE
+from adaptive_hockey_federation.parser.importing_db import (
+    importing_parser_data_db,
+)
 
 
 class Command(BaseCommand):

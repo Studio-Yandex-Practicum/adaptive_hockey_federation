@@ -401,6 +401,11 @@ class Player(BasePerson):
                     'birthday',
                 ]
             ),
+            # TODO т.к. данные, которые ипортирууются
+            # из парсинга могут быть
+            # без номера игрока/игровой позиции
+            # раскомментить, когда проект уже перейдет
+            # на внесение данных заказчиком
             # models.UniqueConstraint(
             #     name='player_position_number_unique',
             #     fields=[
