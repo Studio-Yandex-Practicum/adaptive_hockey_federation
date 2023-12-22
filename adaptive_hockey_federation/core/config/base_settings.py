@@ -99,8 +99,6 @@ STATICFILES_FINDERS = (
 
 STATIC_ROOT = BASE_DIR / 'static'
 
-RESOURSES_ROOT = BASE_DIR / 'resourses'
-
 LOGIN_REDIRECT_URL = 'main:main'
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'

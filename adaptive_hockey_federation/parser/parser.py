@@ -5,7 +5,10 @@ from pprint import pprint
 import click
 import docx  # type: ignore
 
-from adaptive_hockey_federation.core.config.dev_settings import FIXSTURES_DIR
+from adaptive_hockey_federation.core.config.dev_settings import (
+    FIXSTURES_DIR,
+    FIXSTURES_FILE,
+)
 from adaptive_hockey_federation.parser.docx_parser import (
     docx_parser,
     find_numeric_statuses,
@@ -65,8 +68,14 @@ def parsing_file(path: str, result: bool) -> None:
     if result:
         for data in results_list:
             pprint(data)
-    with open(FIXSTURES_DIR / 'data.json', 'w', encoding='utf8') as f:
-        json.dump(results_list, f, ensure_ascii=False, indent=4, default=str)
+
+    if not os.path.exists(FIXSTURES_DIR):
+        os.makedirs(FIXSTURES_DIR)
+    json.dump(
+        results_list,
+        open(FIXSTURES_FILE, 'w', encoding='utf8'),
+        ensure_ascii=False, indent=4, default=str
+    )
 
     results_list = list(results_list)
 

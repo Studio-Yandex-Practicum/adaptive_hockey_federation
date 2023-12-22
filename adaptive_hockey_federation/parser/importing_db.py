@@ -10,7 +10,7 @@ from main.models import (
     Team,
 )
 
-from adaptive_hockey_federation.core.config.base_settings import RESOURSES_ROOT
+from adaptive_hockey_federation.core.config.dev_settings import RESOURSES_ROOT
 from adaptive_hockey_federation.parser.user_card import BaseUserInfo
 
 FILE_MODEL_MAP = {

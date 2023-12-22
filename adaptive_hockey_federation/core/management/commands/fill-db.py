@@ -1,4 +1,3 @@
-import fnmatch
 from os import listdir
 from os.path import isfile, join
 
@@ -19,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Загрузка распарсенных данных."""
-        # importing_parser_data_db(FIXSTURES_FILE)
+        importing_parser_data_db(FIXSTURES_FILE)
 
         """Загрузка тестовых данных из файлов формата JSON."""
         file_names = [f for f in listdir(FIXSTURES_DIR)
@@ -30,4 +29,3 @@ class Command(BaseCommand):
                     importing_test_data_db(FIXSTURES_DIR, file_name)
                 except Exception as e:
                     print(f'Ошибка вставки тестовых данных {e} -> {file_name}')
-            print('Нет файлов main_***.json для загрузки тестовых данных.')
