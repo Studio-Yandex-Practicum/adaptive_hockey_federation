@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.views.generic.list import ListView
 from main.models import Team
 
 # пример рендера таблиц, удалить после реализации вьюх
@@ -31,27 +33,32 @@ def teams_id(request, id):
     return render(request, 'main/teams_id.html')
 
 
-@login_required
-def teams(request):
-    list_teams = Team.objects.all()
-    context = {
-        'table_head': {
-            'name': 'Название команды',
-            'city': 'Город',
-            'discipline_name': 'Дисциплина',
-            'staff_team_member': 'Сотрудник команды'
-        },
-        'table_data': [],
-    }
+class TeamListView(LoginRequiredMixin, ListView):
+    model = Team
+    template_name = 'main/teams.html'
+    context_object_name = 'teams'
 
-    for team in list_teams:
-        context['table_data'].append({
-            'name': team.name,
-            'city': team.city,
-            'discipline_name': team.discipline_name,
-            'staff_team_member': team.staff_team_member,
-        })
-    return render(request, 'main/teams.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        teams = context['teams']
+        table_head = {}
+        for field in Team._meta.get_fields():
+            if hasattr(field, 'verbose_name') and field.name != 'id':
+                table_head[field.name] = field.verbose_name
+
+        table_data = []
+        for team in teams:
+            team_data = {}
+            for field in Team._meta.get_fields():
+                if hasattr(field, 'verbose_name') and field.name != 'id':
+                    team_data[field.name] = getattr(team, field.name)
+            table_data.append(team_data)
+
+        context = {
+            'table_head': table_head,
+            'table_data': table_data
+        }
+        return context
 
 
 @login_required

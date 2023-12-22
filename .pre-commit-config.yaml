@@ -30,6 +30,8 @@ repos:
         - django-stubs
         - django-environ
         - django-phonenumber-field[phonenumbers]
+        - django_extensions
+        - psycopg2-binary
 
   - repo: local
     hooks:
