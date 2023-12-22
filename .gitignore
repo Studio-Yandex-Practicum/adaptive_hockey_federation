@@ -164,4 +164,4 @@ static/
 .DS_Store
 
 #Data JSON
-data.json
+*.json
