@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic.list import ListView
-from main.models import Team
+from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -45,6 +45,7 @@ class TeamListView(LoginRequiredMixin, ListView):
         for field in Team._meta.get_fields():
             if hasattr(field, 'verbose_name') and field.name != 'id':
                 table_head[field.name] = field.verbose_name
+        table_head['players'] = 'Состав'
 
         table_data = []
         for team in teams:
@@ -52,6 +53,8 @@ class TeamListView(LoginRequiredMixin, ListView):
             for field in Team._meta.get_fields():
                 if hasattr(field, 'verbose_name') and field.name != 'id':
                     team_data[field.name] = getattr(team, field.name)
+            players = Player.objects.filter(team=team)
+            team_data['players'] = ', '.join(map(str, players))
             table_data.append(team_data)
 
         context = {
