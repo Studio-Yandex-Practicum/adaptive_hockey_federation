@@ -1,0 +1,181 @@
+html, body {
+  background-color: #ECF1F5;
+}
+section {
+  padding: 100px;
+}
+.header-line{
+  display:inline-flex;
+  align-items:center;
+}
+
+.header-logo {
+  margin: 70px 84px;
+  z-index: 999;
+  width: 250px;
+  height: 250px;
+
+}
+
+.header-ellipse {
+  top : 00px;
+  position: absolute;
+  margin-left: 150px;
+  z-index: 997;
+  width: 700px;
+  height: 400px;
+}
+
+.header-rect {
+  align-self: center;
+  position: absolute;
+  margin-left: 450px;
+  margin-top: -50px;
+  z-index: 996;
+}
+
+.header-text {
+  color: #340061;
+  position: relative;
+  z-index: 999;
+  text-decoration: none;
+  font-family: sans-serif;
+  width: 350px;
+  height: 159px;
+  font-size: 36px;
+  margin-left: -60px;
+  font-weight: bold;
+}
+
+.form_login {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+  width: 400px;
+  margin-left: 500px;
+  margin-top: -70px;
+}
+
+.form_btn {
+  background-color: #64C2D1;
+  color: #fff;
+  width: 240px;
+  height: 40px;
+  font-size: 22px;
+  text-align: center;
+  border-style: none;
+}
+
+.form_btn:hover {
+  background-color: rgb(64, 159, 172);
+}
+
+.enter_btn {
+  position: relative;
+  align-items: center;
+
+}
+
+
+
+.forget-button {
+  text-decoration: none;
+  color: #E73259;
+  position: relative;
+  left: 50px;
+  width: 150px;
+  height: 50px;
+  top: 10px;
+}
+
+.forget-button:hover {
+  color: #851d33;
+}
+
+.errors {
+  width: 200px;
+  height: 50px;
+  position: left;
+  margin-top: -120px;
+  margin-left: 500px;
+}
+
+.button_out {
+  background-color: #E73259;
+  border-radius: 39px;
+  position: relative;
+  width: 240px;
+  height: 60px;
+  bottom: 50px;
+  font-size: 24px;
+  border-color: #E73259;
+  .text {
+      color: #fff;
+      text-decoration: none;
+  }
+
+}
+
+.button_out:hover {
+  background-color: #570a2a;
+}
+
+.reset_card {
+  height: 250px;
+  width: 405px;
+  left: 200px;
+}
+
+.reser_card_form {
+  position: inherit;
+  align-items: center;
+  text-align: center;
+  border: black;
+  .reset_btn {
+
+    position: absolute;
+    left: 85px;
+    margin-top: 20px;
+    background-color: #64C2D1;
+    color: #fff;
+    width: 240px;
+    height: 40px;
+    font-size: 22px;
+    border: #fff;
+    text-decoration: none;
+  }
+}
+
+
+.forget-button-done {
+  position: absolute;
+  text-align: center;
+  left: 95px;
+  margin-top: 20px;
+  background-color: #64C2D1;
+  color: #fff;
+  width: 200px;
+  height: 40px;
+  font-size: 22px;
+  border: #fff;
+  text-decoration: none;
+}
+
+.done_btn {
+  background-color: #64C2D1;
+  color: #fff;
+  position: inherit;
+  border: #fff;
+}
+
+.done_btn_confirm {
+  background-color: #64C2D1;
+  color: #fff;
+  position: relative;
+  border: #fff;
+  width: 200px;
+  height: 40px;
+  left: -50px;
+  margin-top: 20px;
+}

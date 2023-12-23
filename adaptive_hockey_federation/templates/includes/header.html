@@ -5,7 +5,7 @@
     <ul class="nav d-flex justify-content-start">
       <div class="border border-white rounded px-2">
         <i class="bi bi-circle-fill fs-3" style="color: red;"></i>
-        <b class="text-xl" style="color: #340061;">{{ user.username }}</b>
+        <b class="text-xl" style="color: #340061;">{{ request.user.first_name }} {{ request.user.last_name }}</b>
       </div>
     </ul>
     <ul class="nav justify-content-end">

@@ -22,6 +22,7 @@ DATABASES = {
     }
 }
 
+
 RESOURSES_ROOT = BASE_DIR / 'resourses'
 
 DJANGO_SUPERUSER_USERNAME = env('DJANGO_SUPERUSER_USERNAME', default='admin')

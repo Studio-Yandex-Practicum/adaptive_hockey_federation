@@ -1,0 +1,37 @@
+{% extends "registration/base.html" %}
+{% load static %}
+{% load user_filters %}
+{% block title %} Логин {% endblock %}
+{% block content %}
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <section class="form_login">
+            <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            {% for field in form %}
+              <div class="form-group row my-3"
+                {% if field.field.required %} 
+                aria-required="true"
+                {% else %}
+                aria-required="false"
+                {% endif %}
+              >
+                {% include 'registration/includes/fields_form.html'%}
+              </div>
+            {% endfor %}
+            <div class="enter_btn">
+              <button type="submit" class="form_btn">
+                Войти
+              </button>
+              <a href="{% url 'password_reset' %}" class="forget-button">
+                Забыли пароль
+              </a>
+            </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </div>
+{% endblock %}
