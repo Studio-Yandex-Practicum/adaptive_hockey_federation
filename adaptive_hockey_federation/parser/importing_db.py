@@ -54,31 +54,3 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
             player_model.save()
         except Exception as e:
             print(f'Ошибка вставки данных {e} -> {item}')
-
-
-def importing_test_data_db(FIXSTURES_DIR: str, file_name: str) -> None:
-    file = open(FIXSTURES_DIR / file_name)
-    data = json.load(file)
-    key = file_name.replace('.json', '')
-    models_name = FILE_MODEL_MAP[key]
-    for item in data:
-        try:
-            if key == 'main_team':
-                model_ins = models_name(
-                    id=item['id'],
-                    name=item['name'],
-                    city_id=item['city_id'],
-                    discipline_name_id=item['discipline_name_id'],
-                    staff_team_member_id=1,
-                    curator_id=1
-                )
-                model_ins.save()
-            else:
-                model_ins = models_name(
-                    id=item['id'],
-                    name=item['name']
-                )
-                model_ins.save()
-        except Exception as e:
-            print(f'Ошибка вставки данных {e} -> {item}')
-    print(f'Импорт тестовых данных в {key} успешно выполнился.')

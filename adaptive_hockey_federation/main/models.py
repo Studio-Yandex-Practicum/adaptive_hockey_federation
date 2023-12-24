@@ -391,6 +391,8 @@ class Player(BasePerson):
         default_related_name = 'players'
         verbose_name = 'Игрок'
         verbose_name_plural = 'Игроки'
+        # TODO Раскомментировать, когда будет ручное добавление игроков
+        # ограничение на дублирование записей
         constraints = [
             models.UniqueConstraint(
                 name='player_unique',
@@ -398,21 +400,11 @@ class Player(BasePerson):
                     'name',
                     'surname',
                     'patronymic',
-                    'birthday',
+                    'birthday'
+                    # 'position',
+                    # 'number'
                 ]
             ),
-            # TODO т.к. данные, которые ипортирууются
-            # из парсинга могут быть
-            # без номера игрока/игровой позиции
-            # раскомментить, когда проект уже перейдет
-            # на внесение данных заказчиком
-            # models.UniqueConstraint(
-            #     name='player_position_number_unique',
-            #     fields=[
-            #         'position',
-            #         'number'
-            #     ]
-            # )
         ]
 
     def __str__(self):
