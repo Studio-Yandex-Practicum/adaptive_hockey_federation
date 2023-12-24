@@ -15,6 +15,9 @@ PLAYER_NUMBER = '[И|и][Г|г][Р|р][О|о][В|в][О|о][Й|й]'
 POSITION = '[П|п][О|о][З|з][И|и][Ц|ц][И|и][Я|я]'
 NUMERIC_STATUS = '[Ч|ч].+[С|с][Т|т].+'
 PLAYER_CLASS = '[К|к][Л|л][А|а][С|с][С|с]'
+PASSPORT = '[П|а][С|с][П|п][О|о][Р|р][Т|т]'
+ASSISTENT = 'А'
+CAPTAIN = 'К'
 
 
 def read_file_columns(file: docx) -> list[docx]:
@@ -81,7 +84,6 @@ def columns_parser(
                 if re.search(regular_expression, cell.text):
                     for cell in column.cells[index + 1:index + 1 + count]:
                         output.append(cell.text)
-
     return output
 
 
@@ -296,6 +298,53 @@ def find_numeric_statuses(file: docx) -> list[list[str]]:
     return numeric_statuses_list
 
 
+def find_passport(columns: list[docx], regular_expression: str) -> list[str]:
+    """Функция парсит в искомом столбце ПД.
+    """
+    identity_list = columns_parser(columns, regular_expression)
+    return [
+        ' '.join(identity_data.split())
+        for identity_data in identity_list
+        if identity_data
+    ]
+
+
+def find_players_is_captain(
+        columns: list[docx],
+        regular_expression: str,
+) -> list[bool]:
+    """Функция парсит в искомом столбце капитанов.
+    """
+    is_captain_list = []
+    for is_captain in columns_parser(columns, regular_expression):
+        if is_captain and CAPTAIN in is_captain:
+            try:
+                is_captain_list.append(True)
+            except ValueError:
+                is_captain_list.append(False)
+        else:
+            is_captain_list.append(False)
+    return is_captain_list
+
+
+def find_players_is_assistant(
+        columns: list[docx],
+        regular_expression: str,
+) -> list[bool]:
+    """Функция парсит в искомом столбце асситсента.
+    """
+    is_assistant_list = []
+    for is_assistant in columns_parser(columns, regular_expression):
+        if is_assistant and ASSISTENT in is_assistant:
+            try:
+                is_assistant_list.append(True)
+            except ValueError:
+                is_assistant_list.append(False)
+        else:
+            is_assistant_list.append(False)
+    return is_assistant_list
+
+
 def numeric_status_check(
         name: str,
         surname: str,
@@ -331,7 +380,9 @@ def docx_parser(
     team = find_team(text_from_file, columns_from_file, TEAM)
     players_number = find_players_number(columns_from_file, PLAYER_NUMBER)
     positions = find_positions(columns_from_file, POSITION)
-
+    passport = find_passport(columns_from_file, PASSPORT)
+    is_assistent = find_players_is_assistant(columns_from_file, PLAYER_NUMBER)
+    is_captain = find_players_is_captain(columns_from_file, PLAYER_NUMBER)
     return [
         BaseUserInfo(
             name=names[index],
@@ -347,6 +398,9 @@ def docx_parser(
                 numeric_statuses,
             ),
             patronymic=patronymics[index],
+            passport=passport[index],
+            is_assistant=is_assistent[index],
+            is_captain=is_captain[index]
         ).__dict__
         for index in range(len(names))
     ]
