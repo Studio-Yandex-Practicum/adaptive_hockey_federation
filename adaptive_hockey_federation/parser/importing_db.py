@@ -81,4 +81,4 @@ def importing_test_data_db(FIXSTURES_DIR: str, file_name: str) -> None:
                 model_ins.save()
         except Exception as e:
             print(f'Ошибка вставки данных {e} -> {item}')
-    print(f'Импорт тестовых данных в {key} успешно выполнился.')
+    print(f'Импорт тестовых данных в {key} успешно выполнился')
