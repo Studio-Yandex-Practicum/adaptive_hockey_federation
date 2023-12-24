@@ -7,9 +7,16 @@ env.read_env(ROOT_DIR / '.env')
 
 DEV_APPS = [
     'django_extensions',
+    'debug_toolbar',
 ]
 
 INSTALLED_APPS += DEV_APPS
+
+MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 DATABASES = {
     'default': {
