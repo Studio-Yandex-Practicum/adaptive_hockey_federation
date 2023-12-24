@@ -24,7 +24,10 @@
                 </div>
               </div>
               <li class="nav-item py-2">
-                {% url 'main:users' as url_name %}{% include "includes/button.html" with name="Пользователи" %}
+                {% url 'main:players' as url_name %}{% include "includes/button.html" with name="Игроки" %}
+              </li>
+              <li class="nav-item py-2">
+                {% url 'users:list' as url_name %}{% include "includes/button.html" with name="Пользователи" %}
               </li>
               <li class="nav-item py-2">
                 {% url 'main:teams' as url_name %}{% include "includes/button.html" with name="Команды" %}
