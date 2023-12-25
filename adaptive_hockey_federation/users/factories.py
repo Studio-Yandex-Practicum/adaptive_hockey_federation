@@ -15,5 +15,5 @@ class UserFactory(factory.django.DjangoModelFactory):
     email = factory.Faker('email', locale='ru_RU')
     phone = factory.Faker('phone_number', locale='ru_RU')
     is_staff = True
-    is_superuser = True
+    is_superuser = False
     password = factory.PostGenerationMethodCall('set_password', 'pass1234')
