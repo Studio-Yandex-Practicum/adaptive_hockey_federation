@@ -27,5 +27,5 @@ def xlsx_parser(path: str) -> list[BaseUserInfo]:
                 revision=data.get('Пересмотр (начало сезона)'),
                 numeric_status=None
             )
-            players.append(player)
+            players.append(player.__dict__)
     return players
