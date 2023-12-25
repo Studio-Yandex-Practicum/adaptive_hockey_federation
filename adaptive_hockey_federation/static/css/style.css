@@ -41,7 +41,7 @@ html {
     height: 159px;
     font-size: 40px;
     margin-left: -60px
-        
+
 }
 
 .btns {
@@ -82,7 +82,7 @@ html {
         color: #fff;
         text-decoration: none;
     }
-    
+
 }
 
 .open-button {
@@ -99,7 +99,7 @@ html {
     right: -30px;
     width: 180px;
   }
-  
+
   .form-popup {
     position: fixed;
     top: 50%;
@@ -109,9 +109,9 @@ html {
     transform: translate(-50%, -50%);
     display: none;
     z-index: 999;
-    border-radius: 10px;    
+    border-radius: 10px;
   }
-  
+
   .form-container_reset {
     width: 700px;
     height: 400px;
@@ -119,18 +119,18 @@ html {
     background-image: url("img/forma.jpg");
     justify-content: center;
     text-align: center;
-    
+
   }
-  
+
   .form-container_reset input[type=text] {
     width: 40%;
     padding: 15px;
     margin: 5px 0 22px 0;
     border: none;
     background: #f1f1f1;
-    
+
   }
-  
+
   .form-container_reset input[type=text]:focus {
     background-color: #803e3e;
     outline: none;
@@ -148,8 +148,8 @@ html {
     font-size: 15px;
     font-weight: bold;
     display: inline;
-    
-    
+
+
   }
 
 
@@ -159,7 +159,7 @@ html {
   .form-container_reset_reset .cancel {
     background-color: #64C2D1;
   }
-  
+
   .form-container_reset .btn:hover, .open-button:hover {
     opacity: 4;
   }
@@ -176,4 +176,3 @@ html {
 .text_inbox {
   text-align: center;
 }
-
