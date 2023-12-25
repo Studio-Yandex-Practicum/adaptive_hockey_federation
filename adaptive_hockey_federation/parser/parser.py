@@ -1,9 +1,14 @@
+import json
 import os
 from pprint import pprint
 
 import click
 import docx  # type: ignore
 
+from adaptive_hockey_federation.core.config.dev_settings import (
+    FIXSTURES_DIR,
+    FIXSTURES_FILE,
+)
 from adaptive_hockey_federation.parser.docx_parser import (
     docx_parser,
     find_numeric_statuses,
@@ -63,7 +68,17 @@ def parsing_file(path: str, result: bool) -> None:
     if result:
         for data in results_list:
             pprint(data)
-    results_list = list(set(results_list))
+
+    if not os.path.exists(FIXSTURES_DIR):
+        os.makedirs(FIXSTURES_DIR)
+    json.dump(
+        results_list,
+        open(FIXSTURES_FILE, 'w', encoding='utf8'),
+        ensure_ascii=False, indent=4, default=str
+    )
+
+    results_list = list(results_list)
+
     click.echo(f'Успешно обработано {len(files)} файлов.')
     click.echo(f'Извлечено {len(results_list)} уникальных записей')
 
