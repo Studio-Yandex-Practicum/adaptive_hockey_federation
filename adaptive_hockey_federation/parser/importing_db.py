@@ -23,9 +23,9 @@ FILE_MODEL_MAP = {
 
 
 def parse_file(file_path: str) -> list[BaseUserInfo]:
-    file = open(file_path)
-    data = json.load(file)
-    return data
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        return data
 
 
 def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
