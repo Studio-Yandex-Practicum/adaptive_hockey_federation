@@ -27,9 +27,12 @@ repos:
       - id: mypy
         exclude: migrations/|config/|.*settings(\.py|/)?
         additional_dependencies:
+        - django-debug-toolbar
         - django-stubs
         - django-environ
         - django-phonenumber-field[phonenumbers]
+        - django_extensions
+        - psycopg2-binary
 
   - repo: local
     hooks:
@@ -37,7 +40,7 @@ repos:
         name: Export dev Dependencies
         language: system
         pass_filenames: false
-        entry: poetry export --without-hashes --dev --output requirements/develop.txt
+        entry: poetry export --without-hashes --with dev --output requirements/develop.txt
         files: ^(pyproject.toml|poetry.lock)$
       - id: export-prod-dependencies
         name: Export prod Dependencies

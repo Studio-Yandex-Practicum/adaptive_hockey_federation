@@ -103,6 +103,7 @@ fill-db:
 fixture-fill-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --city
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --staff
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --users
 
 
 # Прогон тестов с помощью pytest

@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.views.generic.list import ListView
+from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -21,8 +24,8 @@ def main(request):
 
 
 @login_required
-def users(request):
-    return render(request, 'main/users.html')
+def players(request):
+    return render(request, 'main/players.html')
 
 
 @login_required
@@ -30,9 +33,35 @@ def teams_id(request, id):
     return render(request, 'main/teams_id.html')
 
 
-@login_required
-def teams(request):
-    return render(request, 'main/teams.html', CONTEXT_EXAMPLE)
+class TeamListView(LoginRequiredMixin, ListView):
+    model = Team
+    template_name = 'main/teams.html'
+    context_object_name = 'teams'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        teams = context['teams']
+        table_head = {}
+        for field in Team._meta.get_fields():
+            if hasattr(field, 'verbose_name') and field.name != 'id':
+                table_head[field.name] = field.verbose_name
+        table_head['players'] = 'Состав'
+
+        table_data = []
+        for team in teams:
+            team_data = {}
+            for field in Team._meta.get_fields():
+                if hasattr(field, 'verbose_name') and field.name != 'id':
+                    team_data[field.name] = getattr(team, field.name)
+            players = Player.objects.filter(team=team)
+            team_data['players'] = ', '.join(map(str, players))
+            table_data.append(team_data)
+
+        context = {
+            'table_head': table_head,
+            'table_data': table_data
+        }
+        return context
 
 
 @login_required

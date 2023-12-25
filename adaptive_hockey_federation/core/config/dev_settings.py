@@ -7,9 +7,16 @@ env.read_env(ROOT_DIR / '.env')
 
 DEV_APPS = [
     'django_extensions',
+    'debug_toolbar',
 ]
 
 INSTALLED_APPS += DEV_APPS
+
+MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 DATABASES = {
     'default': {
@@ -22,8 +29,11 @@ DATABASES = {
     }
 }
 
-RESOURSES_ROOT = BASE_DIR / 'resourses'
-
 DJANGO_SUPERUSER_USERNAME = env('DJANGO_SUPERUSER_USERNAME', default='admin')
 DJANGO_SUPERUSER_EMAIL = env('DJANGO_SUPERUSER_EMAIL', default='admin@admin.ru')
 DJANGO_SUPERUSER_PASSWORD = env('DJANGO_SUPERUSER_PASSWORD', default='admin')
+
+FIXSTURES_DIR = BASE_DIR / 'core' / 'fixtures'
+JSON_PARSER_FILE = 'data.json'
+FIXSTURES_FILE = FIXSTURES_DIR / JSON_PARSER_FILE
+RESOURSES_ROOT = BASE_DIR / 'resourses'
