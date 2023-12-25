@@ -64,6 +64,7 @@ module = [
     "adaptive_hockey_federation.parser.*",
     "adaptive_hockey_federation.core.*",
     "phonenumber_field.*",
+    "factory",
 ]
 ignore_missing_imports = true
 
