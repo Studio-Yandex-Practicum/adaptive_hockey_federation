@@ -12,12 +12,13 @@ PATRONYMIC = '[О|о][Т|т]?[Ч|ч][Е|е][С|с][Т|т][В|в][О|о]'
 DATE_OF_BIRTH = '[Д|д][А|а][Т|т][А|а] [Р|р][О|о].+'
 TEAM = '[К|к][О|о][М|м][А|а][Н|н][Д|д][А|а]'
 PLAYER_NUMBER = '[И|и][Г|г][Р|р][О|о][В|в][О|о][Й|й]'
-POSITION = '[П|п][О|о][З|з][И|и][Ц|ц][И|и][Я|я]'
+POSITION = '[П|п][О|о][З|з][И|и][Ц|ц][И|и][Я|я]|[Д|д]олжность'
 NUMERIC_STATUS = '[Ч|ч].+[С|с][Т|т].+'
 PLAYER_CLASS = '[К|к][Л|л][А|а][С|с][С|с]'
 PASSPORT = '[П|а][С|с][П|п][О|о][Р|р][Т|т]'
 ASSISTENT = 'А'
 CAPTAIN = 'К'
+DISCIPLINE_LEVEL = '[Ч|ч]исловой статус'
 
 
 def read_file_columns(file: docx) -> list[docx]:
@@ -92,6 +93,7 @@ def find_names(columns: list[docx], regular_expression: str) -> list[str]:
     (имя идет после фамилии на втором месте).
     """
     names_list = columns_parser(columns, regular_expression)
+    print(f'!!!!{names_list}')
     return [
         name.split()[1].rstrip()
         for name in names_list
@@ -345,6 +347,19 @@ def find_players_is_assistant(
     return is_assistant_list
 
 
+def find_discipline_level(
+        columns: list[docx],
+        regular_expression: str) -> list[str]:
+    """Функция парсит в искомом столбце классификацию/числовой статус.
+    """
+    discipline_level_list = columns_parser(columns, regular_expression)
+    return [
+        discipline_level_data
+        for discipline_level_data in discipline_level_list
+        if discipline_level_data
+    ]
+
+
 def numeric_status_check(
         name: str,
         surname: str,
@@ -383,6 +398,11 @@ def docx_parser(
     passport = find_passport(columns_from_file, PASSPORT)
     is_assistent = find_players_is_assistant(columns_from_file, PLAYER_NUMBER)
     is_captain = find_players_is_captain(columns_from_file, PLAYER_NUMBER)
+    discipline_level = find_discipline_level(
+        columns_from_file,
+        DISCIPLINE_LEVEL
+    )
+
     return [
         BaseUserInfo(
             name=names[index],
@@ -400,7 +420,8 @@ def docx_parser(
             patronymic=patronymics[index],
             passport=passport[index],
             is_assistant=is_assistent[index],
-            is_captain=is_captain[index]
+            is_captain=is_captain[index],
+            classification=discipline_level[index]
         ).__dict__
         for index in range(len(names))
     ]
