@@ -12,11 +12,15 @@ class UserAdmin(admin.ModelAdmin):
         'role',
         'email',
         'phone',
+        'is_staff',
+        'is_superuser'
     )
     fields = [
         ('first_name', 'last_name'),
         'role',
         'email',
         'phone',
+        'is_staff',
+        'is_superuser'
     ]
     empty_value_display = '-пусто-'

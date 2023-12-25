@@ -40,7 +40,7 @@ repos:
         name: Export dev Dependencies
         language: system
         pass_filenames: false
-        entry: poetry export --without-hashes --dev --output requirements/develop.txt
+        entry: poetry export --without-hashes --with dev --output requirements/develop.txt
         files: ^(pyproject.toml|poetry.lock)$
       - id: export-prod-dependencies
         name: Export prod Dependencies
