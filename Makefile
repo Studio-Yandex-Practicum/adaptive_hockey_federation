@@ -56,7 +56,7 @@ migrate:
 
 # Создание супер-юзера.
 createsuperuser:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) createsuperuser --no-input
 
 
 # Запуск локальногоконтейнера Postgres
