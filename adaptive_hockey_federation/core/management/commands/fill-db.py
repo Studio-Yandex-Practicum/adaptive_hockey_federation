@@ -15,8 +15,8 @@ DB_MESSAGE = 'Данные успешно добавлены!'
 class Command(BaseCommand):
     help = "Запуск парсера офисных документов, и создание тестовых юзеров."
 
-    def run_parser(self):
-        """Запуск парсера офисных документов."""
+    def load_data(self):
+        """Загрузка распарсенных данных."""
         importing_parser_data_db(settings.FIXSTURES_FILE)
 
     def create_test_users(self):
@@ -26,6 +26,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Запись данных в БД."""
-        self.run_parser()
+        self.load_data()
         self.create_test_users()
         self.stdout.write(self.style.SUCCESS(DB_MESSAGE))
