@@ -3,9 +3,17 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <button class="button_out" type="button">
-        <a class='text' href="https://paraicehockey.ru/">На сайт</a>
-      </button>
+      {% with request.resolver_match.view_name as view_name %}
+      {% if view_name == 'login'%}
+        <button class="button_out" type="button">
+          <a class='text' href="https://paraicehockey.ru/">На сайт</a>
+        </button>
+      {% else %}
+        <button class="button_out" type="button">
+          <a class='text' href="{% url 'login' %}">На страницу логина</a>
+        </button>
+      {% endif %}
+      {% endwith %}
     </div>
   </div>
 </div>

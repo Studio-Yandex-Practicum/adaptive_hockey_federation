@@ -14,11 +14,7 @@
   {% block content %}
       Контент не подвезли
   {% endblock %}
-  {% with request.resolver_match.view_name as view_name %}
-    {% if view_name == 'login'%}
-      {% include 'registration/includes/footer.html'%}
-    {% endif %}
-  {% endwith %}
+  {% include 'registration/includes/footer.html'%}
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

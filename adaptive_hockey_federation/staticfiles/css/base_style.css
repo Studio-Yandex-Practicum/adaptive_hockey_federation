@@ -123,8 +123,10 @@ section {
 
 .reset_card {
   height: 250px;
-  width: 405px;
+  width: 355px;
   left: 200px;
+  border: none;
+  align-items: center;
 }
 
 .reser_card_form {
@@ -132,10 +134,10 @@ section {
   align-items: center;
   text-align: center;
   border: black;
+  background-color: #ECF1F5;
   .reset_btn {
-
     position: absolute;
-    left: 85px;
+    left: 65px;
     margin-top: 20px;
     background-color: #64C2D1;
     color: #fff;
@@ -151,7 +153,7 @@ section {
 .forget-button-done {
   position: absolute;
   text-align: center;
-  left: 95px;
+  left: 85px;
   margin-top: 20px;
   background-color: #64C2D1;
   color: #fff;
@@ -178,4 +180,32 @@ section {
   height: 40px;
   left: -50px;
   margin-top: 20px;
+}
+
+.navbar-options {
+  background-color: #64c2d1;
+}
+
+.navbar-btns{
+  border-color: #fff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.navbar-btns:hover {
+  border-color: #340061;
+  background-color: #340061;
+  color: #fff
+}
+
+.footer-options {
+  background-color: #64c2d1;
+  height: 90px;
+}
+
+.sourch-options {
+  width: 30px;
+  background-color: #fff;
+  border-color: #64C2D1;
+  height: 40px;
 }
