@@ -1,5 +1,5 @@
-<!DOCTYPE html> 
-<html lang="ru">          
+<!DOCTYPE html>
+<html lang="ru">
 <head>
   {% load static %}
   {% load user_filters %}
@@ -8,7 +8,7 @@
   <link rel ="stylesheet" href="{% static 'css/style.css' %}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <script src="{% static 'js/windows.js' %}"></script>
-  <title> Логин</title>     
+  <title> Логин</title>
 </head>
 <body>
   <div class='header'>
@@ -29,7 +29,7 @@
       </div>
       </div>
       <div class='registration-form'>
-        <div class="container"> 
+        <div class="container">
           <div class="row justify-content-center">
             <div class="col-md-3 p-5">
               {% include 'includes/forms_errors.html' %}
@@ -77,13 +77,13 @@
                 {% csrf_token %}
                 {% for field in form %}
                 <div class="form-group row my-3"
-                  {% if field.field.required %} 
+                  {% if field.field.required %}
                   aria-required="true"
                   {% else %}
                   aria-required="false"
                   {% endif %}
                   >
-                  {{ field|addclass:'form-control' }} 
+                  {{ field|addclass:'form-control' }}
                 </div>
                 {% endfor %}
                 <div class="btns">
@@ -93,7 +93,7 @@
                   <button class="open-button" type="button" onclick="openForm()">Забыли пароль</button>
                 </div>
               </form>
-            </div> 
+            </div>
             <div class='btn_back'>
               <button class="button_out" type="button">
                 <a class='text' href="https://paraicehockey.ru/">На сайт</a>
@@ -105,4 +105,4 @@
     </div>
   </div>
 </body>
-</html> 
+</html>
