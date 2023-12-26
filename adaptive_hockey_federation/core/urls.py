@@ -6,4 +6,5 @@ urlpatterns = [
     path('', include('users.urls', namespace='users')),
     path('', include('main.urls', namespace='main')),
     path("__debug__/", include("debug_toolbar.urls")),
+    path('auth/', include('django.contrib.auth.urls')),
 ]
