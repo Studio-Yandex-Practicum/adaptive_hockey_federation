@@ -88,16 +88,16 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATIC_ROOT = BASE_DIR / 'static'
+
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = BASE_DIR / 'staticfiles',
+STATICFILES_DIRS = (BASE_DIR / 'staticfiles',)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-
-STATIC_ROOT = BASE_DIR / 'static'
 
 LOGIN_REDIRECT_URL = 'main:main'
 
@@ -107,7 +107,7 @@ EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
 MEDIA_URL = '/media/'
 
-LOGIN_URL = 'users:login'
+LOGIN_URL = 'login'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
