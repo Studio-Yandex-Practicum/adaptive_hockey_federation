@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from main.models import Player, Team
-from pprint import pprint
+
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
     'table_head': {
@@ -46,7 +46,6 @@ class PlayersCardView(LoginRequiredMixin, ListView):
                 player.discipline_name = player.discipline.name
             else:
                 player.discipline_name = 'Нет дисциплины'
-        pprint(context)
         return context
 
 
