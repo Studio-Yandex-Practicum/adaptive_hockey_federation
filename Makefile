@@ -101,8 +101,8 @@ fill-db:
 
 #Заполнение базы данных фикстурами
 fixture-fill-db:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --city
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --staff
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --city --amount 20
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --staffmember --amount 25
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-db --users
 
 
