@@ -1,3 +1,6 @@
+from os import listdir
+from os.path import isfile, join
+
 from core.constants import ROLE_ADMIN, ROLE_AGENT, ROLE_MODERATOR
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -6,6 +9,7 @@ from users.factories import UserFactory
 
 from adaptive_hockey_federation.parser.importing_db import (
     importing_parser_data_db,
+    importing_real_data_db,
 )
 
 ROLES = [ROLE_AGENT, ROLE_MODERATOR, ROLE_ADMIN]
@@ -47,20 +51,45 @@ class Command(BaseCommand):
             '--amount',
             type=int,
             default=10,
-            help='Количество фикстур для создания')
+            help='Количество фикстур для создания'
+        )
+        parser.add_argument(
+            '-f',
+            '--fixtures',
+            action='store_true',
+            help='Фикстуры с реальными данными для таблиц.',
+        )
 
     def load_data(self):
         """Загрузка распарсенных данных."""
         importing_parser_data_db(settings.FIXSTURES_FILE)
 
+    def load_real_data(self):
+        """Загрузка реальных данных из JSON."""
+        file_names = [f for f in listdir(settings.FIXSTURES_DIR)
+                      if isfile(join(settings.FIXSTURES_DIR, f))]
+        for file_name in file_names:
+            if 'main_' in file_name:
+                try:
+                    importing_real_data_db(
+                        settings.FIXSTURES_DIR,
+                        file_name
+                    )
+                except Exception as e:
+                    print(f'Ошибка вставки тестовых данных {e} -> '
+                          f'{file_name}')
+        return 'Фикстуры с реальными данными вставлены в таблицы!'
+
     def handle(self, *args, **options):
         """Запись данных в БД."""
-
         parser = options.get('parser')
+        fixtures = options.get('fixtures')
         city = options.get('city', False)
         staff_member = options.get('staff', False)
         test_users = options.get('users', False)
         amount = options.get('amount')
+        if fixtures:
+            self.load_real_data()
         if city:
             CityFactory.create_batch(amount)
             return f'{amount} фикстур для таблицы City создано!'

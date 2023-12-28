@@ -3,6 +3,7 @@ import subprocess
 
 from main.models import (
     City,
+    Discipline,
     DisciplineLevel,
     DisciplineName,
     Nosology,
@@ -18,6 +19,7 @@ FILE_MODEL_MAP = {
     'main_city': City,
     'main_disciplinename': DisciplineName,
     'main_disciplinelevel': DisciplineLevel,
+    'main_discipline': Discipline,
     'main_team': Team
 }
 
@@ -52,5 +54,39 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
                 identity_document=item['passport']
             )
             player_model.save()
+        except Exception as e:
+            print(f'Ошибка вставки данных {e} -> {item}')
+
+
+def importing_real_data_db(FIXSTURES_DIR: str, file_name: str) -> None:
+    file = open(FIXSTURES_DIR / file_name)
+    data = json.load(file)
+    key = file_name.replace('.json', '')
+    models_name = FILE_MODEL_MAP[key]
+    for item in data:
+        try:
+            if key == 'main_team':
+                model_ins = models_name(
+                    id=item['id'],
+                    name=item['name'],
+                    city_id=item['city_id'],
+                    discipline_name_id=item['discipline_name_id'],
+                    staff_team_member_id=1,
+                    curator_id=1
+                )
+                model_ins.save()
+            if key == 'main_descipline':
+                model_ins = models_name(
+                    id=item['id'],
+                    discipline_level_id=item['discipline_level_id'],
+                    discipline_name_id=item['discipline_name_id']
+                )
+                model_ins.save()
+            else:
+                model_ins = models_name(
+                    id=item['id'],
+                    name=item['name']
+                )
+                model_ins.save()
         except Exception as e:
             print(f'Ошибка вставки данных {e} -> {item}')
