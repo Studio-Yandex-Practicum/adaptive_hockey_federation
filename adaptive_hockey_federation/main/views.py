@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
+from main.forms import TeamForm
 from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
@@ -28,9 +30,14 @@ def players(request):
     return render(request, 'main/players.html')
 
 
-@login_required
-def teams_id(request, id):
-    return render(request, 'main/teams_id.html')
+class TeamIdView(LoginRequiredMixin, UpdateView):
+    model = Team
+    form_class = TeamForm
+    template_name = 'main/teams_id.html'
+    success_url = '/teams/'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Team, id=self.kwargs['id'])
 
 
 class TeamListView(LoginRequiredMixin, ListView):
@@ -43,7 +50,7 @@ class TeamListView(LoginRequiredMixin, ListView):
         teams = context['teams']
         table_head = {}
         for field in Team._meta.get_fields():
-            if hasattr(field, 'verbose_name') and field.name != 'id':
+            if hasattr(field, 'verbose_name'):
                 table_head[field.name] = field.verbose_name
         table_head['players'] = 'Состав'
 
@@ -51,7 +58,7 @@ class TeamListView(LoginRequiredMixin, ListView):
         for team in teams:
             team_data = {}
             for field in Team._meta.get_fields():
-                if hasattr(field, 'verbose_name') and field.name != 'id':
+                if hasattr(field, 'verbose_name'):
                     team_data[field.name] = getattr(team, field.name)
             players = Player.objects.filter(team=team)
             team_data['players'] = ', '.join(map(str, players))
@@ -59,7 +66,7 @@ class TeamListView(LoginRequiredMixin, ListView):
 
         context = {
             'table_head': table_head,
-            'table_data': table_data
+            'table_data': table_data,
         }
         return context
 

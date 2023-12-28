@@ -22,7 +22,13 @@
     {% for table_string in table_data %}
       <tr>
         {% for cell in table_string.values %}
-          <td class="border rounded-md table-light">{{ cell }}</td>
+          {% if forloop.counter0 == 1 %}
+            <td class="border rounded-md table-light">
+              <a href="{% url 'main:teams_id' id=table_string.id %}">{{ cell }}
+            </td>
+          {% else %}
+            <td class="border rounded-md table-light">{{ cell }}</td>
+          {% endif %}
         {% endfor %}
         <td class="border rounded-md table-light">
           <button type="button"><img src={% static 'img/edit.png' %}></button>
