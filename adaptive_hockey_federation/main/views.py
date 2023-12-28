@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from main.models import Player, Team
-
+from pprint import pprint
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
     'table_head': {
@@ -23,9 +23,31 @@ def main(request):
     return render(request, 'main/main.html')
 
 
-@login_required
-def players(request):
-    return render(request, 'main/players.html')
+class PlayersCardView(LoginRequiredMixin, ListView):
+    model = Player
+    template_name = 'main/players.html'
+    context_object_name = 'players'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.order_by('surname')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        players = context['players']
+
+        for player in players:
+            if player.team:
+                player.team_name = player.team.name
+            else:
+                player.team_name = 'Нет команды'
+            if player.discipline:
+                player.discipline_name = player.discipline.name
+            else:
+                player.discipline_name = 'Нет дисциплины'
+        pprint(context)
+        return context
 
 
 @login_required

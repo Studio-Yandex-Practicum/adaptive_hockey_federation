@@ -3,5 +3,20 @@
   Список игроков
 {% endblock %}
 {% block content %}
-  Список игроков
+<div class="container mt-3">
+  <div class="row row-cols-1 row-cols-md-5 g-4">
+    {% for player in players %}
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ player.surname }} {{ player.name }}</h5>
+            <p class="card-text">Дата рождения:<br>{{ player.birthday }}</p>
+            <p class="card-text">Команда:<br>{{ player.team_name }}</p>
+            <p class="card-text">Дисциплина:<br>{{ player.discipline_name }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}
