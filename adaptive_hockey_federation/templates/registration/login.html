@@ -9,10 +9,10 @@
           <section class="form_login">
             <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
-            
+
             {% for field in form %}
               <div class="form-group row my-3"
-                {% if field.field.required %} 
+                {% if field.field.required %}
                 aria-required="true"
                 {% else %}
                 aria-required="false"
