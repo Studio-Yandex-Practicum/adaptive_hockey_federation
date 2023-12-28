@@ -3,8 +3,9 @@ from django.core.management.base import BaseCommand
 from main.factories import CityFactory, StaffMemberFactory
 from users.factories import UserFactory
 
-ROLES = [ROLE_AGENT, ROLE_MODERATOR, ROLE_ADMIN]
-TEST_USERS_AMOUNT = 3
+AMOUNT_ADMIN = 3
+AMOUNT_MODERATOR = 2
+AMOUNT_AGENT = 15
 DB_MESSAGE = 'Данные успешно добавлены!'
 
 
@@ -49,6 +50,12 @@ class Command(BaseCommand):
             StaffMemberFactory.create_batch(amount)
             return f'{amount} фикстур для таблицы StaffMemmber создано!'
         if test_users:
-            for role in ROLES:
+            users = {
+                ROLE_ADMIN: AMOUNT_ADMIN,
+                ROLE_MODERATOR: AMOUNT_MODERATOR,
+                ROLE_AGENT: AMOUNT_AGENT
+            }
+            users_amount = sum(users.values())
+            for role, amount in users.items():
                 UserFactory.create_batch(amount, role=role)
-        self.stdout.write(self.style.SUCCESS(DB_MESSAGE))
+            return f'{users_amount} фикстур для таблицы User создано!'
