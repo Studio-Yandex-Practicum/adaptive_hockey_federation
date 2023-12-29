@@ -18,6 +18,8 @@ PLAYER_CLASS = '[К|к][Л|л][А|а][С|с][С|с]'
 PASSPORT = '[П|а][С|с][П|п][О|о][Р|р][Т|т]'
 ASSISTENT = 'А'
 CAPTAIN = 'К'
+DISCIPLINE_LEVEL = 'без ограничений'
+DISCIPLINE_CLEAR = '[Б|б][Класс|класс]'
 
 
 def read_file_columns(file: docx) -> list[docx]:
@@ -345,6 +347,41 @@ def find_players_is_assistant(
     return is_assistant_list
 
 
+def find_discipline_level(
+        columns: list[docx],
+        regular_expression: str,
+) -> list[bool]:
+    """Функция парсит в искомом столбце класс/статус.
+    """
+    discipline_level_list = []
+    for discipline_level in columns_parser(columns, regular_expression):
+        if discipline_level:
+            try:
+                discipline_level = (discipline_level.replace(
+                    'Класс ', '').replace('класс ', '')
+                )
+                discipline_level = re.sub(
+                    r'без ограничений|Не имеет ограничений по здоровью'
+                    '|Без ограничений по здоровью'
+                    '|4Без ограничений'
+                    '|Без ограничений\n4|без ограничений по здоровью 2'
+                    '|игрок без ограничений по здоровью'
+                    '|(без ограничений по здоровью)  3'
+                    '|без ограничений 2|Не имеет ограничений по здоровью',
+                    'б\к', discipline_level)
+                if discipline_level != 'б\к':
+                    discipline_level = (
+                        discipline_level.replace('А', 'A').replace(
+                            'С', 'C').replace('Б', 'B').replace('б', 'B')
+                    )
+                discipline_level_list.append(discipline_level)
+            except ValueError:
+                discipline_level_list.append('None')
+        else:
+            discipline_level_list.append(None)
+    return discipline_level_list
+
+
 def numeric_status_check(
         name: str,
         surname: str,
@@ -383,6 +420,8 @@ def docx_parser(
     passport = find_passport(columns_from_file, PASSPORT)
     is_assistent = find_players_is_assistant(columns_from_file, PLAYER_NUMBER)
     is_captain = find_players_is_captain(columns_from_file, PLAYER_NUMBER)
+    classification = find_discipline_level(columns_from_file, DISCIPLINE_LEVEL)
+
     return [
         BaseUserInfo(
             name=names[index],
@@ -400,7 +439,9 @@ def docx_parser(
             patronymic=patronymics[index],
             passport=passport[index],
             is_assistant=is_assistent[index],
-            is_captain=is_captain[index]
+            is_captain=is_captain[index],
+            classification=(None if len(classification) == 0
+                            else classification[index])
         ).__dict__
         for index in range(len(names))
     ]

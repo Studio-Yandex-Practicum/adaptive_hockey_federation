@@ -39,6 +39,16 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
                 item[key] = ''
             if item[key] is None and key == 'player_number':
                 item[key] = 0
+            if key == 'classification':
+                try:
+                    discipline_level_id = DisciplineLevel.objects.get(
+                        name=item['classification']
+                    )
+                    discipline = Discipline.objects.get(
+                        discipline_level_id=discipline_level_id
+                    )
+                except DisciplineLevel.DoesNotExist:
+                    discipline = None
         try:
             player_model = Player(
                 surname=item['surname'],
@@ -51,7 +61,8 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
                 number=item['player_number'],
                 is_captain=item['is_captain'],
                 is_assistent=item['is_assistant'],
-                identity_document=item['passport']
+                identity_document=item['passport'],
+                discipline=discipline
             )
             player_model.save()
         except Exception as e:
@@ -75,7 +86,7 @@ def importing_real_data_db(FIXSTURES_DIR: str, file_name: str) -> None:
                     curator_id=1
                 )
                 model_ins.save()
-            if key == 'main_descipline':
+            if key == 'main_discipline':
                 model_ins = models_name(
                     id=item['id'],
                     discipline_level_id=item['discipline_level_id'],
