@@ -16,8 +16,8 @@ POSITION = '[П|п][О|о][З|з][И|и][Ц|ц][И|и][Я|я]|Должность
 NUMERIC_STATUS = '[Ч|ч].+[С|с][Т|т].+'
 PLAYER_CLASS = '[К|к][Л|л][А|а][С|с][С|с]'
 PASSPORT = '[П|а][С|с][П|п][О|о][Р|р][Т|т]'
-ASSISTENT = ('(А)', '(а)', 'Ассистент', 'ассистент')
-CAPTAIN = ('(К)', '(к)', 'Капитан', 'капитан')
+ASSISTENT = ['А', 'а', '(А)', '(а)', 'Ассистент', 'ассистент']
+CAPTAIN = ['К', 'к', '(К)', '(к)', 'Капитан', 'капитан']
 DISCIPLINE_LEVEL = 'без ограничений'
 
 
@@ -318,13 +318,14 @@ def find_players_is_captain(
     """
     is_captain_list = []
     for is_captain in columns_parser(columns, regular_expression):
-        if is_captain and is_captain in CAPTAIN:
-            try:
-                is_captain_list.append(True)
-            except ValueError:
+        for i in CAPTAIN:
+            if is_captain and i in is_captain.strip():
+                try:
+                    is_captain_list.append(True)
+                except ValueError:
+                    is_captain_list.append(False)
+            else:
                 is_captain_list.append(False)
-        else:
-            is_captain_list.append(False)
     return is_captain_list
 
 
@@ -336,13 +337,14 @@ def find_players_is_assistant(
     """
     is_assistant_list = []
     for is_assistant in columns_parser(columns, regular_expression):
-        if is_assistant and is_assistant in ASSISTENT:
-            try:
-                is_assistant_list.append(True)
-            except ValueError:
+        for i in ASSISTENT:
+            if is_assistant and i in is_assistant.strip():
+                try:
+                    is_assistant_list.append(True)
+                except ValueError:
+                    is_assistant_list.append(False)
+            else:
                 is_assistant_list.append(False)
-        else:
-            is_assistant_list.append(False)
     return is_assistant_list
 
 
@@ -396,6 +398,12 @@ def numeric_status_check(
     return None
 
 
+def length_list(name: list, len_name: int) -> list:
+    if len(name) != len_name:
+        for _ in range(len_name - len(name)):
+            name.append(None)
+
+
 def docx_parser(
         path: str,
         numeric_statuses: list[list[str]]
@@ -423,24 +431,12 @@ def docx_parser(
     is_captains_alt = find_players_is_captain(columns_from_file, POSITION)
     classification = find_discipline_level(columns_from_file, DISCIPLINE_LEVEL)
 
-    if len(players_number) != len(names):
-        for _ in range(len(names) - len(players_number)):
-            players_number.append(0)
-    if len(is_assistents) != len(names):
-        for _ in range(len(names) - len(is_assistents)):
-            is_assistents.append(False)
-    if len(is_captains) != len(names):
-        for _ in range(len(names) - len(is_captains)):
-            is_captains.append(False)
-    if len(classification) != len(names):
-        for _ in range(len(names) - len(classification)):
-            classification.append(None)
-    if len(passport) != len(names):
-        for _ in range(len(names) - len(passport)):
-            passport.append(None)
-    if len(positions) != len(names):
-        for _ in range(len(names) - len(positions)):
-            positions.append(None)
+    length_list(players_number, len(names))
+    length_list(is_assistents, len(names))
+    length_list(is_captains, len(names))
+    length_list(classification, len(names))
+    length_list(passport, len(names))
+    length_list(positions, len(names))
 
     return [
         BaseUserInfo(

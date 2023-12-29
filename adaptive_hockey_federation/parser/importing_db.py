@@ -25,7 +25,9 @@ FILE_MODEL_MAP = {
     'main_team': Team
 }
 
-POSITIONS = ('нападающий', 'поплавок', 'вратарь', 'защитник')
+PLAYER_POSITIONS = ['нападающий', 'поплавок', 'вратарь', 'защитник',
+                    'Позиция записана неверно',]
+STAFF_POSITIONS = ['тренер', 'координатор', 'пушер',]
 
 
 def parse_file(file_path: str) -> list[BaseUserInfo]:
@@ -52,14 +54,37 @@ def create_staff_member(item) -> None:
         staff_member_model = StaffMember(
             surname=item['surname'],
             name=item['name'],
-            patronymic=item['patronymic'],
+            patronymic=item['patronymic']
         )
         staff_member_model.save()
         staff_team_member_model = StaffTeamMember(
             staff_position=item['position'],
-            staff_member_id=staff_member_model.id)
+            staff_member_id=staff_member_model.id,
+            notes=item['date_of_birth'].replace(' 00:00:00', '')
+        )
         staff_team_member_model.save()
 
+    except Exception as e:
+        print(f'Ошибка вставки данных {e} -> {item}')
+
+
+def create_players(item, discipline: int) -> None:
+    try:
+        player_model = Player(
+            surname=item['surname'],
+            name=item['name'],
+            patronymic=item['patronymic'],
+            birthday=item['date_of_birth'].replace(' 00:00:00', ''),
+            gender='',
+            level_revision=item['revision'],
+            position=item['position'],
+            number=item['player_number'],
+            is_captain=item['is_captain'],
+            is_assistent=item['is_assistant'],
+            identity_document=item['passport'],
+            discipline=discipline
+        )
+        player_model.save()
     except Exception as e:
         print(f'Ошибка вставки данных {e} -> {item}')
 
@@ -73,28 +98,12 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
                 item[key] = ''
             if item[key] is None and key == 'player_number':
                 item[key] = 0
-            if key == 'classification':
-                discipline = get_discipline(item['classification'])
-            if key == 'position' and item[key] not in POSITIONS:
+        for i in PLAYER_POSITIONS:
+            if i in item['position']:
+                create_players(item, get_discipline(item['classification']))
+        for i in STAFF_POSITIONS:
+            if i in item['position']:
                 create_staff_member(item)
-        try:
-            player_model = Player(
-                surname=item['surname'],
-                name=item['name'],
-                patronymic=item['patronymic'],
-                birthday=item['date_of_birth'].replace(' 00:00:00', ''),
-                gender='',
-                level_revision=item['revision'],
-                position=item['position'],
-                number=item['player_number'],
-                is_captain=item['is_captain'],
-                is_assistent=item['is_assistant'],
-                identity_document=item['passport'],
-                discipline=discipline
-            )
-            player_model.save()
-        except Exception as e:
-            print(f'Ошибка вставки данных {e} -> {item}')
 
 
 def importing_real_data_db(FIXSTURES_DIR: str, file_name: str) -> None:
