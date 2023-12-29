@@ -8,6 +8,8 @@ from main.models import (
     DisciplineName,
     Nosology,
     Player,
+    StaffMember,
+    StaffTeamMember,
     Team,
 )
 
@@ -23,11 +25,43 @@ FILE_MODEL_MAP = {
     'main_team': Team
 }
 
+POSITIONS = ('нападающий', 'поплавок', 'вратарь', 'защитник')
+
 
 def parse_file(file_path: str) -> list[BaseUserInfo]:
     with open(file_path, 'r') as file:
         data = json.load(file)
         return data
+
+
+def get_discipline(item_name: str) -> int:
+    try:
+        discipline_level_id = DisciplineLevel.objects.get(
+            name=item_name
+        )
+        discipline = Discipline.objects.get(
+            discipline_level_id=discipline_level_id
+        )
+    except DisciplineLevel.DoesNotExist:
+        discipline = None
+    return discipline
+
+
+def create_staff_member(item) -> None:
+    try:
+        staff_member_model = StaffMember(
+            surname=item['surname'],
+            name=item['name'],
+            patronymic=item['patronymic'],
+        )
+        staff_member_model.save()
+        staff_team_member_model = StaffTeamMember(
+            staff_position=item['position'],
+            staff_member_id=staff_member_model.id)
+        staff_team_member_model.save()
+
+    except Exception as e:
+        print(f'Ошибка вставки данных {e} -> {item}')
 
 
 def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
@@ -40,15 +74,9 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
             if item[key] is None and key == 'player_number':
                 item[key] = 0
             if key == 'classification':
-                try:
-                    discipline_level_id = DisciplineLevel.objects.get(
-                        name=item['classification']
-                    )
-                    discipline = Discipline.objects.get(
-                        discipline_level_id=discipline_level_id
-                    )
-                except DisciplineLevel.DoesNotExist:
-                    discipline = None
+                discipline = get_discipline(item['classification'])
+            if key == 'position' and item[key] not in POSITIONS:
+                create_staff_member(item)
         try:
             player_model = Player(
                 surname=item['surname'],
