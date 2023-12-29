@@ -44,6 +44,7 @@ class TeamListView(LoginRequiredMixin, ListView):
     model = Team
     template_name = 'main/teams.html'
     context_object_name = 'teams'
+    ordering = ['id']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

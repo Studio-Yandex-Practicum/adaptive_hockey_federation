@@ -3,12 +3,24 @@
   Профиль команды
 {% endblock %}
 {% block content %}
-  <h2>Профиль команды</h2>
-
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить изменения</button>
-  </form>
-
+  <h2 class="text-center mb-4">Профиль команды</h2>
+  <div class="card-body">
+    <form method="post" enctype="application/x-www-form-urlencoded" class="mx-auto" style="max-width: 400px;">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group row my-3 p-3">
+        <label for="{{ field.id_for_label }}">
+          {{ field.label }}
+          {% if field.field.required %}
+            <span class="required text-danger">*</span>
+          {% endif %}
+        </label>
+        {{ field }}
+      </div>
+      {% endfor %}
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}
