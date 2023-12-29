@@ -1,11 +1,21 @@
 from core.constants import ROLE_ADMIN, ROLE_AGENT, ROLE_MODERATOR
 from django.core.management.base import BaseCommand
-from main.factories import CityFactory, StaffMemberFactory
+from main.factories import (
+    CityFactory,
+    DiagnosisFactory,
+    NosologyFactory,
+    StaffMemberFactory,
+)
 from users.factories import UserFactory
 
 AMOUNT_ADMIN = 3
 AMOUNT_MODERATOR = 2
 AMOUNT_AGENT = 15
+USERS = {
+    ROLE_ADMIN: AMOUNT_ADMIN,
+    ROLE_MODERATOR: AMOUNT_MODERATOR,
+    ROLE_AGENT: AMOUNT_AGENT
+}
 DB_MESSAGE = 'Данные успешно добавлены!'
 
 
@@ -32,6 +42,18 @@ class Command(BaseCommand):
             help='Фикстуры для таблицы Users'
         )
         parser.add_argument(
+            '-n',
+            '--nosology',
+            action='store_true',
+            help='Фикстуры для таблицы Nosology'
+        )
+        parser.add_argument(
+            '-d',
+            '--diagnosis',
+            action='store_true',
+            help='Фикстуры для таблицы Diagnosis'
+        )
+        parser.add_argument(
             '-a',
             '--amount',
             type=int,
@@ -42,6 +64,8 @@ class Command(BaseCommand):
         city = options.get('city', False)
         staff_member = options.get('staffmember', False)
         test_users = options.get('users', False)
+        nosology = options.get('nosology', False)
+        diagnosis = options.get('diagnosis', False)
         amount = options.get('amount')
         if city:
             CityFactory.create_batch(amount)
@@ -50,12 +74,13 @@ class Command(BaseCommand):
             StaffMemberFactory.create_batch(amount)
             return f'{amount} фикстур для таблицы StaffMemmber создано!'
         if test_users:
-            users = {
-                ROLE_ADMIN: AMOUNT_ADMIN,
-                ROLE_MODERATOR: AMOUNT_MODERATOR,
-                ROLE_AGENT: AMOUNT_AGENT
-            }
-            users_amount = sum(users.values())
-            for role, amount in users.items():
+            users_amount = sum(USERS.values())
+            for role, amount in USERS.items():
                 UserFactory.create_batch(amount, role=role)
             return f'{users_amount} фикстур для таблицы User создано!'
+        if nosology:
+            NosologyFactory.create_batch(amount)
+            return f'{amount} фикстур для таблицы Nosology создано!'
+        if diagnosis:
+            DiagnosisFactory.create_batch(amount)
+            return f'{amount} фикстур для таблицы Diagnosis создано!'
