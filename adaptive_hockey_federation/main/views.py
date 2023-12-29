@@ -28,24 +28,19 @@ class PlayersCardView(LoginRequiredMixin, ListView):
     template_name = 'main/players.html'
     context_object_name = 'players'
     paginate_by = 10
+    fields = ['surname', 'name', 'birthday',
+              'gender', 'number', 'discipline', 'diagnosis']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.order_by('surname')
+        return super().get_queryset().order_by('surname').values(*self.fields)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        players = context['players']
-
-        for player in players:
-            if player.team:
-                player.team_name = player.team.name
-            else:
-                player.team_name = 'Нет команды'
-            if player.discipline:
-                player.discipline_name = player.discipline.name
-            else:
-                player.discipline_name = 'Нет дисциплины'
+        table_head = {}
+        for field in self.fields:
+            print(field)
+            table_head[field] = Player._meta.get_field(field).verbose_name
+        context['table_head'] = table_head
         return context
 
 
