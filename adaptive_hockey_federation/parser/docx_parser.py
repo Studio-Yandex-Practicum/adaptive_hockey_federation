@@ -6,18 +6,18 @@ import docx  # type: ignore
 
 from adaptive_hockey_federation.parser.user_card import BaseUserInfo
 
-NAME = '[И|и][М|м][Я|я]'
-SURNAME = '[Ф|ф][А|а][М|м][И|и][Л|л][И|и][Я|я]'
-PATRONYMIC = '[О|о][Т|т]?[Ч|ч][Е|е][С|с][Т|т][В|в][О|о]'
+NAME = '[И|и][М|м][Я|я]|Ф.И.О.'
+SURNAME = '[Ф|ф][А|а][М|м][И|и][Л|л][И|и][Я|я]|Ф.И.О.'
+PATRONYMIC = '[О|о][Т|т]?[Ч|ч][Е|е][С|с][Т|т][В|в][О|о]|Ф.И.О.'
 DATE_OF_BIRTH = '[Д|д][А|а][Т|т][А|а] [Р|р][О|о].+'
 TEAM = '[К|к][О|о][М|м][А|а][Н|н][Д|д][А|а]'
 PLAYER_NUMBER = '[И|и][Г|г][Р|р][О|о][В|в][О|о][Й|й]'
-POSITION = '[П|п][О|о][З|з][И|и][Ц|ц][И|и][Я|я]'
+POSITION = '[П|п][О|о][З|з][И|и][Ц|ц][И|и][Я|я]|Должность'
 NUMERIC_STATUS = '[Ч|ч].+[С|с][Т|т].+'
 PLAYER_CLASS = '[К|к][Л|л][А|а][С|с][С|с]'
 PASSPORT = '[П|а][С|с][П|п][О|о][Р|р][Т|т]'
-ASSISTENT = 'А'
-CAPTAIN = 'К'
+ASSISTENT = ['(А)', '(а)', 'Ассистент', 'ассистент']
+CAPTAIN = ['(К)', '(к)', 'Капитан', 'капитан']
 DISCIPLINE_LEVEL = 'без ограничений'
 
 
@@ -312,19 +312,20 @@ def find_passport(columns: list[docx], regular_expression: str) -> list[str]:
 
 def find_players_is_captain(
         columns: list[docx],
-        regular_expression: str,
+        regular_expression: str
 ) -> list[bool]:
     """Функция парсит в искомом столбце капитанов.
     """
     is_captain_list = []
     for is_captain in columns_parser(columns, regular_expression):
-        if is_captain and CAPTAIN in is_captain:
-            try:
-                is_captain_list.append(True)
-            except ValueError:
+        for i in CAPTAIN:
+            if is_captain and i in is_captain:
+                try:
+                    is_captain_list.append(True)
+                except ValueError:
+                    is_captain_list.append(False)
+            else:
                 is_captain_list.append(False)
-        else:
-            is_captain_list.append(False)
     return is_captain_list
 
 
@@ -336,13 +337,14 @@ def find_players_is_assistant(
     """
     is_assistant_list = []
     for is_assistant in columns_parser(columns, regular_expression):
-        if is_assistant and ASSISTENT in is_assistant:
-            try:
-                is_assistant_list.append(True)
-            except ValueError:
+        for i in ASSISTENT:
+            if is_assistant and i in is_assistant:
+                try:
+                    is_assistant_list.append(True)
+                except ValueError:
+                    is_assistant_list.append(False)
+            else:
                 is_assistant_list.append(False)
-        else:
-            is_assistant_list.append(False)
     return is_assistant_list
 
 
@@ -375,7 +377,7 @@ def find_discipline_level(
                     )
                 discipline_level_list.append(discipline_level)
             except ValueError:
-                discipline_level_list.append('None')
+                discipline_level_list.append(None)
         else:
             discipline_level_list.append(None)
     return discipline_level_list
@@ -417,9 +419,30 @@ def docx_parser(
     players_number = find_players_number(columns_from_file, PLAYER_NUMBER)
     positions = find_positions(columns_from_file, POSITION)
     passport = find_passport(columns_from_file, PASSPORT)
-    is_assistent = find_players_is_assistant(columns_from_file, PLAYER_NUMBER)
-    is_captain = find_players_is_captain(columns_from_file, PLAYER_NUMBER)
+    is_assistents = find_players_is_assistant(columns_from_file, PLAYER_NUMBER)
+    is_assistents_alt = find_players_is_assistant(columns_from_file, POSITION)
+    is_captains = find_players_is_captain(columns_from_file, PLAYER_NUMBER)
+    is_captains_alt = find_players_is_captain(columns_from_file, POSITION)
     classification = find_discipline_level(columns_from_file, DISCIPLINE_LEVEL)
+
+    if len(players_number) != len(names):
+        for _ in range(len(names) - len(players_number)):
+            players_number.append(0)
+    if len(is_assistents) != len(names):
+        for _ in range(len(names) - len(is_assistents)):
+            is_assistents.append(False)
+    if len(is_captains) != len(names):
+        for _ in range(len(names) - len(is_captains)):
+            is_captains.append(False)
+    if len(classification) != len(names):
+        for _ in range(len(names) - len(classification)):
+            classification.append(None)
+    if len(passport) != len(names):
+        for _ in range(len(names) - len(passport)):
+            passport.append(None)
+    if len(positions) != len(names):
+        for _ in range(len(names) - len(positions)):
+            positions.append(None)
 
     return [
         BaseUserInfo(
@@ -437,10 +460,11 @@ def docx_parser(
             ),
             patronymic=patronymics[index],
             passport=passport[index],
-            is_assistant=is_assistent[index],
-            is_captain=is_captain[index],
-            classification=(None if len(classification) == 0
-                            else classification[index])
+            is_assistant=(is_assistents[index] if is_assistents[index]
+                          else is_assistents_alt[index]),
+            is_captain=(is_captains[index] if is_captains[index]
+                        else is_captains_alt[index]),
+            classification=classification[index]
         ).__dict__
         for index in range(len(names))
     ]
