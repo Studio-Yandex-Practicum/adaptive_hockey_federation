@@ -1,8 +1,7 @@
-from random import randint
-
 import factory
 from faker import Faker
 
+from .dev_utils import check_len_name
 from .models import City, Diagnosis, Nosology, StaffMember
 
 faker = Faker()
@@ -32,7 +31,12 @@ class NosologyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Nosology
 
-    name = factory.Faker('sentence', nb_words=randint(3, 5), locale='ru_RU')
+    name = factory.Faker('sentence', nb_words=5, locale='ru_RU')
+
+    @factory.post_generation
+    def check_name(self, create, extracted, **kwargs):
+        if create:
+            check_len_name(self)
 
 
 class DiagnosisFactory(factory.django.DjangoModelFactory):
@@ -41,4 +45,9 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
         model = Diagnosis
 
     nosology = factory.SubFactory(NosologyFactory)
-    name = factory.Faker('sentence', nb_words=randint(3, 5), locale='ru_RU')
+    name = factory.Faker('sentence', nb_words=5, locale='ru_RU')
+
+    @factory.post_generation
+    def check_name(self, create, extracted, **kwargs):
+        if create:
+            check_len_name(self)
