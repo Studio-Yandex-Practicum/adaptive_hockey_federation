@@ -19,7 +19,6 @@ PASSPORT = '[П|а][С|с][П|п][О|о][Р|р][Т|т]'
 ASSISTENT = 'А'
 CAPTAIN = 'К'
 DISCIPLINE_LEVEL = 'без ограничений'
-DISCIPLINE_CLEAR = '[Б|б][Класс|класс]'
 
 
 def read_file_columns(file: docx) -> list[docx]:
@@ -368,8 +367,8 @@ def find_discipline_level(
                     '|игрок без ограничений по здоровью'
                     '|(без ограничений по здоровью)  3'
                     '|без ограничений 2|Не имеет ограничений по здоровью',
-                    'б\к', discipline_level)
-                if discipline_level != 'б\к':
+                    'б\\к', discipline_level)
+                if discipline_level != 'б\\к':
                     discipline_level = (
                         discipline_level.replace('А', 'A').replace(
                             'С', 'C').replace('Б', 'B').replace('б', 'B')
