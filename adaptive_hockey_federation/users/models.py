@@ -95,12 +95,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email[:QUERY_SET_LENGTH].capitalize()
 
-    def get_username(self):
-        return (
-            f'{self.first_name[:QUERY_SET_LENGTH]} '
-            f'{self.last_name[:QUERY_SET_LENGTH]}'
-        )
-
     def get_full_name(self):
         return (
             f'{self.first_name[:QUERY_SET_LENGTH]} '
