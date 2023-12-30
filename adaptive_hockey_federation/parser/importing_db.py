@@ -110,9 +110,11 @@ def create_players(item, discipline: int) -> None:
             is_assistent=item['is_assistant'],
             identity_document=item['passport'],
             discipline=discipline,
-            # team=team
         )
         player_model.save()
+        teams = Team.objects.get(name=item['team'])
+        player_model.team.add(teams)
+
     except Exception as e:
         print(f'Ошибка вставки данных {e} -> {item}')
 
@@ -130,8 +132,7 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
             if i in item['position']:
                 create_players(
                     item,
-                    get_discipline(item['classification']),
-                    # get_team(item['team'])
+                    get_discipline(item['classification'])
                 )
         for i in STAFF_POSITIONS:
             if i in item['position']:
