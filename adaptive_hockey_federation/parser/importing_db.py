@@ -1,29 +1,25 @@
 import json
 import subprocess
 
+from django.db import connection
+from main import models
 from main.models import (
-    City,
     Discipline,
     DisciplineLevel,
-    DisciplineName,
-    Nosology,
     Player,
     StaffMember,
     StaffTeamMember,
     Team,
 )
 
-from adaptive_hockey_federation.core.config.dev_settings import RESOURSES_ROOT
+from adaptive_hockey_federation.core.config.dev_settings import (
+    FILE_MODEL_MAP,
+    RESOURSES_ROOT,
+)
 from adaptive_hockey_federation.parser.user_card import BaseUserInfo
 
-FILE_MODEL_MAP = {
-    'main_nosology': Nosology,
-    'main_city': City,
-    'main_disciplinename': DisciplineName,
-    'main_disciplinelevel': DisciplineLevel,
-    'main_discipline': Discipline,
-    'main_team': Team
-}
+MODELS_ONE_FIELD_NAME = ['main_city', 'main_disciplinename',
+                         'main_disciplinelevel', 'main_nosology']
 
 PLAYER_POSITIONS = ['нападающий', 'поплавок', 'вратарь', 'защитник',
                     'Позиция записана неверно',]
@@ -47,20 +43,6 @@ def get_discipline(item_name: str) -> int:
     except DisciplineLevel.DoesNotExist:
         discipline = None
     return discipline
-
-
-# def get_team(item_name: str) -> int:
-#     print(f'@@@{item_name}')
-#     try:
-#         teams = Team.objects.filter(
-#             name=item_name
-#         )
-#     except Team.DoesNotExist:
-#         teams = None
-#     print(f'####{teams}')
-#     for team in teams:
-#         print(f'####{team}')
-#         return team
 
 
 def create_staff_member(item) -> None:
@@ -139,21 +121,36 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
                 create_staff_member(item)
 
 
-def importing_real_data_db(FIXSTURES_DIR: str, file_name: str) -> None:
+def clear_data_db(file_name: str) -> None:
+    key = file_name.replace('.json', '')
+    models_name = getattr(models, FILE_MODEL_MAP[key])
+    models_name.objects.all().delete()
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT setval(pg_get_serial_sequence('{key}', 'id'),"
+                   f"coalesce(max(id), 1), max(id) IS NOT null)"
+                   f"FROM {key};")
+
+
+def importing_real_data_db(
+        FIXSTURES_DIR: str, file_name: str) -> None:
     file = open(FIXSTURES_DIR / file_name)
     data = json.load(file)
     key = file_name.replace('.json', '')
-    models_name = FILE_MODEL_MAP[key]
+    models_name = getattr(models, FILE_MODEL_MAP[key])
     for item in data:
         try:
-            if key == 'main_team':
+            if key in MODELS_ONE_FIELD_NAME:
                 model_ins = models_name(
                     id=item['id'],
+                    name=item['name']
+                )
+                model_ins.save()
+            if key == 'main_staffmember':
+                model_ins = models_name(
+                    id=item['id'],
+                    surname=item['surname'],
                     name=item['name'],
-                    city_id=item['city_id'],
-                    discipline_name_id=item['discipline_name_id'],
-                    staff_team_member_id=1,
-                    curator_id=1
+                    patronymic=item['patronymic'],
                 )
                 model_ins.save()
             if key == 'main_discipline':
@@ -163,10 +160,42 @@ def importing_real_data_db(FIXSTURES_DIR: str, file_name: str) -> None:
                     discipline_name_id=item['discipline_name_id']
                 )
                 model_ins.save()
-            else:
+            if key == 'main_staffteammember':
                 model_ins = models_name(
                     id=item['id'],
-                    name=item['name']
+                    staff_position=item['staff_position'],
+                    qualification=item['qualification'],
+                    notes=item['notes'],
+                    staff_member_id=item['staff_member_id'],
+                )
+                model_ins.save()
+            if key == 'main_team':
+                model_ins = models_name(
+                    id=item['id'],
+                    name=item['name'],
+                    city_id=item['city_id'],
+                    discipline_name_id=item['discipline_name_id'],
+                    staff_team_member_id=item['staff_team_member_id'],
+                    curator_id=1
+                )
+                model_ins.save()
+            if key == 'main_player':
+                model_ins = models_name(
+                    id=item['id'],
+                    surname=item['surname'],
+                    name=item['name'],
+                    patronymic=item['patronymic'],
+                    birthday=item['birthday'],
+                    gender=item['gender'],
+                    level_revision=item['level_revision'],
+                    position=item['position'],
+                    number=item['number'],
+                    is_captain=item['is_captain'],
+                    is_assistent=item['is_assistent'],
+                    identity_document=item['identity_document'],
+                    diagnosis_id=item['diagnosis_id'],
+                    discipline_id=item['discipline_id'],
+                    document_id=item['document_id']
                 )
                 model_ins.save()
         except Exception as e:

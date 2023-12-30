@@ -37,3 +37,16 @@ FIXSTURES_DIR = BASE_DIR / 'core' / 'fixtures'
 JSON_PARSER_FILE = 'data.json'
 FIXSTURES_FILE = FIXSTURES_DIR / JSON_PARSER_FILE
 RESOURSES_ROOT = BASE_DIR / 'resourses'
+
+# Важен порядок ключей для вставки/удаления
+FILE_MODEL_MAP = {
+    'main_player': 'Player',
+    'main_team': 'Team',
+    'main_staffteammember': 'StaffTeamMember',
+    'main_staffmember': 'StaffMember',
+    'main_city': 'City',
+    'main_nosology': 'Nosology',
+    'main_discipline': 'Discipline',
+    'main_disciplinename': 'DisciplineName',
+    'main_disciplinelevel': 'DisciplineLevel',
+}

@@ -1,13 +1,12 @@
-from os import listdir
-from os.path import isfile, join
-
 from core.constants import ROLE_ADMIN, ROLE_AGENT, ROLE_MODERATOR
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from main.factories import CityFactory, StaffMemberFactory
 from users.factories import UserFactory
 
+from adaptive_hockey_federation.core.config.dev_settings import FILE_MODEL_MAP
 from adaptive_hockey_federation.parser.importing_db import (
+    clear_data_db,
     importing_parser_data_db,
     importing_real_data_db,
 )
@@ -66,18 +65,28 @@ class Command(BaseCommand):
 
     def load_real_data(self):
         """Загрузка реальных данных из JSON."""
-        file_names = [f for f in listdir(settings.FIXSTURES_DIR)
-                      if isfile(join(settings.FIXSTURES_DIR, f))]
-        for file_name in file_names:
-            if 'main_' in file_name:
+        for key in FILE_MODEL_MAP.items():
+            file_name = key[0] + '.json'
+            if 'main_' in key[0]:
+                try:
+                    clear_data_db(file_name)
+                except Exception as e:
+                    print(f'Ошибка удаления данных {e} -> '
+                          f'{file_name}')
+        items = list(FILE_MODEL_MAP.items())
+        items.reverse()
+        for key in items:
+            file_name = key[0] + '.json'
+            if 'main_' in key[0]:
                 try:
                     importing_real_data_db(
                         settings.FIXSTURES_DIR,
                         file_name
                     )
                 except Exception as e:
-                    print(f'Ошибка вставки тестовых данных {e} -> '
+                    print(f'Ошибка вставки данных {e} -> '
                           f'{file_name}')
+
         return 'Фикстуры с реальными данными вставлены в таблицы!'
 
     def handle(self, *args, **options):
