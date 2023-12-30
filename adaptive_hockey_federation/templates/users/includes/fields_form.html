@@ -5,7 +5,7 @@
       <span class="required text-danger">*</span>
     {% endif %}
 </label>
-{{ field|addclass:'form-control' }} 
+{{ field }} 
   {% if field.help_text %}
     <small 
       id="{{ field.id_for_label }}-help"

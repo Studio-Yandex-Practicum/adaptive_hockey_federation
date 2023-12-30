@@ -7,7 +7,12 @@ from core.constants import (
     ROLE_MODERATOR,
     ROLES_CHOICES,
 )
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from core.validators import email_validator
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    Group,
+    PermissionsMixin,
+)
 from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
@@ -38,7 +43,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=NAME_MAX_LENGTH,
         verbose_name=_('Отчество'),
         help_text=_('Отчество'),
-
     )
     role = models.CharField(
         choices=ROLES_CHOICES,
@@ -50,6 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         max_length=EMAIL_MAX_LENGTH,
         unique=True,
+        validators=(email_validator,),
         verbose_name=_('Электронная почта'),
         help_text=_('Электронная почта'),
     )
@@ -129,4 +134,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         Администратор - имеет неограниченные права управления на проекте.
         """
-        return (self.role == ROLE_ADMIN) or self.is_staff
+        return self.role == ROLE_ADMIN or self.is_staff
+
+
+class ProxyGroup(Group):
+    """Обычная группа django. Класс необходим для регистрации
+    модели в приложении "пользователи"."""
+
+    class Meta:
+        proxy = True
+        verbose_name = "Группа"
+        verbose_name_plural = "Группы"

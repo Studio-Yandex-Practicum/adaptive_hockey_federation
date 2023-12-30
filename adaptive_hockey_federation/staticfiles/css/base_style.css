@@ -4,6 +4,11 @@ html, body {
 section {
   padding: 100px;
 }
+
+li {
+  list-style-type: none;
+}
+
 .header-line{
   display:inline-flex;
   align-items:center;
@@ -15,6 +20,28 @@ section {
   width: 250px;
   height: 250px;
 
+}
+
+.drawler_menu{
+  color: #ffffff;
+  background-color: #64C2D1;
+  border-radius: 6px;
+}
+
+.drawler_menu:hover {
+  color: #ECF1F5;
+  background-color: #340061;
+}
+
+.drawler-menu-active {
+  background-color: #340061  ;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.drawler-menu-active:hover {
+  background-color: #340061  ;
+  color: #fff;
 }
 
 .header-ellipse {
@@ -77,7 +104,25 @@ section {
   left: -11px;
 }
 
+.btsss {
+  width: 150px;
+}
 
+.btns-edit-del {
+  background-color: #fff;
+  width: 50px;
+  height: 50px;
+  margin-left: 10px;
+  border-color: #64C2D1;
+}
+
+.btns-edit-del:disabled {
+  background-color: #b1b1c2;
+  width: 50px;
+  height: 50px;
+  margin-left: 10px;
+  border-color: #000000;
+}
 
 .forget-button {
   text-decoration: none;
@@ -129,6 +174,24 @@ section {
   align-items: center;
 }
 
+.update_card {
+  width: 350px;
+  left: 150px;
+}
+
+.update_btn {
+  position: absolute;
+  left: 55px;
+  margin-top: 20px;
+  background-color: #64C2D1;
+  color: #fff;
+  width: 240px;
+  height: 40px;
+  font-size: 22px;
+  border: #fff;
+  text-decoration: none;
+}
+
 .reser_card_form {
   position: inherit;
   align-items: center;
@@ -148,7 +211,6 @@ section {
     text-decoration: none;
   }
 }
-
 
 .forget-button-done {
   position: absolute;

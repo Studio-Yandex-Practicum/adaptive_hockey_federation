@@ -1,7 +1,11 @@
-{% with request.path as current_url_name %}
+{% with request.path  as current_url_name %}
   <a href="{{ url_name }}"
-    class="nav-link border border-2 border-white hover:bg-[#340061] text-white p-2 mx-1 w-44 text-left
-    {% if current_url_name  == url_name %}bg-[#340061]{% else %}bg-[#64c2d1]{% endif %}">
+    class="nav-link border border-2 border-white p-2 mx-1 w-44 text-left
+    {% if current_url_name  == url_name %}
+      drawler-menu-active
+    {% else %}
+      drawler_menu
+    {% endif %}">
       {{ name }}
   </a>
 {% endwith %}

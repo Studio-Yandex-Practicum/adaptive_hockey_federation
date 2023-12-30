@@ -5,12 +5,11 @@
     <ul class="nav d-flex justify-content-start">
       <div class="border border-white rounded px-2">
         <i class="bi bi-circle-fill fs-3" style="color: red;"></i>
-        <b class="text-xl" style="color: #340061;">{{ request.user.first_name }} {{ request.user.last_name }}</b>
+        <b class="text-xl" style="color: #340061;">{{ request.user.first_name }} {{ request.user.last_name }} {{ request.user.role }}</b>
       </div>
     </ul>
     <ul class="nav justify-content-end">
       <li class="nav-item d-flex">
-
         <a class="nav-link border border-primary place-self-center bg-white p-0.5" href="##">
           <i class="bi bi-search fs-5 p-1 bg-white" style="color: grey;"></i>
         </a>

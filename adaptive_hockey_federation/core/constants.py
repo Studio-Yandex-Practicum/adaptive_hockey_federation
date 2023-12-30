@@ -5,6 +5,9 @@ QUERY_SET_LENGTH = 15
 ROLE_AGENT = 'agent'
 ROLE_MODERATOR = 'moderator'
 ROLE_ADMIN = 'admin'
+GROUP_MODERATORS = 'Модераторы'
+GROUP_ADMINS = 'Администраторы'
+GROUP_AGENTS = 'Агенты'
 ROLES_CHOICES = (
     (ROLE_AGENT, 'Представитель команды'),
     (ROLE_MODERATOR, 'Модератор'),

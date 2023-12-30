@@ -10,7 +10,7 @@
 <div class="col-auto px-0">
     <div id="sidebar" class="collapse collapse-horizontal show border-end vh-100 shadow-sm" style="background-color: #340061";>
         <div id="sidebar-nav" class="list-group me-4 border-0 rounded-0">
-            <ul class="nav-list" style="list-style-type:none">
+            <ul class="nav-list" >
               <div class="container py-5">
                 <div class="row">
                   <div class="col-auto flex justify-end">
@@ -23,7 +23,7 @@
                   </div>
                 </div>
               </div>
-              <li class="nav-item py-2">
+              <li class="nav-item py-2 list-group">
                 {% url 'main:players' as url_name %}{% include "includes/button.html" with name="Игроки" %}
               </li>
               <li class="nav-item py-2">
@@ -36,7 +36,7 @@
                 {% url 'main:competitions' as url_name %}{% include "includes/button.html" with name="Соревнования" %}
               </li>
               <li class="nav-item py-2">
-                {% url 'main:analytics% ' as url_name %}{% include "includes/button.html" with name="Аналитика" %}
+                {% url 'main:analytics' as url_name %}{% include "includes/button.html" with name="Аналитика" %}
               </li>
               <li class="nav-item py-2">
                 {% url 'main:unloads' as url_name %}{% include "includes/button.html" with name="Выгрузки" %}

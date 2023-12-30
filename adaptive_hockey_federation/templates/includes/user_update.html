@@ -1,0 +1,19 @@
+<table class="table table-borderless border-separate border-spacing-1">
+  <thead>
+    <tr>
+      {% for head_item in table_head.values %}
+        <th scope="col" class="border rounded-md table-light">{{ head_item }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td></td></tr>
+    {% for table_string in table_data %}
+      <tr>
+        {% for cell in table_string.values %}
+          <td class="border rounded-md table-light">{{ cell }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
