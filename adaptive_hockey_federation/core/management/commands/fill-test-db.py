@@ -5,6 +5,7 @@ from main.factories import (
     DiagnosisFactory,
     NosologyFactory,
     StaffMemberFactory,
+    StaffTeamMemberFactory,
 )
 from users.factories import UserFactory
 
@@ -16,6 +17,11 @@ USERS = {
     ROLE_MODERATOR: AMOUNT_MODERATOR,
     ROLE_AGENT: AMOUNT_AGENT
 }
+STAFF = {
+    'Тренер': 15,
+    'Другие сотрудники': 10
+}
+
 DB_MESSAGE = 'Данные успешно добавлены!'
 
 
@@ -54,6 +60,12 @@ class Command(BaseCommand):
             help='Фикстуры для таблицы Diagnosis'
         )
         parser.add_argument(
+            '-st',
+            '--staffteam',
+            action='store_true',
+            help='Фикстуры для таблицы StaffTeamMember'
+        )
+        parser.add_argument(
             '-a',
             '--amount',
             type=int,
@@ -66,6 +78,7 @@ class Command(BaseCommand):
         test_users = options.get('users', False)
         nosology = options.get('nosology', False)
         diagnosis = options.get('diagnosis', False)
+        staff_team = options.get('staffteam', False)
         amount = options.get('amount')
         if city:
             CityFactory.create_batch(amount)
@@ -84,3 +97,12 @@ class Command(BaseCommand):
         if diagnosis:
             DiagnosisFactory.create_batch(amount)
             return f'{amount} фикстур для таблицы Diagnosis создано!'
+        if staff_team:
+            staff_amount = sum(STAFF.values())
+            for staff_position, amount in STAFF.items():
+                StaffTeamMemberFactory.create_batch(
+                    amount, staff_position=staff_position
+                )
+            return (
+                f'{staff_amount} фикстур для таблицы StaffTeamMember создано!'
+            )

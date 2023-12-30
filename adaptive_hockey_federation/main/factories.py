@@ -2,7 +2,7 @@ import factory
 from faker import Faker
 
 from .dev_utils import check_len_name
-from .models import City, Diagnosis, Nosology, StaffMember
+from .models import City, Diagnosis, Nosology, StaffMember, StaffTeamMember
 
 faker = Faker()
 
@@ -51,3 +51,12 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
     def check_name(self, create, extracted, **kwargs):
         if create:
             check_len_name(self)
+
+
+class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = StaffTeamMember
+
+    staff_member = factory.SubFactory(StaffMemberFactory)
+    qualification = factory.Faker('sentence', nb_words=5, locale='ru_RU')
+    notes = factory.Faker('sentence', nb_words=10, locale='ru_RU')
