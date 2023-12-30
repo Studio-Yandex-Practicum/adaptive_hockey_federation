@@ -12,14 +12,16 @@ from users.factories import UserFactory
 AMOUNT_ADMIN = 3
 AMOUNT_MODERATOR = 2
 AMOUNT_AGENT = 15
+AMOUTN_COACH = 15
+AMOUNT_OTHERS = 10
 USERS = {
     ROLE_ADMIN: AMOUNT_ADMIN,
     ROLE_MODERATOR: AMOUNT_MODERATOR,
     ROLE_AGENT: AMOUNT_AGENT
 }
 STAFF = {
-    'Тренер': 15,
-    'Другие сотрудники': 10
+    'Тренер': AMOUTN_COACH,
+    'Другие сотрудники': AMOUNT_OTHERS
 }
 
 DB_MESSAGE = 'Данные успешно добавлены!'
