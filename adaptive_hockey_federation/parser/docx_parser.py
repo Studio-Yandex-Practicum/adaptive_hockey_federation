@@ -351,7 +351,7 @@ def find_players_is_assistant(
 def find_discipline_level(
         columns: list[docx],
         regular_expression: str,
-) -> list[bool]:
+) -> list[str]:
     """Функция парсит в искомом столбце класс/статус.
     """
     discipline_level_list = []
@@ -377,9 +377,9 @@ def find_discipline_level(
                     )
                 discipline_level_list.append(discipline_level)
             except ValueError:
-                discipline_level_list.append(None)
+                discipline_level_list.append('')
         else:
-            discipline_level_list.append(None)
+            discipline_level_list.append('')
     return discipline_level_list
 
 
@@ -398,10 +398,11 @@ def numeric_status_check(
     return None
 
 
-def length_list(name: list, len_name: int) -> list:
+def length_list(name: list, len_name: int) -> None:
     if len(name) != len_name:
         for _ in range(len_name - len(name)):
             name.append(None)
+    return None
 
 
 def docx_parser(

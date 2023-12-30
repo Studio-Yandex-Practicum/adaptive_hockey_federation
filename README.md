@@ -599,9 +599,9 @@ make fill-db
 poetry run parser -r -p  adaptive_hockey_federation/resourses/
 ```
 
-Результат парсинга сохранится в директории ```/<корневая директория>/adaptive_hockey_federation/core/fixtures/``` в файле 
+Результат парсинга сохранится в директории ```/<корневая директория>/adaptive_hockey_federation/core/fixtures/``` в файле
 
-Из ```data.json``` автоматически загрузятся распарсенные данные в таблицы 
+Из ```data.json``` автоматически загрузятся распарсенные данные в таблицы
 main_player
 main_staffmember
 main_staffteammember

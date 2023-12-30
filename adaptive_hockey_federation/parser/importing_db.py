@@ -32,7 +32,7 @@ def parse_file(file_path: str) -> list[BaseUserInfo]:
         return data
 
 
-def get_discipline(item_name: str) -> int:
+def get_discipline(item_name: str):
     try:
         discipline_level_id = DisciplineLevel.objects.get(
             name=item_name
@@ -45,7 +45,7 @@ def get_discipline(item_name: str) -> int:
     return discipline
 
 
-def create_staff_member(item) -> None:
+def create_staff_member(item):
     try:
         try:
             staff_member = StaffMember(
@@ -77,7 +77,7 @@ def create_staff_member(item) -> None:
         print(f'Ошибка вставки данных {e} -> {item}')
 
 
-def create_players(item, discipline: int) -> None:
+def create_players(item, discipline) -> None:
     try:
         player_model = Player(
             surname=item['surname'],
@@ -132,7 +132,7 @@ def clear_data_db(file_name: str) -> None:
 
 
 def importing_real_data_db(
-        FIXSTURES_DIR: str, file_name: str) -> None:
+        FIXSTURES_DIR, file_name: str) -> None:
     file = open(FIXSTURES_DIR / file_name)
     data = json.load(file)
     key = file_name.replace('.json', '')
