@@ -49,21 +49,48 @@ def get_discipline(item_name: str) -> int:
     return discipline
 
 
+# def get_team(item_name: str) -> int:
+#     print(f'@@@{item_name}')
+#     try:
+#         teams = Team.objects.filter(
+#             name=item_name
+#         )
+#     except Team.DoesNotExist:
+#         teams = None
+#     print(f'####{teams}')
+#     for team in teams:
+#         print(f'####{team}')
+#         return team
+
+
 def create_staff_member(item) -> None:
     try:
-        staff_member_model = StaffMember(
-            surname=item['surname'],
-            name=item['name'],
-            patronymic=item['patronymic']
-        )
-        staff_member_model.save()
-        staff_team_member_model = StaffTeamMember(
-            staff_position=item['position'],
-            staff_member_id=staff_member_model.id,
-            notes=item['date_of_birth'].replace(' 00:00:00', '')
-        )
-        staff_team_member_model.save()
+        try:
+            staff_member = StaffMember(
+                surname=item['surname'],
+                name=item['name'],
+                patronymic=item['patronymic']
+            )
+            staff_member.save()
 
+            staff_team_member = StaffTeamMember(
+                staff_position=item['position'],
+                staff_member_id=staff_member.id,
+                notes=item['date_of_birth'].replace(' 00:00:00', '')
+            )
+
+            staff_team_member.save()
+            team = Team.objects.get(name=item['team'])
+            staff_team_member_id = StaffTeamMember.objects.get(
+                staff_position__contains='тренер',
+                pk=staff_team_member.id
+            )
+            if (team.staff_team_member_id != staff_team_member_id):
+                team.staff_team_member_id = staff_team_member_id
+                team.save()
+            return team
+        except StaffTeamMember.DoesNotExist:
+            team = None
     except Exception as e:
         print(f'Ошибка вставки данных {e} -> {item}')
 
@@ -82,7 +109,8 @@ def create_players(item, discipline: int) -> None:
             is_captain=item['is_captain'],
             is_assistent=item['is_assistant'],
             identity_document=item['passport'],
-            discipline=discipline
+            discipline=discipline,
+            # team=team
         )
         player_model.save()
     except Exception as e:
@@ -100,7 +128,11 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
                 item[key] = 0
         for i in PLAYER_POSITIONS:
             if i in item['position']:
-                create_players(item, get_discipline(item['classification']))
+                create_players(
+                    item,
+                    get_discipline(item['classification']),
+                    # get_team(item['team'])
+                )
         for i in STAFF_POSITIONS:
             if i in item['position']:
                 create_staff_member(item)

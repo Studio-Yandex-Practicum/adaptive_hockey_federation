@@ -289,7 +289,8 @@ class Team(BaseUniqueName):
     )
     staff_team_member = models.ForeignKey(
         StaffTeamMember,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name=_('Сотрудник команды'),
         help_text=_('Сотрудник команды')
     )
@@ -301,7 +302,8 @@ class Team(BaseUniqueName):
     )
     curator = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name=_('Куратор команды'),
         help_text=_('Куратор команды')
     )
