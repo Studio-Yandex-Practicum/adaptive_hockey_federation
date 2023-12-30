@@ -19,7 +19,7 @@ class TestAuthUrls:
         urls = ['/auth/login/', '/auth/logout/']
         for url in urls:
             try:
-                response = client.get(url)
+                response = client.post(url)
             except Exception as e:
                 assert False, (
                     f'''Страница `{url}` работает неправильно. Ошибка: `{e}`'''
