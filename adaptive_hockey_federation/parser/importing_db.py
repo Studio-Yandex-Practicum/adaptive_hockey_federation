@@ -100,7 +100,7 @@ def create_players(item, discipline: int) -> None:
     except Exception as e:
         print(f'Ошибка вставки данных {e} -> {item}')
 
-
+# flake8: noqa: C901
 def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
     subprocess.getoutput(f'poetry run parser -r -p {RESOURSES_ROOT}')
     data = parse_file(FIXSTURES_FILE)
@@ -198,5 +198,9 @@ def importing_real_data_db(
                     document_id=item['document_id']
                 )
                 model_ins.save()
+            if key == 'main_player_team':
+                player = Player.objects.get(pk=item['player_id'])
+                team = Team.objects.get(pk=item['team_id'])
+                player.team.add(team)
         except Exception as e:
             print(f'Ошибка вставки данных {e} -> {item}')
