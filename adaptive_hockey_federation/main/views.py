@@ -38,7 +38,6 @@ class PlayersCardView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         table_head = {}
         for field in self.fields:
-            print(field)
             table_head[field] = Player._meta.get_field(field).verbose_name
         context['table_head'] = table_head
         return context
