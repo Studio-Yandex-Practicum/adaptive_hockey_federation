@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 from main.forms import TeamForm
@@ -39,6 +40,46 @@ class TeamIdView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return get_object_or_404(Team, id=self.kwargs['id'])
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        team = self.object
+        players = Player.objects.filter(team=team)
+
+        table_head = {
+            'surname': 'Фамилия',
+            'name': 'Имя',
+            'birthday': 'День рождения',
+            'diagnosis': 'Диагноз',
+            'discipline': 'Дисциплина',
+            'gender': 'Пол',
+            'level_revision': 'Уровень ревизии',
+            'position': 'Игровая позиция',
+            'number': 'Номер игрока',
+        }
+
+        table_data = [
+            {
+                'surname': player.surname,
+                'name': player.name,
+                'birthday': player.birthday,
+                'diagnosis': player.diagnosis.name,
+                'discipline': player.discipline,
+                'gender': player.get_gender_display(),
+                'level_revision': player.level_revision,
+                'position': player.get_position_display(),
+                'number': player.number,
+            }
+            for player in players
+        ]
+
+        context = {
+            'table_head': table_head,
+            'table_data': table_data,
+            'team': team,
+        }
+
+        return context
+
 
 class TeamListView(LoginRequiredMixin, ListView):
     model = Team
@@ -49,26 +90,30 @@ class TeamListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teams = context['teams']
-        table_head = {}
-        for field in Team._meta.get_fields():
-            if hasattr(field, 'verbose_name'):
-                table_head[field.name] = field.verbose_name
-        table_head['players'] = 'Состав'
 
         table_data = []
         for team in teams:
-            team_data = {}
-            for field in Team._meta.get_fields():
-                if hasattr(field, 'verbose_name'):
-                    team_data[field.name] = getattr(team, field.name)
+            team_data = {
+                'name': team.name,
+                'city': team.city,
+                'staff_team_member': team.staff_team_member,
+                'discipline_name': team.discipline_name,
+                'curator': team.curator.get_username,
+                'url': reverse('main:teams_id', args=[team.id]),
+            }
             players = Player.objects.filter(team=team)
             team_data['players'] = ', '.join(map(str, players))
             table_data.append(team_data)
 
-        context = {
-            'table_head': table_head,
-            'table_data': table_data,
+        context['table_head'] = {
+            'name': 'Название',
+            'city': 'Город',
+            'staff_team_member': 'Сотрудник команды',
+            'discipline_name': 'Дисциплина',
+            'curator': 'Куратор',
+            'players': 'Состав',
         }
+        context['table_data'] = table_data
         return context
 
 
