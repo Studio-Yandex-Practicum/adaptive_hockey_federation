@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% load user_filters %}
+{% block title %} Создание пользователя {% endblock %}
+{% block content %}
+<div class="container justify-content-center  form_create">
+  <div class="row">
+        <form method="post" action="{% url 'users:user_create' %}">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form-group row my-3"
+            {% if field.field.required %}
+            aria-required="true"
+            {% else %}
+            aria-required="false"
+            {% endif %}
+          >
+          <div class="form-group row my-3">
+              <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="required text-danger">*</span>
+                  {% endif %}
+              </label>
+            {{ field|addclass:'form-control' }}
+            {% if field.errors %}
+              <small class="error">{{ field.errors|striptags  }}</small> 
+            {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+        <div class="enter_btn">
+          <button type="submit" class="form_btn">
+            Создать
+          </button>
+        </div>
+        </form>
+      </div>
+    </div>
+{% endblock%}
