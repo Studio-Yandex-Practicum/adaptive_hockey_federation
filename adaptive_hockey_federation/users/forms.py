@@ -17,20 +17,6 @@ class EmailField(forms.EmailField):
         return None if value is None else unicodedata.normalize("NFKC", value)
 
 
-class UpdateUserForm(forms.ModelForm):
-    """Форма редактирования пользователя"""
-
-    class Meta:
-        model = User
-        fields = [
-            'first_name',
-            'last_name',
-            'patronymic',
-            'email',
-            'phone',
-        ]
-
-
 class CreateUserForm(forms.ModelForm):
     """Форма создания юзера"""
 
@@ -43,6 +29,10 @@ class CreateUserForm(forms.ModelForm):
             'email',
             'phone',
         ]
+
+
+class UpdateUserForm(CreateUserForm):
+    """Форма редактирования пользователя"""
 
 
 class GroupAdminForm(forms.ModelForm):
