@@ -32,10 +32,24 @@ li {
   color: black;
   font-size: 18px;
 }
+
+.pg-list-active:hover {
+  background-color: #269FBD;
+  color: black;
+  font-size: 18px;
+}
+
+
+
 .pg-list {
   background-color: #269FBD;
   color: white;
   font-size: 18px;
+}
+
+.pg-list:hover {
+  background-color: #340061;
+  color: #fff;
 }
 .drawler_menu{
   color: #ffffff;
