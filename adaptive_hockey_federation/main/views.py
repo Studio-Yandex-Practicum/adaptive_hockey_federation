@@ -98,7 +98,7 @@ class TeamListView(LoginRequiredMixin, ListView):
                 'city': team.city,
                 'staff_team_member': team.staff_team_member,
                 'discipline_name': team.discipline_name,
-                'curator': team.curator.get_username,
+                'curator': team.curator.get_full_name,
                 'url': reverse('main:teams_id', args=[team.id]),
             }
             players = Player.objects.filter(team=team)
