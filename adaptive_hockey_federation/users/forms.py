@@ -31,6 +31,20 @@ class UpdateUserForm(forms.ModelForm):
         ]
 
 
+class CreateUserForm(forms.ModelForm):
+    """Форма создания юзера"""
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'patronymic',
+            'email',
+            'phone',
+        ]
+
+
 class GroupAdminForm(forms.ModelForm):
     """Дополнительное поле "Пользователи" для групп."""
 

@@ -33,13 +33,15 @@ li {
   font-size: 18px;
 }
 
+.form_create {
+  width: 500px;
+  height: 650px;
+}
 .pg-list-active:hover {
   background-color: #269FBD;
   color: black;
   font-size: 18px;
 }
-
-
 
 .pg-list {
   background-color: #269FBD;
@@ -206,6 +208,7 @@ li {
 .update_card {
   width: 350px;
   left: 150px;
+  top: -15px;
 }
 
 .update_btn {

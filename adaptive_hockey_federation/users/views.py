@@ -4,11 +4,10 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.urls import reverse_lazy
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.models import Player
 
-from .forms import UpdateUserForm
+from .forms import CreateUserForm, UpdateUserForm
 
 User = get_user_model()
 
@@ -48,7 +47,7 @@ class UpdateUserView(
         PermissionRequiredMixin,
         UpdateView):
     model = User
-    template_name = 'users/list_update.html'
+    template_name = 'includes/user_update.html'
     permission_required = 'users.change_user'
     context_object_name = 'user'
     success_url = '/users'
@@ -70,3 +69,19 @@ class DeleteUserView(
     model = User
     success_url = reverse_lazy('users:users')
     permission_required = 'users.delete_user'
+
+
+class CreateUserView(
+        LoginRequiredMixin,
+        PermissionRequiredMixin,
+        CreateView):
+    model = User
+    form_class = CreateUserForm
+    template_name = 'includes/user_create.html'
+    success_url = '/users'
+    permission_required = 'users.create_user'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)

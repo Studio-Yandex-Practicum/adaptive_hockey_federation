@@ -1,19 +1,46 @@
-<table class="table table-borderless border-separate border-spacing-1">
-  <thead>
-    <tr>
-      {% for head_item in table_head.values %}
-        <th scope="col" class="border rounded-md table-light">{{ head_item }}</th>
+{% extends 'base.html' %}
+{% load user_filters %}
+{% block title %}
+  Изменить пользователя
+{% endblock %}
+{% block content %}
+<div class="container py-4"> 
+  <div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+      <div class="card update_card">
+    <div class="card-header">
+      Редактированние данных пользователя {{ user.first_name }} {{ user.last_name }}
+  </div>
+  <div class="card-body">
+    <form method="post" 
+    {% if action_url %}
+      action="{% url action_url %}"
+    {% endif %}>
+      {% csrf_token %}
+
+      {% for field in form %} 
+      <div class="row my-3">
+        <label for="{{ field.id_for_label }}">
+          {{ field.label }}
+            {% if field.field.required %}
+              <span class="required text-danger">*</span>
+            {% endif %}
+        </label>
+      {{ field |addclass:'form-control' }}
+      {% if field.errors %}
+      <small class="error">{{ field.errors|striptags  }}</small> 
+    {% endif %}
+      </div>
       {% endfor %}
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td></td></tr>
-    {% for table_string in table_data %}
-      <tr>
-        {% for cell in table_string.values %}
-          <td class="border rounded-md table-light">{{ cell }}</td>
-        {% endfor %}
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+      <div class="col-md-6 offset-md-4">
+        <button type="submit" class="update_btn">
+          Сохранить
+        </button>
+      </div>
+    </form>
+  </div>
+  </div> 
+</div>
+</div> 
+</div>
+{% endblock %}
