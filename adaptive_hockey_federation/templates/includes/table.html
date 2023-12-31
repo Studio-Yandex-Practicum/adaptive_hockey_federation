@@ -21,8 +21,10 @@
     {% for table_string in table_data %}
       <tr>
           <td class="border rounded-md table-light">{{ table_string.name }}</td>
-          <td class="border rounded-md table-light">{{ table_string.surname }}</td>
+          <td class="border rounded-md table-light" style="color: blue;">null</td>
+          <td class="border rounded-md table-light" style="color: blue;">null</td>
           <td class="border rounded-md table-light">{{ table_string.email }}</td>
+          <td class="border rounded-md table-light">{{ table_string.phone }}</td>
         <td class="border rounded-md btsss">
         <div class="input-group justify-content-md-end">
           <form action="{% url 'users:user_update' table_string.id %}" method="post">

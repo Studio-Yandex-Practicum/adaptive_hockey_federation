@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import (
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
+from main.models import Player
 
 from .forms import UpdateUserForm
 
@@ -25,14 +26,18 @@ class UsersListView(LoginRequiredMixin, ListView):
         for user in users:
             table_data.append({
                 'id': user.pk,
-                'name': user.first_name,
-                'surname': user.last_name,
+                'name': user.get_full_name(),
                 'email': user.email,
+                'phone': user.phone,
+                'date': user.date_joined,
+                'role': user.role
             })
         context['table_head'] = {
             'name': 'Имя',
-            'surname': 'Фамилия',
+            'date': 'Дата',
+            'role': 'Роль',
             'email': 'Email',
+            'phone': 'Телефон'
         }
         context['table_data'] = table_data
         return context
