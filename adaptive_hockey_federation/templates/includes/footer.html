@@ -10,34 +10,18 @@
 
 
 <div class="footer-copyright">
-  <nav class="navbar navbar-light" style="background-color: #64c2d1;">
+  <nav class="navbar" >
     <div class="container">
       <div class="nav nav-pills justify-content-start">
         <button onclick="toggle_visibility('sidebar');" class="btn" type="button"
         aria-controls="staticBackdrop" aria-expanded="true">
-          <i class="bi bi-caret-right-fill fs-3" style="color: white;"></i>
+          <i class="bi bi-caret-right-fill fs-3" style="color: #340061;"></i>
         </button>
-        <nav aria-label="Page navigation example" class="p-2">
-          <ul class="pagination ps-8">
-            <li class="page-item">
-              <a class="page-link bg-[#64c2d1] me-1" href="#" aria-label="Previous">
-                <i class="bi bi-caret-left-fill" style="color: #340061;"></i>
-              </a>
-            </li>
-            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">1</a></li>
-            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">2</a></li>
-            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link bg-[#64c2d1]" href="#" aria-label="Next">
-                <i class="bi bi-caret-right-fill" style="color: #340061;"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
+        {% include "includes/pagination.html" %}
       </div>
       <ul class="nav nav-pills ">
         {% with request.resolver_match.view_name as view_name %}
-          {% if view_name  == 'main:users' %}{% include "includes/button.html" with name="+ Пользователь" %}{% endif %}
+          {% if view_name  == 'users:users' %}{% include "includes/button.html" with name="+ Пользователь" %}{% endif %}
           {% if view_name  == 'main:teams' %}{% include "includes/button.html" with name="+ Команда" %}{% endif %}
           {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
           {% if view_name  != 'main:unloads' %}{% include "includes/button.html" with name="Выгрузить" %}{% endif %}

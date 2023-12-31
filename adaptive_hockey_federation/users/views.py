@@ -16,13 +16,12 @@ class UsersListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'users/list.html'
     context_object_name = 'users'
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         users = context['users']
         table_data = []
-        id_data = []
-
         for user in users:
             table_data.append({
                 'id': user.pk,
@@ -36,7 +35,6 @@ class UsersListView(LoginRequiredMixin, ListView):
             'email': 'Email',
         }
         context['table_data'] = table_data
-        context['id_data'] = id_data
         return context
 
 
@@ -65,5 +63,5 @@ class DeleteUserView(
         PermissionRequiredMixin,
         DeleteView):
     model = User
-    success_url = reverse_lazy('users:list')
+    success_url = reverse_lazy('users:users')
     permission_required = 'users.delete_user'

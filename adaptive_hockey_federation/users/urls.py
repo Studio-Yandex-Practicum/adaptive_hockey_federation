@@ -1,5 +1,5 @@
 from django.urls import path
-from users.views import UpdateUserView, UsersListView, DeleteUserView
+from users.views import DeleteUserView, UpdateUserView, UsersListView
 
 app_name = 'users'
 
@@ -7,7 +7,7 @@ urlpatterns = [
     path(
         'users/',
         UsersListView.as_view(),
-        name='list'
+        name='users'
     ),
     path(
         'user_update/<int:pk>/',

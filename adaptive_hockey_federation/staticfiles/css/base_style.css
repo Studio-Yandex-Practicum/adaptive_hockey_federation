@@ -22,6 +22,21 @@ li {
 
 }
 
+.navbar-control {
+  background: url(../img/footer.png);
+  height: 85px;
+}
+
+.pg-list-active {
+  background-color: #269FBD;
+  color: black;
+  font-size: 18px;
+}
+.pg-list {
+  background-color: #269FBD;
+  color: white;
+  font-size: 18px;
+}
 .drawler_menu{
   color: #ffffff;
   background-color: #64C2D1;
