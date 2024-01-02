@@ -105,7 +105,7 @@ fixture-fill-db:
 	# cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --staffmember --amount 25
 	# cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --users
 	# cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --nosology --amount 8
-	# cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --diagnosis --amount 8
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --diagnosis --amount 8
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --staffteam
 
 

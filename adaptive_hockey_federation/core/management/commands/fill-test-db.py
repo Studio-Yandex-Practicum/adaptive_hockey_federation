@@ -1,6 +1,6 @@
 from core.constants import ROLE_ADMIN, ROLE_AGENT, ROLE_MODERATOR
 from django.core.management.base import BaseCommand
-from main.factories import (
+from main.factories.factory import (
     CityFactory,
     DiagnosisFactory,
     NosologyFactory,
