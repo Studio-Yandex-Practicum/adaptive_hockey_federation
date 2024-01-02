@@ -78,4 +78,4 @@ parser = "adaptive_hockey_federation.parser.parser:parsing_file"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "adaptive_hockey_federation.core.config.test_settings"
-python_files = ["test_*.py"]
+python_files = ["*_test.py"]
