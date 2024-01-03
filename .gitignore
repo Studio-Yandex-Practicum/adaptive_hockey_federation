@@ -155,6 +155,12 @@ cython_debug/
 # PyCharm
 .idea/
 
+# VScode
+.vscode/
+
+# Pylint settings
+.pylintrc
+
 /adaptive_hockey_federation/parser/Именная заявка/
 resourses/
 
