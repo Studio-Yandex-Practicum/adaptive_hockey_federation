@@ -17,23 +17,39 @@
         aria-controls="staticBackdrop" aria-expanded="true">
           <i class="bi bi-caret-right-fill fs-3" style="color: white;"></i>
         </button>
-        <nav aria-label="Page navigation example" class="p-2">
+        {% if is_paginated %}
+        <nav aria-label="Page navigation" class="p-2">
           <ul class="pagination ps-8">
-            <li class="page-item">
-              <a class="page-link bg-[#64c2d1] me-1" href="#" aria-label="Previous">
-                <i class="bi bi-caret-left-fill" style="color: #340061;"></i>
-              </a>
-            </li>
-            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">1</a></li>
-            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">2</a></li>
-            <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link bg-[#64c2d1]" href="#" aria-label="Next">
-                <i class="bi bi-caret-right-fill" style="color: #340061;"></i>
-              </a>
-            </li>
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link bg-[#64c2d1] me-1" href="?page=1" aria-label="First">Начало</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link bg-[#64c2d1] me-1" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">Предыдущая</a>
+              </li>
+            {% endif %}
+      
+            {% for num in paginator.page_range %}
+              {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                {% if page_obj.number == num %}
+                  <li class="page-item active"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="?page={{ num }}">{{ num }}</a></li>
+                {% else %}
+                  <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+      
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link bg-[#64c2d1]" href="?page={{ page_obj.next_page_number }}" aria-label="Next">Следующая</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link bg-[#64c2d1]" href="?page={{ paginator.num_pages }}" aria-label="Last">Последняя</a>
+              </li>
+            {% endif %}
           </ul>
         </nav>
+        {% endif%}
       </div>
       <ul class="nav nav-pills ">
         {% with request.resolver_match.view_name as view_name %}
