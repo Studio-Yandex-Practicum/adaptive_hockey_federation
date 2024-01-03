@@ -17,7 +17,7 @@ class BaseUserInfo:
     patronymic: Union[str, None] = None
     birth_certificate: Union[str, None] = None
     passport: Union[str, None] = None
-    classification: Union[float, None] = None
+    classification: Union[str, None] = None
     revision: Union[str, None] = None
     is_assistant: bool = False
     is_captain: bool = False

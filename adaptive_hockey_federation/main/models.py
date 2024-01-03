@@ -210,6 +210,16 @@ class StaffMember(BasePerson):
     class Meta:
         verbose_name = 'Сотрудник'
         verbose_name_plural = 'Сотрудники'
+        constraints = [
+            models.UniqueConstraint(
+                name='staff_member_unique',
+                fields=[
+                    'name',
+                    'surname',
+                    'patronymic',
+                ]
+            ),
+        ]
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
@@ -249,6 +259,15 @@ class StaffTeamMember(models.Model):
     class Meta:
         verbose_name = 'Сотрудник команды'
         verbose_name_plural = 'Сотрудники команды'
+        constraints = [
+            models.UniqueConstraint(
+                name='staff_member_position_unique',
+                fields=[
+                    'staff_member',
+                    'staff_position',
+                ]
+            ),
+        ]
 
     def __str__(self):
         return ' '.join([
@@ -270,7 +289,8 @@ class Team(BaseUniqueName):
     )
     staff_team_member = models.ForeignKey(
         StaffTeamMember,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name=_('Сотрудник команды'),
         help_text=_('Сотрудник команды')
     )
@@ -282,7 +302,8 @@ class Team(BaseUniqueName):
     )
     curator = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name=_('Куратор команды'),
         help_text=_('Куратор команды')
     )
