@@ -1,8 +1,15 @@
+import random
+
 import factory
 from faker import Faker
 from main.models import City, Diagnosis, Nosology, StaffMember, StaffTeamMember
 
-from .constants import DIAGNOSIS_WORDS, NOSOLOGY_WORDS, STAFF_TEAM_MEMBER
+from .constants import (
+    DIAGNOSIS_WORDS,
+    NOSOLOGY_DIAGNOSIS,
+    NOSOLOGY_WORDS,
+    STAFF_TEAM_MEMBER,
+)
 from .utils import check_len
 
 faker = Faker()
@@ -36,6 +43,15 @@ class NosologyFactory(factory.django.DjangoModelFactory):
         'sentence',
         nb_words=NOSOLOGY_WORDS['max'],
         locale='ru_RU',
+    )
+
+    diagnosis = factory.RelatedFactoryList(
+        'main.factories.factory.DiagnosisFactory',
+        factory_related_name='nosology',
+        size=lambda: random.randint(
+            NOSOLOGY_DIAGNOSIS['min'],
+            NOSOLOGY_DIAGNOSIS['max'],
+        )
     )
 
     @factory.post_generation
