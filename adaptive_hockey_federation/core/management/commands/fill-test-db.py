@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from main.factories.factory import (
     CityFactory,
     DiagnosisFactory,
+    DisciplineFactory,
     NosologyFactory,
     StaffMemberFactory,
     StaffTeamMemberFactory,
@@ -68,11 +69,18 @@ class Command(BaseCommand):
             help='Фикстуры для таблицы StaffTeamMember'
         )
         parser.add_argument(
+            '-ds',
+            '--discipline',
+            action='store_true',
+            help='Фикстуры для таблицы Discipline'
+        )
+        parser.add_argument(
             '-a',
             '--amount',
             type=int,
             default=10,
-            help='Количество фикстур для создания')
+            help='Количество фикстур для создания',
+        )
 
     def handle(self, *args, **options):
         city = options.get('city', False)
@@ -81,6 +89,7 @@ class Command(BaseCommand):
         nosology = options.get('nosology', False)
         diagnosis = options.get('diagnosis', False)
         staff_team = options.get('staffteam', False)
+        discipline = options.get('discipline', False)
         amount = options.get('amount')
         if city:
             CityFactory.create_batch(amount)
@@ -108,3 +117,6 @@ class Command(BaseCommand):
             return (
                 f'{staff_amount} фикстур для таблицы StaffTeamMember создано!'
             )
+        if discipline:
+            DisciplineFactory.create_batch(amount)
+            return 'Фикстуры для таблицы Discipline создано!'

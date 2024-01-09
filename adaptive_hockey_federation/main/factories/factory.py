@@ -2,10 +2,20 @@ import random
 
 import factory
 from faker import Faker
-from main.models import City, Diagnosis, Nosology, StaffMember, StaffTeamMember
+from main.models import (
+    City,
+    Diagnosis,
+    Discipline,
+    DisciplineLevel,
+    DisciplineName,
+    Nosology,
+    StaffMember,
+    StaffTeamMember,
+)
 
 from .constants import (
     DIAGNOSIS_WORDS,
+    DISCIPLINE_NAME,
     NOSOLOGY_DIAGNOSIS,
     NOSOLOGY_WORDS,
     STAFF_TEAM_MEMBER,
@@ -89,6 +99,7 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
 
 
 class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
+
     class Meta:
         model = StaffTeamMember
 
@@ -119,3 +130,34 @@ class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
                 STAFF_TEAM_MEMBER['notes']['max'],
                 STAFF_TEAM_MEMBER['notes']['min'],
             )
+
+
+class DisciplineNameFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = DisciplineName
+
+    name = factory.Faker('sentence', nb_words=DISCIPLINE_NAME, locale='ru_RU')
+    discipline = factory.RelatedFactoryList(
+        'main.factories.factory.DisciplineFactory',
+        factory_related_name='discipline_name',
+        size=5,
+    )
+
+
+class DisciplineLevelFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = DisciplineLevel
+        django_get_or_create = ['name']
+
+    name = factory.Iterator(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'])
+
+
+class DisciplineFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = Discipline
+
+    discipline_name = factory.SubFactory(DisciplineNameFactory)
+    discipline_level = factory.SubFactory(DisciplineLevelFactory)
