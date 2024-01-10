@@ -50,6 +50,7 @@ class UpdateUserView(
     template_name = 'includes/user_update.html'
     permission_required = 'users.change_user'
     form_class = UpdateUserForm
+    success_url = '/users'
 
 
 class DeleteUserView(
