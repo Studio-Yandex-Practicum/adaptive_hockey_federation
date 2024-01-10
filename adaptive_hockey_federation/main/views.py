@@ -26,9 +26,24 @@ def main(request):
     return render(request, 'main/main.html')
 
 
-@login_required
-def players(request):
-    return render(request, 'main/players.html')
+class PlayersCardView(LoginRequiredMixin, ListView):
+    model = Player
+    template_name = 'main/players.html'
+    context_object_name = 'players'
+    paginate_by = 10
+    fields = ['surname', 'name', 'birthday',
+              'gender', 'number', 'discipline', 'diagnosis']
+
+    def get_queryset(self):
+        return super().get_queryset().order_by('surname').values(*self.fields)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        table_head = {}
+        for field in self.fields:
+            table_head[field] = Player._meta.get_field(field).verbose_name
+        context['table_head'] = table_head
+        return context
 
 
 class TeamIdView(LoginRequiredMixin, UpdateView):
