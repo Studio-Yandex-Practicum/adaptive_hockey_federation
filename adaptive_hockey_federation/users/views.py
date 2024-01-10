@@ -49,17 +49,7 @@ class UpdateUserView(
     model = User
     template_name = 'includes/user_update.html'
     permission_required = 'users.change_user'
-    context_object_name = 'user'
-    success_url = '/users'
     form_class = UpdateUserForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
 
 
 class DeleteUserView(

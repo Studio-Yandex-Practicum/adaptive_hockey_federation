@@ -23,6 +23,7 @@ class UserAdmin(admin.ModelAdmin):
     )
     fields = [
         ('first_name', 'last_name'),
+        'password',
         'email',
         'phone',
         'is_staff',

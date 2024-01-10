@@ -7,13 +7,13 @@ from core.constants import (
     ROLE_MODERATOR,
     ROLES_CHOICES,
 )
-from core.validators import email_validator
 from django.contrib.auth.models import (
     AbstractBaseUser,
     Group,
     PermissionsMixin,
 )
 from django.core.mail import send_mail
+from django.core.validators import EmailValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -54,7 +54,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         max_length=EMAIL_MAX_LENGTH,
         unique=True,
-        validators=(email_validator,),
+        validators=(EmailValidator(
+            message="Используйте корректный адрес электронной почты. "
+            "Адрес должен быть не длиннее 150 символов. "
+            "Допускается использование латинских букв, "
+            "цифр и символов @/./+/-/_"),
+        ),
         verbose_name=_('Электронная почта'),
         help_text=_('Электронная почта'),
     )

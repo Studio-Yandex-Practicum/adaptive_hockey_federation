@@ -35,7 +35,7 @@
           </form>
           <form action="{% url 'users:user_delete' table_string.id %}" method="post" >
             {% csrf_token %}
-            <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %}>
+            <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>
               <img src={% static 'img/delete.png' %}>
             </button>
           </form>
@@ -45,3 +45,5 @@
     {% endfor %}
   </tbody>
 </table>
+
+

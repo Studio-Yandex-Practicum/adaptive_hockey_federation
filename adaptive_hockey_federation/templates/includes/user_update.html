@@ -9,12 +9,13 @@
     <div class="col-md-8 p-5">
       <div class="card update_card">
     <div class="card-header">
-      Редактированние данных пользователя {{ user.first_name }} {{ user.last_name }}
+      Редактированние данных пользователя </br> {{ user.first_name }} {{ user.last_name }}
   </div>
   <div class="card-body">
     <form method="post" 
     {% if action_url %}
       action="{% url action_url %}"
+      enctype="multipart/form-data"
     {% endif %}>
       {% csrf_token %}
 
