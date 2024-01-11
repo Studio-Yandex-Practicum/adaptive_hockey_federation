@@ -4,8 +4,6 @@ from main.factories.factory import (
     CityFactory,
     DiagnosisFactory,
     DisciplineFactory,
-    NosologyFactory,
-    StaffMemberFactory,
     StaffTeamMemberFactory,
 )
 from users.factories import UserFactory
@@ -39,22 +37,10 @@ class Command(BaseCommand):
             help='Фикстуры для таблицы City'
         )
         parser.add_argument(
-            '-s',
-            '--staffmember',
-            action='store_true',
-            help='Фикстуры для таблицы StaffMember'
-        )
-        parser.add_argument(
             '-u',
             '--users',
             action='store_true',
             help='Фикстуры для таблицы Users'
-        )
-        parser.add_argument(
-            '-n',
-            '--nosology',
-            action='store_true',
-            help='Фикстуры для таблицы Nosology'
         )
         parser.add_argument(
             '-d',
@@ -63,7 +49,7 @@ class Command(BaseCommand):
             help='Фикстуры для таблицы Diagnosis'
         )
         parser.add_argument(
-            '-st',
+            '-s',
             '--staffteam',
             action='store_true',
             help='Фикстуры для таблицы StaffTeamMember'
@@ -84,9 +70,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         city = options.get('city', False)
-        staff_member = options.get('staffmember', False)
         test_users = options.get('users', False)
-        nosology = options.get('nosology', False)
         diagnosis = options.get('diagnosis', False)
         staff_team = options.get('staffteam', False)
         discipline = options.get('discipline', False)
@@ -94,17 +78,11 @@ class Command(BaseCommand):
         if city:
             CityFactory.create_batch(amount)
             return f'{amount} фикстур для таблицы City создано!'
-        if staff_member:
-            StaffMemberFactory.create_batch(amount)
-            return f'{amount} фикстур для таблицы StaffMemmber создано!'
         if test_users:
             users_amount = sum(USERS.values())
             for role, amount in USERS.items():
                 UserFactory.create_batch(amount, role=role)
             return f'{users_amount} фикстур для таблицы User создано!'
-        if nosology:
-            NosologyFactory.create_batch(amount)
-            return f'{amount} фикстур для таблицы Nosology создано!'
         if diagnosis:
             DiagnosisFactory.create_batch(amount)
             return f'{amount} фикстур для таблицы Diagnosis создано!'

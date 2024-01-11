@@ -1,5 +1,4 @@
 def check_len(field, max, min):
-    print(field)
     words = field.split()
     count = min - len(words)
     if len(words) < min:

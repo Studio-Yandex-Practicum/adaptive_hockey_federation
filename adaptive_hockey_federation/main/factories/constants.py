@@ -5,4 +5,3 @@ STAFF_TEAM_MEMBER = {
     'qualification': {'max': 5, 'min': 3},
     'notes': {'max': 10, 'min': 7}
 }
-DISCIPLINE_NAME = 2

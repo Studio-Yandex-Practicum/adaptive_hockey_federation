@@ -1,7 +1,7 @@
 import random
 
 import factory
-from faker import Faker
+# from faker import Faker
 from main.models import (
     City,
     Diagnosis,
@@ -11,18 +11,13 @@ from main.models import (
     Nosology,
     StaffMember,
     StaffTeamMember,
+    Team,
 )
+from users.factories import UserFactory
 
-from .constants import (
-    DIAGNOSIS_WORDS,
-    DISCIPLINE_NAME,
-    NOSOLOGY_DIAGNOSIS,
-    NOSOLOGY_WORDS,
-    STAFF_TEAM_MEMBER,
-)
 from .utils import check_len
 
-faker = Faker()
+# faker = Faker()
 
 
 class CityFactory(factory.django.DjangoModelFactory):
@@ -49,30 +44,19 @@ class NosologyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Nosology
 
-    name = factory.Faker(
-        'sentence',
-        nb_words=NOSOLOGY_WORDS['max'],
-        locale='ru_RU',
-    )
+    name = factory.Faker('sentence', nb_words=5, locale='ru_RU')
 
     diagnosis = factory.RelatedFactoryList(
         'main.factories.factory.DiagnosisFactory',
         factory_related_name='nosology',
-        size=lambda: random.randint(
-            NOSOLOGY_DIAGNOSIS['min'],
-            NOSOLOGY_DIAGNOSIS['max'],
-        )
+        size=lambda: random.randint(3, 5,)
     )
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
         field = self.name
         if create:
-            self.name = check_len(
-                field,
-                NOSOLOGY_WORDS['max'],
-                NOSOLOGY_WORDS['min'],
-            )
+            self.name = check_len(field, 5, 3)
 
 
 class DiagnosisFactory(factory.django.DjangoModelFactory):
@@ -81,21 +65,13 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
         model = Diagnosis
 
     nosology = factory.SubFactory(NosologyFactory)
-    name = factory.Faker(
-        'sentence',
-        nb_words=DIAGNOSIS_WORDS['max'],
-        locale='ru_RU',
-    )
+    name = factory.Faker('sentence', nb_words=5, locale='ru_RU')
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
         field = self.name
         if create:
-            self.name = check_len(
-                field,
-                DIAGNOSIS_WORDS['max'],
-                DIAGNOSIS_WORDS['min'],
-            )
+            self.name = check_len(field, 5, 3)
 
 
 class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
@@ -104,32 +80,16 @@ class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
         model = StaffTeamMember
 
     staff_member = factory.SubFactory(StaffMemberFactory)
-    qualification = factory.Faker(
-        'sentence',
-        nb_words=STAFF_TEAM_MEMBER['qualification']['max'],
-        locale='ru_RU',
-    )
-    notes = factory.Faker(
-        'sentence',
-        nb_words=STAFF_TEAM_MEMBER['notes']['max'],
-        locale='ru_RU',
-    )
+    qualification = factory.Faker('sentence', nb_words=5, locale='ru_RU',)
+    notes = factory.Faker('sentence', nb_words=10, locale='ru_RU')
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
         qualification = self.qualification
         notes = self.notes
         if create:
-            self.qualification = check_len(
-                qualification,
-                STAFF_TEAM_MEMBER['qualification']['max'],
-                STAFF_TEAM_MEMBER['qualification']['min'],
-            )
-            self.notes = check_len(
-                notes,
-                STAFF_TEAM_MEMBER['notes']['max'],
-                STAFF_TEAM_MEMBER['notes']['min'],
-            )
+            self.qualification = check_len(qualification, 5, 3)
+            self.notes = check_len(notes, 10, 7)
 
 
 class DisciplineNameFactory(factory.django.DjangoModelFactory):
@@ -137,7 +97,7 @@ class DisciplineNameFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DisciplineName
 
-    name = factory.Faker('sentence', nb_words=DISCIPLINE_NAME, locale='ru_RU')
+    name = factory.Faker('sentence', nb_words=2, locale='ru_RU')
     discipline = factory.RelatedFactoryList(
         'main.factories.factory.DisciplineFactory',
         factory_related_name='discipline_name',
@@ -161,3 +121,15 @@ class DisciplineFactory(factory.django.DjangoModelFactory):
 
     discipline_name = factory.SubFactory(DisciplineNameFactory)
     discipline_level = factory.SubFactory(DisciplineLevelFactory)
+
+
+class TeamFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = Team
+
+    name = factory.Faker('sentence', nb_words=1, locale='ru_RU')
+    city = factory.SubFactory(CityFactory)
+    staff_team_member = factory.SubFactory(StaffTeamMemberFactory)
+    discipline_name = factory.SubFactory(DisciplineNameFactory)
+    curator = factory.SubFactory(UserFactory)
