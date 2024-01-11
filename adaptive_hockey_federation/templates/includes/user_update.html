@@ -9,16 +9,15 @@
     <div class="col-md-8 p-5">
       <div class="card update_card">
     <div class="card-header">
-      Редактированние данных пользователя </br> {{ user.first_name }} {{ user.last_name }}
+      Редактированние данных пользователя </br> {{ object.first_name }} {{ user.last_name }}
   </div>
   <div class="card-body">
-    <form method="post" 
+    <form method="post"
     {% if action_url %}
       action="{% url action_url %}"
       enctype="multipart/form-data"
     {% endif %}>
       {% csrf_token %}
-
       {% for field in form %} 
       <div class="row my-3">
         <label for="{{ field.id_for_label }}">
@@ -27,7 +26,7 @@
               <span class="required text-danger">*</span>
             {% endif %}
         </label>
-      {{ field |addclass:'form-control' }}
+        {{ field |addclass:'form-control' }}
       {% if field.errors %}
       <small class="error">{{ field.errors|striptags  }}</small> 
     {% endif %}

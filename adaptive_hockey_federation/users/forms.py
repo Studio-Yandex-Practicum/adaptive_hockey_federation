@@ -7,6 +7,9 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
+from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.validators import validate_international_phonenumber
 
 User = get_user_model()
 
@@ -22,17 +25,27 @@ class CreateUserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = [
+        fields = (
             'first_name',
             'last_name',
             'patronymic',
             'email',
             'phone',
-        ]
+        )
 
 
 class UpdateUserForm(CreateUserForm):
     """Форма редактирования пользователя"""
+
+    patronymic = forms.CharField(
+        max_length=20,
+        label="Отчество",
+    )
+    phone = PhoneNumberField(
+        validators=[validate_international_phonenumber],
+        max_length=20,
+        label="Актуальный номер телефона",
+    )
 
 
 class GroupAdminForm(forms.ModelForm):

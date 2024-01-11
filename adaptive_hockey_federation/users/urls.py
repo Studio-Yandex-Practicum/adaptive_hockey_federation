@@ -28,5 +28,5 @@ urlpatterns = [
         'user_create/',
         CreateUserView.as_view(),
         name='user_create'
-    )
+    ),
 ]

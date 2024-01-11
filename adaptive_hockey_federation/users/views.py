@@ -51,6 +51,24 @@ class UpdateUserView(
     permission_required = 'users.change_user'
     form_class = UpdateUserForm
     success_url = '/users'
+    initial = {}
+
+    def get_initial(self):
+        return {
+            'first_name': self.object.first_name,
+            'last_name': self.object.last_name,
+            'patronymic': self.object.patronymic,
+            'email': self.object.email,
+            'phone': self.object.phone,
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateUserView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class(
+            instance=self.object,
+            initial=self.get_initial()
+        )
+        return context
 
 
 class DeleteUserView(
