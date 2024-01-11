@@ -171,3 +171,6 @@ static/
 
 #Data JSON
 *.json
+
+#Data .csv
+csv/
