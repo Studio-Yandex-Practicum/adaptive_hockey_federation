@@ -1,10 +1,12 @@
 from core.constants import ROLE_ADMIN, ROLE_AGENT, ROLE_MODERATOR
 from django.core.management.base import BaseCommand
-from main.factories.factory import (
+from main.data_factories.factories import (
     CityFactory,
     DiagnosisFactory,
     DisciplineFactory,
+    PlayerFactory,
     StaffTeamMemberFactory,
+    TeamFactory,
 )
 from users.factories import UserFactory
 
@@ -61,6 +63,18 @@ class Command(BaseCommand):
             help='Фикстуры для таблицы Discipline'
         )
         parser.add_argument(
+            '-t',
+            '--team',
+            action='store_true',
+            help='Фикстуры для таблицы Team'
+        )
+        parser.add_argument(
+            '-p',
+            '--player',
+            action='store_true',
+            help='Фикстуры для таблицы Player'
+        )
+        parser.add_argument(
             '-a',
             '--amount',
             type=int,
@@ -74,6 +88,8 @@ class Command(BaseCommand):
         diagnosis = options.get('diagnosis', False)
         staff_team = options.get('staffteam', False)
         discipline = options.get('discipline', False)
+        team = options.get('team', False)
+        player = options.get('player', False)
         amount = options.get('amount')
         if city:
             CityFactory.create_batch(amount)
@@ -97,4 +113,11 @@ class Command(BaseCommand):
             )
         if discipline:
             DisciplineFactory.create_batch(amount)
-            return 'Фикстуры для таблицы Discipline создано!'
+            return 'Фикстуры для таблицы Discipline созданы!'
+        if team:
+            TeamFactory.create_batch(amount)
+            return 'Фикстуры для таблицы Team созданы!'
+        if player:
+            PlayerFactory.create_batch(amount)
+            return 'Фикстуры для таблицы Player созданы!'
+        return self.stdout.write(self.style.SUCCESS(DB_MESSAGE))
