@@ -20,27 +20,25 @@
   <tbody>
     {% for table_string in table_data %}
       <tr>
-          <td class="border rounded-md table-light">{{ table_string.name }}</td>
-          <td class="border rounded-md table-light" style="color: blue;">null</td>
-          <td class="border rounded-md table-light" style="color: blue;">null</td>
-          <td class="border rounded-md table-light">{{ table_string.email }}</td>
-          <td class="border rounded-md table-light">{{ table_string.phone }}</td>
-        <td class="border rounded-md btsss">
-        <div class="input-group justify-content-md-end">
-          <form action="{% url 'users:user_update' table_string.id %}" method="post">
-            {% csrf_token %}
-            <button class=" btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
-              <img src={% static 'img/edit.png' %}>
-            </button>
-          </form>
-          <form action="{% url 'users:user_delete' table_string.id %}" method="post" >
-            {% csrf_token %}
-            <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>
-              <img src={% static 'img/delete.png' %}>
-            </button>
-          </form>
-        </div>
-        </td>
+        {% for cell_name, cell_value in table_string.items %}
+          {% if forloop.counter0 == 0 and 'url' in table_string %}
+            <td class="border rounded-md table-light">
+              <a href="{{ table_string.url }}">{{ cell_value }} </a>
+            </td>
+          {% elif cell_name != 'url' and cell_name != 'id'%}
+            <td class="border rounded-md table-light">{{ cell_value }}</td>
+          {% endif %}
+        {% endfor %}
+        {% with request.resolver_match.view_name as view_name %}
+          {% if view_name == 'users:users' %}
+            {% include "includes/users_buttons.html" %}
+          {% else %}
+            <td class="border rounded-md table-light">
+              <button type="button"><img src="{% static 'img/edit.png' %}"></button>
+              <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+            </td>
+          {% endif %}
+        {% endwith %}
       </tr>
     {% endfor %}
   </tbody>
