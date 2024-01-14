@@ -3,5 +3,25 @@
   Профиль команды
 {% endblock %}
 {% block content %}
-  Профиль команды
-{% endblock %}
+  <h2 class="text-center mb-4">Профиль команды</h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-body text-start">
+            <p><strong>Название:</strong> {{ team.name }}</p>
+            <p><strong>Город:</strong> {{ team.city.name }}</p>
+            <p><strong>Сотрудник команды:</strong> {{ team.staff_team_member }}</p>
+            <p><strong>Дисциплина:</strong> {{ team.discipline_name }}</p>
+            <p><strong>Куратор:</strong> {{ team.curator.get_full_name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h3 class="mb-3">Игроки команды</h3>
+  <div class="container">
+    {% include 'includes/table.html' with table_head=table_head table_data=table_data %}
+  </div>
+
+{% endblock content %}

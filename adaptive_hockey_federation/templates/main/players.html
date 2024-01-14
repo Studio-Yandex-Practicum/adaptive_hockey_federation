@@ -3,5 +3,7 @@
   Список игроков
 {% endblock %}
 {% block content %}
-  Список игроков
+  <div class="container">
+    {% include 'includes/table.html' with table_head=table_head table_data=players %}
+  </div>
 {% endblock %}
