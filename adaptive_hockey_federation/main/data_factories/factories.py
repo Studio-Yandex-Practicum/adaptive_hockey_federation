@@ -1,6 +1,7 @@
 import random
 
 import factory
+from django.db.models import Count
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -185,8 +186,19 @@ class PlayerFactory(factory.django.DjangoModelFactory):
         lambda: random.choice(PLAYER_POSITION_CHOICES)[1]
     )
     number = factory.Faker('random_number', digits=2)
+    identity_document = factory.LazyFunction(
+        lambda: random.choice(['паспорт', 'свидетельство'])
+    )
+
+    @factory.lazy_attribute
+    def diagnosis(self):
+        return get_random_objects(Diagnosis)
 
     @factory.post_generation
     def team(self, create, extracted, **kwargs):
         if create:
-            self.team.set([get_random_objects(Team)])
+            teams_with_player_count = Team.objects.annotate(
+                player_count=Count('team_players')
+            )
+            if teams_with_player_count.filter(player_count__lt=10):
+                self.team.set([get_random_objects(Team)])

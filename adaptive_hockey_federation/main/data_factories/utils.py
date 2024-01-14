@@ -1,5 +1,7 @@
 import random
 
+from main.models import Discipline, Player, Team
+
 
 def check_len(field, max, min):
     """
@@ -21,3 +23,26 @@ def get_random_objects(model):
     """Функция получает рандомные записи, из представленой модели данных."""
     queryset = model.objects.distinct()
     return random.choice(queryset)
+
+
+def updates_for_players():
+    """
+    Обновления записей игроков в базе данных. Функция проходит по всем
+    существующим командам, присваивает должности капитанов и помощников,
+    в каждой команде по одному капитану и помощнику. Затем к каждому игроку
+    в команде присваевается дисциплина которая соответствует его команде.
+    """
+    teams = Team.objects.all()
+    for team in teams:
+        player_in_team = Player.objects.filter(team__id=team.id)
+        disciplines = Discipline.objects.filter(
+            discipline_name=team.discipline_name.id
+        )
+        discipline = random.choice(disciplines)
+        captain = random.choice(player_in_team)
+        assistent = random.choice(player_in_team)
+        captain.is_captain = True
+        assistent.is_assistent = True
+        captain.save()
+        assistent.save()
+        player_in_team.update(discipline=discipline)

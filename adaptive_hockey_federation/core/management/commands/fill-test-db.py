@@ -8,6 +8,7 @@ from main.data_factories.factories import (
     StaffTeamMemberFactory,
     TeamFactory,
 )
+from main.data_factories.utils import updates_for_players
 from users.factories import UserFactory
 
 AMOUNT_ADMIN = 3
@@ -119,5 +120,6 @@ class Command(BaseCommand):
             return 'Фикстуры для таблицы Team созданы!'
         if player:
             PlayerFactory.create_batch(amount)
+            updates_for_players()
             return 'Фикстуры для таблицы Player созданы!'
         return self.stdout.write(self.style.SUCCESS(DB_MESSAGE))
