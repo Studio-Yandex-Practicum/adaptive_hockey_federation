@@ -7,6 +7,6 @@ urlpatterns = [
     path(
         'users/',
         UsersListView.as_view(),
-        name='list'
-    )
+        name='users'
+    ),
 ]

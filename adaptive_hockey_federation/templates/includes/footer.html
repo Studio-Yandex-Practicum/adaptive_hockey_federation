@@ -10,50 +10,18 @@
 
 
 <div class="footer-copyright">
-  <nav class="navbar navbar-light" style="background-color: #64c2d1;">
+  <nav class="navbar" >
     <div class="container">
       <div class="nav nav-pills justify-content-start">
         <button onclick="toggle_visibility('sidebar');" class="btn" type="button"
         aria-controls="staticBackdrop" aria-expanded="true">
-          <i class="bi bi-caret-right-fill fs-3" style="color: white;"></i>
+          <i class="bi bi-caret-right-fill fs-3" style="color: #340061;"></i>
         </button>
-        {% if is_paginated %}
-        <nav aria-label="Page navigation" class="p-2">
-          <ul class="pagination ps-8">
-            {% if page_obj.has_previous %}
-              <li class="page-item">
-                <a class="page-link bg-[#64c2d1] me-1" href="?page=1" aria-label="First">Начало</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link bg-[#64c2d1] me-1" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">Предыдущая</a>
-              </li>
-            {% endif %}
-      
-            {% for num in paginator.page_range %}
-              {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
-                {% if page_obj.number == num %}
-                  <li class="page-item active"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="?page={{ num }}">{{ num }}</a></li>
-                {% else %}
-                  <li class="page-item"><a class="page-link bg-[#64c2d1] me-1" style="color: #340061;" href="?page={{ num }}">{{ num }}</a></li>
-                {% endif %}
-              {% endif %}
-            {% endfor %}
-      
-            {% if page_obj.has_next %}
-              <li class="page-item">
-                <a class="page-link bg-[#64c2d1]" href="?page={{ page_obj.next_page_number }}" aria-label="Next">Следующая</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link bg-[#64c2d1]" href="?page={{ paginator.num_pages }}" aria-label="Last">Последняя</a>
-              </li>
-            {% endif %}
-          </ul>
-        </nav>
-        {% endif%}
+        {% include "includes/pagination.html" %}
       </div>
       <ul class="nav nav-pills ">
         {% with request.resolver_match.view_name as view_name %}
-          {% if view_name  == 'main:users' %}{% include "includes/button.html" with name="+ Пользователь" %}{% endif %}
+          {% if view_name  == 'users:users' %}{% include "includes/button.html" with name="+ Пользователь"%}{% endif %}
           {% if view_name  == 'main:teams' %}{% include "includes/button.html" with name="+ Команда" %}{% endif %}
           {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
           {% if view_name  != 'main:unloads' %}{% include "includes/button.html" with name="Выгрузить" %}{% endif %}
