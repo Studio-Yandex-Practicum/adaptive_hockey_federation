@@ -31,7 +31,7 @@
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
           {% if view_name == 'users:users' %}
-            {% include "includes/create_delete_buttons.html" %}
+            {% include "includes/users_buttons.html" %}
           {% else %}
             <td class="border rounded-md table-light">
               <button type="button"><img src="{% static 'img/edit.png' %}"></button>
