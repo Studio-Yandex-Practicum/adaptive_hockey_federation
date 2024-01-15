@@ -100,6 +100,7 @@ class TeamListView(LoginRequiredMixin, ListView):
     model = Team
     template_name = 'main/teams.html'
     context_object_name = 'teams'
+    paginate_by = 10
     ordering = ['id']
 
     def get_context_data(self, **kwargs):
