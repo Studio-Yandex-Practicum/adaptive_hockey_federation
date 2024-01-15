@@ -14,6 +14,12 @@ class UserFactory(factory.django.DjangoModelFactory):
     patronymic = factory.Faker('first_name', locale='ru_RU')
     email = factory.Faker('email', locale='ru_RU')
     phone = factory.Faker('phone_number', locale='ru_RU')
-    is_staff = True
-    is_superuser = False
     password = factory.PostGenerationMethodCall('set_password', 'pass1234')
+
+    @factory.post_generation
+    def admin_create(self, create, extracted, **kwargs):
+        if create:
+            if self.role in ['admin', 'moderator']:
+                self.is_staff = True
+                if self.role == 'admin':
+                    self.is_superuser = True

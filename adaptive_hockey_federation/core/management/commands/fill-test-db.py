@@ -1,7 +1,6 @@
 from core.constants import ROLE_ADMIN, ROLE_AGENT, ROLE_MODERATOR
 from django.core.management.base import BaseCommand
 from main.data_factories.factories import (
-    CityFactory,
     DiagnosisFactory,
     DisciplineFactory,
     PlayerFactory,
@@ -33,12 +32,6 @@ class Command(BaseCommand):
     help = 'Наполнние базы данных тестовыми данными.'
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '-c',
-            '--city',
-            action='store_true',
-            help='Фикстуры для таблицы City'
-        )
         parser.add_argument(
             '-u',
             '--users',
@@ -84,7 +77,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        city = options.get('city', False)
         test_users = options.get('users', False)
         diagnosis = options.get('diagnosis', False)
         staff_team = options.get('staffteam', False)
@@ -92,9 +84,6 @@ class Command(BaseCommand):
         team = options.get('team', False)
         player = options.get('player', False)
         amount = options.get('amount')
-        if city:
-            CityFactory.create_batch(amount)
-            return f'{amount} фикстур для таблицы City создано!'
         if test_users:
             users_amount = sum(USERS.values())
             for role, amount in USERS.items():
