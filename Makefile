@@ -16,7 +16,7 @@ SHELL_NC := \e[0m
 
 # Вызов документации.
 help:
-	@echo "$(SHELL_YELLOW)Список полезных функции:$(SHELL_NC)"
+	@echo "$(SHELL_YELLOW)Список полезных функций:$(SHELL_NC)"
 	@echo "	init-app        - $(SHELL_GREEN)Команда для автоустановки статики, миграций и регистрации супер-юзера.$(SHELL_NC)"
 	@echo "	makemigrations  - $(SHELL_GREEN)Команда для создания новых миграций и пременений их к базе данных.$(SHELL_NC)"
 	@echo "	collectstatic   - $(SHELL_GREEN)Команда для сбора статики.$(SHELL_NC)"
@@ -26,7 +26,8 @@ help:
 	@echo "	stop-db         - $(SHELL_GREEN)Команда для остановки локального контейнера postgres.$(SHELL_NC)"
 	@echo "	clear-db        - $(SHELL_GREEN)Команда для очистки volume локального контейнера postgres.$(SHELL_NC)"
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)"
-	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных с помощью парсера.$(SHELL_NC)"
+	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных реальными данными из json фикстур.$(SHELL_NC)"
+	@echo "	fill-test-db    - $(SHELL_GREEN)Команда для заполнения базы данных тестовыми данными при помощи фабрик генерации данных.$(SHELL_NC)"
 	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)"
 	@echo "	shell           - $(SHELL_GREEN)Команда для запуска Django-shell_plus.$(SHELL_NC)"
 	@echo "	help            - $(SHELL_GREEN)Команда вызова справки.$(SHELL_NC)"
@@ -100,7 +101,7 @@ fill-db:
 
 
 #Заполнение базы данных фикстурами
-fixture-fill-db:
+fill-test-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --users
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --diagnosis --amount 8
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --staffteam
