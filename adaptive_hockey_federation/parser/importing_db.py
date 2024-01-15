@@ -27,7 +27,7 @@ STAFF_POSITIONS = ['тренер', 'координатор', 'пушер',]
 
 
 def parse_file(file_path: str) -> list[BaseUserInfo]:
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data
 
@@ -133,8 +133,8 @@ def clear_data_db(file_name: str) -> None:
 
 def importing_real_data_db(
         FIXSTURES_DIR, file_name: str) -> None:
-    file = open(FIXSTURES_DIR / file_name)
-    data = json.load(file)
+    with open(FIXSTURES_DIR / file_name, 'r', encoding='utf-8') as file:
+        data = json.load(file)
     key = file_name.replace('.json', '')
     models_name = getattr(models, FILE_MODEL_MAP[key])
     for item in data:
