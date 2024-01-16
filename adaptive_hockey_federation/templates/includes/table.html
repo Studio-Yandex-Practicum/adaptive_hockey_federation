@@ -1,6 +1,5 @@
 {% load static %}
-
-<table class="table table-borderless border-separate border-spacing-1">
+<table class="table table-borderless border-separate border-spacing-1 align-middle">
   <thead>
     <tr>
       {% for head_item in table_head.values %}
@@ -19,23 +18,30 @@
     </tr>
   </thead>
   <tbody>
-    <tr><td></td></tr>
     {% for table_string in table_data %}
       <tr>
         {% for cell_name, cell_value in table_string.items %}
           {% if forloop.counter0 == 0 and 'url' in table_string %}
             <td class="border rounded-md table-light">
-              <a href="{{ table_string.url }}">{{ cell_value }}</a>
+              <a href="{{ table_string.url }}">{{ cell_value }} </a>
             </td>
-          {% elif cell_name != 'url' %}
+          {% elif cell_name != 'url' and cell_name != 'id'%}
             <td class="border rounded-md table-light">{{ cell_value }}</td>
           {% endif %}
         {% endfor %}
-        <td class="border rounded-md table-light">
-          <button type="button"><img src="{% static 'img/edit.png' %}"></button>
-          <button type="button"><img src="{% static 'img/delete.png' %}"></button>
-        </td>
+        {% with request.resolver_match.view_name as view_name %}
+          {% if view_name == 'users:users' %}
+            {% include "includes/create_delete_buttons.html" %}
+          {% else %}
+            <td class="border rounded-md table-light">
+              <button type="button"><img src="{% static 'img/edit.png' %}"></button>
+              <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+            </td>
+          {% endif %}
+        {% endwith %}
       </tr>
     {% endfor %}
   </tbody>
 </table>
+
+
