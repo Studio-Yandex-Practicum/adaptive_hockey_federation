@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  Профиль игрока
+{% endblock %}
+{% block content %}
+  <h2 class="text-center mb-4">Профиль игрока</h2>
+  <div class="container text-start">
+    <table class="table">
+      <tbody>
+        {% for field_name, field_value in player_fields %}
+          <tr>
+            <th scope="row">{{ field_name }}:</th>
+            <td>{{ field_value }}</td>
+            <td class="rounded-md table-light text-end">
+              <button type="button"><img src="{% static 'img/edit.png' %}"></button>
+              <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}

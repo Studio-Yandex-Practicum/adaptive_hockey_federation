@@ -31,7 +31,7 @@ class PlayersCardView(LoginRequiredMixin, ListView):
     template_name = 'main/players.html'
     context_object_name = 'players'
     paginate_by = 10
-    fields = ['surname', 'name', 'birthday',
+    fields = ['id', 'surname', 'name', 'birthday',
               'gender', 'number', 'discipline', 'diagnosis']
 
     def get_queryset(self):
@@ -41,8 +41,51 @@ class PlayersCardView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         table_head = {}
         for field in self.fields:
-            table_head[field] = Player._meta.get_field(field).verbose_name
+            if field != 'id':
+                table_head[field] = Player._meta.get_field(field).verbose_name
         context['table_head'] = table_head
+
+        players_data = []
+        for player in context['players']:
+            player_data = {
+                'surname': player['surname'],
+                'name': player['name'],
+                'birthday': player['birthday'],
+                'gender': player['gender'],
+                'number': player['number'],
+                'discipline': player['discipline'],
+                'diagnosis': player['diagnosis'],
+                'url': reverse('main:player_id', args=[player['id']]),
+            }
+            players_data.append(player_data)
+
+        context['players_data'] = players_data
+        return context
+
+
+class PlayerIdView(LoginRequiredMixin, UpdateView):
+    model = Player
+    template_name = 'main/player_id.html'
+    context_object_name = 'player'
+    fields = ['surname', 'name', 'birthday', 'gender', 'number', 'discipline', 'diagnosis']
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Player, id=self.kwargs['id'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        player = context['player']
+
+        player_fields = [
+            ('Фамилия', player.surname),
+            ('Имя', player.name),
+            ('Дата рождения', player.birthday),
+            ('Пол', player.gender),
+            ('Номер игрока', player.number),
+            ('Дисциплина', player.discipline),
+            ('Диагноз', player.diagnosis),
+        ]
+        context['player_fields'] = player_fields
         return context
 
 
