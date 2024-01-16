@@ -67,7 +67,8 @@ class PlayerIdView(LoginRequiredMixin, UpdateView):
     model = Player
     template_name = 'main/player_id.html'
     context_object_name = 'player'
-    fields = ['surname', 'name', 'birthday', 'gender', 'number', 'discipline', 'diagnosis']
+    fields = ['surname', 'name', 'birthday',
+              'gender', 'number', 'discipline', 'diagnosis']
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs['id'])
