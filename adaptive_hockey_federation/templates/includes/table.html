@@ -5,9 +5,9 @@
   <thead>
     <tr>
       {% for head_item in table_head.values %}
-      <th scope="col">{{ head_item }}</th>
+      <th class="col">{{ head_item }}</th>
       {% endfor %}
-      <th scope="col">
+      <th class="col">
         <div class="row">
           <div class="col text-right">
             <img src="{% static 'img/edit.png' %}" class="float-end">
@@ -28,7 +28,7 @@
               <a href="{{ table_string.url }}">{{ cell_value }} </a>
             </td>
           {% elif cell_name != 'url' and cell_name != 'id'%}
-            <td >{{ cell_value }}</td>
+            <td>{{ cell_value }}</td>
           {% endif %}
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}

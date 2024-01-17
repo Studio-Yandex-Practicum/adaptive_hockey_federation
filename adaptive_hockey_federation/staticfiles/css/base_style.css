@@ -302,3 +302,8 @@ li {
   border-color: #64C2D1;
   height: 40px;
 }
+@media (min-width: 1104px) {
+  .table-responsive {
+    overflow-x: hidden;
+  }
+}
