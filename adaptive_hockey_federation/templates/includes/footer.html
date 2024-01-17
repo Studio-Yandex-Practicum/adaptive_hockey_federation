@@ -1,5 +1,22 @@
 <footer class="footer mt-auto py-3 bg-light footer-class">
-  <div class="conteiner">
-      {% include "includes/pagination.html" %}
-  </div>
+  <nav class="navbar" >
+   <div class="container">
+     <div class="nav nav-pills justify-content-start">
+       <button onclick="toggle_visibility('sidebar');" class="btn" type="button"
+       aria-controls="staticBackdrop" aria-expanded="true">
+         <i class="bi bi-caret-right-fill fs-3" style="color: #340061;"></i>
+       </button>
+       {% include "includes/pagination.html" %}
+     </div>
+     <ul class="nav nav-pills ">
+       {% with request.resolver_match.view_name as view_name %}
+         {% if view_name  == 'users:users' %}{% include "includes/button.html" with name="+ Пользователь"%}{% endif %}
+         {% if view_name  == 'main:teams' %}{% include "includes/button.html" with name="+ Команда" %}{% endif %}
+         {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
+         {% if view_name  != 'main:unloads' %}{% include "includes/button.html" with name="Выгрузить" %}{% endif %}
+       {% endwith %}
+     </ul>
+   </div>
+ </nav>
 </footer>
+```
