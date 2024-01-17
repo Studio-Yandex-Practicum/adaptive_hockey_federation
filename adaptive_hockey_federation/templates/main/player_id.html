@@ -12,13 +12,19 @@
           <tr>
             <th scope="row">{{ field_name }}:</th>
             <td>{{ field_value }}</td>
-            <td class="rounded-md table-light text-end">
-              <button type="button"><img src="{% static 'img/edit.png' %}"></button>
-              <button type="button"><img src="{% static 'img/delete.png' %}"></button>
-            </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+  </div>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col text-white flex justify-start">
+        <a href="{% url 'main:player_id' id=player.id %}/edit/" class="btn btn-secondary text-white">Редактировать</a>
+        <a href="{% url 'main:player_id' id=player.id %}/delete/" class="btn btn-danger">Удалить</a>
+      </div>
+    </div>
   </div>
 {% endblock content %}

@@ -26,7 +26,7 @@ def main(request):
     return render(request, 'main/main.html')
 
 
-class PlayersCardView(LoginRequiredMixin, ListView):
+class PlayersListView(LoginRequiredMixin, ListView):
     model = Player
     template_name = 'main/players.html'
     context_object_name = 'players'
@@ -67,8 +67,11 @@ class PlayerIdView(LoginRequiredMixin, UpdateView):
     model = Player
     template_name = 'main/player_id.html'
     context_object_name = 'player'
-    fields = ['surname', 'name', 'birthday',
-              'gender', 'number', 'discipline', 'diagnosis']
+    fields = [
+        'surname', 'name', 'patronymic', 'diagnosis', 'discipline',
+        'team', 'document', 'birthday', 'gender', 'level_revision',
+        'position', 'number', 'is_captain', 'is_assistent', 'identity_document'
+    ]
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs['id'])
@@ -80,11 +83,19 @@ class PlayerIdView(LoginRequiredMixin, UpdateView):
         player_fields = [
             ('Фамилия', player.surname),
             ('Имя', player.name),
+            ('Отчество', player.patronymic),
+            ('Диагноз', player.diagnosis),
+            ('Дисциплина', player.discipline),
+            ('Команда', ', '.join([team.name for team in player.team.all()])),
+            ('Документ', player.document),
             ('Дата рождения', player.birthday),
             ('Пол', player.gender),
+            ('Уровень ревизии', player.level_revision),
+            ('Игровая позиция', player.position),
             ('Номер игрока', player.number),
-            ('Дисциплина', player.discipline),
-            ('Диагноз', player.diagnosis),
+            ('Капитан', player.is_captain),
+            ('Ассистент', player.is_assistent),
+            ('Удостоверение личности', player.identity_document),
         ]
         context['player_fields'] = player_fields
         return context
