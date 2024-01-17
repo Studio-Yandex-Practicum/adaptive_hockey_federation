@@ -32,8 +32,15 @@
   <div class="container">
     <div class="row">
       <div class="col text-white flex justify-start">
-        <a href="{% url 'main:player_id' id=player.id %}/edit/" class="btn btn-secondary text-white">Редактировать</a>
-        <a href="{% url 'main:player_id' id=player.id %}/delete/" class="btn btn-danger">Удалить</a>
+        <a href="{% url 'main:player_id' id=player.id %}/edit/" 
+        class="btn btn-secondary text-white" 
+        style="background-color: #64C2D1; border: 1px solid #fff;">
+       Редактировать
+     </a>
+     <a href="{% url 'main:player_id' id=player.id %}/delete/" 
+        class="btn btn-danger">
+       Удалить
+     </a>
       </div>
     </div>
   </div>

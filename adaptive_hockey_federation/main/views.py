@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views.generic.edit import UpdateView
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from main.forms import TeamForm
 from main.models import Player, Team
@@ -63,7 +63,7 @@ class PlayersListView(LoginRequiredMixin, ListView):
         return context
 
 
-class PlayerIdView(LoginRequiredMixin, UpdateView):
+class PlayerIdView(DetailView):
     model = Player
     template_name = 'main/player_id.html'
     context_object_name = 'player'
@@ -101,7 +101,7 @@ class PlayerIdView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class TeamIdView(LoginRequiredMixin, UpdateView):
+class TeamIdView(DetailView):
     model = Team
     form_class = TeamForm
     template_name = 'main/teams_id.html'
