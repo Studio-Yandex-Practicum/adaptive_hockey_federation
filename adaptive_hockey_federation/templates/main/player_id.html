@@ -11,7 +11,17 @@
         {% for field_name, field_value in player_fields %}
           <tr>
             <th scope="row">{{ field_name }}:</th>
-            <td>{{ field_value }}</td>
+            <td>
+              {% if field_name == 'Капитан' or field_name == 'Ассистент' %}
+                {% if field_value %}
+                  Да
+                {% else %}
+                  Нет
+                {% endif %}
+              {% else %}
+                {{ field_value }}
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
       </tbody>
