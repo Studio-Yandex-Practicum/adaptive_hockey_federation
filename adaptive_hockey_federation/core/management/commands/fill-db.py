@@ -1,15 +1,16 @@
+from django.core.management.base import BaseCommand
+
 from adaptive_hockey_federation.core.config.dev_settings import (
+    FILE_MODEL_MAP,
     FIXSTURES_DIR,
     FIXSTURES_FILE,
 )
-from django.core.management.base import BaseCommand
-
-from adaptive_hockey_federation.core.config.dev_settings import FILE_MODEL_MAP
 from adaptive_hockey_federation.parser.importing_db import (
     clear_data_db,
     importing_parser_data_db,
     importing_real_data_db,
 )
+
 
 DB_MESSAGE = "Данные успешно добавлены!"
 
