@@ -5,8 +5,7 @@ from django.contrib.auth.mixins import (
 )
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
-from .forms import CreateUserForm, UpdateUserForm
+from users.forms import CreateUserForm, UpdateUserForm
 
 User = get_user_model()
 
