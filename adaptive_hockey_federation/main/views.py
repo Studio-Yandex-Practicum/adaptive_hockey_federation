@@ -68,9 +68,9 @@ class PlayerIdView(DetailView):
     template_name = 'main/player_id.html'
     context_object_name = 'player'
     fields = [
-        'surname', 'name', 'patronymic', 'diagnosis', 'discipline',
-        'team', 'document', 'birthday', 'gender', 'level_revision',
-        'position', 'number', 'is_captain', 'is_assistent', 'identity_document'
+        'surname', 'name', 'patronymic', 'gender', 'birthday', 'discipline', 'diagnosis', 
+        'level_revision', 'identity_document', 'team', 'is_captain', 'is_assistent', 
+        'position', 'number', 'document'  
     ]
 
     def get_object(self, queryset=None):
@@ -80,24 +80,33 @@ class PlayerIdView(DetailView):
         context = super().get_context_data(**kwargs)
         player = context['player']
 
-        player_fields = [
+        player_fields_personal = [
             ('Фамилия', player.surname),
             ('Имя', player.name),
             ('Отчество', player.patronymic),
-            ('Диагноз', player.diagnosis),
-            ('Дисциплина', player.discipline),
-            ('Команда', ', '.join([team.name for team in player.team.all()])),
-            ('Документ', player.document),
-            ('Дата рождения', player.birthday),
             ('Пол', player.gender),
+            ('Дата рождения', player.birthday),
+            ('Удостоверение личности', player.identity_document),
+            ('Дисциплина', player.discipline),
+            ('Диагноз', player.diagnosis),
+        ]
+
+        player_fields = [
+            ('Команда', ', '.join([team.name for team in player.team.all()])),
             ('Уровень ревизии', player.level_revision),
-            ('Игровая позиция', player.position),
-            ('Номер игрока', player.number),
             ('Капитан', player.is_captain),
             ('Ассистент', player.is_assistent),
-            ('Удостоверение личности', player.identity_document),
+            ('Игровая позиция', player.position),
+            ('Номер игрока', player.number),
         ]
+
+        player_fields_doc = [
+            ('Документ', player.document),
+        ]
+
+        context['player_fields_personal'] = player_fields_personal
         context['player_fields'] = player_fields
+        context['player_fields_doc'] = player_fields_doc
         return context
 
 
