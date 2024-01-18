@@ -77,8 +77,10 @@ class TeamIdView(LoginRequiredMixin, UpdateView):
                 'surname': player.surname,
                 'name': player.name,
                 'birthday': player.birthday,
-                'diagnosis': player.diagnosis.name,
-                'discipline': player.discipline,
+                'diagnosis': player.diagnosis.name
+                if player.diagnosis
+                else None,
+                'discipline': player.discipline if player.discipline else None,
                 'gender': player.get_gender_display(),
                 'level_revision': player.level_revision,
                 'position': player.get_position_display(),
