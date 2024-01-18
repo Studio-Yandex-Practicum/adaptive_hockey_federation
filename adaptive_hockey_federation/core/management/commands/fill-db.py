@@ -11,7 +11,6 @@ from adaptive_hockey_federation.parser.importing_db import (
     importing_real_data_db,
 )
 
-
 DB_MESSAGE = "Данные успешно добавлены!"
 
 
