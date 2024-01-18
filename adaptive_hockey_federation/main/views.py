@@ -68,9 +68,9 @@ class PlayerIdView(DetailView):
     template_name = 'main/player_id.html'
     context_object_name = 'player'
     fields = [
-        'surname', 'name', 'patronymic', 'gender', 'birthday', 'discipline', 'diagnosis', 
-        'level_revision', 'identity_document', 'team', 'is_captain', 'is_assistent', 
-        'position', 'number', 'document'  
+        'surname', 'name', 'patronymic', 'gender', 'birthday',
+        'discipline', 'diagnosis', 'level_revision', 'identity_document',
+        'team', 'is_captain', 'is_assistent', 'position', 'number', 'document'
     ]
 
     def get_object(self, queryset=None):
