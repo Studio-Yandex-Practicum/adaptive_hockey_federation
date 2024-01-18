@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import environ
+import environ  # type: ignore
 
 env = environ.Env()
 
