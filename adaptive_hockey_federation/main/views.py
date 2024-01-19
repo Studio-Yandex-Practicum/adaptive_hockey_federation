@@ -125,10 +125,8 @@ class TeamListView(LoginRequiredMixin, ListView):
         for team in teams:
             team_data = {
                 "name": team.name,
-                "city": team.city,
-                "staff_team_member": team.staff_team_member,
                 "discipline_name": team.discipline_name,
-                "curator": team.curator.get_full_name,
+                "city": team.city,
                 "players": "",
                 "_ref_": {
                     "name": "Игроки",
@@ -142,10 +140,8 @@ class TeamListView(LoginRequiredMixin, ListView):
 
         context["table_head"] = {
             "name": "Название",
-            "city": "Город",
-            "staff_team_member": "Сотрудник команды",
             "discipline_name": "Дисциплина",
-            "curator": "Куратор",
+            "city": "Город",
             "players": "Состав",
             "players_reference": "Игроки",
         }

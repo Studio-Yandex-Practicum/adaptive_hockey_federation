@@ -28,7 +28,7 @@
           {% elif cell_name == '_ref_' %}
             {% if cell_value.type == 'button' %}
               <td class="border rounded-md table-light">
-                <a href="{{ cell_value.url }}" class="btn btn-primary" role="button">{{ cell_value.name }}</a>
+                {% include 'includes/cell_button.html' with url=cell_value.url name=cell_value.name %}
               </td>
             {% else %}
               <td class="border rounded-md table-light">
