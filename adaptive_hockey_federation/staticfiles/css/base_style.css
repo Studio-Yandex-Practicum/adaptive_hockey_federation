@@ -307,3 +307,12 @@ li {
     overflow-x: hidden;
   }
 }
+.table-bordered {
+  border-collapse: separate;
+  border-spacing: 3px
+}
+.table-bordered th, .table-bordered td {
+  background-color: #FFFFFF;
+  border: 1px solid #ECF1F5;
+  border-radius: 8px;
+}
