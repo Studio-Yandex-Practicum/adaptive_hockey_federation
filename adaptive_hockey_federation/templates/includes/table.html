@@ -1,24 +1,25 @@
 {% load static %}
-<table class="table table-borderless border-separate border-spacing-1 align-middle">
-  <thead>
-    <tr>
-      {% for head_item in table_head.values %}
-        <th scope="col" class="border rounded-md table-light">{{ head_item }}</th>
-      {% endfor %}
-      <th scope="col" class="border rounded-md table-light">
-        <div class="row">
-          <div class="col text-right">
-            <img src="{% static 'img/edit.png' %}" class="float-end">
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        {% for head_item in table_head.values %}
+        <th class="col">{{ head_item }}</th>
+        {% endfor %}
+        <th class="col">
+          <div class="row">
+            <div class="col text-right">
+              <img src="{% static 'img/edit.png' %}" class="float-end">
+            </div>
+            <div class="col text-left">
+              <img src="{% static 'img/delete.png' %}" class="float-start">
+            </div>
           </div>
-          <div class="col text-left">
-            <img src="{% static 'img/delete.png' %}" class="float-start">
-          </div>
-        </div>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for table_string in table_data %}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for table_string in table_data %}
       <tr>
         {% for cell_name, cell_value in table_string.items %}
           {% if forloop.counter0 == 0 and 'url' in table_string %}
@@ -40,18 +41,17 @@
           {% endif %}
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
-          {% if view_name == 'users:users' %}
-            {% include "includes/create_delete_buttons.html" %}
-          {% else %}
-            <td class="border rounded-md table-light">
-              <button type="button"><img src="{% static 'img/edit.png' %}"></button>
-              <button type="button"><img src="{% static 'img/delete.png' %}"></button>
-            </td>
-          {% endif %}
+        {% if view_name == 'users:users' %}
+        {% include "includes/create_delete_buttons.html" %}
+        {% else %}
+        <td>
+          <button type="button"><img src="{% static 'img/edit.png' %}"></button>
+          <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+        </td>
+        {% endif %}
         {% endwith %}
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

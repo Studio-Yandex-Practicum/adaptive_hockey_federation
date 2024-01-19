@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views.generic.edit import UpdateView
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from main.forms import TeamForm
 from main.models import Player, Team
@@ -26,12 +26,13 @@ def main(request):
     return render(request, "main/main.html")
 
 
-class PlayersCardView(LoginRequiredMixin, ListView):
+class PlayersListView(LoginRequiredMixin, ListView):
     model = Player
     template_name = "main/players.html"
     context_object_name = "players"
     paginate_by = 10
     fields = [
+        "id",     
         "surname",
         "name",
         "birthday",
@@ -48,12 +49,76 @@ class PlayersCardView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         table_head = {}
         for field in self.fields:
-            table_head[field] = Player._meta.get_field(field).verbose_name
+            if field != "id":
+                table_head[field] = Player._meta.get_field(field).verbose_name
         context["table_head"] = table_head
+
+        players_data = []
+        for player in context['players']:
+            player_data = {
+                'surname': player['surname'],
+                'name': player['name'],
+                'birthday': player['birthday'],
+                'gender': player['gender'],
+                'number': player['number'],
+                'discipline': player['discipline'],
+                'diagnosis': player['diagnosis'],
+                'url': reverse('main:player_id', args=[player['id']]),
+            }
+            players_data.append(player_data)
+
+        context['players_data'] = players_data
         return context
 
 
-class TeamIdView(LoginRequiredMixin, UpdateView):
+class PlayerIdView(DetailView):
+    model = Player
+    template_name = 'main/player_id.html'
+    context_object_name = 'player'
+    fields = [
+        'surname', 'name', 'patronymic', 'gender', 'birthday',
+        'discipline', 'diagnosis', 'level_revision', 'identity_document',
+        'team', 'is_captain', 'is_assistent', 'position', 'number', 'document'
+    ]
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Player, id=self.kwargs['id'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        player = context['player']
+
+        player_fields_personal = [
+            ('Фамилия', player.surname),
+            ('Имя', player.name),
+            ('Отчество', player.patronymic),
+            ('Пол', player.gender),
+            ('Дата рождения', player.birthday),
+            ('Удостоверение личности', player.identity_document),
+            ('Дисциплина', player.discipline),
+            ('Диагноз', player.diagnosis),
+        ]
+
+        player_fields = [
+            ('Команда', ', '.join([team.name for team in player.team.all()])),
+            ('Уровень ревизии', player.level_revision),
+            ('Капитан', player.is_captain),
+            ('Ассистент', player.is_assistent),
+            ('Игровая позиция', player.position),
+            ('Номер игрока', player.number),
+        ]
+
+        player_fields_doc = [
+            ('Документ', player.document),
+        ]
+
+        context['player_fields_personal'] = player_fields_personal
+        context['player_fields'] = player_fields
+        context['player_fields_doc'] = player_fields_doc
+        return context
+
+
+class TeamIdView(DetailView):
     model = Team
     form_class = TeamForm
     template_name = "main/teams_id.html"
