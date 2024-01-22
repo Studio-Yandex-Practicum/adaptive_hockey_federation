@@ -1,0 +1,30 @@
+<li class="nav-item dropdown">
+    <form method="GET">
+    <div class="input-group" style="position: relative;">
+    <input type="search" id="form1" class="form-control"
+    placeholder="{% if request.resolver_match.url_name == 'players' %}Игрок
+                 {% elif request.resolver_match.url_name == 'users' %}Роль
+                 {% elif request.resolver_match.url_name == 'teams' %}Команда
+                 {% elif request.resolver_match.url_name == 'competitions' %}Соревнование
+                 {% elif request.resolver_match.url_name == 'analytics' %}Аналитика
+                 {% else %}Выгрузка
+                 {% endif %}"
+    style="border-top-left-radius: 0; border-bottom-left-radius: 0;"/>
+    <button type="button" class="btn dropdown-toggle-split bg-white"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-caret-down-fill"></i>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
+        style="position: absolute; width: 100%; left: 0; top: 100%; border-radius: 0;">
+        <li><a class="dropdown-item" href="?">Все</a></li>
+        {% for key, column_name in table_head.items %}
+        <li><a class="dropdown-item" href="?search_column={{ key }}">{{ column_name }}</a></li>
+        {% endfor %}
+    </ul>
+    <button type="submit" class="btn btn-outline-secondary bg-white"
+            style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+        <i class="bi bi-search"></i>
+    </button>
+    </div>
+    </form>
+</li>
