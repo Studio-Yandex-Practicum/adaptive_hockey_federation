@@ -168,7 +168,7 @@ class TeamIdView(DetailView):
                 "birthday": player.birthday,
                 "diagnosis": player.diagnosis.name
                 if player.diagnosis
-                else None,
+                else None,  # Noqa
                 "discipline": player.discipline if player.discipline else None,
                 "gender": player.get_gender_display(),
                 "level_revision": player.level_revision,
@@ -204,22 +204,18 @@ class TeamListView(LoginRequiredMixin, ListView):
                 "name": team.name,
                 "discipline_name": team.discipline_name,
                 "city": team.city,
-                "players": "",
                 "_ref_": {
                     "name": "Игроки",
                     "type": "button",
                     "url": reverse("main:teams_id", args=[team.id]),
                 },
             }
-            players = Player.objects.filter(team=team)
-            team_data["players"] = ", ".join(map(str, players))
             table_data.append(team_data)
 
         context["table_head"] = {
             "name": "Название",
             "discipline_name": "Дисциплина",
             "city": "Город",
-            "players": "Состав",
             "players_reference": "Игроки",
         }
         context["table_data"] = table_data
