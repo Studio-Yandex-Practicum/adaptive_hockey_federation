@@ -22,13 +22,23 @@
       {% for table_string in table_data %}
       <tr>
         {% for cell_name, cell_value in table_string.items %}
-        {% if forloop.counter0 == 0 and 'url' in table_string %}
-        <td class="col">
-          <a href="{{ table_string.url }}">{{ cell_value }} </a>
-        </td>
-        {% elif cell_name != 'url' and cell_name != 'id'%}
-        <td class="col">{{ cell_value }}</td>
-        {% endif %}
+          {% if forloop.counter0 == 0 and 'url' in table_string %}
+            <td class="border rounded-md table-light">
+              <a href="{{ table_string.url }}">{{ cell_value }} </a>
+            </td>
+          {% elif cell_name == '_ref_' %}
+            {% if cell_value.type == 'button' %}
+              <td class="border rounded-md table-light">
+                {% include 'includes/cell_button.html' with url=cell_value.url name=cell_value.name %}
+              </td>
+            {% else %}
+              <td class="border rounded-md table-light">
+                <a href="{{ cell_value.url }}">{{ cell_value.name }} </a>
+              </td>
+            {% endif %}
+          {% elif cell_name != 'url' and cell_name != 'id'%}
+            <td class="border rounded-md table-light">{{ cell_value }}</td>
+          {% endif %}
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
         {% if view_name == 'users:users' %}
