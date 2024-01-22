@@ -72,7 +72,7 @@ class UpdateUserView(
 class DeleteUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
-        DeleteView):
+        DeleteView):  # type: ignore
     model = User
     success_url = '/users'
     permission_required = 'users.delete_user'

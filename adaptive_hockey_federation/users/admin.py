@@ -80,4 +80,4 @@ def permissions_new_unicode(self):
     return "%s - %s" % (class_name.title(), permissions_name)
 
 
-Permission.__str__ = permissions_new_unicode
+Permission.__str__ = permissions_new_unicode  # type: ignore
