@@ -49,16 +49,6 @@ class UpdateUserView(
     permission_required = 'users.change_user'
     form_class = UpdateUserForm
     success_url = '/users'
-    initial = {}
-
-    def get_initial(self):
-        return {
-            'first_name': self.object.first_name,
-            'last_name': self.object.last_name,
-            'patronymic': self.object.patronymic,
-            'email': self.object.email,
-            'phone': self.object.phone,
-        }
 
     def get_context_data(self, **kwargs):
         context = super(UpdateUserView, self).get_context_data(**kwargs)
@@ -72,7 +62,8 @@ class UpdateUserView(
 class DeleteUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
-        DeleteView):  # type: ignore
+        DeleteView):
+    object = User
     model = User
     success_url = '/users'
     permission_required = 'users.delete_user'
