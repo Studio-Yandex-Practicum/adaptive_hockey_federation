@@ -144,3 +144,6 @@ class ProxyGroup(Group):
         proxy = True
         verbose_name = "Группа"
         verbose_name_plural = "Группы"
+
+    def __str__(self):
+        return self.name

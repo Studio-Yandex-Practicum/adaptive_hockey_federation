@@ -52,7 +52,7 @@ class GroupAdminForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        exclude = []
+        fields = ['name', 'users', 'permissions']
 
     users = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
