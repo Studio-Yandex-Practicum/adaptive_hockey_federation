@@ -1,25 +1,35 @@
 <nav aria-label="Page navigation" class="p-2">
   <ul class="pagination justify-content-center mb-0 mt-1">
-  {% if page_obj.has_previous %}
-    <a class="page-link pg-list" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-      <i class="bi bi-caret-left-fill" style="color: #fff;"></i>
-    </a>
-  {% endif %}
-      {% for p in paginator.page_range %}
-        {% if page_obj.number == p %}
-          <li class="page-item page-num page-num-selected page-link pg-list-active">{{ p }}</li>
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link pg-list bi bi-chevron-double-left" href="?page=1" aria-label="First"></a>
+      </li>
+      <li class="page-item">
+        <a class="page-link pg-list bi bi bi-chevron-left" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous"></a>
+      </li>
+    {% endif %}
+
+    {% for num in paginator.page_range %}
+      {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+        {% if page_obj.number == num %}
+          <li class="page-item page-num page-num-selected page-link pg-list-active">
+            {{ num }}
+          </li>
         {% else %}
           <li class="page-item page-num pg-list">
-            <a class="page-link pg-list" href="?page={{ p }}">{{ p }}</a>
+            <a class="page-link pg-list" href="?page={{ num }}">{{ num }}</a>
           </li>
         {% endif %}
-      {% endfor %}
-      {% if page_obj.has_next %}
-      <li class="page-item">
-        <a class="page-link pg-list" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-          <i class="bi bi-caret-right-fill" style="color: #fff;"></i>
-        </a>
-      </li>
       {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link pg-list bi bi-chevron-right" href="?page={{ page_obj.next_page_number }}" aria-label="Next"></a>
+      </li>
+      <li class="page-item">
+        <a class="page-link pg-list bi bi-chevron-double-right" href="?page={{ paginator.num_pages }}" aria-label="Last"></a>
+      </li>
+    {% endif %}
   </ul>
 </nav>
