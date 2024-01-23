@@ -1,0 +1,11 @@
+{% with request.path  as current_url_name %}
+  <a href="{% url 'users:user_create'%}"
+    class="nav-link border border-2 border-white p-2 mx-1 w-44 text-left
+    {% if current_url_name  == url_name %}
+      drawler-menu-active
+    {% else %}
+      drawler_menu
+    {% endif %}">
+      {{ name }}
+  </a>
+{% endwith %}
