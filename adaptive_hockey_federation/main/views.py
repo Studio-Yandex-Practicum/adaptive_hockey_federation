@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
-from django.contrib import messages
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, DeleteView
@@ -12,11 +11,7 @@ from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
-    "table_head": {
-        "id": "Идентификатор",
-        "name": "Имя",
-        "surname": "Фамилия",
-    },
+    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
     "table_data": [
         {"id": 1, "name": "Иван", "surname": "Иванов"},
         {"id": 2, "name": "Пётр", "surname": "Петров"},
@@ -123,9 +118,7 @@ class PlayerIdView(DetailView):
             ("Номер игрока", player.number),
         ]
 
-        player_fields_doc = [
-            ("Документ", player.document),
-        ]
+        player_fields_doc = [("Документ", player.document)]
 
         context["player_fields_personal"] = player_fields_personal
         context["player_fields"] = player_fields
@@ -166,9 +159,7 @@ class PlayerIDEditView(UpdateView):
             ("Номер игрока", player.number),
         ]
 
-        player_fields_doc = [
-            ("Документ", player.document),
-        ]
+        player_fields_doc = [("Документ", player.document)]
 
         context["player_fields_personal"] = player_fields_personal
         context["player_fields"] = player_fields
@@ -190,11 +181,12 @@ class PlayerIDEditView(UpdateView):
 
 class PlayerIDDeleteView(DeleteView):
     model = Player
-#    template_name = "main/player_id_delete_confirm.html"
+    #    template_name = "main/player_id_delete_confirm.html"
     success_url = reverse_lazy("main:players")
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["id"])
+
 
 #    def post(self, request, *args, **kwargs):
 #        response = super().post(request, *args, **kwargs)
