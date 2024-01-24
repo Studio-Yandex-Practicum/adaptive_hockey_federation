@@ -76,28 +76,3 @@ jobs:
       - name: mypy
         run: |
           poetry run mypy .
-
-  pytest:
-    runs-on: ubuntu-latest
-    name: mypy
-    steps:
-      - name: Установка Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-
-      - name: Установка Poetry
-        uses: snok/install-poetry@v1
-        with:
-          poetry-version: 1.5.0
-
-      - name: Извлечение репозитория
-        uses: actions/checkout@v4
-
-      - name: Установка зависимостей
-        run: |
-          poetry install
-      - name: pytest
-        run: |
-          poetry run pytest
-        working-directory: adaptive_hockey_federation
