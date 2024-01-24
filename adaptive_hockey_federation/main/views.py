@@ -1,11 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.db.models import Q
-
 from main.forms import TeamForm
 from main.models import Player, Team
 
@@ -45,16 +44,16 @@ class PlayersListView(LoginRequiredMixin, ListView):
     ]
 
     def get_queryset(self):
-        search_string = self.request.GET.get("search")
-        if search_string:
+        search = self.request.GET.get("search")
+        if search:
             or_lookup = (
-                Q(surname__icontains=search_string)
-                | Q(name__icontains=search_string)
-                | Q(birthday__icontains=search_string)
-                | Q(gender__icontains=search_string)
-                | Q(number__icontains=search_string)
-                | Q(discipline__discipline_name_id__name__icontains=search_string)
-                | Q(diagnosis__name__icontains=search_string)
+                Q(surname__icontains=search)
+                | Q(name__icontains=search)
+                | Q(birthday__icontains=search)
+                | Q(gender__icontains=search)
+                | Q(number__icontains=search)
+                | Q(discipline__discipline_name_id__name__icontains=search)
+                | Q(diagnosis__name__icontains=search)
             )
             return (
                 super().get_queryset().filter(or_lookup).values(*self.fields)
