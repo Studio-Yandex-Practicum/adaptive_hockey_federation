@@ -3,11 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
-from django.views.generic.edit import UpdateView, DeleteView
-from main.forms import TeamForm, PlayerForm
+from main.forms import PlayerForm, TeamForm
 from main.models import Player, Team
-
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
