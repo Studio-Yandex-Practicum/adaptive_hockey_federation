@@ -1,11 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.contrib import messages
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from main.forms import TeamForm
+from django.views.generic.edit import UpdateView, DeleteView
+from main.forms import TeamForm, PlayerForm
 from main.models import Player, Team
+
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -130,6 +133,75 @@ class PlayerIdView(DetailView):
         return context
 
 
+class PlayerIDEditView(UpdateView):
+    model = Player
+    template_name = "main/player_id_edit.html"
+    form_class = PlayerForm
+    success_url = reverse_lazy("main:player_id")
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Player, id=self.kwargs["id"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        player = self.get_object()
+
+        player_fields_personal = [
+            ("Фамилия", player.surname),
+            ("Имя", player.name),
+            ("Отчество", player.patronymic),
+            ("Пол", player.gender),
+            ("Дата рождения", player.birthday),
+            ("Удостоверение личности", player.identity_document),
+            ("Дисциплина", player.discipline),
+            ("Диагноз", player.diagnosis),
+        ]
+
+        player_fields = [
+            ("Команда", ", ".join([team.name for team in player.team.all()])),
+            ("Уровень ревизии", player.level_revision),
+            ("Капитан", player.is_captain),
+            ("Ассистент", player.is_assistent),
+            ("Игровая позиция", player.position),
+            ("Номер игрока", player.number),
+        ]
+
+        player_fields_doc = [
+            ("Документ", player.document),
+        ]
+
+        context["player_fields_personal"] = player_fields_personal
+        context["player_fields"] = player_fields
+        context["player_fields_doc"] = player_fields_doc
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        player = form.save(commit=False)
+        player.save()
+        return super().form_valid(form)
+
+
+class PlayerIDDeleteView(DeleteView):
+    model = Player
+#    template_name = "main/player_id_delete_confirm.html"
+    success_url = reverse_lazy("main:players")
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Player, id=self.kwargs["id"])
+
+#    def post(self, request, *args, **kwargs):
+#        response = super().post(request, *args, **kwargs)
+#        messages.success(request, "Профиль игрока успешно удален.")
+#        return response
+
+
 class TeamIdView(DetailView):
     model = Team
     form_class = TeamForm
@@ -240,3 +312,7 @@ def analytics(request):
 @login_required
 def unloads(request):
     return render(request, "main/unloads.html")
+
+
+def player_id_deleted(request):
+    return render(request, "main/player_id_deleted.html")
