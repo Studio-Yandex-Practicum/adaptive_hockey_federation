@@ -1,6 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+from users.forms import CreateUserForm, UpdateUserForm
 
 User = get_user_model()
 
@@ -33,3 +38,48 @@ class UsersListView(LoginRequiredMixin, ListView):
         }
         context['table_data'] = table_data
         return context
+
+
+class UpdateUserView(
+        LoginRequiredMixin,
+        PermissionRequiredMixin,
+        UpdateView):
+    model = User
+    template_name = 'includes/user_update.html'
+    permission_required = 'users.change_user'
+    form_class = UpdateUserForm
+    success_url = '/users'
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateUserView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class(
+            instance=self.object,
+            initial=self.get_initial()
+        )
+        return context
+
+
+class DeleteUserView(
+        LoginRequiredMixin,
+        PermissionRequiredMixin,
+        DeleteView):
+    object = User
+    model = User
+    success_url = '/users'
+    permission_required = 'users.delete_user'
+
+
+class CreateUserView(
+        LoginRequiredMixin,
+        PermissionRequiredMixin,
+        CreateView):
+    model = User
+    form_class = CreateUserForm
+    template_name = 'includes/user_create.html'
+    success_url = '/users'
+    permission_required = 'users.create_user'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
