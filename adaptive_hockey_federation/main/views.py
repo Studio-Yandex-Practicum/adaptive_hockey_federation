@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.db.models import Q
+
 from main.forms import TeamForm
 from main.models import Player, Team
 
@@ -43,6 +45,20 @@ class PlayersListView(LoginRequiredMixin, ListView):
     ]
 
     def get_queryset(self):
+        search_string = self.request.GET.get("search")
+        if search_string:
+            or_lookup = (
+                Q(surname__icontains=search_string)
+                | Q(name__icontains=search_string)
+                | Q(birthday__icontains=search_string)
+                | Q(gender__icontains=search_string)
+                | Q(number__icontains=search_string)
+                | Q(discipline__discipline_name_id__name__icontains=search_string)
+                | Q(diagnosis__name__icontains=search_string)
+            )
+            return (
+                super().get_queryset().filter(or_lookup).values(*self.fields)
+            )
         return super().get_queryset().order_by("surname").values(*self.fields)
 
     def get_context_data(self, **kwargs):
@@ -69,6 +85,15 @@ class PlayersListView(LoginRequiredMixin, ListView):
 
         context["players_data"] = players_data
         return context
+
+
+class PlayersSearchListView(PlayersListView):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(surname__icontains=self.request.GET.get("search"))
+        )
 
 
 class PlayerIdView(DetailView):

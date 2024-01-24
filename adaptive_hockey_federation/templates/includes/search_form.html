@@ -1,7 +1,7 @@
 <li class="nav-item dropdown">
     <form method="GET">
     <div class="input-group" style="position: relative;">
-    <input type="search" id="form1" class="form-control"
+    <input type="search" id="form1" class="form-control" name="search"
     placeholder="{% if request.resolver_match.url_name == 'players' %}Игрок
                  {% elif request.resolver_match.url_name == 'users' %}Роль
                  {% elif request.resolver_match.url_name == 'teams' %}Команда

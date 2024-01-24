@@ -87,7 +87,7 @@ clear-db:
 
 # Локальный запуск сервера разработки.
 run:
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver 80
 
 
 # Запуск django shell
