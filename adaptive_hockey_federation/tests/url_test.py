@@ -8,6 +8,7 @@ from fixture_user import (
     test_password,
     test_role,
 )
+from main.models import City, DisciplineName, Team
 
 User = get_user_model()
 
@@ -16,8 +17,8 @@ class TestAuthUrls:
 
     @pytest.mark.django_db(transaction=True)
     def test_auth_urls(self, client):
-        urls = ['/auth/login/', '/auth/logout/']
-        for url in urls:
+        urls = {'/auth/login/': 200, '/auth/logout/': 302}
+        for url, status in urls.items():
             try:
                 response = client.post(url)
             except Exception as e:
@@ -28,7 +29,7 @@ class TestAuthUrls:
                 f'''Страница `{url}` не найдена,
                 проверьте этот адрес в *urls.py*'''
             )
-            assert response.status_code == 200, (
+            assert response.status_code == status, (
                 f'''Ошибка {response.status_code} при открытиии `{url}`.
                 Проверьте ее view-функцию'''
             )
@@ -44,6 +45,13 @@ class TestUrls(TestCase):
             last_name=test_lastname,
             role=test_role,
             email=test_email,
+        )
+        self.team = Team.objects.create(
+            name='Test Team',
+            city=City.objects.create(name='Test City'),
+            discipline_name=DisciplineName.objects.create(
+                name='Tetst DisciplineName'),
+            curator=self.user
         )
 
     def test_users_list_view_returns_200(self):
