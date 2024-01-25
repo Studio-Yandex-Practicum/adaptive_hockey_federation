@@ -5,7 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import PlayerForm, TeamForm, PlayerEditForm
+from main.forms import PlayerForm, TeamForm
 from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
@@ -123,7 +123,6 @@ class PlayerIdView(DetailView):
         context["player_fields"] = player_fields
         context["player_fields_doc"] = player_fields_doc
         return context
-
 
 
 class PlayerIDEditView(UpdateView):
