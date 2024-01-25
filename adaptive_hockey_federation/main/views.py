@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -40,9 +41,41 @@ class PlayersListView(LoginRequiredMixin, ListView):
     ]
 
     def get_queryset(self):
-        return super().get_queryset().order_by("surname").values(*self.fields)
+        queryset = super().get_queryset()
+        search = self.request.GET.get("search")
+        if search:
+            search_column = self.request.GET.get("search_column")
+            if not search_column or search_column.lower() in ["все", "all"]:
+                or_lookup = (
+                    Q(surname__icontains=search)
+                    | Q(name__icontains=search)
+                    | Q(birthday__icontains=search)
+                    | Q(gender__icontains=search)
+                    | Q(number__icontains=search)
+                    | Q(discipline__discipline_name_id__name__icontains=search)
+                    | Q(diagnosis__name__icontains=search)
+                )
+                queryset = queryset.filter(or_lookup)
+            else:
+                search_fields = {
+                    "surname": "surname",
+                    "name": "name",
+                    "birthday": "birthday",
+                    "gender": "gender",
+                    "number": "surname",
+                    "discipline": "discipline__discipline_name_id__name",
+                    "diagnosis": "diagnosis__name",
+                }
+                lookup = {f"{search_fields[search_column]}__icontains": search}
+                queryset = queryset.filter(**lookup)
 
-    def get_context_data(self, **kwargs):
+        return (
+            queryset.select_related("diagnosis")
+            .select_related("discipline")
+            .order_by("surname")
+        )
+
+    def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         table_head = {}
         for field in self.fields:
@@ -50,19 +83,21 @@ class PlayersListView(LoginRequiredMixin, ListView):
                 table_head[field] = Player._meta.get_field(field).verbose_name
         context["table_head"] = table_head
 
-        players_data = []
-        for player in context["players"]:
-            player_data = {
-                "surname": player["surname"],
-                "name": player["name"],
-                "birthday": player["birthday"],
-                "gender": player["gender"],
-                "number": player["number"],
-                "discipline": player["discipline"],
-                "diagnosis": player["diagnosis"],
-                "url": reverse("main:player_id", args=[player["id"]]),
+        players_data = [
+            {
+                "surname": player.surname,
+                "name": player.name,
+                "birthday": player.birthday,
+                "gender": player.get_gender_display(),
+                "number": player.number,
+                "discipline": player.discipline if player.discipline else None,
+                "diagnosis": player.diagnosis.name
+                if player.diagnosis
+                else None,  # Noqa
+                "url": reverse("main:player_id", args=[player.id]),
             }
-            players_data.append(player_data)
+            for player in context["players"]
+        ]
 
         context["players_data"] = players_data
         return context
@@ -224,11 +259,9 @@ class TeamIdView(DetailView):
             for player in players
         ]
 
-        context = {
-            "table_head": table_head,
-            "table_data": table_data,
-            "team": team,
-        }
+        context["table_head"] = table_head
+        context["table_data"] = table_data
+        context["team"] = team
 
         return context
 
