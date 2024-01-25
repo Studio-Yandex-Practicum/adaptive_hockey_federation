@@ -3,9 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import TeamForm
 from main.models import Player, Team
+from main.permissions import AdminOnly
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -201,6 +203,7 @@ class TeamListView(LoginRequiredMixin, ListView):
         table_data = []
         for team in teams:
             team_data = {
+                "id": team.id,
                 "name": team.name,
                 "discipline_name": team.discipline_name,
                 "city": team.city,
@@ -220,6 +223,55 @@ class TeamListView(LoginRequiredMixin, ListView):
         }
         context["table_data"] = table_data
         return context
+
+
+class UpdateTeamView(
+    LoginRequiredMixin,
+    AdminOnly,
+        UpdateView):
+    model = Team
+    form_class = TeamForm
+    template_name = "includes/user_update.html"
+    success_url = '/teams/'
+
+    def get_object(self, queryset=None):
+        team_id = self.kwargs.get("team_id")
+        return get_object_or_404(Team, pk=team_id)
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateTeamView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class(
+            instance=self.object,
+            initial=self.get_initial()
+        )
+        return context
+
+
+class DeleteTeamView(
+    LoginRequiredMixin,
+    AdminOnly,
+        DeleteView):
+    object = Team
+    model = Team
+    success_url = '/teams/'
+
+    def get_object(self, queryset=None):
+        team_id = self.kwargs.get('team_id')
+        return get_object_or_404(Team, pk=team_id)
+
+
+class CreateTeamView(
+    LoginRequiredMixin,
+    AdminOnly,
+        CreateView):
+    model = Team
+    form_class = TeamForm
+    template_name = 'includes/user_create.html'
+    success_url = '/teams'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 @login_required

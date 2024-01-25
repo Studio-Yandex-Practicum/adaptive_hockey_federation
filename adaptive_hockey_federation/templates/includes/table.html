@@ -41,7 +41,7 @@
           {% endif %}
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
-        {% if view_name == 'users:users' %}
+        {% if view_name == 'users:users' or view_name == 'main:teams' %}
         {% include "includes/create_delete_buttons.html" %}
         {% else %}
         <td>
