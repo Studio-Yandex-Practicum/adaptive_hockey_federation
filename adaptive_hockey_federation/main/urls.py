@@ -22,6 +22,17 @@ urlpatterns = [
     ),
     path("teams/<int:team_id>/", views.TeamIdView.as_view(), name="teams_id"),
     path(
+        "team_update/<int:team_id>/",
+        views.UpdateTeamView.as_view(),
+        name="team_update"
+    ),
+    path(
+        "team_delete/<int:team_id>/",
+        views.DeleteTeamView.as_view(),
+        name="team_delete"
+    ),
+    path("team_create/", views.CreateTeamView.as_view(), name="team_create"),
+    path(
         "competitions/<int:id>/",
         views.competitions_id,
         name="competitions_id",
