@@ -8,7 +8,8 @@
 {% block content %}
   <h2 class="text-center mb-4">Редактирование профиля игрока</h2>
   
-    
+  <form method="post" action="{% url 'main:player_id_edit' player.id %}">
+    {% csrf_token %}
     <div class="container text-start">
       <div class="row">
         <div class="col-md-6">
@@ -64,8 +65,7 @@
           </table>
         </div>
       </div>
-  <form method="post">
-    {% csrf_token %}
+
     <!-- Save Button -->
     <div class="container">
       <div class="row">

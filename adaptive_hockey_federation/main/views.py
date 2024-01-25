@@ -5,7 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import PlayerForm, TeamForm
+from main.forms import PlayerForm, TeamForm, PlayerEditForm
 from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
@@ -125,11 +125,14 @@ class PlayerIdView(DetailView):
         return context
 
 
+
 class PlayerIDEditView(UpdateView):
     model = Player
     template_name = "main/player_id_edit.html"
     form_class = PlayerForm
-    success_url = reverse_lazy("main:player_id")
+
+    def get_success_url(self):
+        return reverse("main:player_id", kwargs={'id': self.object.id})
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["id"])
@@ -165,32 +168,13 @@ class PlayerIDEditView(UpdateView):
         context["player_fields_doc"] = player_fields_doc
         return context
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def form_valid(self, form):
-        player = form.save(commit=False)
-        player.save()
-        return super().form_valid(form)
-
 
 class PlayerIDDeleteView(DeleteView):
     model = Player
-    #    template_name = "main/player_id_delete_confirm.html"
     success_url = reverse_lazy("main:players")
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["id"])
-
-
-#    def post(self, request, *args, **kwargs):
-#        response = super().post(request, *args, **kwargs)
-#        messages.success(request, "Профиль игрока успешно удален.")
-#        return response
 
 
 class TeamIdView(DetailView):
@@ -231,7 +215,7 @@ class TeamIdView(DetailView):
                 "birthday": player.birthday,
                 "diagnosis": player.diagnosis.name
                 if player.diagnosis
-                else None,  # Noqa
+                else None,
                 "discipline": player.discipline if player.discipline else None,
                 "gender": player.get_gender_display(),
                 "level_revision": player.level_revision,
