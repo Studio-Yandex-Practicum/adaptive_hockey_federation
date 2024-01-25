@@ -7,14 +7,14 @@ app_name = "main"
 urlpatterns = [
     path("", views.main, name="main"),
     path("players/", views.PlayersListView.as_view(), name="players"),
-    path("players/<int:id>/", views.PlayerIdView.as_view(), name="player_id"),
+    path("players/<int:pk>/", views.PlayerIdView.as_view(), name="player_id"),
     path(
-        "players/<int:id>/edit/",
+        "players/<int:pk>/edit/",
         views.PlayerIDEditView.as_view(),
         name="player_id_edit",
     ),
     path(
-        "players/<int:id>/delete/",
+        "players/<int:pk>/delete/",
         views.PlayerIDDeleteView.as_view(),
         name="player_id_delete",
     ),

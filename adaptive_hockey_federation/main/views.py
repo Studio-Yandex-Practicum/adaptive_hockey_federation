@@ -83,7 +83,7 @@ class PlayersListView(LoginRequiredMixin, ListView):
                 table_head[field] = Player._meta.get_field(field).verbose_name
         context["table_head"] = table_head
 
-        players_data = [
+        table_data = [
             {
                 "surname": player.surname,
                 "name": player.name,
@@ -95,11 +95,12 @@ class PlayersListView(LoginRequiredMixin, ListView):
                 if player.diagnosis
                 else None,  # Noqa
                 "url": reverse("main:player_id", args=[player.id]),
+                "id": player.pk,
             }
             for player in context["players"]
         ]
 
-        context["players_data"] = players_data
+        context["table_data"] = table_data
         return context
 
 
@@ -126,7 +127,7 @@ class PlayerIdView(DetailView):
     ]
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Player, id=self.kwargs["id"])
+        return get_object_or_404(Player, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -166,10 +167,10 @@ class PlayerIDEditView(UpdateView):
     form_class = PlayerForm
 
     def get_success_url(self):
-        return reverse("main:player_id", kwargs={'id': self.object.id})
+        return reverse("main:player_id", kwargs={"pk": self.object.pk})
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Player, id=self.kwargs["id"])
+        return get_object_or_404(Player, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -208,7 +209,7 @@ class PlayerIDDeleteView(DeleteView):
     success_url = reverse_lazy("main:players")
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Player, id=self.kwargs["id"])
+        return get_object_or_404(Player, id=self.kwargs["pk"])
 
 
 class TeamIdView(DetailView):
@@ -248,9 +249,9 @@ class TeamIdView(DetailView):
                 "name": player.name,
                 "birthday": player.birthday,
                 "diagnosis": player.diagnosis.name
-                if player.diagnosis
-                else None,
-                "discipline": player.discipline if player.discipline else None,
+                if player.diagnosis else None,
+                "discipline": player.discipline
+                if player.discipline else None,
                 "gender": player.get_gender_display(),
                 "level_revision": player.level_revision,
                 "position": player.get_position_display(),
