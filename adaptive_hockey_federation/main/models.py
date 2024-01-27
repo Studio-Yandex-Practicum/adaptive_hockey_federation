@@ -394,12 +394,10 @@ class Player(BasePerson):
     is_captain = models.BooleanField(
         default=False,
         verbose_name=_('Капитан'),
-        help_text=_('Капитан')
     )
     is_assistent = models.BooleanField(
         default=False,
         verbose_name=_('Ассистент'),
-        help_text=_('Ассистент')
     )
     identity_document = models.TextField(
         verbose_name=_('Удостоверение личности'),

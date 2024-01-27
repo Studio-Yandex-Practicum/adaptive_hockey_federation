@@ -112,12 +112,16 @@ class StaffTeamMemberAdmin(StaffMemberAdmin):
 
 class PlayerInline(admin.StackedInline):
     model = Player.team.through
+    insert_after = 'position'
+    verbose_name = 'Команда'
     verbose_name_plural = 'Участие в командах'
     extra = 0
     min_num = 1
+    template = 'admin/custom_stacked.html'
 
 
 class PlayerAdmin(admin.ModelAdmin):
+    change_form_template = 'admin/custom_change_form.html'
     form = PlayerForm
     list_display = (
         'pk',
@@ -153,6 +157,7 @@ class PlayerAdmin(admin.ModelAdmin):
     inlines = (PlayerInline,)
     fieldsets = (
         ('Персональные данные', {
+            'classes': ('collapse',),
             'fields': (
                 ('surname', 'name',),
                 'patronymic',
@@ -164,10 +169,10 @@ class PlayerAdmin(admin.ModelAdmin):
             ),
         }),
         ('Игровые данные', {
+            # 'classes': ('collapse',),
             'fields': (
-                ('position', 'number',),
-                'is_captain',
-                'is_assistent',
+                'position',
+                ('number', 'is_captain', 'is_assistent',),
                 'document',
             ),
         }),
