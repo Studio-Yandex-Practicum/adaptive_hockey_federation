@@ -280,8 +280,7 @@ class TeamListView(LoginRequiredMixin, ListView):
 class UpdateTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-    UpdateView
-):
+        UpdateView):
     model = Team
     form_class = TeamForm
     template_name = "includes/user_update.html"
@@ -304,8 +303,7 @@ class UpdateTeamView(
 class DeleteTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-    DeleteView
-):
+        DeleteView):
     object = Team
     model = Team
     success_url = '/teams/'
@@ -319,8 +317,7 @@ class DeleteTeamView(
 class CreateTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-    CreateView
-):
+        CreateView):
     model = Team
     form_class = TeamForm
     template_name = 'includes/user_create.html'
