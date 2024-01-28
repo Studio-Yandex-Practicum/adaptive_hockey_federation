@@ -9,18 +9,18 @@ urlpatterns = [
     path("players/", views.PlayersListView.as_view(), name="players"),
     path("players/<int:id>/", views.PlayerIdView.as_view(), name="player_id"),
     path("teams/", views.TeamListView.as_view(), name="teams"),
-    path("teams/<int:team_id>/", views.TeamIdView.as_view(), name="teams_id"),
+    path("teams/create/", views.CreateTeamView.as_view(), name="team_create"),
     path(
-        "team_update/<int:team_id>/",
+        "teams/<int:team_id>/edit/",
         views.UpdateTeamView.as_view(),
         name="team_update"
     ),
     path(
-        "team_delete/<int:team_id>/",
+        "teams/<int:team_id>/delete/",
         views.DeleteTeamView.as_view(),
         name="team_delete"
     ),
-    path("team_create/", views.CreateTeamView.as_view(), name="team_create"),
+    path("teams/<int:team_id>/", views.TeamIdView.as_view(), name="teams_id"),
     path(
         "competitions/<int:id>/",
         views.competitions_id,

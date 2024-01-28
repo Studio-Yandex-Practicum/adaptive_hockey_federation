@@ -1,6 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
@@ -8,7 +11,6 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import TeamForm
 from main.models import Player, Team
-from main.permissions import AdminOnly
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -277,12 +279,13 @@ class TeamListView(LoginRequiredMixin, ListView):
 
 class UpdateTeamView(
     LoginRequiredMixin,
-    AdminOnly,
+    PermissionRequiredMixin,
         UpdateView):
     model = Team
     form_class = TeamForm
     template_name = "includes/user_update.html"
     success_url = '/teams/'
+    permission_required = 'team.change_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get("team_id")
@@ -299,11 +302,12 @@ class UpdateTeamView(
 
 class DeleteTeamView(
     LoginRequiredMixin,
-    AdminOnly,
+    PermissionRequiredMixin,
         DeleteView):
     object = Team
     model = Team
     success_url = '/teams/'
+    permission_required = 'team.delete_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get('team_id')
@@ -312,11 +316,12 @@ class DeleteTeamView(
 
 class CreateTeamView(
     LoginRequiredMixin,
-    AdminOnly,
+    PermissionRequiredMixin,
         CreateView):
     model = Team
     form_class = TeamForm
     template_name = 'includes/user_create.html'
+    permission_required = 'team.add_team'
     success_url = '/teams'
 
     def form_valid(self, form):

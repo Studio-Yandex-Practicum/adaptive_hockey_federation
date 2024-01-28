@@ -5,11 +5,7 @@
     {% else %}
       drawler_menu
     {% endif %}"
-    {% if request.resolver_match.url_name == 'users' %}
-      href="{% url 'users:user_create' %}"
-    {% elif request.resolver_match.url_name == 'teams' %}
-      href="{% url 'main:team_create' %}"
-    {% endif %}>
+    href="{{ button_url }}">
       {{ name }}
   </a>
 {% endwith %}
