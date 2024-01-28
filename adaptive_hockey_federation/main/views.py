@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
