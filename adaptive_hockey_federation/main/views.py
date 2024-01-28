@@ -185,30 +185,26 @@ class TeamIdView(DetailView):
         )
 
         table_head = {
+            "number": "№",
             "surname": "Фамилия",
             "name": "Имя",
-            "birthday": "День рождения",
-            "diagnosis": "Диагноз",
-            "discipline": "Дисциплина",
+            "birthday": "Д.Р.",
             "gender": "Пол",
-            "level_revision": "Уровень ревизии",
-            "position": "Игровая позиция",
-            "number": "Номер игрока",
+            "position": "Квалификация",
+            "diagnosis": "Диагноз",
         }
 
         table_data = [
             {
+                "number": player.number,
                 "surname": player.surname,
                 "name": player.name,
                 "birthday": player.birthday,
+                "gender": player.get_gender_display(),
+                "position": player.get_position_display(),
                 "diagnosis": player.diagnosis.name
                 if player.diagnosis
                 else None,  # Noqa
-                "discipline": player.discipline if player.discipline else None,
-                "gender": player.get_gender_display(),
-                "level_revision": player.level_revision,
-                "position": player.get_position_display(),
-                "number": player.number,
             }
             for player in players
         ]

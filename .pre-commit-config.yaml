@@ -42,7 +42,6 @@ repos:
         entry: make pytest
         pass_filenames: false
         types: [python]
-        args: ["-C", "adaptive_hockey_federation"]
       - id: export-dev-dependencies
         name: Export dev Dependencies
         language: system
