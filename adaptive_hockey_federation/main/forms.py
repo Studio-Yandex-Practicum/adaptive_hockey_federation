@@ -17,6 +17,19 @@ class PlayerForm(forms.ModelForm):
     )
 
 
+class PlayerForm(forms.ModelForm):
+    identity_document = forms.CharField(
+        widget=forms.TextInput,
+        label='Удостоверение личности',
+        help_text='Удостоверение личности'
+    )
+    level_revision = forms.CharField(
+        widget=forms.TextInput,
+        label='Уровень ревизии',
+        help_text='Уровень ревизии',
+    )
+
+
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
