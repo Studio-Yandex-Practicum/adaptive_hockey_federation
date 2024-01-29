@@ -5,9 +5,9 @@ def set_default_groups(apps, schema_editor):
     Group = apps.get_model("users", "ProxyGroup")
     Group.objects.bulk_create(
         [
-            Group(name="Administrators"),
-            Group(name="Moderators"),
-            Group(name="Agents"),
+            Group(name="Администраторы"),
+            Group(name="Модераторы"),
+            Group(name="Агенты"),
         ]
     )
 
