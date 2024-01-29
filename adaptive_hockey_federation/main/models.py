@@ -1,28 +1,15 @@
+from core.constants import (
+    CHAR_FIELD_LENGTH,
+    CLASS_FIELD_LENGTH,
+    DEFAULT_VALUE,
+    EMPTY_VALUE_DISPLAY,
+    GENDER_CHOICES,
+    PLAYER_POSITION_CHOICES,
+    STAFF_POSITION_CHOICES,
+)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.models import User
-
-CHAR_FIELD_LENGTH = 256
-EMPTY_VALUE_DISPLAY = ''
-CLASS_FIELD_LENGTH = 10
-DEFAULT_VALUE = 0
-
-GENDER_CHOICES = (
-    ('male', 'Мужской'),
-    ('female', 'Женский'),
-)
-
-PLAYER_POSITION_CHOICES = (
-    ('striker', 'Нападающий'),
-    ('bobber', 'Поплавок'),
-    ('goalkeeper', 'Вратарь'),
-    ('defender', 'Защитник'),
-)
-
-STAFF_POSITION_CHOICES = (
-    ('trainer', 'тренер'),
-    ('other', 'другой'),
-)
 
 
 class BaseUniqueName(models.Model):
