@@ -146,23 +146,6 @@ class Diagnosis(BaseUniqueName):
         return self.name
 
 
-class Document(BaseUniqueName):
-    """
-    Модель Документы для загрузки.
-    """
-    file = models.FileField(
-        upload_to='documents',
-        max_length=CHAR_FIELD_LENGTH
-    )
-
-    class Meta:
-        verbose_name = 'Документ'
-        verbose_name_plural = 'Документы'
-
-    def __str__(self):
-        return self.name
-
-
 class BasePerson(models.Model):
     """
     Абстрактная модель с базовой персональной информацией.
@@ -352,16 +335,6 @@ class Player(BasePerson):
         verbose_name=_('Команда'),
         help_text=_('Команда')
     )
-    document = models.ForeignKey(
-        Document,
-        on_delete=models.CASCADE,
-        related_name='player_documemts',
-        verbose_name=_('Документ'),
-        help_text=_('Документ'),
-        default=EMPTY_VALUE_DISPLAY,
-        blank=True,
-        null=True
-    )
     birthday = models.DateField(
         verbose_name=_('Дата рождения'),
         help_text=_('Дата рождения')
@@ -428,3 +401,43 @@ class Player(BasePerson):
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
+
+
+class Document(BaseUniqueName):
+    """
+    Модель Документы для загрузки.
+    """
+    name = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        verbose_name=_('Наименование'),
+        help_text=_('Наименование'),
+    )
+    file = models.FileField(
+        upload_to='documents',
+        max_length=CHAR_FIELD_LENGTH,
+        unique=True,
+
+    )
+    player = models.ForeignKey(
+        Player,
+        on_delete=models.CASCADE,
+        related_name='player_documemts',
+        verbose_name=_('Игрок'),
+        help_text=_('Игрок'),
+        default=EMPTY_VALUE_DISPLAY,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = 'Документ'
+        verbose_name_plural = 'Документы'
+        constraints = [
+            models.UniqueConstraint(
+                name='player_docume_unique',
+                fields=['file', 'player'],
+            )
+        ]
+
+    def __str__(self):
+        return f'Документ игрока: {self.player}'

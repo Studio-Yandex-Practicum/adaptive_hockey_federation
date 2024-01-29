@@ -120,6 +120,14 @@ class PlayerInline(admin.StackedInline):
     template = 'admin/custom_stacked.html'
 
 
+class DocumentInline(admin.TabularInline):
+    model = Document
+    verbose_name = 'Документ'
+    verbose_name_plural = 'Документы'
+    extra = 0
+    min_num = 1
+
+
 class PlayerAdmin(admin.ModelAdmin):
     change_form_template = 'admin/custom_change_form.html'
     form = PlayerForm
@@ -154,7 +162,7 @@ class PlayerAdmin(admin.ModelAdmin):
         'identity_document',
     )
     ordering = ['surname', 'name', 'patronymic', 'birthday']
-    inlines = (PlayerInline,)
+    inlines = (PlayerInline, DocumentInline,)
     fieldsets = (
         ('Персональные данные', {
             'classes': ('collapse',),
@@ -169,11 +177,10 @@ class PlayerAdmin(admin.ModelAdmin):
             ),
         }),
         ('Игровые данные', {
-            # 'classes': ('collapse',),
+            'classes': ('collapse',),
             'fields': (
                 'position',
                 ('number', 'is_captain', 'is_assistent',),
-                'document',
             ),
         }),
     )
