@@ -1,28 +1,15 @@
+from core.constants import (
+    CHAR_FIELD_LENGTH,
+    CLASS_FIELD_LENGTH,
+    DEFAULT_VALUE,
+    EMPTY_VALUE_DISPLAY,
+    GENDER_CHOICES,
+    PLAYER_POSITION_CHOICES,
+    STAFF_POSITION_CHOICES,
+)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.models import User
-
-CHAR_FIELD_LENGTH = 256
-EMPTY_VALUE_DISPLAY = ''
-CLASS_FIELD_LENGTH = 10
-DEFAULT_VALUE = 0
-
-GENDER_CHOICES = (
-    ('male', 'Мужской'),
-    ('female', 'Женский'),
-)
-
-PLAYER_POSITION_CHOICES = (
-    ('striker', 'Нападающий'),
-    ('bobber', 'Поплавок'),
-    ('goalkeeper', 'Вратарь'),
-    ('defender', 'Защитник'),
-)
-
-STAFF_POSITION_CHOICES = (
-    ('trainer', 'тренер'),
-    ('other', 'другой'),
-)
 
 
 class BaseUniqueName(models.Model):
@@ -141,23 +128,6 @@ class Diagnosis(BaseUniqueName):
     class Meta:
         verbose_name = 'Диагноз'
         verbose_name_plural = 'Диагнозы'
-
-    def __str__(self):
-        return self.name
-
-
-class Document(BaseUniqueName):
-    """
-    Модель Документы для загрузки.
-    """
-    file = models.FileField(
-        upload_to='documents',
-        max_length=CHAR_FIELD_LENGTH
-    )
-
-    class Meta:
-        verbose_name = 'Документ'
-        verbose_name_plural = 'Документы'
 
     def __str__(self):
         return self.name
@@ -352,16 +322,6 @@ class Player(BasePerson):
         verbose_name=_('Команда'),
         help_text=_('Команда')
     )
-    document = models.ForeignKey(
-        Document,
-        on_delete=models.CASCADE,
-        related_name='player_documemts',
-        verbose_name=_('Документ'),
-        help_text=_('Документ'),
-        default=EMPTY_VALUE_DISPLAY,
-        blank=True,
-        null=True
-    )
     birthday = models.DateField(
         verbose_name=_('Дата рождения'),
         help_text=_('Дата рождения')
@@ -394,12 +354,10 @@ class Player(BasePerson):
     is_captain = models.BooleanField(
         default=False,
         verbose_name=_('Капитан'),
-        help_text=_('Капитан')
     )
     is_assistent = models.BooleanField(
         default=False,
         verbose_name=_('Ассистент'),
-        help_text=_('Ассистент')
     )
     identity_document = models.TextField(
         verbose_name=_('Удостоверение личности'),
@@ -430,3 +388,43 @@ class Player(BasePerson):
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
+
+
+class Document(BaseUniqueName):
+    """
+    Модель Документы для загрузки.
+    """
+    name = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        verbose_name=_('Наименование'),
+        help_text=_('Наименование'),
+    )
+    file = models.FileField(
+        upload_to='documents',
+        max_length=CHAR_FIELD_LENGTH,
+        unique=True,
+
+    )
+    player = models.ForeignKey(
+        Player,
+        on_delete=models.CASCADE,
+        related_name='player_documemts',
+        verbose_name=_('Игрок'),
+        help_text=_('Игрок'),
+        default=EMPTY_VALUE_DISPLAY,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = 'Документ'
+        verbose_name_plural = 'Документы'
+        constraints = [
+            models.UniqueConstraint(
+                name='player_docume_unique',
+                fields=['file', 'player'],
+            )
+        ]
+
+    def __str__(self):
+        return f'Документ игрока: {self.player}'
