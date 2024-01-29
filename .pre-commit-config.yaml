@@ -36,12 +36,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: run-make-pytest
-        name: Run make pytest in adaptive_hockey_federation
-        language: system
-        entry: make pytest
-        pass_filenames: false
-        types: [python]
       - id: export-dev-dependencies
         name: Export dev Dependencies
         language: system

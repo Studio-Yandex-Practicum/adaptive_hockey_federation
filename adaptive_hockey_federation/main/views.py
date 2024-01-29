@@ -183,8 +183,8 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-        curators = [team.curator]
-        curators_table_head = {
+        staff_list = [team.staff_team_member]
+        staff_table_head = {
             "number": "№",
             "surname": "Фамилия",
             "name": "Имя",
@@ -192,16 +192,16 @@ class TeamIdView(DetailView):
             "position": "Квалификация",
             "note": "Примечание",
         }
-        curators_table_data = [
+        staff_table_data = [
             {
                 "number": i + 1,
-                "surname": curator.last_name,
-                "name": curator.first_name,
-                "function": curator.role,
-                "position": "",
-                "note": "",
+                "surname": staff.staff_member.surname,
+                "name": staff.staff_member.name,
+                "function": staff.staff_position,
+                "position": staff.qualification,
+                "note": staff.notes,
             }
-            for i, curator in enumerate(curators)
+            for i, staff in enumerate(staff_list)
         ]
         players_table_head = {
             "number": "№",
@@ -230,8 +230,8 @@ class TeamIdView(DetailView):
 
         context["table_head"] = players_table_head
         context["table_data"] = players_table_data
-        context["curators_table_head"] = curators_table_head
-        context["curators_table_data"] = curators_table_data
+        context["staff_table_head"] = staff_table_head
+        context["staff_table_data"] = staff_table_data
         context["team"] = team
 
         return context
