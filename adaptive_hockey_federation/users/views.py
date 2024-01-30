@@ -45,7 +45,7 @@ class UpdateUserView(
         PermissionRequiredMixin,
         UpdateView):
     model = User
-    template_name = 'includes/user_update.html'
+    template_name = 'users/user_update.html'
     permission_required = 'users.change_user'
     form_class = UpdateUserForm
     success_url = '/users'
@@ -75,7 +75,7 @@ class CreateUserView(
         CreateView):
     model = User
     form_class = CreateUserForm
-    template_name = 'includes/user_create.html'
+    template_name = 'users/user_create.html'
     success_url = '/users'
     permission_required = 'users.create_user'
 

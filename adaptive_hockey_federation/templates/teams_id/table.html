@@ -1,0 +1,57 @@
+{% load static %}
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        {% for head_item in table_head.values %}
+        <th class="col">{{ head_item }}</th>
+        {% endfor %}
+        <th class="col">
+          <div class="row">
+            <div class="col text-right">
+              <img src="{% static 'img/edit.png' %}" class="float-end">
+            </div>
+            <div class="col text-left">
+              <img src="{% static 'img/delete.png' %}" class="float-start">
+            </div>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for table_string in table_data %}
+      <tr>
+        {% for cell_name, cell_value in table_string.items %}
+          {% if forloop.counter0 == 0 and 'url' in table_string %}
+            <td class="border rounded-md table-light">
+              <a href="{{ table_string.url }}">{{ cell_value }} </a>
+            </td>
+          {% elif cell_name == '_ref_' %}
+            {% if cell_value.type == 'button' %}
+              <td class="border rounded-md table-light">
+                {% include 'teams_id/cell_button.html' with url=cell_value.url name=cell_value.name %}
+              </td>
+            {% else %}
+              <td class="border rounded-md table-light">
+                <a href="{{ cell_value.url }}">{{ cell_value.name }} </a>
+              </td>
+            {% endif %}
+          {% elif cell_name != 'url' and cell_name != 'id'%}
+            <td class="border rounded-md table-light">{{ cell_value }}</td>
+          {% endif %}
+        {% endfor %}
+        {% with request.resolver_match.view_name as view_name %}
+        {% if view_name == 'users:users' %}
+        {% include "teams_id/create_delete_buttons.html" %}
+        {% else %}
+        <td>
+          <button type="button"><img src="{% static 'img/edit.png' %}"></button>
+          <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+        </td>
+        {% endif %}
+        {% endwith %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

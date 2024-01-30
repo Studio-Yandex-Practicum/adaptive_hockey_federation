@@ -15,22 +15,22 @@
           </div>
         </div>
         <li class="nav-item py-2 list-group">
-          {% url 'main:players' as url_name %}{% include "includes/button.html" with name="Игроки" %}
+          {% url 'main:players' as url_name %}{% include "base/button.html" with name="Игроки" %}
         </li>
         <li class="nav-item py-2">
-          {% url 'users:users' as url_name %}{% include "includes/button.html" with name="Пользователи" %}
+          {% url 'users:users' as url_name %}{% include "base/button.html" with name="Пользователи" %}
         </li>
         <li class="nav-item py-2">
-          {% url 'main:teams' as url_name %}{% include "includes/button.html" with name="Команды" %}
+          {% url 'main:teams' as url_name %}{% include "base/button.html" with name="Команды" %}
         </li>
         <li class="nav-item py-2">
-          {% url 'main:competitions' as url_name %}{% include "includes/button.html" with name="Соревнования" %}
+          {% url 'main:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
         </li>
         <li class="nav-item py-2">
-          {% url 'main:analytics' as url_name %}{% include "includes/button.html" with name="Аналитика" %}
+          {% url 'main:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
         </li>
         <li class="nav-item py-2">
-          {% url 'main:unloads' as url_name %}{% include "includes/button.html" with name="Выгрузки" %}
+          {% url 'main:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
         </li>
       </ul>
     </div>

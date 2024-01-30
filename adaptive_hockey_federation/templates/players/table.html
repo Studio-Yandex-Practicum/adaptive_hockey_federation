@@ -29,7 +29,7 @@
           {% elif cell_name == '_ref_' %}
             {% if cell_value.type == 'button' %}
               <td class="border rounded-md table-light">
-                {% include 'includes/cell_button.html' with url=cell_value.url name=cell_value.name %}
+                {% include 'players/cell_button.html' with url=cell_value.url name=cell_value.name %}
               </td>
             {% else %}
               <td class="border rounded-md table-light">
@@ -42,7 +42,7 @@
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
         {% if view_name == 'users:users' %}
-        {% include "includes/create_delete_buttons.html" %}
+        {% include "players/create_delete_buttons.html" %}
         {% else %}
         <td>
           <button type="button"><img src="{% static 'img/edit.png' %}"></button>

@@ -24,12 +24,12 @@ CONTEXT_EXAMPLE = {
 
 @login_required
 def main(request):
-    return render(request, "main/main.html")
+    return render(request, "home/main.html")
 
 
 class PlayersListView(LoginRequiredMixin, ListView):
     model = Player
-    template_name = "main/players.html"
+    template_name = "players/players.html"
     context_object_name = "players"
     paginate_by = 10
     fields = [
@@ -108,7 +108,7 @@ class PlayersListView(LoginRequiredMixin, ListView):
 
 class PlayerIdView(DetailView):
     model = Player
-    template_name = "main/player_id.html"
+    template_name = "player_id/player_id.html"
     context_object_name = "player"
     fields = [
         "surname",
@@ -168,7 +168,7 @@ class PlayerIdView(DetailView):
 class TeamIdView(DetailView):
     model = Team
     form_class = TeamForm
-    template_name = "main/teams_id.html"
+    template_name = "teams_id/teams_id.html"
     success_url = "/teams/"
 
     def get_object(self, queryset=None):
@@ -239,7 +239,7 @@ class TeamIdView(DetailView):
 
 class TeamListView(LoginRequiredMixin, ListView):
     model = Team
-    template_name = "main/teams.html"
+    template_name = "teams/teams.html"
     context_object_name = "teams"
     paginate_by = 10
     ordering = ["id"]
@@ -274,19 +274,19 @@ class TeamListView(LoginRequiredMixin, ListView):
 
 @login_required
 def competitions_id(request, id):
-    return render(request, "main/competitions_id.html")
+    return render(request, "competitions_id/competitions_id.html")
 
 
 @login_required
 def competitions(request):
-    return render(request, "main/competitions.html")
+    return render(request, "competitions/competitions.html")
 
 
 @login_required
 def analytics(request):
-    return render(request, "main/analitics.html")
+    return render(request, "analytics/analitics.html")
 
 
 @login_required
 def unloads(request):
-    return render(request, "main/unloads.html")
+    return render(request, "unloads/unloads.html")
