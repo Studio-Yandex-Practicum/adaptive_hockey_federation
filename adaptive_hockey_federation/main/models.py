@@ -353,8 +353,8 @@ class Event(models.Model):
         return self.title
 
     @property
-    def get_date_end(self):
-        return self.date_begin + self.duration
+    def get_duration(self):
+        return self.date_end - self.date_start
 
 
 class Player(BasePerson):
