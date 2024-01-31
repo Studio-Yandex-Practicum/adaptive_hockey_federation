@@ -307,6 +307,12 @@ class Team(BaseUniqueName):
         verbose_name=_('Куратор команды'),
         help_text=_('Куратор команды')
     )
+    team_event = models.ManyToManyField(
+        'Event',
+        null=True,
+        related_name='teams',
+        through='TeamInEvent'
+    )
 
     class Meta:
         default_related_name = 'teams'
@@ -323,6 +329,32 @@ class Team(BaseUniqueName):
         if self.city:
             return f'{self.name} - {self.city}'
         return self.name
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=100)
+    date_start = models.DateField()
+    date_end = models.DateField()
+    duration = models.DurationField()
+    location = models.CharField(max_length=100)
+    team_event = models.ManyToManyField(
+        Team,
+        null=True,
+        related_name='events',
+        through='TeamInEvent'
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('-date_start',)
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def get_date_end(self):
+        return self.date_begin + self.duration
 
 
 class Player(BasePerson):
@@ -430,3 +462,18 @@ class Player(BasePerson):
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
+
+
+class TeamInEvent(models.Model):
+    team_event = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name='team_on_event',
+        verbose_name='Команда'
+    )
+    event = models.ForeignKey(
+        'Event',
+        on_delete=models.CASCADE,
+        related_name='event',
+        verbose_name='Ивент'
+    )
