@@ -477,3 +477,6 @@ class TeamInEvent(models.Model):
         related_name='event',
         verbose_name='Ивент'
     )
+
+    def __str__(self):
+        return self.event
