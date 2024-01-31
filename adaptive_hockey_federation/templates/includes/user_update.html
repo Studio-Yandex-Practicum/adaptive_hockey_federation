@@ -26,6 +26,15 @@
             enctype="multipart/form-data"
           {% endif %}>
             {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+
             {% for field in form %}
             <div class="row my-3">
               <label for="{{ field.id_for_label }}">
