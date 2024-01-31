@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.models import User
@@ -307,10 +309,11 @@ class Team(BaseUniqueName):
         verbose_name=_('Куратор команды'),
         help_text=_('Куратор команды')
     )
-    team_event = models.ManyToManyField(
+    events = models.ManyToManyField(
         'Event',
-        null=True,
-        related_name='teams',
+        related_name='events',
+        verbose_name=_('Соревнования в которых участвует команда'),
+        help_text=_('Соревнования в которых участвует команда'),
         through='TeamInEvent'
     )
 
@@ -329,32 +332,6 @@ class Team(BaseUniqueName):
         if self.city:
             return f'{self.name} - {self.city}'
         return self.name
-
-
-class Event(models.Model):
-    title = models.CharField(max_length=100)
-    date_start = models.DateField()
-    date_end = models.DateField()
-    duration = models.DurationField()
-    location = models.CharField(max_length=100)
-    team_event = models.ManyToManyField(
-        Team,
-        null=True,
-        related_name='events',
-        through='TeamInEvent'
-    )
-
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ('-date_start',)
-
-    def __str__(self):
-        return self.title
-
-    @property
-    def get_duration(self):
-        return self.date_end - self.date_start
 
 
 class Player(BasePerson):
@@ -464,18 +441,56 @@ class Player(BasePerson):
         return ' '.join([self.surname, self.name, self.patronymic])
 
 
+class Event(models.Model):
+    """
+    Модель соревнований.
+    """
+    title = models.CharField(max_length=100)
+    date_start = models.DateField()
+    date_end = models.DateField()
+    duration = models.DurationField()
+    city = models.ForeignKey(
+        City,
+        on_delete=models.CASCADE,
+        verbose_name=_('Город проведения соревнований'),
+        help_text=_('Город проведения соревнований')
+    )
+    location = models.CharField(max_length=100)
+    teams = models.ManyToManyField(
+        Team,
+        related_name='teams',
+        verbose_name=_('Состав команд участников'),
+        help_text=_('Состав команд участников'),
+        through='TeamInEvent'
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Соревнование'
+        verbose_name_plural = 'Соревнования'
+        ordering = ('-date_start',)
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def get_duration(self):
+        return timedelta(self.date_end - self.date_start)
+
+
 class TeamInEvent(models.Model):
-    team_event = models.ForeignKey(
+    team = models.ForeignKey(
         Team,
         on_delete=models.CASCADE,
         related_name='team_on_event',
         verbose_name='Команда'
     )
     event = models.ForeignKey(
-        'Event',
+        Event,
         on_delete=models.CASCADE,
         related_name='event',
-        verbose_name='Ивент'
+        verbose_name='Соревнование'
     )
 
     def __str__(self):
