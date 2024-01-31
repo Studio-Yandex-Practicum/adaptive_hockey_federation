@@ -480,6 +480,9 @@ class Event(models.Model):
 
 
 class TeamInEvent(models.Model):
+    """
+    Модель участвующих команд в соревнованиях
+    """
     team = models.ForeignKey(
         Team,
         on_delete=models.CASCADE,
