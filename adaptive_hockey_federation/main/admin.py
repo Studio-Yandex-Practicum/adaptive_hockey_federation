@@ -1,4 +1,5 @@
 from django.contrib import admin
+from main.forms import PlayerForm
 from main.models import (
     City,
     Diagnosis,
@@ -109,7 +110,27 @@ class StaffTeamMemberAdmin(StaffMemberAdmin):
     )
 
 
+class PlayerInline(admin.StackedInline):
+    model = Player.team.through
+    insert_after = 'position'
+    verbose_name = 'Команда'
+    verbose_name_plural = 'Участие в командах'
+    extra = 0
+    min_num = 1
+    template = 'admin/custom_stacked.html'
+
+
+class DocumentInline(admin.TabularInline):
+    model = Document
+    verbose_name = 'Документ'
+    verbose_name_plural = 'Документы'
+    extra = 0
+    min_num = 1
+
+
 class PlayerAdmin(admin.ModelAdmin):
+    change_form_template = 'admin/custom_change_form.html'
+    form = PlayerForm
     list_display = (
         'pk',
         'surname',
@@ -141,6 +162,28 @@ class PlayerAdmin(admin.ModelAdmin):
         'identity_document',
     )
     ordering = ['surname', 'name', 'patronymic', 'birthday']
+    inlines = (PlayerInline, DocumentInline,)
+    fieldsets = (
+        ('Персональные данные', {
+            'classes': ('collapse',),
+            'fields': (
+                ('surname', 'name',),
+                'patronymic',
+                ('gender', 'birthday',),
+                'identity_document',
+                'discipline',
+                'diagnosis',
+                'level_revision',
+            ),
+        }),
+        ('Игровые данные', {
+            'classes': ('collapse',),
+            'fields': (
+                'position',
+                ('number', 'is_captain', 'is_assistent',),
+            ),
+        }),
+    )
 
 
 class TeamAdmin(admin.ModelAdmin):

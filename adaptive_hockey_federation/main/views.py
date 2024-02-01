@@ -187,38 +187,55 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-
-        table_head = {
+        staff_list = [team.staff_team_member,]
+        staff_table_head = {
+            "number": "№",
             "surname": "Фамилия",
             "name": "Имя",
-            "birthday": "День рождения",
-            "diagnosis": "Диагноз",
-            "discipline": "Дисциплина",
+            "function": "Должность",
+            "position": "Квалификация",
+            "note": "Примечание",
+        }
+        staff_table_data = [
+            {
+                "number": i + 1,
+                "surname": staff.staff_member.surname,
+                "name": staff.staff_member.name,
+                "function": staff.staff_position,
+                "position": staff.qualification,
+                "note": staff.notes,
+            }
+            for i, staff in enumerate(staff_list)
+        ]
+        players_table_head = {
+            "number": "№",
+            "surname": "Фамилия",
+            "name": "Имя",
+            "birthday": "Д.Р.",
             "gender": "Пол",
-            "level_revision": "Уровень ревизии",
-            "position": "Игровая позиция",
-            "number": "Номер игрока",
+            "position": "Квалификация",
+            "diagnosis": "Диагноз",
         }
 
-        table_data = [
+        players_table_data = [
             {
+                "number": player.number,
                 "surname": player.surname,
                 "name": player.name,
                 "birthday": player.birthday,
+                "gender": player.get_gender_display(),
+                "position": player.get_position_display(),
                 "diagnosis": player.diagnosis.name
                 if player.diagnosis
                 else None,  # Noqa
-                "discipline": player.discipline if player.discipline else None,
-                "gender": player.get_gender_display(),
-                "level_revision": player.level_revision,
-                "position": player.get_position_display(),
-                "number": player.number,
             }
             for player in players
         ]
 
-        context["table_head"] = table_head
-        context["table_data"] = table_data
+        context["table_head"] = players_table_head
+        context["table_data"] = players_table_data
+        context["staff_table_head"] = staff_table_head
+        context["staff_table_data"] = staff_table_data
         context["team"] = team
 
         return context
