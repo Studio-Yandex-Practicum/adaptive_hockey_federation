@@ -1,10 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
 from main.models import Player, Team
@@ -300,6 +303,7 @@ class TeamListView(LoginRequiredMixin, ListView):
         table_data = []
         for team in teams:
             team_data = {
+                "id": team.id,
                 "name": team.name,
                 "discipline_name": team.discipline_name,
                 "city": team.city,
@@ -319,6 +323,58 @@ class TeamListView(LoginRequiredMixin, ListView):
         }
         context["table_data"] = table_data
         return context
+
+
+class UpdateTeamView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+        UpdateView):
+    model = Team
+    form_class = TeamForm
+    template_name = "includes/user_update.html"
+    success_url = '/teams/'
+    permission_required = 'team.change_team'
+
+    def get_object(self, queryset=None):
+        team_id = self.kwargs.get("team_id")
+        return get_object_or_404(Team, pk=team_id)
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateTeamView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class(
+            instance=self.object,
+            initial=self.get_initial()
+        )
+        return context
+
+
+class DeleteTeamView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+        DeleteView):
+    object = Team
+    model = Team
+    success_url = '/teams/'
+    permission_required = 'team.delete_team'
+
+    def get_object(self, queryset=None):
+        team_id = self.kwargs.get('team_id')
+        return get_object_or_404(Team, pk=team_id)
+
+
+class CreateTeamView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+        CreateView):
+    model = Team
+    form_class = TeamForm
+    template_name = 'includes/user_create.html'
+    permission_required = 'team.add_team'
+    success_url = '/teams'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 @login_required

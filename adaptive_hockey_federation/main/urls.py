@@ -20,6 +20,17 @@ urlpatterns = [
     ),
     path("player_deleted/", views.player_id_deleted, name="player_id_deleted"),
     path("teams/", views.TeamListView.as_view(), name="teams"),
+    path("teams/create/", views.CreateTeamView.as_view(), name="team_create"),
+    path(
+        "teams/<int:team_id>/edit/",
+        views.UpdateTeamView.as_view(),
+        name="team_update"
+    ),
+    path(
+        "teams/<int:team_id>/delete/",
+        views.DeleteTeamView.as_view(),
+        name="team_delete"
+    ),
     path("teams/<int:team_id>/", views.TeamIdView.as_view(), name="teams_id"),
     path(
         "competitions/<int:id>/", views.competitions_id, name="competitions_id"
