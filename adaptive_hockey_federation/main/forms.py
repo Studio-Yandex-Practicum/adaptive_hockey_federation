@@ -2,19 +2,18 @@ from django import forms
 from main.models import Player, Team
 
 
-class TeamForm(forms.ModelForm):
-    class Meta:
-        model = Team
-        fields = [
-            'name',
-            'city',
-            'staff_team_member',
-            'discipline_name',
-            'curator'
-        ]
-
-
 class PlayerForm(forms.ModelForm):
+    identity_document = forms.CharField(
+        widget=forms.TextInput,
+        label='Удостоверение личности',
+        help_text='Удостоверение личности'
+    )
+    level_revision = forms.CharField(
+        widget=forms.TextInput,
+        label='Уровень ревизии',
+        help_text='Уровень ревизии',
+    )
+
     class Meta:
         model = Player
         fields = [
@@ -32,5 +31,17 @@ class PlayerForm(forms.ModelForm):
             "is_assistent",
             "position",
             "number",
-            "document",
+            "identity_document",
+        ]
+
+
+class TeamForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = [
+            'name',
+            'city',
+            'staff_team_member',
+            'discipline_name',
+            'curator'
         ]
