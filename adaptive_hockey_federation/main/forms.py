@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelChoiceField, Select, TextInput
-from main.models import City, DisciplineName, StaffTeamMember, Team
+from main.models import City, DisciplineName, Player, StaffTeamMember, Team
 from users.models import User
 
 
@@ -15,6 +15,26 @@ class PlayerForm(forms.ModelForm):
         label='Уровень ревизии',
         help_text='Уровень ревизии',
     )
+
+    class Meta:
+        model = Player
+        fields = [
+            "surname",
+            "name",
+            "patronymic",
+            "gender",
+            "birthday",
+            "discipline",
+            "diagnosis",
+            "level_revision",
+            "identity_document",
+            "team",
+            "is_captain",
+            "is_assistent",
+            "position",
+            "number",
+            "identity_document",
+        ]
 
 
 class TeamForm(forms.ModelForm):
