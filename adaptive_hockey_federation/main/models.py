@@ -97,7 +97,7 @@ class Discipline(models.Model):
         ]
 
     def __str__(self):
-        return self.discipline_name.name
+        return f'{self.discipline_name.name} ({self.discipline_level.name})'
 
 
 class Nosology(BaseUniqueName):

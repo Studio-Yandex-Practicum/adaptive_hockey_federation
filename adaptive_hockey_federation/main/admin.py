@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.forms import PlayerForm
+from main.forms import PlayerForm, TeamForm
 from main.models import (
     City,
     Diagnosis,
@@ -187,19 +187,20 @@ class PlayerAdmin(admin.ModelAdmin):
 
 
 class TeamAdmin(admin.ModelAdmin):
+    form = TeamForm
     list_display = (
         'pk',
         'name',
         'city',
         'staff_team_member',
-        'discipline_name'
+        'discipline_name',
     )
     search_fields = (
         'pk',
         'name',
         'city',
         'staff_team_member',
-        'discipline_name'
+        'discipline_name',
     )
     ordering = ['name']
 

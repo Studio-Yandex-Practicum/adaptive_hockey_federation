@@ -1,5 +1,6 @@
 from django import forms
 from main.models import Team
+from users.models import User
 
 
 class PlayerForm(forms.ModelForm):
@@ -15,13 +16,18 @@ class PlayerForm(forms.ModelForm):
     )
 
 
+class UserChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.get_full_name()
+
+
 class TeamForm(forms.ModelForm):
+    curator = UserChoiceField(
+        queryset=User.objects.all(),
+        label='Куратор',
+        help_text='Куратор команды',
+    )
+
     class Meta:
         model = Team
-        fields = [
-            'name',
-            'city',
-            'staff_team_member',
-            'discipline_name',
-            'curator'
-        ]
+        fields = '__all__'
