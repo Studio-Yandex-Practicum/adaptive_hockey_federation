@@ -1,5 +1,5 @@
 from django import forms
-from main.models import Team
+from main.models import Player, Team
 
 
 class PlayerForm(forms.ModelForm):
@@ -13,6 +13,26 @@ class PlayerForm(forms.ModelForm):
         label='Уровень ревизии',
         help_text='Уровень ревизии',
     )
+
+    class Meta:
+        model = Player
+        fields = [
+            "surname",
+            "name",
+            "patronymic",
+            "gender",
+            "birthday",
+            "discipline",
+            "diagnosis",
+            "level_revision",
+            "identity_document",
+            "team",
+            "is_captain",
+            "is_assistent",
+            "position",
+            "number",
+            "identity_document",
+        ]
 
 
 class TeamForm(forms.ModelForm):
