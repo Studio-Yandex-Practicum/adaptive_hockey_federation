@@ -1,4 +1,5 @@
 from django.urls import path
+from events import views as events
 from main import views
 
 app_name = "main"
@@ -15,7 +16,7 @@ urlpatterns = [
         views.competitions_id,
         name="competitions_id",
     ),
-    path("competitions/", views.competitions, name="competitions"),
+    path("competitions/", events.EventListView.as_view(), name="competitions"),
     path("analytics/", views.analytics, name="analytics"),
     path("unloads/", views.unloads, name="unloads"),
 ]

@@ -1,3 +1,14 @@
 from django.contrib import admin
+from events.models import Event
 
-# Register your models here.
+
+class EventAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'title'
+    )
+    search_fields = ('title',)
+    ordering = ['title']
+
+
+admin.site.register(Event, EventAdmin)

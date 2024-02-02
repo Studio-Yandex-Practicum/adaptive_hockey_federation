@@ -29,7 +29,7 @@ class Event(models.Model):
     class Meta:
         verbose_name = 'Соревнование'
         verbose_name_plural = 'Соревнования'
-        ordering = ('-date_start',)
+        ordering = ('date_start',)
 
     def __str__(self):
         return self.title

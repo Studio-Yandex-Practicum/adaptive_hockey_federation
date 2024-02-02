@@ -185,11 +185,15 @@ class EventFactory(factory.django.DjangoModelFactory):
         model = Event
         django_get_or_create = ['title']
 
-    title = factory.LazyFunction(lambda: faker.sentence(nb_words=2))
+    title = factory.Faker('sentence', nb_words=2, locale='ru_RU')
     city = factory.SubFactory(CityFactory)
-    date_start = date.today() + timedelta(days=random.randint(10, 365))
-    date_end = date_start + timedelta(weeks=random.randint(2, 24))
-    location = factory.LazyFunction(lambda: faker.sentence(nb_words=4))
+    date_start = date.today() + timedelta(
+        days=random.randrange(5, 30, 5)
+    )
+    date_end = date_start + timedelta(
+        days=random.randrange(2, 10, 2)
+    )
+    location = factory.Faker('sentence', nb_words=4, locale='ru_RU')
     is_active = factory.LazyFunction(
         lambda: random.choice([True, False])
     )
