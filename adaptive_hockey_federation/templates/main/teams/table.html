@@ -42,7 +42,7 @@
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
         {% if view_name == 'main:teams' %}
-        {% include "includes/team_edit_delete_buttons.html" %}
+        {% include "main/teams/team_edit_delete_buttons.html" %}
         {% else %}
         <td>
           <button type="button"><img src="{% static 'img/edit.png' %}"></button>
