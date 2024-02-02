@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
 from django.views.generic.list import ListView
 from events.models import Event
 
