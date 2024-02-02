@@ -1,7 +1,10 @@
 import random
+from datetime import date, timedelta
 
 import factory
 from django.db.models import Count
+from events.models import Event
+from faker import Factory as FackerFoctory
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -19,6 +22,8 @@ from main.models import (
 from users.models import User
 
 from .utils import check_len, get_random_objects
+
+faker = FackerFoctory.create()
 
 
 class CityFactory(factory.django.DjangoModelFactory):
@@ -168,6 +173,34 @@ class TeamFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def curator(self):
         return get_random_objects(User)
+
+
+class EventFactory(factory.django.DjangoModelFactory):
+    """
+    Создание соревнований. Привязка к ним уже созданных городов, команд
+    создание локации, времени начала и окончания, активно или закончено
+    """
+
+    class Meta:
+        model = Event
+        django_get_or_create = ['title']
+
+    title = factory.LazyFunction(lambda: faker.sentence(nb_words=2))
+    city = factory.SubFactory(CityFactory)
+    date_start = date.today() + timedelta(days=random.randint(10, 365))
+    date_end = date_start + timedelta(weeks=random.randint(2, 24))
+    location = factory.LazyFunction(lambda: faker.sentence(nb_words=4))
+    is_active = factory.LazyFunction(
+        lambda: random.choice([True, False])
+    )
+
+    @factory.post_generation
+    def teams(self, create, extracted, **kwargs):
+        if create:
+            teams = Team.objects.all()
+            list_teams = random.choices(teams, k=8)
+            for team in list_teams:
+                self.teams.add(team)
 
 
 class PlayerFactory(factory.django.DjangoModelFactory):

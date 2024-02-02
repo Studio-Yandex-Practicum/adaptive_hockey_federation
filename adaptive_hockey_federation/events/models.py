@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from main.models import City, Team
@@ -12,7 +10,6 @@ class Event(models.Model):
     title = models.CharField(max_length=100)
     date_start = models.DateField()
     date_end = models.DateField()
-    duration = models.DurationField()
     city = models.ForeignKey(
         City,
         on_delete=models.CASCADE,
@@ -22,10 +19,9 @@ class Event(models.Model):
     location = models.CharField(max_length=100)
     teams = models.ManyToManyField(
         Team,
-        related_name='teams',
+        related_name='event_teams',
         verbose_name=_('Состав команд участников'),
         help_text=_('Состав команд участников'),
-        through='TeamInEvent'
     )
 
     is_active = models.BooleanField(default=True)
@@ -38,6 +34,8 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def get_duration(self):
-        return timedelta(self.date_end - self.date_start)
+    def period_duration(self):
+        """
+        Функция расчитывает длительность турнира
+        """
+        return self.date_end - self.date_start

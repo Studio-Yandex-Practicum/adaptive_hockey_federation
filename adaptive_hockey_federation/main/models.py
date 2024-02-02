@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from events.models import Event
 from users.models import User
 
 CHAR_FIELD_LENGTH = 256
@@ -308,13 +307,6 @@ class Team(BaseUniqueName):
         verbose_name=_('Куратор команды'),
         help_text=_('Куратор команды')
     )
-    events = models.ManyToManyField(
-        Event,
-        related_name='events',
-        verbose_name=_('Соревнования в которых участвует команда'),
-        help_text=_('Соревнования в которых участвует команда'),
-        through='TeamInEvent'
-    )
 
     class Meta:
         default_related_name = 'teams'
@@ -438,24 +430,3 @@ class Player(BasePerson):
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
-
-
-class TeamInEvent(models.Model):
-    """
-    Модель участвующих команд в соревнованиях
-    """
-    team = models.ForeignKey(
-        Team,
-        on_delete=models.CASCADE,
-        related_name='team_on_event',
-        verbose_name='Команда'
-    )
-    event = models.ForeignKey(
-        Event,
-        on_delete=models.CASCADE,
-        related_name='event',
-        verbose_name='Соревнование'
-    )
-
-    def __str__(self):
-        return self.event
