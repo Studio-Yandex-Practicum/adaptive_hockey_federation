@@ -1,9 +1,9 @@
 {% extends 'base/base.html' %}
 {% block title %}
-  Список пользователей
+  Список игроков
 {% endblock %}
 {% block content %}
   <div class="container">
-    {% include 'users/table.html' with table_head=table_head table_data=table_data %}
+    {% include 'main/players/table.html' with table_head=table_head table_data=table_data %}
   </div>
 {% endblock %}

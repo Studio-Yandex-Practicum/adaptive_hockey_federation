@@ -12,7 +12,7 @@ User = get_user_model()
 
 class UsersListView(LoginRequiredMixin, ListView):
     model = User
-    template_name = 'users/list.html'
+    template_name = 'main/users/list.html'
     context_object_name = 'users'
     paginate_by = 10
 

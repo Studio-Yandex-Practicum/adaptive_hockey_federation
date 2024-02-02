@@ -29,26 +29,26 @@
           {% elif cell_name == '_ref_' %}
             {% if cell_value.type == 'button' %}
               <td class="border rounded-md table-light">
-                {% include 'players/cell_button.html' with url=cell_value.url name=cell_value.name %}
+                {% include 'main/teams/cell_button.html' with url=cell_value.url name=cell_value.name %}
               </td>
             {% else %}
               <td class="border rounded-md table-light">
                 <a href="{{ cell_value.url }}">{{ cell_value.name }} </a>
               </td>
             {% endif %}
-          {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
+          {% elif cell_name != 'url' and cell_name != 'id'%}
             <td class="border rounded-md table-light">{{ cell_value }}</td>
           {% endif %}
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
-            {% if view_name == 'main:players' %}
-              {% include "players/create_delete_button_players.html" %}
-            {% else %}
-              <td>
-                <button type="button"><img src="{% static 'img/edit.png' %}"></button>
-                <button type="button"><img src="{% static 'img/delete.png' %}"></button>
-              </td>
-            {% endif %}
+        {% if view_name == 'users:users' %}
+        {% include "main/teams/create_delete_buttons.html" %}
+        {% else %}
+        <td>
+          <button type="button"><img src="{% static 'img/edit.png' %}"></button>
+          <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+        </td>
+        {% endif %}
         {% endwith %}
       </tr>
       {% endfor %}
