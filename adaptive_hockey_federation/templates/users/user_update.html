@@ -1,7 +1,11 @@
 {% extends 'base/base.html' %}
 {% load user_filters %}
 {% block title %}
-  Изменить пользователя
+  {% if '/user_update/' in request.path %}
+    Изменить пользователя
+  {% elif '/team_update/' in request.path %}
+    Редактированние данных команды
+  {% endif %}
 {% endblock %}
 {% block content %}
 <div class="container py-4">
@@ -9,7 +13,11 @@
     <div class="col-md-8 p-5">
       <div class="card update_card">
         <div class="card-header">
-          Редактированние данных пользователя </br> {{ object.first_name }} {{ object.last_name }}
+          {% if '/user_update/' in request.path %}
+            Редактированние данных пользователя </br> {{ object.first_name }} {{ object.last_name }}
+          {% elif '/team_update/' in request.path %}
+            Редактированние данных команды </br> {{ object.name }}
+          {% endif %}
         </div>
         <div class="card-body">
           <form method="post"
@@ -18,6 +26,15 @@
             enctype="multipart/form-data"
           {% endif %}>
             {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+
             {% for field in form %}
             <div class="row my-3">
               <label for="{{ field.id_for_label }}">
