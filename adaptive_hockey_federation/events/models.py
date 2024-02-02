@@ -2,12 +2,14 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from main.models import City, Team
 
+CHAR_FIELD_LENGTH = 250
+
 
 class Event(models.Model):
     """
     Модель соревнований.
     """
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=CHAR_FIELD_LENGTH)
     date_start = models.DateField()
     date_end = models.DateField()
     city = models.ForeignKey(
@@ -16,7 +18,7 @@ class Event(models.Model):
         verbose_name=_('Город проведения соревнований'),
         help_text=_('Город проведения соревнований')
     )
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=CHAR_FIELD_LENGTH)
     teams = models.ManyToManyField(
         Team,
         related_name='event_teams',
