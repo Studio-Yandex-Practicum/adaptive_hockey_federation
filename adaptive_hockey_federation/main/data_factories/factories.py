@@ -157,9 +157,9 @@ class TeamFactory(factory.django.DjangoModelFactory):
     name = factory.Faker('sentence', nb_words=2, locale='ru_RU')
     city = factory.SubFactory(CityFactory)
 
-    @factory.lazy_attribute
-    def staff_team_member(self):
-        return get_random_objects(StaffTeamMember)
+    # @factory.lazy_attribute
+    # def staff_team_member(self):
+    #     return get_random_objects(StaffTeamMember)
 
     @factory.lazy_attribute
     def discipline_name(self):

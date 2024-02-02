@@ -1,5 +1,4 @@
 from django import forms
-from main.models import Team
 from users.models import User
 
 
@@ -28,6 +27,12 @@ class TeamForm(forms.ModelForm):
         help_text='Куратор команды',
     )
 
-    class Meta:
-        model = Team
-        fields = '__all__'
+    # class Meta:
+    #     model = Team
+    #     fields = [
+    #         'name',
+    #         'city',
+    #         'staff_team_member',
+    #         'discipline_name',
+    #         'curator'
+    #     ]

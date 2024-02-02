@@ -113,11 +113,11 @@ class StaffTeamMemberAdmin(StaffMemberAdmin):
 class PlayerInline(admin.StackedInline):
     model = Player.team.through
     insert_after = 'position'
-    verbose_name = 'Команда'
-    verbose_name_plural = 'Участие в командах'
+    # verbose_name = 'Команда'
+    # verbose_name_plural = 'Участие в командах'
     extra = 0
     min_num = 1
-    template = 'admin/custom_stacked.html'
+    # template = 'admin/custom_stacked.html'
 
 
 class DocumentInline(admin.TabularInline):
@@ -186,23 +186,40 @@ class PlayerAdmin(admin.ModelAdmin):
     )
 
 
+class StaffTeamMemberInline(admin.StackedInline):
+    model = StaffTeamMember.team.through
+    # insert_after = 'position'
+    verbose_name = 'Сотрудник'
+    verbose_name_plural = 'Административый состав команды'
+    extra = 0
+    min_num = 1
+
+
 class TeamAdmin(admin.ModelAdmin):
     form = TeamForm
     list_display = (
         'pk',
         'name',
         'city',
-        'staff_team_member',
+        # 'staff_team_member',
         'discipline_name',
     )
     search_fields = (
         'pk',
         'name',
         'city',
-        'staff_team_member',
+        # 'staff_team_member',
         'discipline_name',
     )
     ordering = ['name']
+    inlines = (StaffTeamMemberInline, PlayerInline,)
+    fields = [
+        'name',
+        'city',
+        # 'staff_team_member',
+        'discipline_name',
+        'curator'
+    ]
 
 
 admin.site.register(City, CityAdmin)
