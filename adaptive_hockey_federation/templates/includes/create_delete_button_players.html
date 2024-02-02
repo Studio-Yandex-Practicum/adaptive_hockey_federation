@@ -1,0 +1,16 @@
+{% load static %}
+<td class="border rounded-md btsss">
+  <div class="input-group justify-content-md-center">
+    <a href="{% url 'main:player_id_edit' pk=table_string.id %}">
+      <button class=" btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
+        <img src={% static 'img/edit.png' %}>
+      </button>
+    </a>
+    <form action="{% url 'main:player_id_delete' pk=table_string.id %}" method="post" >
+      {% csrf_token %}
+      <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>
+        <img src={% static 'img/delete.png' %}>
+      </button>
+    </form>
+  </div>
+</td>

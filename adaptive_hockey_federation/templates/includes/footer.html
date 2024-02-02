@@ -10,8 +10,8 @@
       </div>
       <ul class="nav nav-pills ">
         {% with request.resolver_match.view_name as view_name %}
-          {% if view_name == 'users:users' and perms.add_user %}{% include "includes/button_create.html" with name="+ Пользователь"%}{% endif %}
-          {% if view_name  == 'main:teams' %}{% include "includes/button.html" with name="+ Команда" %}{% endif %}
+          {% if view_name == 'users:users' and perms.add_user %}{% include "includes/user_button_create.html" with name="+ Пользователь"%}{% endif %}
+          {% if view_name  == 'main:teams' %}{% include "includes/team_button_create.html" with name="+ Команда" %}{% endif %}
           {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
           {% if view_name  != 'main:unloads' %}{% include "includes/button.html" with name="Выгрузить" %}{% endif %}
           {% if view_name  == 'main:teams_id' %}{% include "includes/button_list.html" with name="+ Добавить" %}{% endif %}
