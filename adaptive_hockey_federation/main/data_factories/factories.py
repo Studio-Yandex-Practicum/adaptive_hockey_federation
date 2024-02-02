@@ -4,7 +4,6 @@ from datetime import date, timedelta
 import factory
 from django.db.models import Count
 from events.models import Event
-from faker import Factory as FackerFoctory
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -22,8 +21,6 @@ from main.models import (
 from users.models import User
 
 from .utils import check_len, get_random_objects
-
-faker = FackerFoctory.create()
 
 
 class CityFactory(factory.django.DjangoModelFactory):
