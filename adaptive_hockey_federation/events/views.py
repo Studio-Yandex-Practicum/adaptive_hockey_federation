@@ -4,6 +4,7 @@ from events.models import Event
 
 
 class EventListView(LoginRequiredMixin, ListView):
+    """Временная view для отображения работы модели Event"""
     model = Event
     template_name = "main/competitions.html"
     context_object_name = "events"
