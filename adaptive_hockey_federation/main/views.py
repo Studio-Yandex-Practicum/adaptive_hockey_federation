@@ -1,20 +1,20 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import TeamForm
+from main.forms import PlayerForm, TeamForm
 from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
-    "table_head": {
-        "id": "Идентификатор",
-        "name": "Имя",
-        "surname": "Фамилия",
-    },
+    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
     "table_data": [
         {"id": 1, "name": "Иван", "surname": "Иванов"},
         {"id": 2, "name": "Пётр", "surname": "Петров"},
@@ -86,7 +86,7 @@ class PlayersListView(LoginRequiredMixin, ListView):
                 table_head[field] = Player._meta.get_field(field).verbose_name
         context["table_head"] = table_head
 
-        players_data = [
+        table_data = [
             {
                 "surname": player.surname,
                 "name": player.name,
@@ -98,11 +98,12 @@ class PlayersListView(LoginRequiredMixin, ListView):
                 if player.diagnosis
                 else None,  # Noqa
                 "url": reverse("main:player_id", args=[player.id]),
+                "id": player.pk,
             }
             for player in context["players"]
         ]
 
-        context["players_data"] = players_data
+        context["table_data"] = table_data
         return context
 
 
@@ -129,7 +130,7 @@ class PlayerIdView(DetailView):
     ]
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Player, id=self.kwargs["id"])
+        return get_object_or_404(Player, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -155,14 +156,63 @@ class PlayerIdView(DetailView):
             ("Номер игрока", player.number),
         ]
 
-        player_fields_doc = [
-            ("Документ", player.document),
-        ]
+        player_fields_doc = [("Документ", player.identity_document)]
 
         context["player_fields_personal"] = player_fields_personal
         context["player_fields"] = player_fields
         context["player_fields_doc"] = player_fields_doc
         return context
+
+
+class PlayerIDEditView(UpdateView):
+    model = Player
+    template_name = "main/player_id_edit.html"
+    form_class = PlayerForm
+
+    def get_success_url(self):
+        return reverse("main:player_id", kwargs={"pk": self.object.pk})
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Player, id=self.kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        player = self.get_object()
+
+        player_fields_personal = [
+            ("Фамилия", player.surname),
+            ("Имя", player.name),
+            ("Отчество", player.patronymic),
+            ("Пол", player.gender),
+            ("Дата рождения", player.birthday),
+            ("Удостоверение личности", player.identity_document),
+            ("Дисциплина", player.discipline),
+            ("Диагноз", player.diagnosis),
+        ]
+
+        player_fields = [
+            ("Команда", ", ".join([team.name for team in player.team.all()])),
+            ("Уровень ревизии", player.level_revision),
+            ("Капитан", player.is_captain),
+            ("Ассистент", player.is_assistent),
+            ("Игровая позиция", player.position),
+            ("Номер игрока", player.number),
+        ]
+
+        player_fields_doc = [("Документ", player.identity_document)]
+
+        context["player_fields_personal"] = player_fields_personal
+        context["player_fields"] = player_fields
+        context["player_fields_doc"] = player_fields_doc
+        return context
+
+
+class PlayerIDDeleteView(DeleteView):
+    model = Player
+    success_url = reverse_lazy("main:players")
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Player, id=self.kwargs["pk"])
 
 
 class TeamIdView(DetailView):
@@ -183,38 +233,57 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-
-        table_head = {
+        staff_list = [team.staff_team_member,]
+        staff_table_head = {
+            "number": "№",
             "surname": "Фамилия",
             "name": "Имя",
-            "birthday": "День рождения",
-            "diagnosis": "Диагноз",
-            "discipline": "Дисциплина",
+            "function": "Должность",
+            "position": "Квалификация",
+            "note": "Примечание",
+        }
+        staff_table_data = [
+            {
+                "number": i + 1,
+                "surname": staff.staff_member.surname,
+                "name": staff.staff_member.name,
+                "function": staff.staff_position,
+                "position": staff.qualification,
+                "note": staff.notes,
+            }
+            for i, staff in enumerate(staff_list)
+        ]
+        players_table_head = {
+            "number": "№",
+            "surname": "Фамилия",
+            "name": "Имя",
+            "birthday": "Д.Р.",
             "gender": "Пол",
-            "level_revision": "Уровень ревизии",
-            "position": "Игровая позиция",
-            "number": "Номер игрока",
+            "position": "Квалификация",
+            "diagnosis": "Диагноз",
         }
 
-        table_data = [
+        players_table_data = [
             {
+                "number": player.number,
                 "surname": player.surname,
                 "name": player.name,
                 "birthday": player.birthday,
-                "diagnosis": player.diagnosis.name
-                if player.diagnosis
-                else None,  # Noqa
-                "discipline": player.discipline if player.discipline else None,
                 "gender": player.get_gender_display(),
-                "level_revision": player.level_revision,
                 "position": player.get_position_display(),
-                "number": player.number,
+                "diagnosis": player.diagnosis.name
+                if player.diagnosis else None,
+                "discipline": player.discipline
+                if player.discipline else None,
+                "level_revision": player.level_revision,
             }
             for player in players
         ]
 
-        context["table_head"] = table_head
-        context["table_data"] = table_data
+        context["table_head"] = players_table_head
+        context["table_data"] = players_table_data
+        context["staff_table_head"] = staff_table_head
+        context["staff_table_data"] = staff_table_data
         context["team"] = team
 
         return context
@@ -234,6 +303,7 @@ class TeamListView(LoginRequiredMixin, ListView):
         table_data = []
         for team in teams:
             team_data = {
+                "id": team.id,
                 "name": team.name,
                 "discipline_name": team.discipline_name,
                 "city": team.city,
@@ -255,6 +325,58 @@ class TeamListView(LoginRequiredMixin, ListView):
         return context
 
 
+class UpdateTeamView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+        UpdateView):
+    model = Team
+    form_class = TeamForm
+    template_name = "includes/user_update.html"
+    success_url = '/teams/'
+    permission_required = 'team.change_team'
+
+    def get_object(self, queryset=None):
+        team_id = self.kwargs.get("team_id")
+        return get_object_or_404(Team, pk=team_id)
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateTeamView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class(
+            instance=self.object,
+            initial=self.get_initial()
+        )
+        return context
+
+
+class DeleteTeamView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+        DeleteView):
+    object = Team
+    model = Team
+    success_url = '/teams/'
+    permission_required = 'team.delete_team'
+
+    def get_object(self, queryset=None):
+        team_id = self.kwargs.get('team_id')
+        return get_object_or_404(Team, pk=team_id)
+
+
+class CreateTeamView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+        CreateView):
+    model = Team
+    form_class = TeamForm
+    template_name = 'includes/user_create.html'
+    permission_required = 'team.add_team'
+    success_url = '/teams'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
 @login_required
 def competitions_id(request, id):
     return render(request, "main/competitions_id.html")
@@ -268,3 +390,7 @@ def analytics(request):
 @login_required
 def unloads(request):
     return render(request, "main/unloads.html")
+
+
+def player_id_deleted(request):
+    return render(request, "main/player_id_deleted.html")
