@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.auth.models import Permission
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from fixture_user import (
@@ -46,6 +47,7 @@ class TestUrls(TestCase):
             role=test_role,
             email=test_email,
         )
+
         self.team = Team.objects.create(
             name='Test Team',
             city=City.objects.create(name='Test City'),
@@ -53,7 +55,7 @@ class TestUrls(TestCase):
                 name='Tetst DisciplineName'),
             curator=self.user
         )
-
+        
     def delete_user(self, user_id):
         try:
             user = User.objects.get(id=user_id)
@@ -98,10 +100,18 @@ class TestUrls(TestCase):
         response = self.client.get('/users/')
         self.assertEqual(response.status_code, 200)
 
+
     def test_user_update_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get(f'/user_update/{self.user.id}/')
-        self.assertEqual(response.status_code, 200)
+        self.adminuser = User.objects.get(first_name='admin')
+
+        self.permission = Permission.objects.get(codename='change_user')
+        self.adminuser.user_permissions.add(self.permission)
+        self.adminuser.save()
+
+        self.client.force_login(self.adminuser)
+
+        response = self.client.get('/user_update/1/')
+        assert response.status_code == 200
 
     def test_main_view_returns_200(self):
         self.client.force_login(self.user)
