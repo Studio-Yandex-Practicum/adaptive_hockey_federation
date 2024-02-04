@@ -100,7 +100,6 @@ class TestUrls(TestCase):
         response = self.client.get('/users/')
         self.assertEqual(response.status_code, 200)
 
-
     def test_user_update_view_returns_200(self):
         self.adminuser = User.objects.get(first_name='admin')
 
