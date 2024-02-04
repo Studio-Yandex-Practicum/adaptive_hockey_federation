@@ -1,6 +1,6 @@
 import pytest
-from django.contrib.auth.models import Permission
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
 from fixture_user import (
     test_email,
@@ -55,7 +55,7 @@ class TestUrls(TestCase):
                 name='Tetst DisciplineName'),
             curator=self.user
         )
-        
+
     def delete_user(self, user_id):
         try:
             user = User.objects.get(id=user_id)
