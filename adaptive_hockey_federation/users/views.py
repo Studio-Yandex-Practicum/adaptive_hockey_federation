@@ -45,7 +45,7 @@ class UpdateUserView(
         PermissionRequiredMixin,
         UpdateView):
     model = User
-    template_name = 'users/user_update.html'
+    template_name = 'main/users/user_update.html'
     permission_required = 'users.change_user'
     form_class = UpdateUserForm
     success_url = '/users'
