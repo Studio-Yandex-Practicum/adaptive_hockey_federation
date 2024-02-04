@@ -1,13 +1,17 @@
+from random import randint
+
 from core.constants import ROLE_ADMIN, ROLE_AGENT, ROLE_MODERATOR
 from django.core.management.base import BaseCommand
 from main.data_factories.factories import (
     DiagnosisFactory,
     DisciplineFactory,
+    DocumentFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
     TeamFactory,
 )
 from main.data_factories.utils import updates_for_players
+from main.models import Player
 from users.factories import UserFactory
 
 AMOUNT_ADMIN = 3
@@ -24,7 +28,7 @@ STAFF = {"Тренер": AMOUNT_COACH, "Другие сотрудники": AMOU
 
 
 class Command(BaseCommand):
-    help = "Наполнние базы данных тестовыми данными."
+    help = "Наполнение базы данных тестовыми данными."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -58,6 +62,10 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы Player",
         )
         parser.add_argument(
+            "-doc", "--document", action="store_true",
+            help="Фикстуры для таблицы Document",
+        )
+        parser.add_argument(
             "-a",
             "--amount",
             type=int,
@@ -65,13 +73,14 @@ class Command(BaseCommand):
             help="Количество фикстур для создания",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa: C901
         test_users = options.get("users", False)
         diagnosis = options.get("diagnosis", False)
         staff_team = options.get("staffteam", False)
         discipline = options.get("discipline", False)
         team = options.get("team", False)
         player = options.get("player", False)
+        document = options.get("document", False)
         amount = options.get("amount")
         if test_users:
             users_amount = sum(USERS.values())
@@ -122,5 +131,15 @@ class Command(BaseCommand):
             return self.stdout.write(
                 self.style.SUCCESS(
                     f"{amount} фикстур для таблицы Player созданы!"
+                )
+            )
+        if document:
+            players = Player.objects.all()
+            for player in players:
+                num_docs = randint(1, 5)
+                DocumentFactory.create_batch(num_docs, player=player)
+            return self.stdout.write(
+                self.style.SUCCESS(
+                    f"{amount} фикстур для таблицы Document созданы!"
                 )
             )

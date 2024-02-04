@@ -1,6 +1,8 @@
 import random
+from io import BytesIO
 
 import factory
+from django.core.files.base import File
 from django.db.models import Count
 from main.models import (
     GENDER_CHOICES,
@@ -10,15 +12,22 @@ from main.models import (
     Discipline,
     DisciplineLevel,
     DisciplineName,
+    Document,
     Nosology,
     Player,
     StaffMember,
     StaffTeamMember,
     Team,
 )
+from PIL import Image
 from users.models import User
 
 from .utils import check_len, get_random_objects
+
+SIZE_IMAGE = (100, 100)
+COLOR_IMAGE = (256, 0, 0)
+FORMAT_IMAGE = 'RGBA'
+EXT_IMAGE = 'png'
 
 
 class CityFactory(factory.django.DjangoModelFactory):
@@ -202,3 +211,26 @@ class PlayerFactory(factory.django.DjangoModelFactory):
             )
             if teams_with_player_count.filter(player_count__lt=10):
                 self.team.set([get_random_objects(Team)])
+
+
+class DocumentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Document
+
+    name = factory.LazyAttribute(
+        lambda obj: f'{obj.player.surname}-{random.randint(1000, 9999)}'
+    )
+
+    @factory.lazy_attribute
+    def player(self):
+        return get_random_objects(PlayerFactory)
+
+    @factory.post_generation
+    def file(self, create, extracted, **kwargs):
+        if not create:
+            return
+        file_obj = BytesIO()
+        image = Image.new(FORMAT_IMAGE, size=SIZE_IMAGE, color=COLOR_IMAGE)
+        image.save(file_obj, EXT_IMAGE)
+        file_obj.seek(0)
+        self.file.save(f'{self.name}.png', File(file_obj))

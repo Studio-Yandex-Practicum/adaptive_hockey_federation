@@ -200,7 +200,8 @@ class PlayerIDEditView(UpdateView):
         ]
 
         player_fields_doc = [("Документ", player.identity_document)]
-
+        player_documents = player.player_documemts.all()
+        context["player_documents"] = player_documents
         context["player_fields_personal"] = player_fields_personal
         context["player_fields"] = player_fields
         context["player_fields_doc"] = player_fields_doc
