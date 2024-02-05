@@ -1,0 +1,11 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+  Карточка удалена
+{% endblock %}
+
+{% block content %}
+  <h2 class="text-center mb-4">Карточка игрока успешно удалена</h2>
+  <p class="text-center"><a href="{% url 'main:players' %}">Вернуться к списку игроков</a></p>
+{% endblock %}

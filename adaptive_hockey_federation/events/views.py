@@ -6,7 +6,7 @@ from events.models import Event
 class EventListView(LoginRequiredMixin, ListView):
     """Временная view для отображения работы модели Event"""
     model = Event
-    template_name = "main/competitions.html"
+    template_name = "main/competitions/competitions.html"
     context_object_name = "events"
     paginate_by = 10
     ordering = ["id"]
