@@ -3,5 +3,7 @@
   Список соревнований
 {% endblock %}
 {% block content %}
-  Список соревнований
+  <div class="container">
+    {% include 'main/competitions/table.html' with table_head=table_head table_data=table_data %}
+  </div>
 {% endblock %}

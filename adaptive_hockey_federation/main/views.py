@@ -383,11 +383,6 @@ def competitions_id(request, id):
 
 
 @login_required
-def competitions(request):
-    return render(request, "main/competitions/competitions.html")
-
-
-@login_required
 def analytics(request):
     return render(request, "main/analytics/analitics.html")
 
