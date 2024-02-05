@@ -9,7 +9,13 @@ from fixture_user import (
     test_password,
     test_role,
 )
-from main.models import City, DisciplineName, Team
+from main.models import (
+    City,
+    DisciplineName,
+    StaffMember,
+    StaffTeamMember,
+    Team,
+)
 
 User = get_user_model()
 
@@ -47,13 +53,17 @@ class TestUrls(TestCase):
             role=test_role,
             email=test_email,
         )
-
+        self.staff_member = StaffMember.objects.create(
+            name='Test Name', surname='Test Surname')
+        self.staff_team_member = StaffTeamMember.objects.create(
+            staff_member=self.staff_member, staff_position='Test Staff')
         self.team = Team.objects.create(
             name='Test Team',
             city=City.objects.create(name='Test City'),
             discipline_name=DisciplineName.objects.create(
                 name='Tetst DisciplineName'),
-            curator=self.user
+            curator=self.user,
+            staff_team_member=self.staff_team_member
         )
 
     def delete_user(self, user_id):

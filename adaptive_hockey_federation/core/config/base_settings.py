@@ -29,6 +29,7 @@ LOCAL_APPS = [
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
+    'events.apps.EventsConfig',
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + DEFAULT_APPS + LOCAL_APPS

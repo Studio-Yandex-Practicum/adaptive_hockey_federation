@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from main.data_factories.factories import (
     DiagnosisFactory,
     DisciplineFactory,
+    EventFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
     TeamFactory,
@@ -58,6 +59,10 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы Player",
         )
         parser.add_argument(
+            "-e", "--event", action="store_true",
+            help="Фикстуры для таблицы Event",
+        )
+        parser.add_argument(
             "-a",
             "--amount",
             type=int,
@@ -72,6 +77,7 @@ class Command(BaseCommand):
         discipline = options.get("discipline", False)
         team = options.get("team", False)
         player = options.get("player", False)
+        event = options.get('event', False)
         amount = options.get("amount")
         if test_users:
             users_amount = sum(USERS.values())
@@ -108,7 +114,6 @@ class Command(BaseCommand):
                     f"{amount} фикстур для таблицы Discipline созданы!"
                 )
             )
-
         if team:
             TeamFactory.create_batch(amount)
             return self.stdout.write(
@@ -122,5 +127,12 @@ class Command(BaseCommand):
             return self.stdout.write(
                 self.style.SUCCESS(
                     f"{amount} фикстур для таблицы Player созданы!"
+                )
+            )
+        if event:
+            EventFactory.create_batch(amount)
+            return self.stdout.write(
+                self.style.SUCCESS(
+                    f"{amount} фикстур для таблицы Event созданы!"
                 )
             )
