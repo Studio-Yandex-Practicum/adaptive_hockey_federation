@@ -1,0 +1,14 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Профиль команды
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <h3 class="text-start mb-4">Тренеры</h3>
+    {% include 'main/teams_id/table.html' with table_head=staff_table_head table_data=staff_table_data %}
+  </div>
+  <div class="container">
+    <h3 class="text-start mb-4">Игроки</h3>
+    {% include 'main/teams_id/table.html' with table_head=table_head table_data=table_data %}
+  </div>
+{% endblock content %}
