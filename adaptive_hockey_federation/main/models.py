@@ -205,13 +205,6 @@ class Team(BaseUniqueName):
         verbose_name=_('Город откуда команда'),
         help_text=_('Город откуда команда')
     )
-    # staff_team_member = models.ForeignKey(
-    #     StaffTeamMember,
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     verbose_name=_('Сотрудник команды'),
-    #     help_text=_('Сотрудник команды')
-    # )
     discipline_name = models.ForeignKey(
         DisciplineName,
         on_delete=models.CASCADE,
@@ -299,6 +292,9 @@ class StaffTeamMember(models.Model):
             self.staff_member.name,
             self.staff_member.patronymic
         ])
+
+    def get_name_and_staff_position(self):
+        return f'{self.__str__()} ({self.staff_position})'
 
 
 class Player(BasePerson):
@@ -394,6 +390,9 @@ class Player(BasePerson):
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
+
+    def get_name_and_position(self):
+        return f'{self.__str__()} ({self.position})'
 
 
 class Document(BaseUniqueName):
