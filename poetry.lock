@@ -31,13 +31,13 @@ wrapt = {version = ">=1.14,<2", markers = "python_version >= \"3.11\""}
 
 [[package]]
 name = "certifi"
-version = "2023.11.17"
+version = "2024.2.2"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "certifi-2023.11.17-py3-none-any.whl", hash = "sha256:e036ab49d5b79556f99cfc2d9320b34cfbe5be05c5871b51de9329f0603b0474"},
-    {file = "certifi-2023.11.17.tar.gz", hash = "sha256:9b469f3a900bf28dc19b8cfbf8019bf47f7fdd1a65a1d4ffb98fc14166beb4d1"},
+    {file = "certifi-2024.2.2-py3-none-any.whl", hash = "sha256:dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1"},
+    {file = "certifi-2024.2.2.tar.gz", hash = "sha256:0569859f95fc761b18b45ef421b1290a0f65f147e92a1e5eb3e635f9a5e4e66f"},
 ]
 
 [[package]]
@@ -208,13 +208,13 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-debug-toolbar"
-version = "4.2.0"
+version = "4.3.0"
 description = "A configurable set of panels that display various debug information about the current request/response."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_debug_toolbar-4.2.0-py3-none-any.whl", hash = "sha256:af99128c06e8e794479e65ab62cc6c7d1e74e1c19beb44dcbf9bad7a9c017327"},
-    {file = "django_debug_toolbar-4.2.0.tar.gz", hash = "sha256:bc7fdaafafcdedefcc67a4a5ad9dac96efd6e41db15bc74d402a54a2ba4854dc"},
+    {file = "django_debug_toolbar-4.3.0-py3-none-any.whl", hash = "sha256:e09b7dcb8417b743234dfc57c95a7c1d1d87a88844abd13b4c5387f807b31bf6"},
+    {file = "django_debug_toolbar-4.3.0.tar.gz", hash = "sha256:0b0dddee5ea29b9cb678593bc0d7a6d76b21d7799cb68e091a2148341a80f3c4"},
 ]
 
 [package.dependencies]
@@ -337,13 +337,13 @@ doc = ["Sphinx", "sphinx-rtd-theme", "sphinxcontrib-spelling"]
 
 [[package]]
 name = "faker"
-version = "22.5.1"
+version = "22.7.0"
 description = "Faker is a Python package that generates fake data for you."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Faker-22.5.1-py3-none-any.whl", hash = "sha256:4e7bb19c1955bb978bf1d4cb0cf25930e37de0e7dfbc6abd768fd4784d9a9653"},
-    {file = "Faker-22.5.1.tar.gz", hash = "sha256:79cbe3be786789efa05b8c75d7e0ec4efa6ecb786b8fe90eae49c2f8f9cbe31a"},
+    {file = "Faker-22.7.0-py3-none-any.whl", hash = "sha256:d12edbac08a82a75ecd588f299f44f12e33f000c15fe414abc417f0836cb51ae"},
+    {file = "Faker-22.7.0.tar.gz", hash = "sha256:f797529ebeb9bd9e1851106b99e156c9bebe67d2730c8393a1705ed1c864f1bf"},
 ]
 
 [package.dependencies]
@@ -843,18 +843,18 @@ xmp = ["defusedxml"]
 
 [[package]]
 name = "platformdirs"
-version = "4.1.0"
+version = "4.2.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "platformdirs-4.1.0-py3-none-any.whl", hash = "sha256:11c8f37bcca40db96d8144522d925583bdb7a31f7b0e37e3ed4318400a8e2380"},
-    {file = "platformdirs-4.1.0.tar.gz", hash = "sha256:906d548203468492d432bcb294d4bc2fff751bf84971fbb2c10918cc206ee420"},
+    {file = "platformdirs-4.2.0-py3-none-any.whl", hash = "sha256:0614df2a2f37e1a662acbd8e2b25b92ccf8632929bc6d43467e17fe89c75e068"},
+    {file = "platformdirs-4.2.0.tar.gz", hash = "sha256:ef0cc731df711022c174543cb70a9b5bd22e5a9337c8624ef2c2ceb8ddad8768"},
 ]
 
 [package.extras]
-docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.1)", "sphinx-autodoc-typehints (>=1.24)"]
-test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4)", "pytest-cov (>=4.1)", "pytest-mock (>=3.11.1)"]
+docs = ["furo (>=2023.9.10)", "proselint (>=0.13)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.25.2)"]
+test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)"]
 
 [[package]]
 name = "pluggy"
@@ -1014,13 +1014,13 @@ testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "no
 
 [[package]]
 name = "pytest-django"
-version = "4.7.0"
+version = "4.8.0"
 description = "A Django plugin for pytest."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest-django-4.7.0.tar.gz", hash = "sha256:92d6fd46b1d79b54fb6b060bbb39428073396cec717d5f2e122a990d4b6aa5e8"},
-    {file = "pytest_django-4.7.0-py3-none-any.whl", hash = "sha256:4e1c79d5261ade2dd58d91208017cd8f62cb4710b56e012ecd361d15d5d662a2"},
+    {file = "pytest-django-4.8.0.tar.gz", hash = "sha256:5d054fe011c56f3b10f978f41a8efb2e5adfc7e680ef36fb571ada1f24779d90"},
+    {file = "pytest_django-4.8.0-py3-none-any.whl", hash = "sha256:ca1ddd1e0e4c227cf9e3e40a6afc6d106b3e70868fd2ac5798a22501271cd0c7"},
 ]
 
 [package.dependencies]
@@ -1185,24 +1185,35 @@ test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "types-openpyxl"
-version = "3.1.0.20240106"
+version = "3.1.0.20240205"
 description = "Typing stubs for openpyxl"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-openpyxl-3.1.0.20240106.tar.gz", hash = "sha256:4b15530546296673b5bcaea5b0e74e45cf98b8b411a6191807985f59a2c80176"},
-    {file = "types_openpyxl-3.1.0.20240106-py3-none-any.whl", hash = "sha256:2b612c5a5556323d28032658e34aee259a7a4b3ce8d9f6a8b89fb2634cbeab4a"},
+    {file = "types-openpyxl-3.1.0.20240205.tar.gz", hash = "sha256:0b1c933f3a33e5f701a748426582aae360bc5c033ce7caea192687a1f99c7bd3"},
+    {file = "types_openpyxl-3.1.0.20240205-py3-none-any.whl", hash = "sha256:734dfff2bfeeee0f46e78aed34f903130afe2364e9655c77b68436f187ec8a2d"},
+]
+
+[[package]]
+name = "types-pillow"
+version = "10.2.0.20240206"
+description = "Typing stubs for Pillow"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-Pillow-10.2.0.20240206.tar.gz", hash = "sha256:f0de5107ff8362ffdbbd53ec896202ac905e6ab22ae784b46bcdad160ea143b9"},
+    {file = "types_Pillow-10.2.0.20240206-py3-none-any.whl", hash = "sha256:abc339ae28af5916146a7729261480d68ac902cd4ff57e0bdd402eee7962644d"},
 ]
 
 [[package]]
 name = "types-pytz"
-version = "2023.3.1.1"
+version = "2024.1.0.20240203"
 description = "Typing stubs for pytz"
 optional = false
-python-versions = "*"
+python-versions = ">=3.8"
 files = [
-    {file = "types-pytz-2023.3.1.1.tar.gz", hash = "sha256:cc23d0192cd49c8f6bba44ee0c81e4586a8f30204970fc0894d209a6b08dab9a"},
-    {file = "types_pytz-2023.3.1.1-py3-none-any.whl", hash = "sha256:1999a123a3dc0e39a2ef6d19f3f8584211de9e6a77fe7a0259f04a524e90a5cf"},
+    {file = "types-pytz-2024.1.0.20240203.tar.gz", hash = "sha256:c93751ee20dfc6e054a0148f8f5227b9a00b79c90a4d3c9f464711a73179c89e"},
+    {file = "types_pytz-2024.1.0.20240203-py3-none-any.whl", hash = "sha256:9679eef0365db3af91ef7722c199dbb75ee5c1b67e3c4dd7bfbeb1b8a71c21a3"},
 ]
 
 [[package]]
@@ -1240,17 +1251,18 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.1.0"
+version = "2.2.0"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "urllib3-2.1.0-py3-none-any.whl", hash = "sha256:55901e917a5896a349ff771be919f8bd99aff50b79fe58fec595eb37bbc56bb3"},
-    {file = "urllib3-2.1.0.tar.gz", hash = "sha256:df7aa8afb0148fa78488e7899b2c59b5f4ffcfa82e6c54ccb9dd37c1d7b52d54"},
+    {file = "urllib3-2.2.0-py3-none-any.whl", hash = "sha256:ce3711610ddce217e6d113a2732fafad960a03fd0318c91faa79481e35c11224"},
+    {file = "urllib3-2.2.0.tar.gz", hash = "sha256:051d961ad0c62a94e50ecf1af379c3aba230c66c710493493560c0c223c49f20"},
 ]
 
 [package.extras]
 brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
+h2 = ["h2 (>=4,<5)"]
 socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
@@ -1356,4 +1368,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "fa09b28164b714a78cce4e88edb1ec33b54febc9329b4e57ce1dc935522f7390"
+content-hash = "b1e8dfc6842fc424760e014b68d2f0f906ce8aa5be1e8cb9c29646ffa521ae7a"
