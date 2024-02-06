@@ -2,8 +2,15 @@
   <nav class="navbar" >
     <div class="container">
       <div class="nav nav-pills justify-content-start">
-        <button onclick="toggle_visibility('sidebar');" class="btn" type="button"
-        aria-controls="staticBackdrop" aria-expanded="true">
+        <button
+          id="rectangle"
+          onclick="toggle_visibility(false);"
+          class="btn"
+          type="button"
+          aria-controls="staticBackdrop"
+          aria-expanded="true"
+          style="transform: rotate(180deg);"
+        >
           <i class="bi bi-caret-right-fill fs-3" style="color: #340061;"></i>
         </button>
         {% include "includes/pagination.html" %}

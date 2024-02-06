@@ -22,28 +22,26 @@
   </head>
 
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        {% include 'includes/drawer.html' %}
-        <div class="col px-0">
-          <header>
-            {% include 'includes/header.html' %}
-          </header>
-          <div class="content container-fluid text-center text-2xl">
-            <div class="row">
-              <div class="col ps-md-2 pt-2">
-                <div class="page-header pt-3">
-                  {% block content_navigation %}
-                  {% endblock %}
-                  {% block content %}
-                  Основной текст
-                  {% endblock %}
-                </div>
+    <div class="container-fluid container__fluid">
+      {% include 'includes/drawer.html' %}
+      <div class="col px-0">
+        <header>
+          {% include 'includes/header.html' %}
+        </header>
+        <div class="content container-fluid text-center text-2xl">
+          <div class="row">
+            <div class="col ps-md-2 pt-2">
+              <div class="page-header pt-3">
+                {% block content_navigation %}
+                {% endblock %}
+                {% block content %}
+                Основной текст
+                {% endblock %}
               </div>
             </div>
           </div>
-          {% include 'includes/footer.html' %}
         </div>
+        {% include 'includes/footer.html' %}
       </div>
     </div>
     <!-- JS block -->
@@ -56,13 +54,23 @@
           preflight: false,
         }
       }
-      function toggle_visibility(id) {
-          var e = document.getElementById(id);
-          if(e.style.display == 'block')
-             e.style.display = 'none';
-          else
-             e.style.display = 'block';
+      const rectangle = document.getElementById('rectangle')
+      const sidebar = document.getElementById('container__fluid')
+      let isRotated = false
+      function toggle_visibility(visabiliti) {
+        if (visabiliti) {
+          return
+        } else {
+          if (isRotated) {
+            rectangle.style.transform = 'rotate(180deg)'
+          } else {
+            rectangle.style.transform = 'rotate(0deg)'
+          }
+          isRotated = !isRotated
+          sidebar.classList.toggle('container__flu')
+        }
       }
+      window.onload = toggle_visibility(true)
     </script>
     {% block JavaScript %}
     {% endblock %}

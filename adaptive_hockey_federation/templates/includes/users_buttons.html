@@ -3,7 +3,7 @@
   <div class="input-group justify-content-md-center">
     <form action="{% url 'users:user_update' table_string.id %}" method="post">
       {% csrf_token %}
-      <button class=" btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
+      <button class="btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
         <img src={% static 'img/edit.png' %}>
       </button>
     </form>

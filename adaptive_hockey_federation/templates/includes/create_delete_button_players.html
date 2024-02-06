@@ -2,7 +2,7 @@
 <td class="border rounded-md btsss">
   <div class="input-group justify-content-md-center">
     <a href="{% url 'main:player_id_edit' pk=table_string.id %}">
-      <button class=" btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
+      <button class="btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
         <img src={% static 'img/edit.png' %}>
       </button>
     </a>
