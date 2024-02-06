@@ -140,6 +140,6 @@ class Command(BaseCommand):
                 DocumentFactory.create_batch(num_docs, player=player)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Document созданы!"
+                    f"{num_docs} фикстур для таблицы Document созданы!"
                 )
             )
