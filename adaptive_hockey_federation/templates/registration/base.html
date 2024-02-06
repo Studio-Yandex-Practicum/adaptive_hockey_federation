@@ -3,14 +3,15 @@
 <head>
   {% load static %}
   {% include 'registration/includes/head.html' %}
+  <link rel="stylesheet" href="{% static 'css/pages/index.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/login.css' %}">
+  <link rel="icon" href="../../static/favicon.ico">
   <title>
     {% block title %} {% endblock %}
   </title>
 </head>
 <body>
-  <header>
-    {% include 'registration/includes/header.html'%}
-  </header>
+  {% include 'registration/includes/header.html'%}
   {% block content %}
       Контент не подвезли
   {% endblock %}
