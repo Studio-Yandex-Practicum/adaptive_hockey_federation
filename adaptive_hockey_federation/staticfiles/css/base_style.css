@@ -17,10 +17,10 @@ li {
 }
 
 .header {
-  overflow: hidden;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -133,6 +133,12 @@ li {
   grid-row: 1;
 }
 
+@media screen and (min-width: 1441px) and (max-width: 1920px) {
+  .header-rect-container {
+    grid-column: 6 / -1;
+  }
+}
+
 .header-rect {
   position: relative;
   max-width: 100%;
@@ -166,6 +172,18 @@ li {
   font-weight: 700;
   font-weight: bold;
   z-index: 5;
+}
+
+@media screen and (min-width: 1441px) and (max-width: 1920px) {
+  .header-text {
+    font-size: 48px;
+  }
+}
+
+@media screen and (min-width: 1281px) and (max-width: 1920px) {
+  .header-text {
+    grid-column: 3 / span 5;
+  }
 }
 
 @media screen and (min-width: 768px) and (max-width: 1280px) {
