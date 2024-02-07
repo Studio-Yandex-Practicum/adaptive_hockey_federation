@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - develop
+      - dev
 
 env:
   REGISTRY: ghcr.io
@@ -41,7 +41,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build and push Docker image for Stage
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/dev'
         uses: docker/build-push-action@v5
         with:
           context: .
