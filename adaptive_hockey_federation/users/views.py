@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import (
 )
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from users.forms import CreateUserForm, UpdateUserForm
+from users.forms import UpdateUserForm, UsersCreationForm
 
 User = get_user_model()
 
@@ -74,8 +74,8 @@ class CreateUserView(
         PermissionRequiredMixin,
         CreateView):
     model = User
-    form_class = CreateUserForm
-    template_name = 'users/user_create.html'
+    form_class = UsersCreationForm
+    template_name = 'main/users/user_create.html'
     success_url = '/users'
     permission_required = 'users.create_user'
 

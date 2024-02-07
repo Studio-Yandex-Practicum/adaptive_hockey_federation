@@ -19,21 +19,7 @@ class EmailField(forms.EmailField):
         return None if value is None else unicodedata.normalize("NFKC", value)
 
 
-class CreateUserForm(forms.ModelForm):
-    """Форма создания юзера"""
-
-    class Meta:
-        model = User
-        fields = (
-            'first_name',
-            'last_name',
-            'patronymic',
-            'email',
-            'phone',
-        )
-
-
-class UpdateUserForm(CreateUserForm):
+class UpdateUserForm(UserChangeForm):
     """Форма редактирования пользователя"""
 
     patronymic = forms.CharField(
@@ -45,6 +31,16 @@ class UpdateUserForm(CreateUserForm):
         max_length=20,
         label="Актуальный номер телефона",
     )
+
+    class Meta:
+        model = User
+        fields = (
+            'first_name',
+            'last_name',
+            'patronymic',
+            'email',
+            'phone'
+        )
 
 
 class GroupAdminForm(forms.ModelForm):
@@ -132,3 +128,18 @@ class UserAdminCreationForm(UserCreationForm):
                 "unique": "Электронная почта должна быть уникальной!",
             },
         }
+
+
+class UsersCreationForm(UserAdminCreationForm):
+    """Форма создания пользователя на странице users"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["password1"].required = True
+        self.fields["password2"].required = True
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+        user.set_password(self.cleaned_data["password1"])
+        user.save()
+        return user
