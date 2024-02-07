@@ -22,3 +22,26 @@ def user(django_user_model):
 def user_client(user, client):
     client.force_login(user)
     return client
+
+
+@pytest.fixture
+def adminuser(djangousermodel):
+    admin = djangousermodel.objects.createsuperuser(
+        first_name='admin',
+        email='admin@admin.com',
+        password='admin'
+    )
+    admin.isstaff = True
+    admin.issuperuser = True
+    admin.save()
+    return admin
+
+
+@pytest.fixture
+def moderatoruser(djangousermodel):
+    moderator = djangousermodel.objects.createuser(
+        first_name='moderator',
+        email='moderator@moderator.com',
+        password='moderator'
+    )
+    return moderator
