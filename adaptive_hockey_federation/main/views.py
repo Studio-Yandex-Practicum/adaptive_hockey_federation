@@ -233,7 +233,7 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-        staff_list = [team.staff_team_member,]
+        staff_list = team.team_members.all()
         staff_table_head = {
             "number": "№",
             "surname": "Фамилия",

@@ -63,7 +63,6 @@ class TestUrls(TestCase):
             discipline_name=DisciplineName.objects.create(
                 name='Tetst DisciplineName'),
             curator=self.user,
-            staff_team_member=self.staff_team_member
         )
 
     def delete_user(self, user_id):
