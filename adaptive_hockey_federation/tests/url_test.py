@@ -131,14 +131,10 @@ class TestUrls(TestCase):
         response = self.client.get('/players/')
         self.assertEqual(response.status_code, 200)
 
-    # Данный тест проверяет view-класс команды. Были внесены изменения,
-    # в модель Team(удалено поле staff_team_member), в данный момент
-    # view-класс не отрабатывается правильно по это причине ломается тест.
-    # Необходимо поправить view-класс TeamIdView.
-    # def test_main_teams_id_view_returns_200(self):
-    #     self.client.force_login(self.user)
-    #     response = self.client.get('/teams/1/')
-    #     self.assertEqual(response.status_code, 200)
+    def test_main_teams_id_view_returns_200(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/teams/1/')
+        self.assertEqual(response.status_code, 200)
 
     def test_main_teams_view_returns_200(self):
         self.client.force_login(self.user)
