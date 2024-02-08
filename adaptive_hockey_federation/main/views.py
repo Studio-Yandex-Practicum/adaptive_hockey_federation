@@ -297,6 +297,33 @@ class TeamListView(LoginRequiredMixin, ListView):
     paginate_by = 10
     ordering = ["id"]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get("search")
+        if search:
+            search_column = self.request.GET.get("search_column")
+            if not search_column or search_column.lower() in ["все", "all"]:
+                or_lookup = (
+                    Q(discipline_name_id__name__icontains=search)
+                    | Q(name__icontains=search)
+                    | Q(city__name__icontains=search)
+                )
+                queryset = queryset.filter(or_lookup)
+            else:
+                search_fields = {
+                    "discipline_name": "discipline_name_id__name",
+                    "name": "name",
+                    "city": "city__name",
+                }
+                lookup = {f"{search_fields[search_column]}__icontains": search}
+                queryset = queryset.filter(**lookup)
+
+        return (
+            queryset.select_related("discipline_name")
+            .select_related("city")
+            .order_by("name")
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teams = context["teams"]
