@@ -365,10 +365,11 @@ class DeleteTeamView(
 class CreateTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-        CreateView):
+    CreateView
+):
     model = Team
     form_class = TeamForm
-    template_name = 'includes/user_create.html'
+    template_name = 'main/users/user_create.html'
     permission_required = 'team.add_team'
     success_url = '/teams'
 
