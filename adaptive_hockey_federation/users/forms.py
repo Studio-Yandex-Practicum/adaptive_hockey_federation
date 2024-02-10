@@ -7,8 +7,6 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
-from phonenumber_field.formfields import PhoneNumberField
-from phonenumber_field.validators import validate_international_phonenumber
 
 User = get_user_model()
 
@@ -17,30 +15,6 @@ class EmailField(forms.EmailField):
     def to_python(self, value):
         value = super().to_python(value)
         return None if value is None else unicodedata.normalize("NFKC", value)
-
-
-class UpdateUserForm(UserChangeForm):
-    """Форма редактирования пользователя"""
-
-    patronymic = forms.CharField(
-        max_length=20,
-        label="Отчество",
-    )
-    phone = PhoneNumberField(
-        validators=[validate_international_phonenumber],
-        max_length=20,
-        label="Актуальный номер телефона",
-    )
-
-    class Meta:
-        model = User
-        fields = (
-            'first_name',
-            'last_name',
-            'patronymic',
-            'email',
-            'phone'
-        )
 
 
 class GroupAdminForm(forms.ModelForm):
@@ -76,7 +50,6 @@ class GroupAdminForm(forms.ModelForm):
 
 class UserAdminForm(UserChangeForm):
     email = EmailField(label="Электронная почта", required=True)
-    password = forms.CharField(widget=forms.HiddenInput())
     is_staff = forms.CharField(widget=forms.HiddenInput())
     is_superuser = forms.CharField(widget=forms.HiddenInput())
 
@@ -130,16 +103,62 @@ class UserAdminCreationForm(UserCreationForm):
         }
 
 
-class UsersCreationForm(UserAdminCreationForm):
+class UsersCreationForm(forms.ModelForm):
     """Форма создания пользователя на странице users"""
+
+    class Meta:
+        model = User
+        fields = (
+            'first_name',
+            'last_name',
+            'patronymic',
+            'email',
+            'phone',
+            'role'
+        )
+        error_messages = {
+            "email": {
+                "unique": "Электронная почта должна быть уникальной!",
+            },
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["password1"].required = True
-        self.fields["password2"].required = True
+        self.fields["patronymic"].required = False
+        self.fields["role"].required = True
+        self.fields["phone"].required = True
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        user.patronymic = self.cleaned_data["patronymic"]
         user.email = self.cleaned_data["email"]
-        user.set_password(self.cleaned_data["password1"])
+        user.save()
+        return user
+
+
+class UpdateUserForm(forms.ModelForm):
+    """Форма редактирования пользователя"""
+
+    class Meta:
+        model = User
+        fields = (
+            'first_name',
+            'last_name',
+            'patronymic',
+            'email',
+            'phone',
+            'role'
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["patronymic"].required = False
+        self.fields["role"].required = True
+        self.fields["phone"].required = True
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.patronymic = self.cleaned_data["patronymic"]
+        user.email = self.cleaned_data["email"]
         user.save()
         return user
