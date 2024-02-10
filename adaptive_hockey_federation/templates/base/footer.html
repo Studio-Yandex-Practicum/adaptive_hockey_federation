@@ -10,7 +10,7 @@
       </div>
       <ul class="nav nav-pills ">
         {% with request.resolver_match.view_name as view_name %}
-          {% if view_name == 'users:users' and perms.add_user %}{% include "base/button_create.html" with name="+ Пользователь"%}{% endif %}
+          {% if view_name == 'users:users' and perms.users.add_user %}{% include "base/button_create.html" with name="+ Пользователь"%}{% endif %}
           {% if view_name  == 'main:teams' %}{% include "base/button.html" with name="+ Команда" %}{% endif %}
           {% if view_name  == 'main:competitions' %}{% include "base/button.html" with name="+ Соревнование" %}{% endif %}
           {% if view_name  != 'main:unloads' %}{% include "base/button.html" with name="Выгрузить" %}{% endif %}

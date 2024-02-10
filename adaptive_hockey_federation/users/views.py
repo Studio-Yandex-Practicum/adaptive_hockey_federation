@@ -78,8 +78,3 @@ class CreateUserView(
     template_name = 'main/users/user_create.html'
     success_url = '/users'
     permission_required = 'users.create_user'
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.save()
-        return super().form_valid(form)

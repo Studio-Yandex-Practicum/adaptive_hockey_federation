@@ -1,4 +1,5 @@
 import factory  # type: ignore
+from core.constants import ROLE_ADMIN, ROLE_MODERATOR
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -19,7 +20,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def admin_create(self, create, extracted, **kwargs):
         if create:
-            if self.role in ['admin', 'moderator']:
+            if self.role in [ROLE_ADMIN, ROLE_MODERATOR]:
                 self.is_staff = True
-                if self.role == 'admin':
+                if self.role == ROLE_ADMIN:
                     self.is_superuser = True

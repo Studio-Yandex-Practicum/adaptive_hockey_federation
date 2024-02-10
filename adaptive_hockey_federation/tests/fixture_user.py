@@ -1,9 +1,10 @@
 import pytest
+from core.constants import ROLE_SUPERUSER
 
 test_password = 'admin'
 test_name = 'admin'
 test_lastname = 'admin'
-test_role = 'admin'
+test_role = ROLE_SUPERUSER
 test_email = 'admin@admin.ru'
 
 

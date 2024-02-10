@@ -1,12 +1,15 @@
 import unicodedata
 
+from core.constants import ROLES_CHOICES
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
+from django.forms import Select
 from django.utils.crypto import get_random_string
+from users.utils import send_user_data_after_create, set_permission_create_user
 
 User = get_user_model()
 
@@ -106,6 +109,16 @@ class UserAdminCreationForm(UserCreationForm):
 class UsersCreationForm(forms.ModelForm):
     """Форма создания пользователя на странице users"""
 
+    role = forms.ChoiceField(
+        choices=ROLES_CHOICES[:-1],
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Роль пользователя',
+        error_messages={
+            'required': 'Пожалуйста, выберите роль из списка.'
+        }
+    )
+
     class Meta:
         model = User
         fields = (
@@ -121,6 +134,9 @@ class UsersCreationForm(forms.ModelForm):
                 "unique": "Электронная почта должна быть уникальной!",
             },
         }
+        widgets = {
+            'role': Select(),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -129,36 +145,24 @@ class UsersCreationForm(forms.ModelForm):
         self.fields["phone"].required = True
 
     def save(self, commit=True):
-        user = super().save(commit=False)
+        user = super(UsersCreationForm, self).save(commit=False)
         user.patronymic = self.cleaned_data["patronymic"]
         user.email = self.cleaned_data["email"]
+        password = get_random_string(length=10)
+        user.set_password(password)
         user.save()
+        set_permission_create_user(self.cleaned_data["role"], user)
+        send_user_data_after_create(user.email, password)
         return user
 
 
-class UpdateUserForm(forms.ModelForm):
+class UpdateUserForm(UsersCreationForm):
     """Форма редактирования пользователя"""
 
-    class Meta:
-        model = User
-        fields = (
-            'first_name',
-            'last_name',
-            'patronymic',
-            'email',
-            'phone',
-            'role'
-        )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["patronymic"].required = False
-        self.fields["role"].required = True
-        self.fields["phone"].required = True
-
     def save(self, commit=True):
-        user = super().save(commit=False)
+        user = super(UsersCreationForm, self).save(commit=False)
         user.patronymic = self.cleaned_data["patronymic"]
         user.email = self.cleaned_data["email"]
         user.save()
+        set_permission_create_user(self.cleaned_data["role"], user)
         return user
