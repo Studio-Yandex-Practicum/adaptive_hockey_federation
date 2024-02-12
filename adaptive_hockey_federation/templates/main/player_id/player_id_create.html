@@ -69,7 +69,12 @@
                 </tbody>
               </table>
             {% else %}
-              <p>Документы отсутствуют</p>
+              <div>
+                {{ formset.management_form }}
+                {% for image_form in formset %}
+                    {{ image_form }}
+                {% endfor %}
+              </div>            
             {% endif %}
           </table>
         </div>

@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelChoiceField, Select, TextInput
-from main.models import City, DisciplineName, Player, Team
+from main.models import City, DisciplineName, Document, Player, Team
 from users.models import User
 
 
@@ -27,7 +27,6 @@ class PlayerForm(forms.ModelForm):
             "discipline",
             "diagnosis",
             "level_revision",
-            "identity_document",
             "team",
             "is_captain",
             "is_assistent",
@@ -35,6 +34,27 @@ class PlayerForm(forms.ModelForm):
             "number",
             "identity_document",
         ]
+
+
+class DocumentForm(forms.Form):
+    image = forms.FileField(widget=forms.FileInput())
+
+    class Meta:
+        fields = ('name', 'image')
+
+
+class DocumentFormSet(forms.BaseModelFormSet):
+    '''Формсет идентификационных документов игрока'''
+    def __init__(self, *args, **kwargs):
+        if 'player' in kwargs.keys():
+            player = kwargs.pop('player')
+        else:
+            player = None
+        super().__init__(*args, **kwargs)
+        if player and isinstance(player, Player):
+            self.queryset = player.player_documemts.all()
+        else:
+            self.queryset = Document.objects.none()
 
 
 class TeamForm(forms.ModelForm):
@@ -126,3 +146,12 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
             'staffteammember': 'Сотрудник команды',
             'team': 'Команда',
         }
+
+
+DocumentCreateFormSet = forms.modelformset_factory(
+    model=Document,
+    form=DocumentForm,
+    fields=DocumentForm.Meta.fields,
+    extra=0,
+    formset=DocumentFormSet
+)

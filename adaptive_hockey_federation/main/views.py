@@ -9,8 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
-from main.forms import PlayerForm, TeamForm
+from main.forms import DocumentCreateFormSet, PlayerForm, TeamForm
 from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
@@ -36,8 +35,52 @@ class PlayerCreateView(CreateView):
     success_url = "/players"
 
     def form_valid(self, form):
-        form.save()
+        context = self.get_context_data()
+        files = context["player_documents"]
+
+        self.object = form.save()
+
+        if files.is_valid():
+            files.instance = self.object
+            files.save()
+
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            images_formset = DocumentCreateFormSet(
+                self.request.POST, self.request.FILES, player=self.object
+            )
+        else:
+            images_formset = DocumentCreateFormSet(instance=self.object)
+        context['formset'] = images_formset
+        context['player'] = self.object
+        return context
+
+    # def get_success_url(self):
+    #     return reverse("main:player_id", kwargs={"pk": self.object.pk})
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     player = self.get_object()
+
+    #     player_fields = [
+    #         ("Команда", ", ".join([team.name for team in player.team.all()])),
+    #         ("Уровень ревизии", player.level_revision),
+    #         ("Капитан", player.is_captain),
+    #         ("Ассистент", player.is_assistent),
+    #         ("Игровая позиция", player.position),
+    #         ("Номер игрока", player.number),
+    #     ]
+
+    #     player_fields_doc = [("Документ", player.identity_document)]
+    #     player_documents = player.player_documemts.all()
+    #     context["player_documents"] = player_documents
+    #     context["player_fields_personal"] = player_fields_personal
+    #     context["player_fields"] = player_fields
+    #     context["player_fields_doc"] = player_fields_doc
+    #     return context
 
 
 class PlayersListView(LoginRequiredMixin, ListView):
