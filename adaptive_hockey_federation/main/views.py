@@ -351,7 +351,8 @@ class UpdateTeamView(
 class DeleteTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-        DeleteView):
+    DeleteView
+):
     object = Team
     model = Team
     success_url = '/teams/'
@@ -369,7 +370,7 @@ class CreateTeamView(
 ):
     model = Team
     form_class = TeamForm
-    template_name = 'main/users/user_create.html'
+    template_name = 'main/teams/team_create.html'
     permission_required = 'team.add_team'
     success_url = '/teams'
 
