@@ -262,6 +262,8 @@ class TeamIdView(DetailView):
             "gender": "Пол",
             "position": "Квалификация",
             "diagnosis": "Диагноз",
+            "discipline": "Дисциплина",
+            "level_revision": "Уровень ревизии",
         }
 
         players_table_data = [
