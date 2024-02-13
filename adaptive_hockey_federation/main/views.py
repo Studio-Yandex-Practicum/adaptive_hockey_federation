@@ -372,7 +372,7 @@ class CreateTeamView(
     form_class = TeamForm
     template_name = 'main/teams/team_create.html'
     permission_required = 'team.add_team'
-    success_url = '/teams'
+    success_url = '/teams/?page=last'
 
     def form_valid(self, form):
         form.save()
