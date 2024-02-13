@@ -1,3 +1,4 @@
+from core.constants import STAFF_POSITION_CHOICES
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -234,25 +235,34 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-        staff_list = team.team_members.all()
-        staff_table_head = {
-            "number": "№",
-            "surname": "Фамилия",
-            "name": "Имя",
-            "function": "Должность",
-            "position": "Квалификация",
-            "note": "Примечание",
-        }
-        staff_table_data = [
+        staff_table = [
             {
-                "number": i + 1,
-                "surname": staff.staff_member.surname,
-                "name": staff.staff_member.name,
-                "function": staff.staff_position,
-                "position": staff.qualification,
-                "note": staff.notes,
+                "staff_position": staff_position[1].title(),
+                "staff_table_head": {
+                    "number": "№",
+                    "surname": "Фамилия",
+                    "name": "Имя",
+                    "function": "Должность",
+                    "position": "Квалификация",
+                    "note": "Примечание",
+                },
+                "staff_table_data": [
+                    {
+                        "number": i + 1,
+                        "surname": staff.staff_member.surname,
+                        "name": staff.staff_member.name,
+                        "function": staff.staff_position,
+                        "position": staff.qualification,
+                        "note": staff.notes,
+                    }
+                    for i, staff in enumerate(
+                        team.team_members.filter(
+                            staff_position=staff_position[1].title()
+                        )
+                    )
+                ]
             }
-            for i, staff in enumerate(staff_list)
+            for staff_position in STAFF_POSITION_CHOICES
         ]
         players_table_head = {
             "number": "№",
@@ -265,7 +275,6 @@ class TeamIdView(DetailView):
             "discipline": "Дисциплина",
             "level_revision": "Уровень ревизии",
         }
-
         players_table_data = [
             {
                 "number": player.number,
@@ -285,8 +294,7 @@ class TeamIdView(DetailView):
 
         context["table_head"] = players_table_head
         context["table_data"] = players_table_data
-        context["staff_table_head"] = staff_table_head
-        context["staff_table_data"] = staff_table_data
+        context["staff_table"] = staff_table
         context["team"] = team
 
         return context
