@@ -3,28 +3,108 @@ name: Project stage deploy
 on:
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: adaptive_hockey_federation
+  DEPLOY_PATH: adaptive_hockey_federation
+
+defaults:
+  run:
+    working-directory: .
+
 jobs:
   pytest:
     runs-on: ubuntu-latest
     name: pytest
     steps:
-      - name: Установка Python
+      - name: Install Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
 
-      - name: Установка Poetry
+      - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           poetry-version: 1.5.0
 
-      - name: Извлечение репозитория
+      - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Установка зависимостей
+      - name: Install dependencies
         run: |
           poetry install
       - name: pytest
         run: |
           poetry run pytest
         working-directory: adaptive_hockey_federation
+
+  deploy:
+    name: Deploy changes on server
+    runs-on: ubuntu-latest
+    environment:
+      name: stage_deploy
+    needs: tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Create folder for deploy
+        run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+
+      - name: Copy dev folder to VPS
+        run: scp -r $GITHUB_WORKSPACE/infra/stage/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+
+      - name: Execute commands on VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+
+            rm .env
+            touch .env
+
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+            echo DEBUG=${{ secrets.DEBUG }} >> .env
+            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+
+            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+            echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+            echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+
+            echo DJANGO_SUPERUSER_FIRST_NAME=${{ secrets.DJANGO_SUPERUSER_FIRST_NAME }}
+            echo DJANGO_SUPERUSER_LAST_NAME=${{ secrets.DJANGO_SUPERUSER_LAST_NAME }}
+            echo DJANGO_SUPERUSER_ROLE=${{ secrets.DJANGO_SUPERUSER_ROLE }}
+            echo DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+            echo DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+            echo DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+
+            cd infra/stage/
+            docker system prune --force
+
+            # Installing defend service for app
+            sudo cp -f /home/developer/adaptive_hockey_federation/infra/stage/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
+            sudo systemctl daemon-reload
+            sudo systemctl restart adaptive_hockey_federation.service
+
+            sleep 10
+            docker exec adaptive_hockey_federation python manage.py migrate
+            docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+            docker exec adaptive_hockey_federation python manage.py createsuperuser --no-input
