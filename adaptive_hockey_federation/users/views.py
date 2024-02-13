@@ -26,6 +26,7 @@ class UsersListView(LoginRequiredMixin, ListView):
                 or_lookup = (
                     Q(first_name__icontains=search)
                     | Q(last_name__icontains=search)
+                    | Q(date_joined__icontains=search)
                     | Q(role__icontains=search)
                     | Q(email__icontains=search)
                     | Q(phone__icontains=search)
@@ -33,18 +34,24 @@ class UsersListView(LoginRequiredMixin, ListView):
                 queryset = queryset.filter(or_lookup)
             else:
                 search_fields = {
-                    "first_name": "first_name",
-                    "last_name": "last_name",
+                    "date": "date_joined",
                     "role": "role",
                     "email": "email",
                     "phone": "phone"
                 }
-                lookup = {f"{search_fields[search_column]}__icontains": search}
-                queryset = queryset.filter(**lookup)
+                if search_column == "name":
+                    queryset = queryset.filter(
+                        Q(first_name__icontains=search)
+                        | Q(last_name__icontains=search)
+                    )
+                else:
+                    queryset = queryset.filter(**{
+                        f"{search_fields[search_column]}__icontains": search
+                    })
 
         return (
             queryset
-            .order_by("email")
+            .order_by("last_name")
         )
 
     def get_context_data(self, **kwargs):
