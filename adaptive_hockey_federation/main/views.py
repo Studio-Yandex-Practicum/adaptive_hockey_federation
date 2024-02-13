@@ -9,7 +9,12 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import DocumentForm, PlayerForm, TeamForm
+from main.forms import (
+    DocumentCreateFormSet,
+    DocumentForm,
+    PlayerForm,
+    TeamForm
+)
 from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
@@ -36,28 +41,29 @@ class PlayerCreateView(CreateView):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        files = context["player_documents"]
+        print(context)
+        formset = context['formset']
 
         self.object = form.save()
+        print(self.object)
+        for doc in formset:
+            print(doc)
 
-        if files.is_valid():
-            files.instance = self.object
-            files.save()
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
 
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            images_form = DocumentForm(
+            images_form = DocumentCreateFormSet(
                 self.request.POST, self.request.FILES
             )
         else:
-            images_form = DocumentForm()
-        print(images_form)
-        print(self.object)
+            images_form = DocumentCreateFormSet()
         context['formset'] = images_form
-        context['player'] = self.object
         return context
 
     # def get_success_url(self):

@@ -1,3 +1,4 @@
+from datetime import datetime
 from django import forms
 from django.forms import ModelChoiceField, Select, TextInput
 from main.models import City, DisciplineName, Document, Player, Team
@@ -42,6 +43,7 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = ('file',)
+        labels = {'file': 'Файл для загузки'}
 
 
 class DocumentFormSet(forms.BaseModelFormSet):
@@ -61,9 +63,8 @@ class DocumentFormSet(forms.BaseModelFormSet):
 DocumentCreateFormSet = forms.modelformset_factory(
     model=Document,
     form=DocumentForm,
-    fields=DocumentForm.Meta.fields,
-    extra=0,
-    formset=DocumentFormSet
+    extra=1,
+    formset=DocumentFormSet,
 )
 
 
