@@ -78,6 +78,9 @@ jobs:
             rm .env
             touch .env
 
+            echo HOST_NG=${{ secrets.HOST_NG }}
+            echo PORT_NG=${{ secrets.PORT_NG }}
+
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             echo DEBUG=${{ secrets.DEBUG }} >> .env
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
