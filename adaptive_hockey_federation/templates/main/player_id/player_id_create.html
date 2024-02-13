@@ -8,7 +8,7 @@
 {% block content %}
   <h2 class="text-center mb-4">Создание профиля нового игрока</h2>
 
-  <form method="post" action="{% url 'main:player_create' %}">
+  <form method="post" action="{% url 'main:player_create' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container text-start">
       <div class="row">
@@ -70,11 +70,8 @@
               </table>
             {% else %}
               <div>
-                {{ formset.management_form }}
-                {% for image_form in formset %}
-                    {{ image_form }}
-                {% endfor %}
-              </div>            
+                {{ formset }}
+              </div>
             {% endif %}
           </table>
         </div>

@@ -36,11 +36,12 @@ class PlayerForm(forms.ModelForm):
         ]
 
 
-class DocumentForm(forms.Form):
-    image = forms.FileField(widget=forms.FileInput())
+class DocumentForm(forms.ModelForm):
+    # image = forms.FileField(widget=forms.FileInput())
 
     class Meta:
-        fields = ('name', 'image')
+        model = Document
+        fields = ('file',)
 
 
 class DocumentFormSet(forms.BaseModelFormSet):
@@ -51,10 +52,19 @@ class DocumentFormSet(forms.BaseModelFormSet):
         else:
             player = None
         super().__init__(*args, **kwargs)
-        if player and isinstance(player, Player):
+        if player:
             self.queryset = player.player_documemts.all()
         else:
             self.queryset = Document.objects.none()
+
+
+DocumentCreateFormSet = forms.modelformset_factory(
+    model=Document,
+    form=DocumentForm,
+    fields=DocumentForm.Meta.fields,
+    extra=0,
+    formset=DocumentFormSet
+)
 
 
 class TeamForm(forms.ModelForm):
@@ -146,12 +156,3 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
             'staffteammember': 'Сотрудник команды',
             'team': 'Команда',
         }
-
-
-DocumentCreateFormSet = forms.modelformset_factory(
-    model=Document,
-    form=DocumentForm,
-    fields=DocumentForm.Meta.fields,
-    extra=0,
-    formset=DocumentFormSet
-)

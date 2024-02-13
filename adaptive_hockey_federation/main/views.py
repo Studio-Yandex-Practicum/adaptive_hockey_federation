@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import DocumentCreateFormSet, PlayerForm, TeamForm
+from main.forms import DocumentForm, PlayerForm, TeamForm
 from main.models import Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
@@ -49,12 +49,14 @@ class PlayerCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            images_formset = DocumentCreateFormSet(
-                self.request.POST, self.request.FILES, player=self.object
+            images_form = DocumentForm(
+                self.request.POST, self.request.FILES
             )
         else:
-            images_formset = DocumentCreateFormSet(instance=self.object)
-        context['formset'] = images_formset
+            images_form = DocumentForm()
+        print(images_form)
+        print(self.object)
+        context['formset'] = images_form
         context['player'] = self.object
         return context
 
@@ -66,7 +68,8 @@ class PlayerCreateView(CreateView):
     #     player = self.get_object()
 
     #     player_fields = [
-    #         ("Команда", ", ".join([team.name for team in player.team.all()])),
+    #         ("Команда", ", ".join(
+    # [team.name for team in player.team.all()])),
     #         ("Уровень ревизии", player.level_revision),
     #         ("Капитан", player.is_captain),
     #         ("Ассистент", player.is_assistent),
