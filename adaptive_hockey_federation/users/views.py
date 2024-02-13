@@ -62,14 +62,14 @@ class UsersListView(LoginRequiredMixin, ListView):
             table_data.append({
                 'name': user.get_full_name(),
                 'date': user.date_joined,
-                'role': user.role,
+                'role': user.get_role_display(),
                 'email': user.email,
                 'phone': user.phone,
                 'id': user.pk,
             })
         context['table_head'] = {
             'name': 'Имя',
-            'date': 'Дата',
+            'date': 'Дата регистрации',
             'role': 'Роль',
             'email': 'Email',
             'phone': 'Телефон',
