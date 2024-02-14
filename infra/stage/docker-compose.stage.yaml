@@ -12,7 +12,7 @@ services:
       - ../../.env
 
   site:
-    image: "ghcr.io/studio-yandex-practicum/adaptive_hockey_federation:dev"
+    image: ${IMAGE_COMPOSE}
     restart: always
     volumes:
       - static_value:/app/static/
