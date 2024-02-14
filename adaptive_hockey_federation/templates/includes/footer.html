@@ -1,29 +1,24 @@
-<footer class="footer mt-auto py-3 bg-light footer-class">
-  <nav class="navbar" >
-    <div class="container">
-      <div class="nav nav-pills justify-content-start">
-        <button
-          id="rectangle"
-          onclick="toggle_visibility(false);"
-          class="btn"
-          type="button"
-          aria-controls="staticBackdrop"
-          aria-expanded="true"
-          style="transform: rotate(180deg);"
-        >
-          <i class="bi bi-caret-right-fill fs-3" style="color: #340061;"></i>
-        </button>
-        {% include "includes/pagination.html" %}
-      </div>
-      <ul class="nav nav-pills ">
-        {% with request.resolver_match.view_name as view_name %}
-          {% if view_name == 'users:users' and perms.add_user %}{% include "includes/user_button_create.html" with name="+ Пользователь"%}{% endif %}
-          {% if view_name  == 'main:teams' %}{% include "includes/team_button_create.html" with name="+ Команда" %}{% endif %}
-          {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
-          {% if view_name  != 'main:unloads' %}{% include "includes/button.html" with name="Выгрузить" %}{% endif %}
-          {% if view_name  == 'main:teams_id' %}{% include "includes/button_list.html" with name="+ Добавить" %}{% endif %}
-        {% endwith %}
-      </ul>
-    </div>
+<footer class="footer footer-class">
+  <nav class="navbar-footer">
+    <button
+      id="rectangle"
+      onclick="toggle_visibility(false);"
+      class="nav-button"
+      type="button"
+      aria-controls="staticBackdrop"
+      aria-expanded="true"
+    >
+      <i class="bi bi-caret-right-fill fs-3" style="color: #fff;"></i>
+    </button>
+    {% include "includes/pagination.html" %}
+    <ul class="nav nav-pills">
+      {% with request.resolver_match.view_name as view_name %}
+        {% if view_name == 'users:users' and perms.add_user %}{% include "includes/user_button_create.html" with name="+ Пользователь"%}{% endif %}
+        {% if view_name  == 'main:teams' %}{% include "includes/team_button_create.html" with name="+ Команда" %}{% endif %}
+        {% if view_name  == 'main:competitions' %}{% include "includes/button.html" with name="+ Соревнование" %}{% endif %}
+        {% if view_name  != 'main:unloads' %}{% include "includes/button.html" with name="Выгрузить" %}{% endif %}
+        {% if view_name  == 'main:teams_id' %}{% include "includes/button_list.html" with name="+ Добавить" %}{% endif %}
+      {% endwith %}
+    </ul>
   </nav>
 </div>

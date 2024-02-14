@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base_style.css' %}">
+    <link rel="icon" type="image/ico" href="{% static 'favicon.ico' %}">
 
     <title>
       {% block title %}
@@ -22,25 +23,21 @@
   </head>
 
   <body>
-    <div class="container-fluid container__fluid">
+    <div class="container__fluid">
       {% include 'includes/drawer.html' %}
-      <div class="col px-0">
-        <header>
+      <div class="page">
+        <header class="header">
           {% include 'includes/header.html' %}
         </header>
-        <div class="content container-fluid text-center text-2xl">
-          <div class="row">
-            <div class="col ps-md-2 pt-2">
-              <div class="page-header pt-3">
-                {% block content_navigation %}
-                {% endblock %}
-                {% block content %}
-                Основной текст
-                {% endblock %}
-              </div>
-            </div>
+        <main class="main">
+          <div class="table-container">
+            {% block content_navigation %}
+            {% endblock %}
+            {% block content %}
+            Основной текст
+            {% endblock %}
           </div>
-        </div>
+        </main>
         {% include 'includes/footer.html' %}
       </div>
     </div>
@@ -62,12 +59,12 @@
           return
         } else {
           if (isRotated) {
-            rectangle.style.transform = 'rotate(180deg)'
-          } else {
             rectangle.style.transform = 'rotate(0deg)'
+          } else {
+            rectangle.style.transform = 'rotate(180deg)'
           }
           isRotated = !isRotated
-          sidebar.classList.toggle('container__flu')
+          sidebar.classList.toggle('aside-navbar_opened')
         }
       }
       window.onload = toggle_visibility(true)
