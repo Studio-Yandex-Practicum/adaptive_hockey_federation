@@ -541,6 +541,7 @@ li {
   margin: 0;
   padding: 0;
   display: flex;
+  align-items: center;
   flex: 1;
   flex-direction: column;
 }
@@ -599,6 +600,7 @@ th, td {
   max-height: 95vh;
   overflow-x: auto;
   overflow-y: auto;
+  text-align: center;
 }
 
 .table-table {
