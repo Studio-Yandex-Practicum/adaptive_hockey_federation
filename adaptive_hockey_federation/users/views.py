@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from django.db.models import Q
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from users.forms import CreateUserForm, UpdateUserForm
@@ -16,6 +17,43 @@ class UsersListView(LoginRequiredMixin, ListView):
     context_object_name = 'users'
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get("search")
+        if search:
+            search_column = self.request.GET.get("search_column")
+            if not search_column or search_column.lower() in ["все", "all"]:
+                or_lookup = (
+                    Q(first_name__icontains=search)
+                    | Q(last_name__icontains=search)
+                    | Q(date_joined__icontains=search)
+                    | Q(role__icontains=search)
+                    | Q(email__icontains=search)
+                    | Q(phone__icontains=search)
+                )
+                queryset = queryset.filter(or_lookup)
+            else:
+                search_fields = {
+                    "date": "date_joined",
+                    "role": "role",
+                    "email": "email",
+                    "phone": "phone"
+                }
+                if search_column == "name":
+                    queryset = queryset.filter(
+                        Q(first_name__icontains=search)
+                        | Q(last_name__icontains=search)
+                    )
+                else:
+                    queryset = queryset.filter(**{
+                        f"{search_fields[search_column]}__icontains": search
+                    })
+
+        return (
+            queryset
+            .order_by("last_name")
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         users = context['users']
@@ -24,14 +62,14 @@ class UsersListView(LoginRequiredMixin, ListView):
             table_data.append({
                 'name': user.get_full_name(),
                 'date': user.date_joined,
-                'role': user.role,
+                'role': user.get_role_display(),
                 'email': user.email,
                 'phone': user.phone,
                 'id': user.pk,
             })
         context['table_head'] = {
             'name': 'Имя',
-            'date': 'Дата',
+            'date': 'Дата регистрации',
             'role': 'Роль',
             'email': 'Email',
             'phone': 'Телефон',
