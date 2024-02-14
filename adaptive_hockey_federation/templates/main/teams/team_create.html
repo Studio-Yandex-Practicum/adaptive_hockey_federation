@@ -28,6 +28,7 @@
                   {% endif %}
               </label>
               {{ field|addclass:'form-control' }}
+              {% include 'main/teams/team_form_city_field_datalist.html' %}
             {% if field.errors %}
             <small class="error">{{ field.errors|striptags  }}</small>
           {% endif %}

@@ -1,4 +1,7 @@
+from typing import Any
+
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
 from main.models import City, DisciplineName, Player, StaffTeamMember, Team
 from users.models import User
@@ -37,6 +40,44 @@ class PlayerForm(forms.ModelForm):
         ]
 
 
+class CityChoiceField(ModelChoiceField):
+    """Самодельное поле для выбора города."""
+
+    def __init__(self):
+        super().__init__(
+            queryset=City.objects.all(),
+            widget=TextInput(attrs={
+                'class': 'form-control',
+                'list': 'cities',
+                'placeholder': 'Введите или выберите название города'
+            }),
+            required=True,
+            error_messages={
+                'required': 'Пожалуйста, выберите город из списка.'
+            },
+            label='Город откуда команда',
+        )
+
+    def clean(self, value: Any) -> Any:
+        """Переопределенный метод родительского класса.
+        Прежде, чем вызвать родительский метод, получает объект города (
+        City) по введенному названию, проверяет наличие введенного
+        наименования города в БД. Если такого города в БД нет, то создает
+        соответствующий город (объект класса City) и возвращает его на
+        дальнейшую стандартную валидацию формы."""
+        value = value.strip()
+
+        if (not isinstance(value, str) or
+                value in self.empty_values):
+            raise ValidationError(self.error_messages['required'])
+
+        if city := City.get_by_name(value):
+            return super().clean(city)
+
+        city = City.objects.create(name=value)
+        return super().clean(city)
+
+
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
@@ -44,16 +85,8 @@ class TeamForm(forms.ModelForm):
             'curator'
         ].label_from_instance = lambda obj: obj.get_full_name()
 
-    city = forms.ModelChoiceField(
-        queryset=City.objects.all(),
-        widget=Select(attrs={'class': 'form-control'}),
-        required=True,
-        error_messages={
-            'required': 'Пожалуйста, выберите город из списка.'
-        },
-        label='Город откуда команда',
-        empty_label='Выберите название города'
-    )
+    city = CityChoiceField()
+
     curator = ModelChoiceField(
         queryset=User.objects.filter(role='agent'),
         required=True,
@@ -98,7 +131,6 @@ class TeamForm(forms.ModelForm):
             'name': TextInput(
                 attrs={'placeholder': 'Введите название команды'}
             ),
-            'city': Select(),
             'staff_team_member': Select(),
             'discipline_name': Select(),
             'curator': Select(),

@@ -1,3 +1,5 @@
+from django.db.models import QuerySet
+
 from core.constants import (
     CHAR_FIELD_LENGTH,
     CLASS_FIELD_LENGTH,
@@ -32,12 +34,22 @@ class City(BaseUniqueName):
     """
     Модель Город.
     """
+
     class Meta:
         verbose_name = 'Город'
         verbose_name_plural = 'Города'
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_by_name(cls, name: str):
+        """Возвращает объект БД по наименованию (полю "name")."""
+        name = name.strip()
+        res: QuerySet = cls.objects.filter(name=name)
+        if res.exists():
+            return res.first()
+        return None
 
 
 class DisciplineName(BaseUniqueName):
