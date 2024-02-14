@@ -1,7 +1,11 @@
 name: Project stage deploy
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Build and push Docker image
+    types:
+      - completed
 
 env:
   REGISTRY: ghcr.io
@@ -43,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: stage_deploy
-    needs: tests
+    needs: pytest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -69,17 +73,16 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
 
             rm .env
             touch .env
 
-            echo HOST_NG=${{ secrets.HOST_NG }}
-            echo PORT_NG=${{ secrets.PORT_NG }}
+            echo HOST_NG=${{ secrets.HOST_NG }} >> .env
+            echo PORT_NG=${{ secrets.PORT_NG }} >> .env
+            echo IMAGE_COMPOSE=${{ secrets.IMAGE_COMPOSE }} > .env
 
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             echo DEBUG=${{ secrets.DEBUG }} >> .env
@@ -92,13 +95,6 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
 
-            echo DJANGO_SUPERUSER_FIRST_NAME=${{ secrets.DJANGO_SUPERUSER_FIRST_NAME }}
-            echo DJANGO_SUPERUSER_LAST_NAME=${{ secrets.DJANGO_SUPERUSER_LAST_NAME }}
-            echo DJANGO_SUPERUSER_ROLE=${{ secrets.DJANGO_SUPERUSER_ROLE }}
-            echo DJANGO_SUPERUSER_USERNAME=${{ secrets.DJANGO_SUPERUSER_USERNAME }}
-            echo DJANGO_SUPERUSER_EMAIL=${{ secrets.DJANGO_SUPERUSER_EMAIL }}
-            echo DJANGO_SUPERUSER_PASSWORD=${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
-
             cd infra/stage/
             docker system prune --force
 
@@ -110,4 +106,3 @@ jobs:
             sleep 10
             docker exec adaptive_hockey_federation python manage.py migrate
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-            docker exec adaptive_hockey_federation python manage.py createsuperuser --no-input
