@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
 from fixture_user import (
     test_email,
@@ -62,13 +63,63 @@ class TestUrls(TestCase):
             discipline_name=DisciplineName.objects.create(
                 name='Tetst DisciplineName'),
             curator=self.user,
-            staff_team_member=self.staff_team_member
         )
+
+    def delete_user(self, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            user.delete()
+            return True
+        except User.DoesNotExist:
+            return False
+
+    def test_create_user(self):
+        # Тест - создание пользователя
+        self.assertEqual(self.user.first_name, test_name)
+        self.assertEqual(self.user.last_name, test_lastname)
+        self.assertEqual(self.user.role, test_role)
+        self.assertEqual(self.user.email, test_email)
+
+    def test_edit_user(self):
+        # Тест - редактирование существующего пользователя
+        new_name = 'Test'
+        new_lastname = 'User'
+        new_role = 'Tester'
+        new_email = 'test@example.com'
+
+        self.user.first_name = new_name
+        self.user.last_name = new_lastname
+        self.user.role = new_role
+        self.user.email = new_email
+        self.user.save()
+
+        edited_user = User.objects.get(email=new_email)
+        self.assertEqual(edited_user.first_name, new_name)
+        self.assertEqual(edited_user.last_name, new_lastname)
+        self.assertEqual(edited_user.role, new_role)
+        self.assertEqual(edited_user.email, new_email)
+
+    def test_delete_user(self):
+        # Тест - удаление пользователя
+        delete_result = self.delete_user(self.user.id)
+        self.assertTrue(delete_result, 'Ошибка при удалении пользователя')
 
     def test_users_list_view_returns_200(self):
         self.client.force_login(self.user)
         response = self.client.get('/users/')
         self.assertEqual(response.status_code, 200)
+
+    def test_user_update_view_returns_200(self):
+        self.adminuser = User.objects.get(first_name='admin')
+
+        self.permission = Permission.objects.get(codename='change_user')
+        self.adminuser.user_permissions.add(self.permission)
+        self.adminuser.save()
+
+        self.client.force_login(self.adminuser)
+
+        response = self.client.get('/user_update/1/')
+        assert response.status_code == 200
 
     def test_main_view_returns_200(self):
         self.client.force_login(self.user)
