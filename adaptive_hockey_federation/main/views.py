@@ -237,8 +237,8 @@ class TeamIdView(DetailView):
         )
         staff_table = [
             {
-                "staff_position": staff_position[1].title(),
-                "staff_table_head": {
+                "position": staff_position[1].title(),
+                "head": {
                     "number": "№",
                     "surname": "Фамилия",
                     "name": "Имя",
@@ -246,7 +246,7 @@ class TeamIdView(DetailView):
                     "position": "Квалификация",
                     "note": "Примечание",
                 },
-                "staff_table_data": [
+                "data": [
                     {
                         "number": i + 1,
                         "surname": staff.staff_member.surname,
@@ -264,36 +264,38 @@ class TeamIdView(DetailView):
             }
             for staff_position in STAFF_POSITION_CHOICES
         ]
-        players_table_head = {
-            "number": "№",
-            "surname": "Фамилия",
-            "name": "Имя",
-            "birthday": "Д.Р.",
-            "gender": "Пол",
-            "position": "Квалификация",
-            "diagnosis": "Диагноз",
-            "discipline": "Дисциплина",
-            "level_revision": "Уровень ревизии",
+        players_table = {
+            "name": "Игроки",
+            "head": {
+                "number": "№",
+                "surname": "Фамилия",
+                "name": "Имя",
+                "birthday": "Д.Р.",
+                "gender": "Пол",
+                "position": "Квалификация",
+                "diagnosis": "Диагноз",
+                "discipline": "Дисциплина",
+                "level_revision": "Уровень ревизии",
+            },
+            "data": [
+                {
+                    "number": player.number,
+                    "surname": player.surname,
+                    "name": player.name,
+                    "birthday": player.birthday,
+                    "gender": player.get_gender_display(),
+                    "position": player.get_position_display(),
+                    "diagnosis": player.diagnosis.name
+                    if player.diagnosis else None,
+                    "discipline": player.discipline
+                    if player.discipline else None,
+                    "level_revision": player.level_revision,
+                }
+                for player in players
+            ]
         }
-        players_table_data = [
-            {
-                "number": player.number,
-                "surname": player.surname,
-                "name": player.name,
-                "birthday": player.birthday,
-                "gender": player.get_gender_display(),
-                "position": player.get_position_display(),
-                "diagnosis": player.diagnosis.name
-                if player.diagnosis else None,
-                "discipline": player.discipline
-                if player.discipline else None,
-                "level_revision": player.level_revision,
-            }
-            for player in players
-        ]
 
-        context["table_head"] = players_table_head
-        context["table_data"] = players_table_data
+        context["players_table"] = players_table
         context["staff_table"] = staff_table
         context["team"] = team
 
