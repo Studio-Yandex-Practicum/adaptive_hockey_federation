@@ -1,4 +1,3 @@
-from core.utils import generate_file_name
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -13,14 +12,7 @@ from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
 from main.models import Document, Player, Team
 
-# пример рендера таблиц, удалить после реализации вьюх
-CONTEXT_EXAMPLE = {
-    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
-    "table_data": [
-        {"id": 1, "name": "Иван", "surname": "Иванов"},
-        {"id": 2, "name": "Пётр", "surname": "Петров"},
-    ],
-}
+from adaptive_hockey_federation.core.utils import generate_file_name
 
 
 @login_required
