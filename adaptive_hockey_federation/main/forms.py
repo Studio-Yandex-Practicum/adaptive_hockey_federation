@@ -67,8 +67,8 @@ class CityChoiceField(ModelChoiceField):
         дальнейшую стандартную валидацию формы."""
         value = value.strip()
 
-        if (not isinstance(value, str) or
-                value in self.empty_values):
+        if (not isinstance(value, str)
+                or value in self.empty_values):
             raise ValidationError(self.error_messages['required'])
 
         if city := City.get_by_name(value):

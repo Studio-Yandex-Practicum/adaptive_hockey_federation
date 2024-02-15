@@ -1,5 +1,3 @@
-from django.db.models import QuerySet
-
 from core.constants import (
     CHAR_FIELD_LENGTH,
     CLASS_FIELD_LENGTH,
@@ -10,6 +8,7 @@ from core.constants import (
     STAFF_POSITION_CHOICES,
 )
 from django.db import models
+from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 from users.models import User
 

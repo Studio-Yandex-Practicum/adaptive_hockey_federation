@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
-from main.models import Player, Team, City
+from main.models import City, Player, Team
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -383,7 +383,6 @@ class CreateTeamView(
         cities = City.objects.values_list('name', flat=True)
         context['cities'] = cities
         return context
-
 
 
 @login_required
