@@ -1,2 +1,2 @@
 {% url 'users:user_create' as user_create_url %}
-{% include "includes/button_create.html" with button_url=user_create_url name="Создать пользователя" current_url_name=request.path %}
+{% include "base/button_create.html" with button_url=user_create_url name="Создать пользователя" current_url_name=request.path %}
