@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-TIME_FORMAT = '%H-%M-%S'
+from core.constants import TIME_FORMAT
 
 
 def generate_file_name(filename: str, prefix: str, suffix) -> str:

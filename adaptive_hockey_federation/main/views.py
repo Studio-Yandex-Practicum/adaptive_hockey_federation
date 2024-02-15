@@ -1,3 +1,4 @@
+from core.utils import generate_file_name
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -11,7 +12,6 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
 from main.models import Document, Player, Team
-from main.utils import generate_file_name
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {

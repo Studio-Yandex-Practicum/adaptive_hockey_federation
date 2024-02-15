@@ -34,3 +34,5 @@ STAFF_POSITION_CHOICES = (
     ('trainer', 'тренер'),
     ('other', 'другой'),
 )
+
+TIME_FORMAT = '%H-%M-%S'
