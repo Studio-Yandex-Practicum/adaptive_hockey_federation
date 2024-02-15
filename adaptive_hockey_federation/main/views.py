@@ -9,13 +9,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import (
-    DocumentCreateFormSet,
-    DocumentForm,
-    PlayerForm,
-    TeamForm
-)
-from main.models import Player, Team
+from main.forms import PlayerForm, TeamForm
+from main.models import Document, Player, Team
+from main.utils import generate_file_name
 
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
@@ -40,56 +36,13 @@ class PlayerCreateView(CreateView):
     success_url = "/players"
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        print(context)
-        formset = context['formset']
-
-        self.object = form.save()
-        print(self.object)
-        for doc in formset:
-            print(doc)
-
-        if formset.is_valid():
-            formset.instance = self.object
-            formset.save()
-
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            images_form = DocumentCreateFormSet(
-                self.request.POST, self.request.FILES
+        player = form.save()
+        for iter, file in enumerate(self.request.FILES.getlist('documents')):
+            file.name = generate_file_name(file.name, player.name, iter)
+            Document.objects.create(
+                player=player, file=file, name=file.name
             )
-        else:
-            images_form = DocumentCreateFormSet()
-        context['formset'] = images_form
-        return context
-
-    # def get_success_url(self):
-    #     return reverse("main:player_id", kwargs={"pk": self.object.pk})
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     player = self.get_object()
-
-    #     player_fields = [
-    #         ("Команда", ", ".join(
-    # [team.name for team in player.team.all()])),
-    #         ("Уровень ревизии", player.level_revision),
-    #         ("Капитан", player.is_captain),
-    #         ("Ассистент", player.is_assistent),
-    #         ("Игровая позиция", player.position),
-    #         ("Номер игрока", player.number),
-    #     ]
-
-    #     player_fields_doc = [("Документ", player.identity_document)]
-    #     player_documents = player.player_documemts.all()
-    #     context["player_documents"] = player_documents
-    #     context["player_fields_personal"] = player_fields_personal
-    #     context["player_fields"] = player_fields
-    #     context["player_fields_doc"] = player_fields_doc
-    #     return context
+        return super().form_valid(form)
 
 
 class PlayersListView(LoginRequiredMixin, ListView):
