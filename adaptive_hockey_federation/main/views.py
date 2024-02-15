@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-
 # пример рендера таблиц, удалить после реализации вьюх
 CONTEXT_EXAMPLE = {
     "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
