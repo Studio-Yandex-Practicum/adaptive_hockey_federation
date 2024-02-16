@@ -65,11 +65,12 @@ class CityChoiceField(ModelChoiceField):
         наименования города в БД. Если такого города в БД нет, то создает
         соответствующий город (объект класса City) и возвращает его на
         дальнейшую стандартную валидацию формы."""
-        value = value.strip()
 
         if (not isinstance(value, str)
                 or value in self.empty_values):
             raise ValidationError(self.error_messages['required'])
+
+        value = value.strip()
 
         if city := City.get_by_name(value):
             return super().clean(city)

@@ -233,7 +233,7 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-        staff_list = [team.staff_team_member,]
+        staff_list = [team.staff_team_member, ]
         staff_table_head = {
             "number": "№",
             "surname": "Фамилия",
@@ -325,13 +325,24 @@ class TeamListView(LoginRequiredMixin, ListView):
         return context
 
 
+class CityListMixin:
+    """Миксин для использования в видах редактирования и создания команд."""
+
+    @staticmethod
+    def get_cities():
+        """Возвращает список имен всех городов из БД."""
+        return City.objects.values_list('name', flat=True)
+
+
 class UpdateTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-        UpdateView):
+    UpdateView,
+    CityListMixin
+):
     model = Team
     form_class = TeamForm
-    template_name = "main/users/user_update.html"
+    template_name = "main/teams/team_update.html"
     success_url = '/teams/'
     permission_required = 'team.change_team'
 
@@ -343,8 +354,9 @@ class UpdateTeamView(
         context = super(UpdateTeamView, self).get_context_data(**kwargs)
         context['form'] = self.form_class(
             instance=self.object,
-            initial=self.get_initial()
+            initial={'city': self.object.city.name}
         )
+        context['cities'] = self.get_cities()
         return context
 
 
@@ -366,7 +378,8 @@ class DeleteTeamView(
 class CreateTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-    CreateView
+    CreateView,
+    CityListMixin
 ):
     model = Team
     form_class = TeamForm
@@ -380,8 +393,7 @@ class CreateTeamView(
 
     def get_context_data(self, **kwargs):
         context = super(CreateTeamView, self).get_context_data(**kwargs)
-        cities = City.objects.values_list('name', flat=True)
-        context['cities'] = cities
+        context['cities'] = self.get_cities()
         return context
 
 

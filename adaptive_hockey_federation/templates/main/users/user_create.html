@@ -2,11 +2,7 @@
 {% load static %}
 {% load user_filters %}
 {% block title %}
-  {% if '/user_create/' in request.path %}
     Создать пользователя
-  {% elif '/team_create/' in request.path %}
-    Создать команду
-  {% endif %}
 {% endblock %}
 {% block content %}
 <div class="container py-4">
@@ -14,11 +10,7 @@
     <div class="col-md-8 p-5">
       <div class="card update_card">
         <div class="card-header">
-          {% if '/user_create/' in request.path %}
           Создание нового пользователя
-          {% elif '/team_create/' in request.path %}
-          Создание новой команды
-          {% endif %}
         </div>
         <div class="card-body">
           <form method="post"
