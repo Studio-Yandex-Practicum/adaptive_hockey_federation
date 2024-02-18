@@ -16,7 +16,10 @@
         {% if view_name == 'users:users' and perms.add_user %}{% include "base/user_button_create!.html" with name="+ Пользователь"%}{% endif %}
         {% if view_name  == 'main:teams' %}{% include "base/team_button_create!.html" with name="+ Команда" %}{% endif %}
         {% if view_name  == 'main:competitions' %}{% include "base/button.html" with name="+ Соревнование" %}{% endif %}
+<<<<<<< HEAD
         {% if view_name  == 'main:players' %}{% include "main/players/player_button_create.html"%}{% endif %}
+=======
+>>>>>>> 182c295 (Ilya ivashchenk0 front (#161))
         {% if view_name  != 'main:unloads' %}{% include "base/button.html" with name="Выгрузить" %}{% endif %}
         {% if view_name  == 'main:teams_id' %}{% include "base/button_list.html" with name="+ Добавить" %}{% endif %}
       {% endwith %}
