@@ -1,20 +1,9 @@
 {% load static %}
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <div class='header-line'>
-        <div class='header-logo'>
-          <img src={% static "img/logo.png" %}>
-        </div>
-        <div class='header-ellipse'>
-          <img src={% static "img/ellipse.png" %}>
-        </div>
-        <div class='header-rect'>
-          <img src={% static "img/rect.png" %} width="990px" height="345px">
-        </div>
-        <div>
-          <p class='header-text fw-weight-bold'>Мир хоккея <br>для особенных детей</p>
-        </div>
-      </div>
+<header class="header-login">
+  <img class='header-logo' src={% static "img/logo.png" %} alt="Логотип">
+  <h1 class='header-text fw-weight-bold'>Мир хоккея<br>для особенных<br>детей</h1>
+  <div class="header-rect-container">
+    <div class="header-ellipse"></div>
+    <img class="header-rect" src={% static "img/rect.png" %} alt="Следж-хоккей, хоккей для незрячих, Специальный хоккей">
   </div>
-</div>
+</header>
