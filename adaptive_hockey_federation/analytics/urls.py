@@ -4,5 +4,5 @@ from django.urls import path
 app_name = "analytics"
 
 urlpatterns = [
-    path("analytics/", views.analytics, name="analytics"),
+    path("analytics/", views.AnalyticsListView.as_view(), name="analytics"),
 ]

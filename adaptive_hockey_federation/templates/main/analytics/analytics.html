@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Аналитика
+{% endblock %}
+{% block content %}
+  <div class="container">
+    {% include 'main/analytics/dashboard.html' with dashboard=dashboard %}
+  </div>
+  <div class="container">
+    {% include 'main/analytics/table.html' with table_head=table_head table_data=table_data %}
+  </div>
+{% endblock %}
