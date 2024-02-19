@@ -8,6 +8,7 @@ from core.constants import (
     STAFF_POSITION_CHOICES,
 )
 from django.db import models
+from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 from users.models import User
 
@@ -32,12 +33,22 @@ class City(BaseUniqueName):
     """
     Модель Город.
     """
+
     class Meta:
         verbose_name = 'Город'
         verbose_name_plural = 'Города'
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_by_name(cls, name: str):
+        """Возвращает объект БД по наименованию (полю "name")."""
+        name = name.strip()
+        res: QuerySet = cls.objects.filter(name=name)
+        if res.exists():
+            return res.first()
+        return None
 
 
 class DisciplineName(BaseUniqueName):
