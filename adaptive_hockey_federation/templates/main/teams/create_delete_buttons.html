@@ -1,13 +1,13 @@
 {% load static %}
-<td class="border rounded-md btsss">
-  <div class="input-group justify-content-md-center">
+<td class="border rounded-md">
+  <div class="cell-table">
     <form action="{% if view_name == 'users:users' %}
     {% url 'users:user_update' table_string.id %}
     {% elif view_name == 'main:teams' %}{% url 'main:team_update' table_string.id %}
     {% endif %}" method="post">
       {% csrf_token %}
-      <button class=" btns-edit-del" type="submit" {% if view_name == 'users:users' and perms.users.change_user or view_name == 'main:teams' and request.user.is_admin %} activate {% else %} disabled {% endif %}>
-        <img src={% static 'img/edit.png' %}>
+      <button class="btns-edit-del" type="submit" {% if view_name == 'users:users' and perms.users.change_user or view_name == 'main:teams' and request.user.is_admin %} activate {% else %} disabled {% endif %}>
+        {% include 'base/edit_icon.html' %}
       </button>
     </form>
     <form action="{% if view_name == 'users:users' %}
@@ -17,7 +17,7 @@
     {% endif %}" method="post" >
       {% csrf_token %}
       <button class="btns-edit-del" type="submit" {% if view_name == 'users:users' and perms.users.change_user or view_name == 'main:teams' and request.user.is_admin %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить {% if view_name == 'users:users' %} пользователя {{ table_string.name }} {% else %}команду {{table_string.name}}{% endif %}?');"></a>
-        <img src={% static 'img/delete.png' %}>
+        {% include 'base/delete_icon.html' %}
       </button>
     </form>
   </div>
