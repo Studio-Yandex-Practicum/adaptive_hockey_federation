@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load user_filters %}
 {% block title %}
-    Изменить пользователя
+    Редактирование данных команды
 {% endblock %}
 {% block content %}
 <div class="container py-4">
@@ -9,7 +9,7 @@
     <div class="col-md-8 p-5">
       <div class="card update_card">
         <div class="card-header">
-            Редактированние данных пользователя </br> {{ object.first_name }} {{ object.last_name }}
+            Редактирование данных команды </br> {{ object.name }}
         </div>
         <div class="card-body">
           <form method="post"
@@ -36,6 +36,7 @@
                   {% endif %}
               </label>
               {{ field |addclass:'form-control' }}
+              {% include 'main/teams/team_form_city_field_datalist.html' %}
             {% if field.errors %}
             <small class="error">{{ field.errors|striptags  }}</small>
           {% endif %}
