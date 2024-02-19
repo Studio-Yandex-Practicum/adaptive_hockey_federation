@@ -11,9 +11,16 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
-from main.models import City, Document, Player, Team
+from main.models import Player, Team
 
-from adaptive_hockey_federation.core.utils import generate_file_name
+# пример рендера таблиц, удалить после реализации вьюх
+CONTEXT_EXAMPLE = {
+    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
+    "table_data": [
+        {"id": 1, "name": "Иван", "surname": "Иванов"},
+        {"id": 2, "name": "Пётр", "surname": "Петров"},
+    ],
+}
 
 
 @login_required
