@@ -102,9 +102,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return (
+            f'{self.last_name[:QUERY_SET_LENGTH]} '
             f'{self.first_name[:QUERY_SET_LENGTH]} '
-            f'{self.patronymic[:QUERY_SET_LENGTH]} '
-            f'{self.last_name[:QUERY_SET_LENGTH]}'
+            f'{self.patronymic[:QUERY_SET_LENGTH]}'
         )
 
     def email_user(self, subject, message, from_email=None, **kwargs):

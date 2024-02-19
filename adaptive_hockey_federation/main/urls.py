@@ -19,6 +19,10 @@ urlpatterns = [
         views.PlayerIDDeleteView.as_view(),
         name="player_id_delete",
     ),
+    path(
+        "player_create/", views.PlayerCreateView.as_view(),
+        name="player_create"
+    ),
     path("player_deleted/", views.player_id_deleted, name="player_id_deleted"),
     path("teams/", views.TeamListView.as_view(), name="teams"),
     path("teams/create/", views.CreateTeamView.as_view(), name="team_create"),

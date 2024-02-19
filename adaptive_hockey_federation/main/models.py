@@ -108,7 +108,7 @@ class Discipline(models.Model):
         ]
 
     def __str__(self):
-        return self.discipline_name.name
+        return f'{self.discipline_name.name} ({self.discipline_level.name})'
 
 
 class Nosology(BaseUniqueName):
@@ -206,6 +206,47 @@ class StaffMember(BasePerson):
         return ' '.join([self.surname, self.name, self.patronymic])
 
 
+class Team(BaseUniqueName):
+    """
+    Модель команды.
+    """
+    city = models.ForeignKey(
+        City,
+        on_delete=models.CASCADE,
+        verbose_name=_('Город откуда команда'),
+        help_text=_('Город откуда команда')
+    )
+    discipline_name = models.ForeignKey(
+        DisciplineName,
+        on_delete=models.CASCADE,
+        verbose_name=_('Дисциплина команды'),
+        help_text=_('Дисциплина команды')
+    )
+    curator = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name=_('Куратор команды'),
+        help_text=_('Куратор команды')
+    )
+
+    class Meta:
+        default_related_name = 'teams'
+        verbose_name = 'Команда'
+        verbose_name_plural = 'Команды'
+        constraints = [
+            models.UniqueConstraint(
+                name='team_city_unique',
+                fields=['name', 'city', 'discipline_name'],
+            )
+        ]
+
+    def __str__(self):
+        if self.city:
+            return f'{self.name} - {self.city}'
+        return self.name
+
+
 class StaffTeamMember(models.Model):
     """
     Модель сотрудник команды.
@@ -222,6 +263,12 @@ class StaffTeamMember(models.Model):
         default=EMPTY_VALUE_DISPLAY,
         verbose_name=_('Статус сотрудника'),
         help_text=_('Статус сотрудника')
+    )
+    team = models.ManyToManyField(
+        Team,
+        related_name='team_members',
+        verbose_name=_('Команда'),
+        help_text=_('Команда')
     )
     qualification = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -257,53 +304,8 @@ class StaffTeamMember(models.Model):
             self.staff_member.patronymic
         ])
 
-
-class Team(BaseUniqueName):
-    """
-    Модель команды.
-    """
-    city = models.ForeignKey(
-        City,
-        on_delete=models.CASCADE,
-        verbose_name=_('Город откуда команда'),
-        help_text=_('Город откуда команда')
-    )
-    staff_team_member = models.ForeignKey(
-        StaffTeamMember,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name=_('Сотрудник команды'),
-        help_text=_('Сотрудник команды')
-    )
-    discipline_name = models.ForeignKey(
-        DisciplineName,
-        on_delete=models.CASCADE,
-        verbose_name=_('Дисциплина команды'),
-        help_text=_('Дисциплина команды')
-    )
-    curator = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name=_('Куратор команды'),
-        help_text=_('Куратор команды')
-    )
-
-    class Meta:
-        default_related_name = 'teams'
-        verbose_name = 'Команда'
-        verbose_name_plural = 'Команды'
-        constraints = [
-            models.UniqueConstraint(
-                name='team_city_unique',
-                fields=['name', 'city', 'discipline_name'],
-            )
-        ]
-
-    def __str__(self):
-        if self.city:
-            return f'{self.name} - {self.city}'
-        return self.name
+    def get_name_and_staff_position(self):
+        return f'{self.__str__()} ({self.staff_position})'
 
 
 class Player(BasePerson):
@@ -399,6 +401,9 @@ class Player(BasePerson):
 
     def __str__(self):
         return ' '.join([self.surname, self.name, self.patronymic])
+
+    def get_name_and_position(self):
+        return f'{self.__str__()} ({self.position})'
 
 
 class Document(BaseUniqueName):

@@ -1,3 +1,4 @@
+from core.constants import STAFF_POSITION_CHOICES
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -10,21 +11,31 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
-from main.models import City, Player, Team
+from main.models import City, Document, Player, Team
 
-# пример рендера таблиц, удалить после реализации вьюх
-CONTEXT_EXAMPLE = {
-    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
-    "table_data": [
-        {"id": 1, "name": "Иван", "surname": "Иванов"},
-        {"id": 2, "name": "Пётр", "surname": "Петров"},
-    ],
-}
+from adaptive_hockey_federation.core.utils import generate_file_name
 
 
 @login_required
 def main(request):
     return render(request, "main/home/main.html")
+
+
+class PlayerCreateView(CreateView):
+    '''View-класс для создания нового игрока.'''
+    model = Player
+    form_class = PlayerForm
+    template_name = "main/player_id/player_id_create.html"
+    success_url = "/players"
+
+    def form_valid(self, form):
+        player = form.save()
+        for iter, file in enumerate(self.request.FILES.getlist('documents')):
+            file.name = generate_file_name(file.name, player.name, iter)
+            Document.objects.create(
+                player=player, file=file, name=file.name
+            )
+        return super().form_valid(form)
 
 
 class PlayersListView(LoginRequiredMixin, ListView):
@@ -200,7 +211,8 @@ class PlayerIDEditView(UpdateView):
         ]
 
         player_fields_doc = [("Документ", player.identity_document)]
-
+        player_documents = player.player_documemts.all()
+        context["player_documents"] = player_documents
         context["player_fields_personal"] = player_fields_personal
         context["player_fields"] = player_fields
         context["player_fields_doc"] = player_fields_doc
@@ -233,57 +245,68 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-        staff_list = [team.staff_team_member, ]
-        staff_table_head = {
-            "number": "№",
-            "surname": "Фамилия",
-            "name": "Имя",
-            "function": "Должность",
-            "position": "Квалификация",
-            "note": "Примечание",
-        }
-        staff_table_data = [
+        staff_table = [
             {
-                "number": i + 1,
-                "surname": staff.staff_member.surname,
-                "name": staff.staff_member.name,
-                "function": staff.staff_position,
-                "position": staff.qualification,
-                "note": staff.notes,
+                "position": staff_position[1].title(),
+                "head": {
+                    "number": "№",
+                    "surname": "Фамилия",
+                    "name": "Имя",
+                    "function": "Должность",
+                    "position": "Квалификация",
+                    "note": "Примечание",
+                },
+                "data": [
+                    {
+                        "number": i + 1,
+                        "surname": staff.staff_member.surname,
+                        "name": staff.staff_member.name,
+                        "function": staff.staff_position,
+                        "position": staff.qualification,
+                        "note": staff.notes,
+                    }
+                    for i, staff in enumerate(
+                        team.team_members.filter(
+                            staff_position=staff_position[1].title()
+                        )
+                    )
+                ]
             }
-            for i, staff in enumerate(staff_list)
+            for staff_position in STAFF_POSITION_CHOICES
         ]
-        players_table_head = {
-            "number": "№",
-            "surname": "Фамилия",
-            "name": "Имя",
-            "birthday": "Д.Р.",
-            "gender": "Пол",
-            "position": "Квалификация",
-            "diagnosis": "Диагноз",
+        players_table = {
+            "name": "Игроки",
+            "head": {
+                "number": "№",
+                "surname": "Фамилия",
+                "name": "Имя",
+                "birthday": "Д.Р.",
+                "gender": "Пол",
+                "position": "Квалификация",
+                "diagnosis": "Диагноз",
+                "discipline": "Дисциплина",
+                "level_revision": "Уровень ревизии",
+            },
+            "data": [
+                {
+                    "number": player.number,
+                    "surname": player.surname,
+                    "name": player.name,
+                    "birthday": player.birthday,
+                    "gender": player.get_gender_display(),
+                    "position": player.get_position_display(),
+                    "diagnosis": player.diagnosis.name
+                    if player.diagnosis else None,
+                    "discipline": player.discipline
+                    if player.discipline else None,
+                    "level_revision": player.level_revision,
+                }
+                for player in players
+            ]
         }
 
-        players_table_data = [
-            {
-                "number": player.number,
-                "surname": player.surname,
-                "name": player.name,
-                "birthday": player.birthday,
-                "gender": player.get_gender_display(),
-                "position": player.get_position_display(),
-                "diagnosis": player.diagnosis.name
-                if player.diagnosis else None,
-                "discipline": player.discipline
-                if player.discipline else None,
-                "level_revision": player.level_revision,
-            }
-            for player in players
-        ]
-
-        context["table_head"] = players_table_head
-        context["table_data"] = players_table_data
-        context["staff_table_head"] = staff_table_head
-        context["staff_table_data"] = staff_table_data
+        context["players_table"] = players_table
+        context["staff_table"] = staff_table
         context["team"] = team
 
         return context

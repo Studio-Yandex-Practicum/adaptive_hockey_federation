@@ -1,0 +1,2 @@
+{% url 'main:player_create' as player_create_url %}
+{% include 'base/button_create.html' with button_url=player_create_url name="Создать" current_url_name=request.path %}
