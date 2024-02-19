@@ -5,7 +5,6 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
-
 from main.forms import PlayerForm
 from main.models import Player
 
