@@ -11,21 +11,31 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
-from main.models import Player, Team
+from main.models import Document, Player, Team
 
-# пример рендера таблиц, удалить после реализации вьюх
-CONTEXT_EXAMPLE = {
-    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
-    "table_data": [
-        {"id": 1, "name": "Иван", "surname": "Иванов"},
-        {"id": 2, "name": "Пётр", "surname": "Петров"},
-    ],
-}
+from adaptive_hockey_federation.core.utils import generate_file_name
 
 
 @login_required
 def main(request):
     return render(request, "main/home/main.html")
+
+
+class PlayerCreateView(CreateView):
+    '''View-класс для создания нового игрока.'''
+    model = Player
+    form_class = PlayerForm
+    template_name = "main/player_id/player_id_create.html"
+    success_url = "/players"
+
+    def form_valid(self, form):
+        player = form.save()
+        for iter, file in enumerate(self.request.FILES.getlist('documents')):
+            file.name = generate_file_name(file.name, player.name, iter)
+            Document.objects.create(
+                player=player, file=file, name=file.name
+            )
+        return super().form_valid(form)
 
 
 class PlayersListView(LoginRequiredMixin, ListView):
