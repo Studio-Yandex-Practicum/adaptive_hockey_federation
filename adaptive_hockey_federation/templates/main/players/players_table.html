@@ -7,8 +7,8 @@
         <th class="col">{{ head_item }}</th>
         {% endfor %}
         <th>
-          {% include 'base/edit_icon.html' %}
-          {% include 'base/delete_icon.html' %}
+          {% include 'base/icons/edit_icon.html' %}
+          {% include 'base/icons/delete_icon.html' %}
         </th>
       </tr>
     </thead>
@@ -23,7 +23,7 @@
           {% elif cell_name == '_ref_' %}
             {% if cell_value.type == 'button' %}
               <td class="border rounded-md table-light">
-                {% include 'main/players/cell_button.html' with url=cell_value.url name=cell_value.name %}
+                {% include 'base/buttons/cell_button.html' with url=cell_value.url name=cell_value.name %}
               </td>
             {% else %}
               <td class="border rounded-md table-light">
@@ -34,16 +34,7 @@
             <td class="border rounded-md table-light">{{ cell_value }}</td>
           {% endif %}
         {% endfor %}
-        {% with request.resolver_match.view_name as view_name %}
-            {% if view_name == 'main:players' %}
-              {% include "main/players/create_delete_button_players.html" %}
-            {% else %}
-              <td>
-                {% include 'base/edit_icon.html' %}
-                {% include 'base/delete_icon.html' %}
-              </td>
-            {% endif %}
-        {% endwith %}
+              {% include "main/players/buttons/players_list_edit_delete_buttons.html" %}
       </tr>
       {% endfor %}
     </tbody>

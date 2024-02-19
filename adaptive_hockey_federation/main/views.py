@@ -40,7 +40,7 @@ class PlayerCreateView(CreateView):
 
 class PlayersListView(LoginRequiredMixin, ListView):
     model = Player
-    template_name = "main/players/players.html"
+    template_name = "main/players/players_list.html"
     context_object_name = "players"
     paginate_by = 10
     fields = [
