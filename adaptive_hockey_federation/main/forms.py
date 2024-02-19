@@ -27,7 +27,6 @@ class PlayerForm(forms.ModelForm):
             "discipline",
             "diagnosis",
             "level_revision",
-            "identity_document",
             "team",
             "is_captain",
             "is_assistent",
