@@ -1,8 +1,8 @@
 from django.urls import path
 from events import views as events
 
-from . import views as main_views
-from .controllers import player_views, team_views
+from main import views as main_views
+from main.controllers import player_views, team_views
 
 app_name = "main"
 

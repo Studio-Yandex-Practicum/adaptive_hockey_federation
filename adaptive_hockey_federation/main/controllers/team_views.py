@@ -8,8 +8,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from ..forms import TeamForm
-from ..models import Player, Team
+from main.forms import TeamForm
+from main.models import Player, Team
 
 
 class TeamIdView(DetailView):

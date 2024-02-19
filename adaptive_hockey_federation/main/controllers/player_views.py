@@ -6,8 +6,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from ..forms import PlayerForm
-from ..models import Player
+from main.forms import PlayerForm
+from main.models import Player
 
 
 class PlayersListView(LoginRequiredMixin, ListView):
