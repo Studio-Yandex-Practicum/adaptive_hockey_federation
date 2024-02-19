@@ -29,6 +29,11 @@ urlpatterns = [
         player_views.player_id_deleted,
         name="player_id_deleted",
     ),
+    path(
+        "player_create/",
+        player_views.PlayerCreateView.as_view(),
+        name="player_create",
+    ),
     path("teams/", team_views.TeamListView.as_view(), name="teams"),
     path(
         "teams/create/",
