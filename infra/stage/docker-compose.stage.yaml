@@ -6,30 +6,35 @@ services:
     container_name: db
     image: postgres:13.0-alpine
     restart: always
+    ports:
+      - 5432:${DB_PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - ../../.env
 
   site:
-    image: imageName
+    image: "${IMAGE_COMPOSE}"
+    container_name: adaptive_hockey_federation
     restart: always
     volumes:
-      - static_value:/app/static/
-      - media_value:/app/media/
+      - static_value:/app/adaptive_hockey_federation/static/
+      - media_value:/app/adaptive_hockey_federation/media/
     env_file:
-      - ./.env
+      - ../../.env
     depends_on:
       - db
 
   nginx:
     image: nginx:1.21.3-alpine
     ports:
-      - "80:80"
+      - "80:${PORT}"
     volumes:
-      - ../../nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ../nginx/nginx_stage.conf:/etc/nginx/conf.d/default.conf
       - static_value:/var/html/static/
       - media_value:/var/html/media/
+    env_file:
+      - ../../.env
     depends_on:
       - site
 

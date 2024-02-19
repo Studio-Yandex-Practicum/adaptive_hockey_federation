@@ -1,14 +1,9 @@
+from core.constants import STAFF_POSITION_CHOICES
 from django.contrib.auth.decorators import login_required
+
 from django.shortcuts import render
 
-# пример рендера таблиц, удалить после реализации вьюх
-CONTEXT_EXAMPLE = {
-    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
-    "table_data": [
-        {"id": 1, "name": "Иван", "surname": "Иванов"},
-        {"id": 2, "name": "Пётр", "surname": "Петров"},
-    ],
-}
+from adaptive_hockey_federation.core.utils import generate_file_name
 
 
 @login_required

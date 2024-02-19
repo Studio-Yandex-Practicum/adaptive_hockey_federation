@@ -7,7 +7,7 @@ RUN pip install -r develop.txt --no-cache-dir
 
 COPY . .
 
-WORKDIR ./src
+WORKDIR /app/adaptive_hockey_federation
 
 
-CMD ["gunicorn", "adaptive_hockey_federation.core.wsgi:application", "--bind", "0:8000" ]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0:8000" ]
