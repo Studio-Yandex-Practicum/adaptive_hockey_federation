@@ -29,7 +29,7 @@
           {% elif cell_name == '_ref_' %}
             {% if cell_value.type == 'button' %}
               <td class="border rounded-md table-light">
-                {% include 'main/teams/cell_button.html' with url=cell_value.url name=cell_value.name %}
+                {% include 'base/cell_button.html' with url=cell_value.url name=cell_value.name %}
               </td>
             {% else %}
               <td class="border rounded-md table-light">

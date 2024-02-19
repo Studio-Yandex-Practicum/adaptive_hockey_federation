@@ -113,7 +113,7 @@ class CreateUserView(
         CreateView):
     model = User
     form_class = CreateUserForm
-    template_name = 'users/user_create.html'
+    template_name = 'main/users/user_create.html'
     success_url = '/users'
     permission_required = 'users.create_user'
 
