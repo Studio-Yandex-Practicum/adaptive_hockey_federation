@@ -1,9 +1,5 @@
-from core.constants import STAFF_POSITION_CHOICES
 from django.contrib.auth.decorators import login_required
-
 from django.shortcuts import render
-
-from adaptive_hockey_federation.core.utils import generate_file_name
 
 
 @login_required
