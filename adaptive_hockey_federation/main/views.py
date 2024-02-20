@@ -331,6 +331,16 @@ class TeamListView(LoginRequiredMixin, ListView):
                     | Q(city__name__icontains=search)
                 )
                 queryset = queryset.filter(or_lookup)
+            elif search_column == 'team_structure':
+                or_lookup = (
+                    Q(team_players__name__icontains=search)
+                    | Q(team_players__surname__icontains=search)
+                    | Q(team_players__patronymic__icontains=search)
+                    | Q(team_members__staff_member__name__icontains=search)
+                    | Q(team_members__staff_member__surname__icontains=search)
+                    | Q(team_members__staff_member__patronymic__icontains=search)  # Noqa
+                )
+                queryset = queryset.filter(or_lookup)
             else:
                 search_fields = {
                     "discipline_name": "discipline_name_id__name",
@@ -358,7 +368,7 @@ class TeamListView(LoginRequiredMixin, ListView):
                 "discipline_name": team.discipline_name,
                 "city": team.city,
                 "_ref_": {
-                    "name": "Игроки",
+                    "name": "Посмотреть",
                     "type": "button",
                     "url": reverse("main:teams_id", args=[team.id]),
                 },
@@ -369,7 +379,7 @@ class TeamListView(LoginRequiredMixin, ListView):
             "name": "Название",
             "discipline_name": "Дисциплина",
             "city": "Город",
-            "players_reference": "Игроки",
+            "team_structure": "Состав команды",
         }
         context["table_data"] = table_data
         return context
