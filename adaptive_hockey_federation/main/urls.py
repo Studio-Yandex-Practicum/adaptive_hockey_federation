@@ -1,8 +1,7 @@
 from django.urls import path
 from events import views as events
-
-from . import views as main_views
-from .controllers import player_views, team_views
+from main import views as main_views
+from main.controllers import player_views, team_views
 
 app_name = "main"
 
@@ -33,6 +32,11 @@ urlpatterns = [
         "player_deleted/",
         player_views.player_id_deleted,
         name="player_id_deleted",
+    ),
+    path(
+        "player_create/",
+        player_views.PlayerCreateView.as_view(),
+        name="player_create",
     ),
     path("teams/", team_views.TeamListView.as_view(), name="teams"),
     path(

@@ -1,3 +1,4 @@
+from core.utils import generate_file_name
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -5,11 +6,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
-from adaptive_hockey_federation.core.utils import generate_file_name
-
-from ..forms import PlayerForm
-from ..models import Document, Player
+from main.forms import PlayerForm
+from main.models import Document, Player
 
 
 class PlayerCreateView(CreateView):
