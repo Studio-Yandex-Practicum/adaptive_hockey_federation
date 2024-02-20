@@ -58,31 +58,32 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
       - name: Create folder for deploy
         run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
-        run: scp -r $GITHUB_WORKSPACE/infra/stage/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+        run: |
+          scp -r $GITHUB_WORKSPACE/infra/stage/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/nginx/
 
       - name: Execute commands on VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
-
             rm .env
             touch .env
 
-            echo HOST_NG=${{ secrets.HOST_NG }} >> .env
-            echo PORT_NG=${{ secrets.PORT_NG }} >> .env
-            echo IMAGE_COMPOSE=${{ secrets.IMAGE_COMPOSE }} > .env
+            echo HOST=${{ secrets.HOST }} >> .env
+            echo PORT=${{ secrets.PORT }} >> .env
+            echo IMAGE_COMPOSE=${{ secrets.IMAGE_COMPOSE }} >> .env
 
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             echo DEBUG=${{ secrets.DEBUG }} >> .env
@@ -103,6 +104,6 @@ jobs:
             sudo systemctl daemon-reload
             sudo systemctl restart adaptive_hockey_federation.service
 
-            sleep 10
-            docker exec adaptive_hockey_federation python manage.py migrate
+            sleep 20
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+            docker exec adaptive_hockey_federation python manage.py migrate

@@ -1,3 +1,4 @@
+from core.constants import STAFF_POSITION_CHOICES
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -10,21 +11,31 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm, TeamForm
-from main.models import Player, Team
+from main.models import City, Document, Player, Team
 
-# пример рендера таблиц, удалить после реализации вьюх
-CONTEXT_EXAMPLE = {
-    "table_head": {"id": "Идентификатор", "name": "Имя", "surname": "Фамилия"},
-    "table_data": [
-        {"id": 1, "name": "Иван", "surname": "Иванов"},
-        {"id": 2, "name": "Пётр", "surname": "Петров"},
-    ],
-}
+from adaptive_hockey_federation.core.utils import generate_file_name
 
 
 @login_required
 def main(request):
     return render(request, "main/home/main.html")
+
+
+class PlayerCreateView(CreateView):
+    '''View-класс для создания нового игрока.'''
+    model = Player
+    form_class = PlayerForm
+    template_name = "main/player_id/player_id_create.html"
+    success_url = "/players"
+
+    def form_valid(self, form):
+        player = form.save()
+        for iter, file in enumerate(self.request.FILES.getlist('documents')):
+            file.name = generate_file_name(file.name, player.name, iter)
+            Document.objects.create(
+                player=player, file=file, name=file.name
+            )
+        return super().form_valid(form)
 
 
 class PlayersListView(LoginRequiredMixin, ListView):
@@ -234,59 +245,68 @@ class TeamIdView(DetailView):
             .select_related("discipline")
             .all()
         )
-        staff_list = team.team_members.all()
-        staff_table_head = {
-            "number": "№",
-            "surname": "Фамилия",
-            "name": "Имя",
-            "function": "Должность",
-            "position": "Квалификация",
-            "note": "Примечание",
-        }
-        staff_table_data = [
+        staff_table = [
             {
-                "number": i + 1,
-                "surname": staff.staff_member.surname,
-                "name": staff.staff_member.name,
-                "function": staff.staff_position,
-                "position": staff.qualification,
-                "note": staff.notes,
+                "position": staff_position[1].title(),
+                "head": {
+                    "number": "№",
+                    "surname": "Фамилия",
+                    "name": "Имя",
+                    "function": "Должность",
+                    "position": "Квалификация",
+                    "note": "Примечание",
+                },
+                "data": [
+                    {
+                        "number": i + 1,
+                        "surname": staff.staff_member.surname,
+                        "name": staff.staff_member.name,
+                        "function": staff.staff_position,
+                        "position": staff.qualification,
+                        "note": staff.notes,
+                    }
+                    for i, staff in enumerate(
+                        team.team_members.filter(
+                            staff_position=staff_position[1].title()
+                        )
+                    )
+                ]
             }
-            for i, staff in enumerate(staff_list)
+            for staff_position in STAFF_POSITION_CHOICES
         ]
-        players_table_head = {
-            "number": "№",
-            "surname": "Фамилия",
-            "name": "Имя",
-            "birthday": "Д.Р.",
-            "gender": "Пол",
-            "position": "Квалификация",
-            "diagnosis": "Диагноз",
-            "discipline": "Дисциплина",
-            "level_revision": "Уровень ревизии",
+        players_table = {
+            "name": "Игроки",
+            "head": {
+                "number": "№",
+                "surname": "Фамилия",
+                "name": "Имя",
+                "birthday": "Д.Р.",
+                "gender": "Пол",
+                "position": "Квалификация",
+                "diagnosis": "Диагноз",
+                "discipline": "Дисциплина",
+                "level_revision": "Уровень ревизии",
+            },
+            "data": [
+                {
+                    "number": player.number,
+                    "surname": player.surname,
+                    "name": player.name,
+                    "birthday": player.birthday,
+                    "gender": player.get_gender_display(),
+                    "position": player.get_position_display(),
+                    "diagnosis": player.diagnosis.name
+                    if player.diagnosis else None,
+                    "discipline": player.discipline
+                    if player.discipline else None,
+                    "level_revision": player.level_revision,
+                }
+                for player in players
+            ]
         }
 
-        players_table_data = [
-            {
-                "number": player.number,
-                "surname": player.surname,
-                "name": player.name,
-                "birthday": player.birthday,
-                "gender": player.get_gender_display(),
-                "position": player.get_position_display(),
-                "diagnosis": player.diagnosis.name
-                if player.diagnosis else None,
-                "discipline": player.discipline
-                if player.discipline else None,
-                "level_revision": player.level_revision,
-            }
-            for player in players
-        ]
-
-        context["table_head"] = players_table_head
-        context["table_data"] = players_table_data
-        context["staff_table_head"] = staff_table_head
-        context["staff_table_data"] = staff_table_data
+        context["players_table"] = players_table
+        context["staff_table"] = staff_table
         context["team"] = team
 
         return context
@@ -328,13 +348,24 @@ class TeamListView(LoginRequiredMixin, ListView):
         return context
 
 
+class CityListMixin:
+    """Миксин для использования в видах редактирования и создания команд."""
+
+    @staticmethod
+    def get_cities():
+        """Возвращает список имен всех городов из БД."""
+        return City.objects.values_list('name', flat=True)
+
+
 class UpdateTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-        UpdateView):
+    UpdateView,
+    CityListMixin
+):
     model = Team
     form_class = TeamForm
-    template_name = "main/users/user_update.html"
+    template_name = "main/teams/team_update.html"
     success_url = '/teams/'
     permission_required = 'team.change_team'
 
@@ -346,15 +377,17 @@ class UpdateTeamView(
         context = super(UpdateTeamView, self).get_context_data(**kwargs)
         context['form'] = self.form_class(
             instance=self.object,
-            initial=self.get_initial()
+            initial={'city': self.object.city.name}
         )
+        context['cities'] = self.get_cities()
         return context
 
 
 class DeleteTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-        DeleteView):
+    DeleteView
+):
     object = Team
     model = Team
     success_url = '/teams/'
@@ -368,16 +401,23 @@ class DeleteTeamView(
 class CreateTeamView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-        CreateView):
+    CreateView,
+    CityListMixin
+):
     model = Team
     form_class = TeamForm
-    template_name = 'includes/user_create.html'
+    template_name = 'main/teams/team_create.html'
     permission_required = 'team.add_team'
-    success_url = '/teams'
+    success_url = '/teams/?page=last'
 
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateTeamView, self).get_context_data(**kwargs)
+        context['cities'] = self.get_cities()
+        return context
 
 
 @login_required

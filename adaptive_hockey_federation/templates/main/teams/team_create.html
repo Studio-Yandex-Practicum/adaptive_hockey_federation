@@ -1,7 +1,8 @@
-{% extends 'base/base.html' %}
+{% extends "base/base.html" %}
+{% load static %}
 {% load user_filters %}
 {% block title %}
-    Изменить пользователя
+    Создать команду
 {% endblock %}
 {% block content %}
 <div class="container py-4">
@@ -9,7 +10,7 @@
     <div class="col-md-8 p-5">
       <div class="card update_card">
         <div class="card-header">
-            Редактированние данных пользователя </br> {{ object.first_name }} {{ object.last_name }}
+          Создание новой команды
         </div>
         <div class="card-body">
           <form method="post"
@@ -18,15 +19,6 @@
             enctype="multipart/form-data"
           {% endif %}>
             {% csrf_token %}
-
-            {% if form.non_field_errors %}
-              <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-
             {% for field in form %}
             <div class="row my-3">
               <label for="{{ field.id_for_label }}">
@@ -35,7 +27,8 @@
                     <span class="required text-danger">*</span>
                   {% endif %}
               </label>
-              {{ field |addclass:'form-control' }}
+              {{ field|addclass:'form-control' }}
+              {% include 'main/teams/team_form_city_field_datalist.html' %}
             {% if field.errors %}
             <small class="error">{{ field.errors|striptags  }}</small>
           {% endif %}
@@ -43,7 +36,7 @@
             {% endfor %}
             <div class="col-md-6 offset-md-4">
               <button type="submit" class="update_btn">
-                Сохранить
+                Создать
               </button>
             </div>
           </form>

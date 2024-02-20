@@ -6,15 +6,9 @@
         {% for head_item in table_head.values %}
         <th class="col">{{ head_item }}</th>
         {% endfor %}
-        <th class="col">
-          <div class="row">
-            <div class="col text-right">
-              <img src="{% static 'img/edit.png' %}" class="float-end">
-            </div>
-            <div class="col text-left">
-              <img src="{% static 'img/delete.png' %}" class="float-start">
-            </div>
-          </div>
+        <th>
+          {% include 'base/edit_icon.html' %}
+          {% include 'base/delete_icon.html' %}
         </th>
       </tr>
     </thead>
@@ -44,13 +38,13 @@
         {% if view_name == 'users:users' %}
           {% include "teams_id/create_delete_buttons.html" %}
         {% elif view_name == 'main:players' %}
-          {% include "includes/create_delete_button_players.html" %}
+          {% include "main/players/create_delete_button_players.html" %}
         {% elif view_name == 'main:teams' %}
-          {% include "includes/team_edit_delete_buttons.html" %}
+          {% include "main/players/team_edit_delete_buttons.html" %}
         {% else %}
         <td>
-          <button type="button"><img src="{% static 'img/edit.png' %}"></button>
-          <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+          {% include 'base/edit_icon.html' %}
+          {% include 'base/delete_icon.html' %}
         </td>
         {% endif %}
         {% endwith %}
