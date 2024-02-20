@@ -34,7 +34,8 @@ urlpatterns = [
     ),
     path("teams/<int:team_id>/", views.TeamIdView.as_view(), name="teams_id"),
     path(
-        "competitions/<int:id>/", views.competitions_id, name="competitions_id"
+        "competitions/<int:pk>/",
+        events.TeamsOnEnvent.as_view(), name="competitions_id"
     ),
     path("competitions/", events.EventListView.as_view(), name="competitions"),
     path("analytics/", views.analytics, name="analytics"),
