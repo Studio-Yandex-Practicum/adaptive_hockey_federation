@@ -1,4 +1,6 @@
-# constatnts for users/models.py
+# constants for users/models.py
+import datetime
+
 NAME_MAX_LENGTH = 256
 EMAIL_MAX_LENGTH = 256
 QUERY_SET_LENGTH = 15
@@ -36,3 +38,14 @@ STAFF_POSITION_CHOICES = (
 )
 
 TIME_FORMAT = "%H-%M-%S"
+
+TIMESPAN_CHOICES = (
+    (datetime.datetime.now().replace(
+        day=1, hour=0, minute=0, second=0, microsecond=0
+    ), "Текущий месяц"),
+    (datetime.datetime.now().replace(
+        month=1, day=1, hour=0, minute=0, second=0, microsecond=0
+    ), "Текущий год"),
+)
+
+BLANK_CHOICE = [(None, 'Все')]

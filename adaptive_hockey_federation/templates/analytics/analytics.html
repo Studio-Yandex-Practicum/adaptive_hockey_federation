@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Аналитика
+{% endblock %}
+{% block content %}
+  <div class="container container text-center p-4">
+    {% include 'analytics/filters.html' with form=form %}
+  </div>
+  <div class="container container text-center p-4">
+    {% include 'analytics/dashboard.html' with dashboard=dashboard %}
+  </div>
+  <div class="container">
+    {% include 'analytics/table.html' with table_head=table_head table_data=table_data %}
+  </div>
+{% endblock %}

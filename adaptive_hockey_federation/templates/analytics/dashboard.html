@@ -1,18 +1,5 @@
 {% load static %}
-<div class="container text-center p-4">
-    <div class="row row-cols-3 row-gap-2 column-gap-0 h-25" style="width: 50%">
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                За время
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+
 <div class="container text-center p-4">
     <div class="row row-cols-3 row-gap-2 column-gap-0 h-25" style="width: 50%">
         {% for metric in dashboard.primary %}
@@ -50,4 +37,3 @@
             </div>
         {% endfor %}
     </div>
-</div>

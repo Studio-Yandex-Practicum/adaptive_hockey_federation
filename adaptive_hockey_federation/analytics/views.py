@@ -1,7 +1,9 @@
 from datetime import datetime
 
-from core.constants import GENDER_CHOICES
+from analytics.forms import AnalyticsFilterForm
+from core.constants import GENDER_CHOICES, PLAYER_POSITION_CHOICES
 from dateutil.relativedelta import relativedelta
+from django.db.models import Q
 from main.models import City, Diagnosis, Player, Team
 from views import PlayersListView
 
@@ -9,14 +11,29 @@ from views import PlayersListView
 class AnalyticsListView(
     PlayersListView,
 ):
-    template_name = "main/analytics/analytics.html"
+    template_name = "analytics/analytics.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        or_lookup = {
+            'discipline__discipline_name_id':
+                self.request.GET.get('discipline'),
+            'team': self.request.GET.get('team'),
+            'position': dict(PLAYER_POSITION_CHOICES)[
+                self.request.GET.get('position')],
+        }
+        or_lookup = {key: value for key, value in or_lookup.items() if value}
+        if not or_lookup:
+            return queryset
+        return queryset.filter(Q(**or_lookup))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         date_18_years_ago = datetime.now() - relativedelta(years=18)
+        context["form"] = AnalyticsFilterForm(self.request.GET or None)
         context["dashboard"] = {
             "primary": [
-                ("игроков", Player.objects.count()),
+                ("игроков", self.get_queryset().count()),
                 ("команд", Team.objects.count()),
                 ("городов", City.objects.count()),
             ],
