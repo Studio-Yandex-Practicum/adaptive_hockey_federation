@@ -3,11 +3,30 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
+from adaptive_hockey_federation.core.utils import generate_file_name
+
 from ..forms import PlayerForm
-from ..models import Player
+from ..models import Document, Player
+
+
+class PlayerCreateView(CreateView):
+    '''View-класс для создания нового игрока.'''
+    model = Player
+    form_class = PlayerForm
+    template_name = "main/player_id/player_id_create.html"
+    success_url = "/players"
+
+    def form_valid(self, form):
+        player = form.save()
+        for iter, file in enumerate(self.request.FILES.getlist('documents')):
+            file.name = generate_file_name(file.name, player.name, iter)
+            Document.objects.create(
+                player=player, file=file, name=file.name
+            )
+        return super().form_valid(form)
 
 
 class PlayersListView(LoginRequiredMixin, ListView):

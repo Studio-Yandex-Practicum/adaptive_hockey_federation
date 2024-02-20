@@ -1,17 +1,21 @@
 {% load static %}
-<td class="border rounded-md btsss">
-  <div class="input-group justify-content-md-center">
+<td class="border rounded-md">
+  <div class="items__group">
     <form action="{% url action_url table_string.id %}" method="post">
       {% csrf_token %}
       <button class="btns-edit-del" type="submit" {% if is_activated %}activate{% else %}disabled{% endif %}>
-        <img src={% static 'img/edit.png' %}>
+        {% include 'base/edit_icon.html' %}
       </button>
     </form>
     <form action="{% url delete_url table_string.id %}" method="post" >
       {% csrf_token %}
-      <button class="btns-edit-del" type="submit" {% if is_activated %}activate{% else %}disabled{% endif %}
-             onclick="return confirm('{{ delete_message }}{{ table_string.name }} ?');">
-        <img src={% static 'img/delete.png' %}>
+      <button
+        class="btns-edit-del"
+        type="submit"
+        {% if is_activated %}activate{% else %}disabled{% endif %}
+        onclick="return confirm('{{ delete_message }}{{ table_string.name }} ?');"
+      >
+        {% include 'base/delete_icon.html' %}
       </button>
     </form>
   </div>

@@ -1,0 +1,76 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+  Создание профиля нового игрока
+{% endblock %}
+
+{% block content %}
+  <h2 class="text-center mb-4">Создание профиля нового игрока</h2>
+
+  <form method="post" action="{% url 'main:player_create' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container text-start">
+      <div class="row">
+        <div class="col-md-6">
+          <h4 class="text-center mb-4">Личная информация</h4>
+          <table class="table">
+            <tbody>
+              {% for field in form.visible_fields %}
+                  {% if field.name in 'surname name patronymic gender birthday discipline diagnosis' or field.name == 'identity_document' %}
+                  <tr>
+                    <th>{{ field.label_tag }}</th>
+                    <td>{{ field }}</td>
+                    <td>{{ field.errors }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-md-6">
+          <h4 class="text-center mb-4">Игровая информация</h4>
+          <table class="table">
+            <tbody>
+              {% for field in form.visible_fields %}
+                {% if field.name in 'team level_revision is_captain is_assistent position number' %}
+                  <tr>
+                    <th>{{ field.label_tag }}</th>
+                    <td>{{ field }}</td>
+                    <td>{{ field.errors }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h4 class="text-center mb-4">Документы</h4>
+          <table class="table">
+              <div>
+                Зажав клавишу Ctrl, можно выбрать несколько файлов:
+                <input type="file" name="documents" multiple>
+              </div>
+            </form>
+          </table>
+        </div>
+      </div>
+
+    <!-- Save Button -->
+    <div class="container">
+      <div class="row">
+        <div class="col text-center text-white flex justify-start">
+          <button type="submit" class="btn btn-secondary text-white"
+                  style="background-color: #64C2D1; border: 1px solid #fff;">
+            Сохранить
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="container mb-4"></div>
+{% endblock %}
