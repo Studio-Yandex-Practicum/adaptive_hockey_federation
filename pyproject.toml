@@ -19,6 +19,7 @@ pytest-django = "^4.7.0"
 psycopg2-binary = "2.9.9"
 django-environ = "^0.11.2"
 django-extensions = "^3.2.3"
+pillow = "^10.2.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
@@ -26,6 +27,7 @@ pre-commit = "3.5.0"
 django-debug-toolbar = "^4.2.0"
 django-extensions = "^3.2.3"
 factory-boy = "^3.3.0"
+types-Pillow = "*"
 
 [tool.poetry.group.test.dependencies]
 flake8 = "^6.1.0"

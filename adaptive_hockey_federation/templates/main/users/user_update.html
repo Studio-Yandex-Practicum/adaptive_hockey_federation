@@ -1,11 +1,7 @@
 {% extends 'base/base.html' %}
 {% load user_filters %}
 {% block title %}
-  {% if '/user_update/' in request.path %}
     Изменить пользователя
-  {% elif '/team_update/' in request.path %}
-    Редактированние данных команды
-  {% endif %}
 {% endblock %}
 {% block content %}
 <div class="container py-4">
@@ -13,11 +9,7 @@
     <div class="col-md-8 p-5">
       <div class="card update_card">
         <div class="card-header">
-          {% if '/user_update/' in request.path %}
             Редактированние данных пользователя </br> {{ object.first_name }} {{ object.last_name }}
-          {% elif '/team_update/' in request.path %}
-            Редактированние данных команды </br> {{ object.name }}
-          {% endif %}
         </div>
         <div class="card-body">
           <form method="post"

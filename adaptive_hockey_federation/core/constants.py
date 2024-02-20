@@ -37,6 +37,8 @@ PLAYER_POSITION_CHOICES = (
 )
 
 STAFF_POSITION_CHOICES = (
-    ('trainer', 'тренер'),
-    ('other', 'другой'),
+    ('trainer', 'Тренер'),
+    ('other', 'Другой'),
 )
+
+TIME_FORMAT = '%H-%M-%S'

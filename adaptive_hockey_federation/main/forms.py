@@ -1,6 +1,9 @@
+from typing import Any
+
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
-from main.models import City, DisciplineName, Player, StaffTeamMember, Team
+from main.models import City, DisciplineName, Player, Team
 from users.models import User
 
 
@@ -27,7 +30,6 @@ class PlayerForm(forms.ModelForm):
             "discipline",
             "diagnosis",
             "level_revision",
-            "identity_document",
             "team",
             "is_captain",
             "is_assistent",
@@ -37,6 +39,45 @@ class PlayerForm(forms.ModelForm):
         ]
 
 
+class CityChoiceField(ModelChoiceField):
+    """Самодельное поле для выбора города."""
+
+    def __init__(self):
+        super().__init__(
+            queryset=City.objects.all(),
+            widget=TextInput(attrs={
+                'class': 'form-control',
+                'list': 'cities',
+                'placeholder': 'Введите или выберите название города'
+            }),
+            required=True,
+            error_messages={
+                'required': 'Пожалуйста, выберите город из списка.'
+            },
+            label='Город откуда команда',
+        )
+
+    def clean(self, value: Any) -> Any:
+        """Переопределенный метод родительского класса.
+        Прежде, чем вызвать родительский метод, получает объект города (
+        City) по введенному названию, проверяет наличие введенного
+        наименования города в БД. Если такого города в БД нет, то создает
+        соответствующий город (объект класса City) и возвращает его на
+        дальнейшую стандартную валидацию формы."""
+
+        if (not isinstance(value, str)
+                or value in self.empty_values):
+            raise ValidationError(self.error_messages['required'])
+
+        value = value.strip()
+
+        if city := City.get_by_name(value):
+            return super().clean(city)
+
+        city = City.objects.create(name=value)
+        return super().clean(city)
+
+
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
@@ -44,16 +85,8 @@ class TeamForm(forms.ModelForm):
             'curator'
         ].label_from_instance = lambda obj: obj.get_full_name()
 
-    city = forms.ModelChoiceField(
-        queryset=City.objects.all(),
-        widget=Select(attrs={'class': 'form-control'}),
-        required=True,
-        error_messages={
-            'required': 'Пожалуйста, выберите город из списка.'
-        },
-        label='Город откуда команда',
-        empty_label='Выберите название города'
-    )
+    city = CityChoiceField()
+
     curator = ModelChoiceField(
         queryset=User.objects.filter(role='agent'),
         required=True,
@@ -62,16 +95,6 @@ class TeamForm(forms.ModelForm):
         empty_label='Выберите куратора',
         error_messages={
             'required': 'Пожалуйста, выберите куратора из списка.'
-        }
-    )
-    staff_team_member = forms.ModelChoiceField(
-        queryset=StaffTeamMember.objects.all(),
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='Сотрудник команды',
-        empty_label='Выберите сотрудника команды',
-        error_messages={
-            'required': 'Пожалуйста, выберите сотрудника из списка.'
         }
     )
     discipline_name = forms.ModelChoiceField(
@@ -90,7 +113,6 @@ class TeamForm(forms.ModelForm):
         fields = [
             'name',
             'city',
-            'staff_team_member',
             'discipline_name',
             'curator'
         ]
@@ -98,8 +120,8 @@ class TeamForm(forms.ModelForm):
             'name': TextInput(
                 attrs={'placeholder': 'Введите название команды'}
             ),
-            'city': Select(),
             'staff_team_member': Select(),
+            'city': Select(),
             'discipline_name': Select(),
             'curator': Select(),
         }
@@ -109,3 +131,32 @@ class TeamForm(forms.ModelForm):
             if commit:
                 instance.save()
             return instance
+
+
+class PlayerTeamForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PlayerTeamForm, self).__init__(*args, **kwargs)
+        self.fields[
+            'player'
+        ].label_from_instance = lambda obj: obj.get_name_and_position()
+
+    class Meta:
+        labels = {
+            'player': 'Игрок',
+            'team': 'Название команды',
+        }
+
+
+class StaffTeamMemberTeamForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(StaffTeamMemberTeamForm, self).__init__(*args, **kwargs)
+        self.fields[
+            'staffteammember'
+        ].label_from_instance = lambda obj: obj.get_name_and_staff_position()
+
+    class Meta:
+        labels = {
+            'staffteammember': 'Сотрудник команды',
+            'team': 'Команда',
+        }

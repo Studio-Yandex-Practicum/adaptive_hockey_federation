@@ -3,12 +3,14 @@
   Профиль команды
 {% endblock %}
 {% block content %}
+  {% for staff in staff_table %}
+      <div class="container">
+        <h3 class="text-start mb-4">{{ staff.position }}</h3>
+        {% include 'main/teams_id/table.html' with table_head=staff.head table_data=staff.data %}
+      </div>
+  {% endfor %}
   <div class="container">
-    <h3 class="text-start mb-4">Тренеры</h3>
-    {% include 'main/teams_id/table.html' with table_head=staff_table_head table_data=staff_table_data %}
-  </div>
-  <div class="container">
-    <h3 class="text-start mb-4">Игроки</h3>
-    {% include 'main/teams_id/table.html' with table_head=table_head table_data=table_data %}
+    <h3 class="text-start mb-4">{{ players_table.name }}</h3>
+    {% include 'main/teams_id/table.html' with table_head=players_table.head table_data=players_table.data %}
   </div>
 {% endblock content %}

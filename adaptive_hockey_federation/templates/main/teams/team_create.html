@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load user_filters %}
+{% block title %}
+    Создать команду
+{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+      <div class="card update_card">
+        <div class="card-header">
+          Создание новой команды
+        </div>
+        <div class="card-body">
+          <form method="post"
+          {% if action_url %}
+            action="{% url action_url %}"
+            enctype="multipart/form-data"
+          {% endif %}>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="row my-3">
+              <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="required text-danger">*</span>
+                  {% endif %}
+              </label>
+              {{ field|addclass:'form-control' }}
+              {% include 'main/teams/team_form_city_field_datalist.html' %}
+            {% if field.errors %}
+            <small class="error">{{ field.errors|striptags  }}</small>
+          {% endif %}
+            </div>
+            {% endfor %}
+            <div class="col-md-6 offset-md-4">
+              <button type="submit" class="update_btn">
+                Создать
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
