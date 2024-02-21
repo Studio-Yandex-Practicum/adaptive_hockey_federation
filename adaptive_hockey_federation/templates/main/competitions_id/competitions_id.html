@@ -16,6 +16,7 @@
         <th>Город</th>
         <th>Дисциплина</th>
         <th>Состав</th>
+        <th>Действия</th>
       </tr>
     </thead>
     <tbody>
@@ -27,7 +28,13 @@
           <td>{{ team.discipline_name }}</td>
           <td><a href="{{ team.ref.url }}" class="btn btn-secondary text-white"
             style="background-color: #64C2D1; border: 1px solid #fff;"
-            role="button">Игроки</a></td>
+            role="button">Игроки</a>
+          </td>
+          <td>
+            <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить команду {{ table_string.name }}?');"></a>
+              {% include 'base/delete_icon.html' %}
+            </button>
+          </td>
         </tr>
       {% endfor %}
     </tbody>
