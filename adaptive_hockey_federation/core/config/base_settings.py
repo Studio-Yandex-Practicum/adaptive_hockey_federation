@@ -30,6 +30,7 @@ LOCAL_APPS = [
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
     'events.apps.EventsConfig',
+    'analytics.apps.AnalyticsConfig',
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + DEFAULT_APPS + LOCAL_APPS

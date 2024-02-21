@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from analytics.forms import AnalyticsFilterForm
-from controllers.player_views import PlayersListView
 from core.constants import GENDER_CHOICES, PLAYER_POSITION_CHOICES
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
+from main.controllers.player_views import PlayersListView
 from main.models import Diagnosis, Team
 
 
