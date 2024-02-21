@@ -227,11 +227,14 @@ class PlayerIDDeleteView(DeleteView):
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
 
-class TeamIdView(DetailView):
+class TeamIdView(PermissionRequiredMixin, DetailView):
     model = Team
     form_class = TeamForm
     template_name = "main/teams_id/teams_id.html"
     success_url = "/teams/"
+    permission_required = "main.view_team"
+    permission_denied_message = ("Отсутствует разрешение на просмотр "
+                                 "содержимого.")
 
     def get_object(self, queryset=None):
         return get_object_or_404(Team, id=self.kwargs["team_id"])
@@ -367,7 +370,7 @@ class UpdateTeamView(
     form_class = TeamForm
     template_name = "main/teams/team_update.html"
     success_url = '/teams/'
-    permission_required = 'team.change_team'
+    permission_required = 'main.change_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get("team_id")
