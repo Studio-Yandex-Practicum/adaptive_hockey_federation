@@ -421,7 +421,7 @@ class CreateTeamView(
     model = Team
     form_class = TeamForm
     template_name = 'main/teams/team_create.html'
-    permission_required = 'team.add_team'
+    permission_required = 'main.add_team'
     success_url = '/teams/?page=last'
 
     def form_valid(self, form):
