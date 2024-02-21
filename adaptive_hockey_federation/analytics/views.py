@@ -59,7 +59,4 @@ class AnalyticsListView(
                     ))
             ]
         }
-        context["filter_menus"] = {
-            ""
-        }
         return context
