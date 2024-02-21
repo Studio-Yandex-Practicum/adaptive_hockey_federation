@@ -403,7 +403,7 @@ class DeleteTeamView(
     object = Team
     model = Team
     success_url = '/teams/'
-    permission_required = 'team.delete_team'
+    permission_required = 'main.delete_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get('team_id')
