@@ -4,7 +4,7 @@ from analytics.forms import AnalyticsFilterForm
 from core.constants import GENDER_CHOICES, PLAYER_POSITION_CHOICES
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
-from main.models import City, Diagnosis, Player, Team
+from main.models import Diagnosis, Team
 from views import PlayersListView
 
 
@@ -34,24 +34,29 @@ class AnalyticsListView(
         context["dashboard"] = {
             "primary": [
                 ("игроков", self.get_queryset().count()),
-                ("команд", Team.objects.count()),
-                ("городов", City.objects.count()),
+                ("команд", teams_count := Team.objects.filter(
+                    id__in=self.get_queryset().values_list(
+                        'team', flat=True).distinct()).count()
+                 ),
+                ("городов", teams_count),
             ],
             "secondary": [
-                ("мальчиков", Player.objects.filter(
+                ("мальчиков", self.get_queryset().filter(
                     gender=GENDER_CHOICES[0][1]).count()),
-                ("девочек", Player.objects.filter(
+                ("девочек", self.get_queryset().filter(
                     gender=GENDER_CHOICES[1][1]).count()),
-                ("младше 18", Player.objects.filter(
+                ("младше 18", self.get_queryset().filter(
                     birthday__lt=date_18_years_ago).count()),
-                ("старше 18", Player.objects.filter(
+                ("старше 18", self.get_queryset().filter(
                     birthday__gte=date_18_years_ago).count()),
             ],
             "diagnosis": [
                 (f"{diagnosis.name}", diagnosis.player_diagnosis.count())
                 for i, diagnosis in enumerate(
-                    Diagnosis.objects.all()
-                )
+                    Diagnosis.objects.filter(
+                        id__in=self.get_queryset().values_list(
+                            'diagnosis', flat=True).distinct()
+                    ))
             ]
         }
         context["filter_menus"] = {
