@@ -3,20 +3,23 @@
   <div class="items__group">
     <form action="{% url action_url table_string.id %}" method="post">
       {% csrf_token %}
-      <button class="btns-edit-del" type="submit" {% if is_activated %}activate{% else %}disabled{% endif %}>
-        {% include 'base/edit_icon.html' %}
-      </button>
+      {% if perms.main.change_team %}
+        <button class="btns-edit-del" type="submit">
+          {% include 'base/edit_icon.html' %}
+        </button>
+      {% endif %}
     </form>
-    <form action="{% url delete_url table_string.id %}" method="post" >
+    <form action="{% url delete_url table_string.id %}" method="post">
       {% csrf_token %}
-      <button
-        class="btns-edit-del"
-        type="submit"
-        {% if is_activated %}activate{% else %}disabled{% endif %}
-        onclick="return confirm('{{ delete_message }}{{ table_string.name }} ?');"
-      >
-        {% include 'base/delete_icon.html' %}
-      </button>
+      {% if perms.main.delete_team %}
+        <button
+                class="btns-edit-del"
+                type="submit"
+                onclick="return confirm('{{ delete_message }}{{ table_string.name }} ?');"
+        >
+          {% include 'base/delete_icon.html' %}
+        </button>
+      {% endif %}
     </form>
   </div>
 </td>
