@@ -8,11 +8,6 @@ def main(request):
 
 
 @login_required
-def competitions_id(request, id):
-    return render(request, "main/competitions_id/competitions_id.html")
-
-
-@login_required
 def analytics(request):
     return render(request, "main/analytics/analitics.html")
 

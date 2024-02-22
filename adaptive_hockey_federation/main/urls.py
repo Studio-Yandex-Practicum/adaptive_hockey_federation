@@ -1,5 +1,4 @@
 from django.urls import path
-from events import views as events
 from main import views as main_views
 from main.controllers import player_views, team_views
 
@@ -59,12 +58,6 @@ urlpatterns = [
         team_views.TeamIdView.as_view(),
         name="teams_id",
     ),
-    path(
-        "competitions/<int:id>/",
-        main_views.competitions_id,
-        name="competitions_id",
-    ),
-    path("competitions/", events.EventListView.as_view(), name="competitions"),
     path("analytics/", main_views.analytics, name="analytics"),
     path("unloads/", main_views.unloads, name="unloads"),
 ]

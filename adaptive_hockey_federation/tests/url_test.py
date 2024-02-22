@@ -9,6 +9,7 @@ from fixture_user import (
     test_password,
     test_role,
 )
+from main.data_factories.factories import EventFactory
 from main.models import (
     City,
     DisciplineName,
@@ -64,6 +65,7 @@ class TestUrls(TestCase):
                 name='Tetst DisciplineName'),
             curator=self.user,
         )
+        self.competition = EventFactory.create()
 
     def delete_user(self, user_id):
         try:
