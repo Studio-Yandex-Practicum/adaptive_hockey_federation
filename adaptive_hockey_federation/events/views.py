@@ -50,7 +50,6 @@ class TeamsOnEvent(DetailView):
 
     model = Event
     template_name = "main/competitions_id/competitions_id.html"
-    # success_url = "/competitions/"
 
     def get_success_url(self):
         return reverse_lazy(
