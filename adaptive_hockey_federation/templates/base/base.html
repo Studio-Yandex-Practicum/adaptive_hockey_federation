@@ -59,12 +59,12 @@
           return
         } else {
           if (isRotated) {
-            rectangle.style.transform = 'rotate(0deg)'
-          } else {
             rectangle.style.transform = 'rotate(180deg)'
+          } else {
+            rectangle.style.transform = 'rotate(0deg)'
           }
           isRotated = !isRotated
-          sidebar.classList.toggle('aside-navbar_opened')
+          sidebar.classList.toggle('aside-navbar_closed')
         }
       }
       window.onload = toggle_visibility(true)

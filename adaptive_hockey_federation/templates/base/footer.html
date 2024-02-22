@@ -1,15 +1,6 @@
 <footer class="footer footer-class">
   <nav class="navbar-footer">
-    <button
-      id="rectangle"
-      onclick="toggle_visibility(false);"
-      class="nav-button"
-      type="button"
-      aria-controls="staticBackdrop"
-      aria-expanded="true"
-    >
-      <i class="bi bi-caret-right-fill fs-3" style="color: #fff;"></i>
-    </button>
+    <div style="width: 50px;"></div>
     {% include "base/pagination.html" %}
     <ul class="nav nav-pills">
       {% with request.resolver_match.view_name as view_name %}

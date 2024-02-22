@@ -10,11 +10,10 @@
 
   <form method="post" action="{% url 'main:player_create' %}" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="container text-start">
-      <div class="row">
-        <div class="col-md-6">
+    <div class="container text-center">
+        <div class="full-container">
           <h4 class="text-center mb-4">Личная информация</h4>
-          <table class="table">
+          <table class="table-table">
             <tbody>
               {% for field in form.visible_fields %}
                   {% if field.name in 'surname name patronymic gender birthday discipline diagnosis' or field.name == 'identity_document' %}
@@ -29,9 +28,9 @@
           </table>
         </div>
 
-        <div class="col-md-6">
+        <div class="full-container">
           <h4 class="text-center mb-4">Игровая информация</h4>
-          <table class="table">
+          <table class="table-table">
             <tbody>
               {% for field in form.visible_fields %}
                 {% if field.name in 'team level_revision is_captain is_assistent position number' %}
@@ -45,12 +44,10 @@
             </tbody>
           </table>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-md-6">
+        <div class="full-container">
           <h4 class="text-center mb-4">Документы</h4>
-          <table class="table">
+          <table class="table-table">
               <div>
                 Зажав клавишу Ctrl, можно выбрать несколько файлов:
                 <input type="file" name="documents" multiple>
@@ -58,14 +55,16 @@
             </form>
           </table>
         </div>
-      </div>
 
     <!-- Save Button -->
     <div class="container">
       <div class="row">
         <div class="col text-center text-white flex justify-start">
-          <button type="submit" class="btn btn-secondary text-white"
-                  style="background-color: #64C2D1; border: 1px solid #fff;">
+          <button
+            type="submit"
+            class="btn btn-secondary text-white"
+            style="background-color: #64C2D1; border: 1px solid #fff;"
+          >
             Сохранить
           </button>
         </div>
