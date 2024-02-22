@@ -1,4 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse, reverse_lazy
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from events.models import Event
 
@@ -26,7 +28,7 @@ class EventListView(LoginRequiredMixin, ListView):
                 "_ref_": {
                     "name": "Состав",
                     "type": "button",
-                    "url": '',
+                    "url": reverse("events:competitions_id", args=[event.pk]),
                 },
             })
 
@@ -40,4 +42,37 @@ class EventListView(LoginRequiredMixin, ListView):
             "teams": "Состав",
         }
         context["table_data"] = table_data
+        return context
+
+
+class TeamsOnEvent(DetailView):
+    """Отображение команд, принимающих участие в соревновании."""
+
+    model = Event
+    template_name = "main/competitions_id/competitions_id.html"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'events:competitions_id', kwargs={'pk': self.object.pk}
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        event = self.get_object()
+        teams = event.teams.all()
+        teams_table_data = [
+            {
+                "id": team.id,
+                "name": team.name,
+                "city": team.city,
+                "discipline_name": team.discipline_name,
+                "ref": {
+                    "name": "Игроки",
+                    "type": "button",
+                    "url": reverse("main:teams_id", args=[team.id]),
+                },
+            }
+            for team in teams
+        ]
+        context["table_data"] = teams_table_data
         return context

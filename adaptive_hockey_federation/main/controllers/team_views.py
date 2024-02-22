@@ -13,11 +13,17 @@ from main.forms import TeamForm
 from main.models import City, Player, Team
 
 
-class TeamIdView(DetailView):
+class TeamIdView(PermissionRequiredMixin, DetailView):
+    """Вид команды.
+    Детальный просмотр команды по игрокам и сотрудникам."""
+
     model = Team
     form_class = TeamForm
     template_name = "main/teams_id/teams_id.html"
     success_url = "/teams/"
+    permission_required = "main.view_team"
+    permission_denied_message = ("Отсутствует разрешение на просмотр "
+                                 "содержимого.")
 
     def get_object(self, queryset=None):
         return get_object_or_404(Team, id=self.kwargs["team_id"])
@@ -99,6 +105,8 @@ class TeamIdView(DetailView):
 
 
 class TeamListView(LoginRequiredMixin, ListView):
+    """Список спортивных команд."""
+
     model = Team
     template_name = "main/teams/teams.html"
     context_object_name = "teams"
@@ -186,11 +194,13 @@ class UpdateTeamView(
     UpdateView,
     CityListMixin
 ):
+    """Вид с формой изменения основных данных спортивной команды."""
+
     model = Team
     form_class = TeamForm
     template_name = "main/teams/team_update.html"
     success_url = '/teams/'
-    permission_required = 'team.change_team'
+    permission_required = 'main.change_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get("team_id")
@@ -211,10 +221,12 @@ class DeleteTeamView(
     PermissionRequiredMixin,
     DeleteView
 ):
+    """Вид удаления спортивной команды."""
+
     object = Team
     model = Team
     success_url = '/teams/'
-    permission_required = 'team.delete_team'
+    permission_required = 'main.delete_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get('team_id')
@@ -227,10 +239,12 @@ class CreateTeamView(
     CreateView,
     CityListMixin
 ):
+    """Вид с формой создания новой спортивной команды."""
+
     model = Team
     form_class = TeamForm
     template_name = 'main/teams/team_create.html'
-    permission_required = 'team.add_team'
+    permission_required = 'main.add_team'
     success_url = '/teams/?page=last'
 
     def form_valid(self, form):
