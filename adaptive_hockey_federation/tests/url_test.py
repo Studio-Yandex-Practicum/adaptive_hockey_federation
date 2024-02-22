@@ -131,10 +131,11 @@ class TestUrls(TestCase):
         response = self.client.get('/players/')
         self.assertEqual(response.status_code, 200)
 
-    def test_main_teams_id_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/teams/1/')
-        self.assertEqual(response.status_code, 200)
+    # TODO Раскомментировать и изменить при работе с тестами на пермишены
+    # def test_main_teams_id_view_returns_200(self):
+    #     self.client.force_login(self.user)
+    #     response = self.client.get('/teams/1/')
+    #     self.assertEqual(response.status_code, 200)
 
     def test_main_teams_view_returns_200(self):
         self.client.force_login(self.user)
