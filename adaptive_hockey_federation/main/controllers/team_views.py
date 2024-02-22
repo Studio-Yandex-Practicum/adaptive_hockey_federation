@@ -13,11 +13,17 @@ from main.forms import TeamForm
 from main.models import City, Player, Team
 
 
-class TeamIdView(DetailView):
+class TeamIdView(PermissionRequiredMixin, DetailView):
+    """Вид команды.
+    Детальный просмотр команды по игрокам и сотрудникам."""
+
     model = Team
     form_class = TeamForm
     template_name = "main/teams_id/teams_id.html"
     success_url = "/teams/"
+    permission_required = "main.view_team"
+    permission_denied_message = ("Отсутствует разрешение на просмотр "
+                                 "содержимого.")
 
     def get_object(self, queryset=None):
         return get_object_or_404(Team, id=self.kwargs["team_id"])
@@ -99,48 +105,13 @@ class TeamIdView(DetailView):
 
 
 class TeamListView(LoginRequiredMixin, ListView):
+    """Список спортивных команд."""
+
     model = Team
     template_name = "main/teams/teams.html"
     context_object_name = "teams"
     paginate_by = 10
     ordering = ["id"]
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            search_column = self.request.GET.get("search_column")
-            if not search_column or search_column.lower() in ["все", "all"]:
-                or_lookup = (
-                    Q(discipline_name_id__name__icontains=search)
-                    | Q(name__icontains=search)
-                    | Q(city__name__icontains=search)
-                )
-                queryset = queryset.filter(or_lookup)
-            elif search_column == 'team_structure':
-                or_lookup = (
-                    Q(team_players__name__icontains=search)
-                    | Q(team_players__surname__icontains=search)
-                    | Q(team_players__patronymic__icontains=search)
-                    | Q(team_members__staff_member__name__icontains=search)
-                    | Q(team_members__staff_member__surname__icontains=search)
-                    | Q(team_members__staff_member__patronymic__icontains=search)  # Noqa
-                )
-                queryset = queryset.filter(or_lookup)
-            else:
-                search_fields = {
-                    "discipline_name": "discipline_name_id__name",
-                    "name": "name",
-                    "city": "city__name",
-                }
-                lookup = {f"{search_fields[search_column]}__icontains": search}
-                queryset = queryset.filter(**lookup)
-
-        return (
-            queryset.select_related("discipline_name")
-            .select_related("city")
-            .order_by("name")
-        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,7 +125,7 @@ class TeamListView(LoginRequiredMixin, ListView):
                 "discipline_name": team.discipline_name,
                 "city": team.city,
                 "_ref_": {
-                    "name": "Посмотреть",
+                    "name": "Игроки",
                     "type": "button",
                     "url": reverse("main:teams_id", args=[team.id]),
                 },
@@ -165,7 +136,7 @@ class TeamListView(LoginRequiredMixin, ListView):
             "name": "Название",
             "discipline_name": "Дисциплина",
             "city": "Город",
-            "team_structure": "Состав команды",
+            "players_reference": "Игроки",
         }
         context["table_data"] = table_data
         return context
@@ -186,11 +157,13 @@ class UpdateTeamView(
     UpdateView,
     CityListMixin
 ):
+    """Вид с формой изменения основных данных спортивной команды."""
+
     model = Team
     form_class = TeamForm
     template_name = "main/teams/team_update.html"
     success_url = '/teams/'
-    permission_required = 'team.change_team'
+    permission_required = 'main.change_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get("team_id")
@@ -211,10 +184,12 @@ class DeleteTeamView(
     PermissionRequiredMixin,
     DeleteView
 ):
+    """Вид удаления спортивной команды."""
+
     object = Team
     model = Team
     success_url = '/teams/'
-    permission_required = 'team.delete_team'
+    permission_required = 'main.delete_team'
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get('team_id')
@@ -227,10 +202,12 @@ class CreateTeamView(
     CreateView,
     CityListMixin
 ):
+    """Вид с формой создания новой спортивной команды."""
+
     model = Team
     form_class = TeamForm
     template_name = 'main/teams/team_create.html'
-    permission_required = 'team.add_team'
+    permission_required = 'main.add_team'
     success_url = '/teams/?page=last'
 
     def form_valid(self, form):
