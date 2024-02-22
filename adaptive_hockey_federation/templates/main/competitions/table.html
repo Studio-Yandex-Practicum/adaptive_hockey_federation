@@ -5,19 +5,9 @@
       {% for head_item in table_head.values %}
       <th>{{ head_item }}</th>
       {% endfor %}
-      <th>
-        <div class="icons-block">
-          <div class="col icon">
-            <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#340061" d="M20.99.769a1.579 1.579 0 0 1 2.232 0l6.316 6.316a1.579 1.579 0 0 1 0 2.232L9.01 29.844a1.579 1.579 0 0 1-1.116.463H1.579A1.58 1.58 0 0 1 0 28.727v-6.315c0-.419.167-.82.463-1.116l15.79-15.79L20.988.769Zm-3.621 8.086L3.158 23.065v4.084H7.24l14.21-14.21-4.082-4.084Zm6.316 1.85 2.504-2.504-4.084-4.083-2.504 2.504 4.084 4.083Z"/><path fill="#000" fill-opacity=".2" d="M20.99.769a1.579 1.579 0 0 1 2.232 0l6.316 6.316a1.579 1.579 0 0 1 0 2.232L9.01 29.844a1.579 1.579 0 0 1-1.116.463H1.579A1.58 1.58 0 0 1 0 28.727v-6.315c0-.419.167-.82.463-1.116l15.79-15.79L20.988.769Zm-3.621 8.086L3.158 23.065v4.084H7.24l14.21-14.21-4.082-4.084Zm6.316 1.85 2.504-2.504-4.084-4.083-2.504 2.504 4.084 4.083Z"/>
-            </svg>
-          </div>
-          <div class="col icon">
-            <svg class="delete-icon" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#E73259" d="M15 .307c-8.272 0-15 6.73-15 15s6.728 15 15 15 15-6.73 15-15-6.728-15-15-15Zm0 26.666c-6.432 0-11.667-5.233-11.667-11.666C3.333 8.873 8.568 3.64 15 3.64c6.432 0 11.667 5.233 11.667 11.667 0 6.433-5.235 11.666-11.667 11.666Zm1.178-11.666 4.41-4.41a.837.837 0 0 0 0-1.179.836.836 0 0 0-1.178 0L15 14.128l-4.41-4.411a.833.833 0 0 0-1.178 1.178l4.41 4.412-4.41 4.41a.834.834 0 1 0 1.178 1.18L15 16.485l4.41 4.41a.833.833 0 1 0 1.18-1.177l-4.412-4.411Z"/><path fill="#000" fill-opacity=".2" d="M15 .307c-8.272 0-15 6.73-15 15s6.728 15 15 15 15-6.73 15-15-6.728-15-15-15Zm0 26.666c-6.432 0-11.667-5.233-11.667-11.666C3.333 8.873 8.568 3.64 15 3.64c6.432 0 11.667 5.233 11.667 11.667 0 6.433-5.235 11.666-11.667 11.666Zm1.178-11.666 4.41-4.41a.837.837 0 0 0 0-1.179.836.836 0 0 0-1.178 0L15 14.128l-4.41-4.411a.833.833 0 0 0-1.178 1.178l4.41 4.412-4.41 4.41a.834.834 0 1 0 1.178 1.18L15 16.485l4.41 4.41a.833.833 0 1 0 1.18-1.177l-4.412-4.411Z"/>
-            </svg>
-          </div>
-        </div>
+      <th class="cell__buttons">
+        {% include 'base/active_edit_icon.html' %}
+        {% include 'base/active_delete_icon.html' %}
       </th>
     </tr>
   </thead>
@@ -31,16 +21,16 @@
           </td>
         {% elif cell_name == '_ref_' %}
           {% if cell_value.type == 'button' %}
-            <td class="border rounded-md table-light">
+            <td class="rounded-md">
               {% include 'base/cell_button.html' with url=cell_value.url name=cell_value.name %}
             </td>
           {% else %}
-            <td class="border rounded-md table-light">
+            <td class="rounded-md">
               <a href="{{ cell_value.url }}">{{ cell_value.name }} </a>
             </td>
           {% endif %}
         {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
-          <td class="border rounded-md table-light">{{ cell_value }}</td>
+          <td class="rounded-md">{{ cell_value }}</td>
         {% endif %}
       {% endfor %}
       {% with request.resolver_match.view_name as view_name %}
@@ -51,7 +41,7 @@
           {% elif view_name == 'main:teams' %}
               {% include "base/team_edit_delete_buttons.html" %}
           {% else %}
-              <td>
+              <td class="cell__buttons">
                 {% include 'base/edit_icon.html' %}
                 {% include 'base/delete_icon.html' %}
               </td>

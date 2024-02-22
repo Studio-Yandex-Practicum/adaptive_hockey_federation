@@ -342,9 +342,9 @@ li {
 }
 
 .reset_card {
-  height: 250px;
-  width: 355px;
-  left: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: none;
   align-items: center;
 }
@@ -375,15 +375,12 @@ li {
   border: black;
   background-color: #ECF1F5;
   .reset_btn {
-    position: absolute;
-    left: 65px;
-    margin-top: 20px;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    border: none;
     background-color: #64C2D1;
     color: #fff;
-    width: 240px;
-    height: 40px;
     font-size: 22px;
-    border: #fff;
     text-decoration: none;
   }
 }
@@ -447,14 +444,14 @@ li {
   position: fixed;
   top: 0;
   height: 100%;
-  left: -282px;
+  left: 0;
   background-color: #340061;
-  transition: right 0.3s ease;
+  transition: left 0.3s ease;
   z-index: 5;
 }
 
-.aside-navbar_opened {
-  left: 0;
+.aside-navbar_closed {
+  left: -282px;
 }
 
 .navbar-options {
@@ -575,19 +572,31 @@ li {
   display: flex;
 }
 
-th, td {
+th {
   background-color: #FFFFFF;
-  border: 3px solid #ECF1F5;
+  border: none;
   border-radius: 8px;
-  border-collapse: separate;
-  border-spacing: 5px;
+  text-align: center;
+  padding: 5px;
+}
+
+td {
+  background-color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
   text-align: center;
   padding: 5px;
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
   th, td {
-    font-size: 8px;
+    font-size: 10px;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 860px) {
+  th, td {
+    font-size: 14px;
   }
 }
 
@@ -604,8 +613,10 @@ th, td {
 }
 
 .table-table {
-  border-collapse: separate;
   padding: 10px 5px;
+  border-collapse: separate;
+  border-spacing: 4px;
+  width: 100%;
 }
 
 .navigate {
@@ -618,18 +629,22 @@ th, td {
 
 .navbar-container {
   display: flex;
-  flex-direction: column;
   justify-content: space-around;
   align-items: center;
   height: 100%;
+  position: relative;
 }
 
 .nav-button {
+  position: absolute;
+  right: -50px;
+  bottom: 4%;
   margin: 0;
   padding: 5px 15px;
-  border: 1px solid #fff;
-  border-radius: 8px;
-  background-color: #269fbd;
+  border: none;
+  border-radius: 0 8px 8px 0 / 8px 8px 8px 8px;
+  background-color: #340061;
+  outline: none;
 }
 
 .navbar-footer {
@@ -683,4 +698,41 @@ th, td {
 .group-input {
   display: flex;
   justify-content: center;
+}
+
+.cell__buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.container-divs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.divs-limit {
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 70%;
+  gap: 20px;
+  text-align: center;
+}
+
+.profile-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.triangle {
+  padding: 8px 0;
+  transform: rotate(180deg);
 }
