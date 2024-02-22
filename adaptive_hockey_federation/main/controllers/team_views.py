@@ -113,6 +113,43 @@ class TeamListView(LoginRequiredMixin, ListView):
     paginate_by = 10
     ordering = ["id"]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get("search")
+        if search:
+            search_column = self.request.GET.get("search_column")
+            if not search_column or search_column.lower() in ["все", "all"]:
+                or_lookup = (
+                    Q(discipline_name_id__name__icontains=search)
+                    | Q(name__icontains=search)
+                    | Q(city__name__icontains=search)
+                )
+                queryset = queryset.filter(or_lookup)
+            elif search_column == 'team_structure':
+                or_lookup = (
+                    Q(team_players__name__icontains=search)
+                    | Q(team_players__surname__icontains=search)
+                    | Q(team_players__patronymic__icontains=search)
+                    | Q(team_members__staff_member__name__icontains=search)
+                    | Q(team_members__staff_member__surname__icontains=search)
+                    | Q(team_members__staff_member__patronymic__icontains=search)  # Noqa
+                )
+                queryset = queryset.filter(or_lookup)
+            else:
+                search_fields = {
+                    "discipline_name": "discipline_name_id__name",
+                    "name": "name",
+                    "city": "city__name",
+                }
+                lookup = {f"{search_fields[search_column]}__icontains": search}
+                queryset = queryset.filter(**lookup)
+
+        return (
+            queryset.select_related("discipline_name")
+            .select_related("city")
+            .order_by("name")
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teams = context["teams"]
@@ -125,7 +162,7 @@ class TeamListView(LoginRequiredMixin, ListView):
                 "discipline_name": team.discipline_name,
                 "city": team.city,
                 "_ref_": {
-                    "name": "Игроки",
+                    "name": "Посмотреть",
                     "type": "button",
                     "url": reverse("main:teams_id", args=[team.id]),
                 },
@@ -136,7 +173,7 @@ class TeamListView(LoginRequiredMixin, ListView):
             "name": "Название",
             "discipline_name": "Дисциплина",
             "city": "Город",
-            "players_reference": "Игроки",
+            "team_structure": "Состав команды",
         }
         context["table_data"] = table_data
         return context
