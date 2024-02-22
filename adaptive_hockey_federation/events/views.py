@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from events.models import Event
@@ -28,7 +28,7 @@ class EventListView(LoginRequiredMixin, ListView):
                 "_ref_": {
                     "name": "Состав",
                     "type": "button",
-                    "url": reverse("main:competitions_id", args=[event.pk]),
+                    "url": reverse("events:competitions_id", args=[event.pk]),
                 },
             })
 
@@ -45,12 +45,17 @@ class EventListView(LoginRequiredMixin, ListView):
         return context
 
 
-class TeamsOnEnvent(DetailView):
+class TeamsOnEvent(DetailView):
     """Отображение команд, принимающих участие в соревновании."""
 
     model = Event
     template_name = "main/competitions_id/competitions_id.html"
-    success_url = "/competitions/"
+    # success_url = "/competitions/"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'events:competitions_id', kwargs={'pk': self.object.pk}
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
