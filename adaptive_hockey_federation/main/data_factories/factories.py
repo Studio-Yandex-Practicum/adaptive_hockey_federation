@@ -190,6 +190,7 @@ class EventFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Event
+        skip_postgeneration_save = True
         django_get_or_create = ['title']
 
     title = factory.Faker('sentence', nb_words=2, locale='ru_RU')

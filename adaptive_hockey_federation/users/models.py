@@ -54,11 +54,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         max_length=EMAIL_MAX_LENGTH,
         unique=True,
-        validators=(EmailValidator(
-            message="Используйте корректный адрес электронной почты. "
-            "Адрес должен быть не длиннее 150 символов. "
-            "Допускается использование латинских букв, "
-            "цифр и символов @/./+/-/_"),
+        validators=(
+            EmailValidator(
+                message="Используйте корректный адрес электронной почты. "
+                        "Адрес должен быть не длиннее 150 символов. "
+                        "Допускается использование латинских букв, "
+                        "цифр и символов @/./+/-/_"
+            ),
         ),
         verbose_name=_('Электронная почта'),
         help_text=_('Электронная почта'),

@@ -20,25 +20,25 @@ GROUP_CHOICES = {
 }
 # constants for main/models.py
 CHAR_FIELD_LENGTH = 256
-EMPTY_VALUE_DISPLAY = ''
+EMPTY_VALUE_DISPLAY = ""
 CLASS_FIELD_LENGTH = 10
 DEFAULT_VALUE = 0
 
 GENDER_CHOICES = (
-    ('male', 'Мужской'),
-    ('female', 'Женский'),
+    ("male", "Мужской"),
+    ("female", "Женский"),
 )
 
 PLAYER_POSITION_CHOICES = (
-    ('striker', 'Нападающий'),
-    ('bobber', 'Поплавок'),
-    ('goalkeeper', 'Вратарь'),
-    ('defender', 'Защитник'),
+    ("striker", "Нападающий"),
+    ("bobber", "Поплавок"),
+    ("goalkeeper", "Вратарь"),
+    ("defender", "Защитник"),
 )
 
 STAFF_POSITION_CHOICES = (
-    ('trainer', 'Тренер'),
-    ('other', 'Другой'),
+    ("trainer", "тренер"),
+    ("other", "другой"),
 )
 
-TIME_FORMAT = '%H-%M-%S'
+TIME_FORMAT = "%H-%M-%S"

@@ -21,7 +21,7 @@
         {% url 'main:teams' as url_name %}{% include "base/button.html" with name="Команды" %}
       </li>
       <li class="nav-item py-2">
-        {% url 'main:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
+        {% url 'events:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
       </li>
       <li class="nav-item py-2">
         {% url 'main:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
@@ -31,15 +31,13 @@
       </li>
     </ul>
     <button
-      id="rectangle"
       onclick="toggle_visibility(false);"
       class="nav-button"
       type="button"
       aria-controls="staticBackdrop"
       aria-expanded="true"
-      style="transform: rotate(180deg);"
     >
-      <i class="bi bi-caret-right-fill fs-3" style="color: #fff;"></i>
+      {% include "base/triangle.html" %}
     </button>
   </div>
 </aside>
