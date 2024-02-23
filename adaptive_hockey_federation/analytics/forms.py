@@ -1,10 +1,6 @@
-from core.constants import (
-    BLANK_CHOICE,
-    PLAYER_POSITION_CHOICES,
-    TIMESPAN_CHOICES,
-)
+from core.constants import BLANK_CHOICE, TIMESPAN_CHOICES
 from django import forms
-from main.models import DisciplineName, Team
+from main.models import City, DisciplineName
 
 
 class AnalyticsFilterForm(forms.Form):
@@ -14,23 +10,18 @@ class AnalyticsFilterForm(forms.Form):
         label='За время',
         widget=forms.Select(attrs={"class": "form-control"}),
     )
+    city = forms.ModelChoiceField(
+        queryset=City.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={"class": "form-control"}),
+        empty_label="Все",
+    )
     discipline = forms.ModelChoiceField(
         queryset=DisciplineName.objects.all(),
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
         empty_label="Все",
     )
-    team = forms.ModelChoiceField(
-        queryset=Team.objects.all(),
-        required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        empty_label="Все",
-    )
-    position = forms.ChoiceField(
-        choices=(BLANK_CHOICE + list(PLAYER_POSITION_CHOICES)),
-        required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
 
     class Meta:
-        fields = ('timespan', 'discipline', 'team', 'position')
+        fields = ('timespan', 'city', 'discipline')
