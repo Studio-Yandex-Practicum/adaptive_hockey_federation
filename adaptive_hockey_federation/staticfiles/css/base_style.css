@@ -408,10 +408,6 @@ li {
   opacity: 0;
 }
 
-#rectangle {
-  transition: transform 0.3s ease;
-}
-
 .rotate {
   transform: rotate(180deg);
 }
@@ -440,14 +436,14 @@ li {
   position: fixed;
   top: 0;
   height: 100%;
-  left: 0;
+  left: -282px;
   background-color: #340061;
   transition: left 0.3s ease;
   z-index: 5;
 }
 
-.aside-navbar_closed {
-  left: -282px;
+.aside-navbar_opened {
+  left: 0;
 }
 
 .navbar-options {
@@ -736,7 +732,7 @@ td {
 
 .triangle {
   padding: 8px 0;
-  transform: rotate(180deg);
+  transform: rotate(0deg);
   transition: transform 0.3s ease;
 }
 

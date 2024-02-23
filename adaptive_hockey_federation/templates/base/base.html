@@ -51,7 +51,7 @@
           preflight: false,
         }
       }
-      const rectangle = document.getElementById('rectangle')
+      const triangle = document.getElementById('triangle')
       const sidebar = document.getElementById('container__fluid')
       let isRotated = false
       function toggle_visibility(visabiliti) {
@@ -59,12 +59,12 @@
           return
         } else {
           if (isRotated) {
-            rectangle.style.transform = 'rotate(180deg)'
+            triangle.style.transform = 'rotate(0deg)'
           } else {
-            rectangle.style.transform = 'rotate(0deg)'
+            triangle.style.transform = 'rotate(180deg)'
           }
           isRotated = !isRotated
-          sidebar.classList.toggle('aside-navbar_closed')
+          sidebar.classList.toggle('aside-navbar_opened')
         }
       }
       window.onload = toggle_visibility(true)
