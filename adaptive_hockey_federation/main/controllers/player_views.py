@@ -220,7 +220,11 @@ class PlayerIDEditView(PermissionRequiredMixin, UpdateView):
         return context
 
 
-class PlayerIDDeleteView(PermissionRequiredMixin, DeleteView):
+class PlayerIDDeleteView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView
+):
     model = Player
     success_url = reverse_lazy("main:players")
     permission_required = 'main.delete_player'
