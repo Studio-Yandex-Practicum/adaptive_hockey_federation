@@ -14,10 +14,6 @@ urlpatterns = [
         name="player_id",
     ),
     path(
-        "player_create/", player_views.PlayerCreateView.as_view(),
-        name="player_create"
-    ),
-    path(
         "players/<int:pk>/edit/",
         player_views.PlayerIDEditView.as_view(),
         name="player_id_edit",
@@ -34,7 +30,7 @@ urlpatterns = [
     ),
     path(
         "player_create/",
-        player_views.PlayerCreateView.as_view(),
+        player_views.PlayerIDCreateView.as_view(),
         name="player_create",
     ),
     path("teams/", team_views.TeamListView.as_view(), name="teams"),
