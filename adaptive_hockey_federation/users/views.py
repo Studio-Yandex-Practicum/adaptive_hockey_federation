@@ -3,7 +3,9 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.db.models import Q
+from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from users.forms import UpdateUserForm, UsersCreationForm
@@ -82,6 +84,9 @@ class UpdateUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
         UpdateView):
+    """
+    Вьюха редактирования пользователя
+    """
     model = User
     template_name = 'main/users/user_update.html'
     permission_required = 'users.change_user'
@@ -101,6 +106,9 @@ class DeleteUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
         DeleteView):
+    """
+    Вьюха удаления пользователя
+    """
     object = User
     model = User
     success_url = '/users'
@@ -111,8 +119,21 @@ class CreateUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
         CreateView):
+    """
+    Вьюха создания пользователя
+    """
     model = User
     form_class = UsersCreationForm
     template_name = 'main/users/user_create.html'
     success_url = '/users'
     permission_required = 'users.create_user'
+
+
+class PasswordSetView(PasswordResetConfirmView):
+    """Вьюха изменения пароля пользователя"""
+    success_url = reverse_lazy("users:users")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.user.save()
+        return response

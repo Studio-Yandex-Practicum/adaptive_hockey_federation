@@ -5,11 +5,15 @@ from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.forms import Select
 from django.utils.crypto import get_random_string
-from users.utils import send_user_data_after_create, set_permission_create_user
+from main.models import Team
+from users.utilits.create_password import generate_random_password
+from users.utilits.reset_password import send_password_reset_email
+from users.utils import set_permission_create_user
 
 User = get_user_model()
 
@@ -118,6 +122,12 @@ class UsersCreationForm(forms.ModelForm):
             'required': 'Пожалуйста, выберите роль из списка.'
         }
     )
+    team = forms.ModelChoiceField(
+        queryset=Team.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Команда представителя',
+    )
 
     class Meta:
         model = User
@@ -127,7 +137,8 @@ class UsersCreationForm(forms.ModelForm):
             'patronymic',
             'email',
             'phone',
-            'role'
+            'role',
+            'team',
         )
         error_messages = {
             "email": {
@@ -136,6 +147,7 @@ class UsersCreationForm(forms.ModelForm):
         }
         widgets = {
             'role': Select(),
+            'team': Select(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -148,21 +160,17 @@ class UsersCreationForm(forms.ModelForm):
         user = super(UsersCreationForm, self).save(commit=False)
         user.patronymic = self.cleaned_data["patronymic"]
         user.email = self.cleaned_data["email"]
-        password = get_random_string(length=10)
-        user.set_password(password)
-        user.save()
+        user.password = make_password(generate_random_password())
         set_permission_create_user(self.cleaned_data["role"], user)
-        send_user_data_after_create(user.email, password)
+        send_password_reset_email(user)
         return user
 
 
 class UpdateUserForm(UsersCreationForm):
     """Форма редактирования пользователя"""
-
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
         user.patronymic = self.cleaned_data["patronymic"]
         user.email = self.cleaned_data["email"]
-        user.save()
         set_permission_create_user(self.cleaned_data["role"], user)
         return user
