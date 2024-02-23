@@ -12,10 +12,10 @@ def check_len(field, max, min):
     count = min - len(words)
     if len(words) < min:
         add_words = words[:count]
-        words.append(' '.join(add_words))
+        words.append(" ".join(add_words))
     if len(words) > max:
         del words[max:]
-    field = ' '.join(words)
+    field = " ".join(words)
     return field
 
 

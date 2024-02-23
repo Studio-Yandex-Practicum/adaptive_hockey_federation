@@ -1,4 +1,5 @@
 asgiref==3.7.2 ; python_version >= "3.11" and python_version < "4.0"
+black==24.2.0 ; python_version >= "3.11" and python_version < "4.0"
 cfgv==3.4.0 ; python_version >= "3.11" and python_version < "4.0"
 click==8.1.7 ; python_version >= "3.11" and python_version < "4.0"
 colorama==0.4.6 ; python_version >= "3.11" and python_version < "4.0" and (platform_system == "Windows" or sys_platform == "win32")
@@ -22,6 +23,7 @@ nodeenv==1.8.0 ; python_version >= "3.11" and python_version < "4.0"
 openpyxl-stubs==0.1.25 ; python_version >= "3.11" and python_version < "4.0"
 openpyxl==3.1.2 ; python_version >= "3.11" and python_version < "4.0"
 packaging==23.2 ; python_version >= "3.11" and python_version < "4.0"
+pathspec==0.12.1 ; python_version >= "3.11" and python_version < "4.0"
 phonenumbers==8.13.30 ; python_version >= "3.11" and python_version < "4.0"
 pillow==10.2.0 ; python_version >= "3.11" and python_version < "4.0"
 platformdirs==4.2.0 ; python_version >= "3.11" and python_version < "4.0"
