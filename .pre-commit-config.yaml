@@ -39,6 +39,7 @@ repos:
         - django-environ
         - django-phonenumber-field[phonenumbers]
         - django_extensions
+        - types-python-dateutil
         - psycopg2-binary
 
   - repo: local

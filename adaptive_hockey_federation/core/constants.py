@@ -1,4 +1,4 @@
-# constatnts for users/models.py
+# constants for users/models.py
 NAME_MAX_LENGTH = 256
 EMAIL_MAX_LENGTH = 256
 QUERY_SET_LENGTH = 15
