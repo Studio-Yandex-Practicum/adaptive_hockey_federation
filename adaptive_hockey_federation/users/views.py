@@ -100,8 +100,13 @@ class UpdateUserView(
 
     def get_context_data(self, **kwargs):
         context = super(UpdateUserView, self).get_context_data(**kwargs)
+        queryset = self.object.team.all()
+        team = None
+        if queryset:
+            team = self.object.team.all()[0]
         context['form'] = self.form_class(
             instance=self.object,
+            initial={'team': team}
         )
         return context
 

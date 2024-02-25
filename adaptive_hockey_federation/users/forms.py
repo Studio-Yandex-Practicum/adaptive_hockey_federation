@@ -165,6 +165,9 @@ class UsersCreationForm(forms.ModelForm):
 class UpdateUserForm(UsersCreationForm):
     """Форма редактирования пользователя"""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
         set_permission_create_user(self.cleaned_data["role"], user)

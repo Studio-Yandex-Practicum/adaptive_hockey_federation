@@ -34,22 +34,13 @@ def set_permission_create_user(role, user):
     user.groups.add(group)
 
 
-def send_user_data_after_create(email, password):
-    """
-    Функция отправки логина и пароля пользователю после создания
-    """
-    from django.core.mail import send_mail
-    send_mail(
-        None,
-        f"Ваш логин для входа на сайт: {email} временный пароль: { password }",
-        'admin@admin.ru',
-        [email],
-        fail_silently=False,
-    )
-
-
 def set_team_curator(user, choice_team):
     """
     Функция назначения представителя команды
     """
-    pass
+    from main.models import Team
+    Team.objects.filter(curator=user).update(curator=None)
+    if choice_team is not None:
+        team = Team.objects.get(id=choice_team.id)
+        team.curator = user
+        team.save()
