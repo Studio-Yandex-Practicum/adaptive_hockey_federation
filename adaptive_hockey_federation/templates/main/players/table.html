@@ -18,7 +18,11 @@
         {% for cell_name, cell_value in table_string.items %}
           {% if forloop.counter0 == 0 and 'url' in table_string %}
             <td class="rounded-md">
-              <a href="{{ table_string.url }}">{{ cell_value }} </a>
+              {% if 'main.view_player' in perms %}
+                <a href="{{ table_string.url }}"> {{ cell_value }}
+              {% else %}
+                {{ cell_value }}
+              {% endif %}</a>
             </td>
           {% elif cell_name == '_ref_' %}
             {% if cell_value.type == 'button' %}

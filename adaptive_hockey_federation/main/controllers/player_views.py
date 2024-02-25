@@ -94,18 +94,18 @@ class PlayersListView(LoginRequiredMixin, ListView):
 
 
 class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
-    '''View-класс для создания нового игрока.'''
+    """Представление для создания нового игрока."""
     model = Player
     form_class = PlayerForm
-    template_name = 'main/player_id/player_id_create.html'
-    success_url = '/players'
-    permission_required = 'main.add_player'
+    template_name = "main/player_id/player_id_create.html"
+    success_url = "/players"
+    permission_required = "main.add_player"
     permission_denied_message = (
-        'У Вас нет разрешения на создание карточки игрока.')
+        "У Вас нет разрешения на создание карточки игрока.")
 
     def form_valid(self, form):
         player = form.save()
-        for iter, file in enumerate(self.request.FILES.getlist('documents')):
+        for iter, file in enumerate(self.request.FILES.getlist("documents")):
             file.name = generate_file_name(file.name, player.name, iter)
             Document.objects.create(
                 player=player, file=file, name=file.name
@@ -220,14 +220,11 @@ class PlayerIDEditView(PermissionRequiredMixin, UpdateView):
         return context
 
 
-class PlayerIDDeleteView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    DeleteView
-):
+class PlayerIDDeleteView(PermissionRequiredMixin, DeleteView):
     model = Player
+    object = Player
     success_url = reverse_lazy("main:players")
-    permission_required = 'main.delete_player'
+    permission_required = "main.delete_player"
     permission_denied_message = (
         'У Вас нет разрешения на удаление карточки игрока.')
 

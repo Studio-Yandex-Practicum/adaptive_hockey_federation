@@ -3,13 +3,13 @@
   <div class="input-group justify-content-md-center">
     <form action="{% url 'users:user_update' table_string.id %}" method="post">
       {% csrf_token %}
-      <button class=" btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
+      <button class=" btns-edit-del" type="submit" {% if 'main.change_player' in perms %} activate {% else %} disabled {% endif %}>
         {% include 'base/edit_icon.html' %}
       </button>
     </form>
     <form action="{% url 'users:user_delete' table_string.id %}" method="post" >
       {% csrf_token %}
-      <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>
+      <button class="btns-edit-del" type="submit" {% if 'main.delete_player' in perms %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>
         {% include 'base/delete_icon.html' %}
       </button>
     </form>
