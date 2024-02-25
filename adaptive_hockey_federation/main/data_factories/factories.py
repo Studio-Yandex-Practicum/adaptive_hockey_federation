@@ -28,30 +28,30 @@ from .utils import check_len, get_random_objects
 
 SIZE_IMAGE = (100, 100)
 COLOR_IMAGE = (256, 0, 0)
-FORMAT_IMAGE = 'RGBA'
-EXT_IMAGE = 'png'
+FORMAT_IMAGE = "RGBA"
+EXT_IMAGE = "png"
 
 
 class CityFactory(factory.django.DjangoModelFactory):
     """Создания данных городов. Название города является уникальным."""
 
-    class Meta():
+    class Meta:
         model = City
-        django_get_or_create = ['name']
+        django_get_or_create = ["name"]
 
-    name = factory.Faker('city', locale='ru_RU')
+    name = factory.Faker("city", locale="ru_RU")
 
 
 class StaffMemberFactory(factory.django.DjangoModelFactory):
     """Создание сотрудников команд."""
 
-    class Meta():
+    class Meta:
         model = StaffMember
 
-    surname = factory.Faker('last_name', locale='ru_RU')
-    name = factory.Faker('first_name', locale='ru_RU')
-    patronymic = factory.Faker('middle_name', locale='ru_RU')
-    phone = factory.Faker('phone_number', locale='ru_RU')
+    surname = factory.Faker("last_name", locale="ru_RU")
+    name = factory.Faker("first_name", locale="ru_RU")
+    patronymic = factory.Faker("middle_name", locale="ru_RU")
+    phone = factory.Faker("phone_number", locale="ru_RU")
 
 
 class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
@@ -64,8 +64,12 @@ class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
         model = StaffTeamMember
 
     staff_member = factory.SubFactory(StaffMemberFactory)
-    qualification = factory.Faker('sentence', nb_words=5, locale='ru_RU',)
-    notes = factory.Faker('sentence', nb_words=10, locale='ru_RU')
+    qualification = factory.Faker(
+        "sentence",
+        nb_words=5,
+        locale="ru_RU",
+    )
+    notes = factory.Faker("sentence", nb_words=10, locale="ru_RU")
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
@@ -87,11 +91,14 @@ class NosologyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Nosology
 
-    name = factory.Faker('sentence', nb_words=5, locale='ru_RU')
+    name = factory.Faker("sentence", nb_words=5, locale="ru_RU")
     diagnosis = factory.RelatedFactoryList(
-        'main.data_factories.factories.DiagnosisFactory',
-        factory_related_name='nosology',
-        size=lambda: random.randint(3, 5,)
+        "main.data_factories.factories.DiagnosisFactory",
+        factory_related_name="nosology",
+        size=lambda: random.randint(
+            3,
+            5,
+        ),
     )
 
     @factory.post_generation
@@ -109,10 +116,10 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Diagnosis
-        django_get_or_create = ['name']
+        django_get_or_create = ["name"]
 
     nosology = factory.SubFactory(NosologyFactory)
-    name = factory.Faker('sentence', nb_words=5, locale='ru_RU')
+    name = factory.Faker("sentence", nb_words=5, locale="ru_RU")
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
@@ -126,12 +133,12 @@ class DisciplineNameFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = DisciplineName
-        django_get_or_create = ['name']
+        django_get_or_create = ["name"]
 
-    name = factory.Faker('sentence', nb_words=2, locale='ru_RU')
+    name = factory.Faker("sentence", nb_words=2, locale="ru_RU")
     discipline = factory.RelatedFactoryList(
-        'main.data_factories.factories.DisciplineFactory',
-        factory_related_name='discipline_name',
+        "main.data_factories.factories.DisciplineFactory",
+        factory_related_name="discipline_name",
         size=5,
     )
 
@@ -144,9 +151,9 @@ class DisciplineLevelFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = DisciplineLevel
-        django_get_or_create = ['name']
+        django_get_or_create = ["name"]
 
-    name = factory.Iterator(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'])
+    name = factory.Iterator(["A1", "A2", "B1", "B2", "C1", "C2"])
 
 
 class DisciplineFactory(factory.django.DjangoModelFactory):
@@ -168,9 +175,9 @@ class TeamFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Team
-        django_get_or_create = ['name']
+        django_get_or_create = ["name"]
 
-    name = factory.Faker('sentence', nb_words=2, locale='ru_RU')
+    name = factory.Faker("sentence", nb_words=2, locale="ru_RU")
     city = factory.SubFactory(CityFactory)
 
     @factory.lazy_attribute
@@ -191,20 +198,14 @@ class EventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Event
         skip_postgeneration_save = True
-        django_get_or_create = ['title']
+        django_get_or_create = ["title"]
 
-    title = factory.Faker('sentence', nb_words=2, locale='ru_RU')
+    title = factory.Faker("sentence", nb_words=2, locale="ru_RU")
     city = factory.SubFactory(CityFactory)
-    date_start = date.today() + timedelta(
-        days=random.randrange(5, 30, 5)
-    )
-    date_end = date_start + timedelta(
-        days=random.randrange(2, 10, 2)
-    )
-    location = factory.Faker('sentence', nb_words=4, locale='ru_RU')
-    is_active = factory.LazyFunction(
-        lambda: random.choice([True, False])
-    )
+    date_start = date.today() + timedelta(days=random.randrange(5, 30, 5))
+    date_end = date_start + timedelta(days=random.randrange(2, 10, 2))
+    location = factory.Faker("sentence", nb_words=4, locale="ru_RU")
+    is_active = factory.LazyFunction(lambda: random.choice([True, False]))
 
     @factory.post_generation
     def teams(self, create, extracted, **kwargs):
@@ -216,23 +217,25 @@ class EventFactory(factory.django.DjangoModelFactory):
 
 
 class PlayerFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         model = Player
-        django_get_or_create = ['birthday']
+        django_get_or_create = ["birthday"]
 
-    surname = factory.Faker('last_name', locale='ru_RU')
-    name = factory.Faker('first_name', locale='ru_RU')
-    patronymic = factory.Faker('middle_name', locale='ru_RU')
-    birthday = factory.Faker('date_of_birth', minimum_age=12, maximum_age=18)
+    surname = factory.Faker("last_name", locale="ru_RU")
+    name = factory.Faker("first_name", locale="ru_RU")
+    patronymic = factory.Faker("middle_name", locale="ru_RU")
+    birthday = factory.Faker("date_of_birth", minimum_age=12, maximum_age=18)
+    addition_date = factory.Faker(
+        "date_time_this_decade", before_now=True, after_now=False
+    )
     gender = factory.LazyFunction(lambda: random.choice(GENDER_CHOICES)[1])
-    level_revision = factory.Faker('sentence', nb_words=1, locale='ru_RU')
+    level_revision = factory.Faker("sentence", nb_words=1, locale="ru_RU")
     position = factory.LazyFunction(
         lambda: random.choice(PLAYER_POSITION_CHOICES)[1]
     )
-    number = factory.Faker('random_number', digits=2)
+    number = factory.Faker("random_number", digits=2)
     identity_document = factory.LazyFunction(
-        lambda: random.choice(['паспорт', 'свидетельство'])
+        lambda: random.choice(["паспорт", "свидетельство"])
     )
 
     @factory.lazy_attribute
@@ -243,7 +246,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     def team(self, create, extracted, **kwargs):
         if create:
             teams_with_player_count = Team.objects.annotate(
-                player_count=Count('team_players')
+                player_count=Count("team_players")
             )
             if teams_with_player_count.filter(player_count__lt=10):
                 self.team.set([get_random_objects(Team)])
@@ -254,7 +257,7 @@ class DocumentFactory(factory.django.DjangoModelFactory):
         model = Document
 
     name = factory.LazyAttribute(
-        lambda obj: f'{obj.player.surname}-{random.randint(1000, 9999)}'
+        lambda obj: f"{obj.player.surname}-{random.randint(1000, 9999)}"
     )
 
     @factory.lazy_attribute
@@ -269,4 +272,4 @@ class DocumentFactory(factory.django.DjangoModelFactory):
         image = Image.new(FORMAT_IMAGE, size=SIZE_IMAGE, color=COLOR_IMAGE)
         image.save(file_obj, EXT_IMAGE)
         file_obj.seek(0)
-        self.file.save(f'{self.name}.png', File(file_obj))
+        self.file.save(f"{self.name}.png", File(file_obj))

@@ -8,10 +8,5 @@ def main(request):
 
 
 @login_required
-def analytics(request):
-    return render(request, "main/analytics/analitics.html")
-
-
-@login_required
 def unloads(request):
     return render(request, "main/unloads/unloads.html")

@@ -58,6 +58,5 @@ urlpatterns = [
         team_views.TeamIdView.as_view(),
         name="teams_id",
     ),
-    path("analytics/", main_views.analytics, name="analytics"),
     path("unloads/", main_views.unloads, name="unloads"),
 ]

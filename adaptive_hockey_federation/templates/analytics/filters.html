@@ -1,0 +1,10 @@
+<form method="GET" class="row" style="width: 50%">
+    {% for field in form %}
+        <div class="col">
+            {{ field.label }} {{ field }}
+        </div>
+    {% endfor %}
+    <div class="col">
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </div>
+</form>

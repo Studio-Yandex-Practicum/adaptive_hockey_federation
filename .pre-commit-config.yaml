@@ -12,6 +12,13 @@ repos:
     hooks:
       - id: isort
 
+  - repo: https://github.com/psf/black
+    rev: 24.2.0
+    hooks:
+      - id: black
+        args: ['--line-length=79']
+        exclude: migrations/|config/|.*settings(\.py|/)?
+
   - repo: https://github.com/PyCQA/flake8
     rev: 6.1.0
     hooks:
@@ -32,6 +39,7 @@ repos:
         - django-environ
         - django-phonenumber-field[phonenumbers]
         - django_extensions
+        - types-python-dateutil
         - psycopg2-binary
 
   - repo: local

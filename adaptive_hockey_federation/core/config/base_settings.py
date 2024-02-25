@@ -12,6 +12,8 @@ DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=["*"],)
 
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["*"])
+
 DEFAULT_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,6 +32,7 @@ LOCAL_APPS = [
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
     'events.apps.EventsConfig',
+    'analytics.apps.AnalyticsConfig',
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + DEFAULT_APPS + LOCAL_APPS
