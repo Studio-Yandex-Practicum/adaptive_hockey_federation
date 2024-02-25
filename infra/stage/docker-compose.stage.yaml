@@ -25,18 +25,30 @@ services:
     depends_on:
       - db
 
-  nginx:
-    image: nginx:1.21.3-alpine
-    ports:
-      - "80:${PORT}"
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=Europe/Moscow
+      - URL=${HOST}
+      - VALIDATION=http
+      - STAGING=${ST}
     volumes:
-      - ../nginx/nginx_stage.conf:/etc/nginx/conf.d/default.conf
+      - ../nginx/nginx_stage.conf:/config/nginx/site-confs/default.conf
       - static_value:/var/html/static/
       - media_value:/var/html/media/
+    ports:
+      - 443:443
+      - 80:${PORT}
     env_file:
       - ../../.env
     depends_on:
       - site
+    restart: unless-stopped
 
 volumes:
   static_value:

@@ -14,8 +14,8 @@ User=developer
 WorkingDirectory=/home/developer/adaptive_hockey_federation/infra/stage/
 
 ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull site
-ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull postgres-db
-ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull nginx
+ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull db
+ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull swag
 ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env down
 
 # compose up

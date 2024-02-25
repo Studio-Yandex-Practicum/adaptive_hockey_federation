@@ -84,10 +84,12 @@ jobs:
             echo HOST=${{ secrets.HOST }} >> .env
             echo PORT=${{ secrets.PORT }} >> .env
             echo IMAGE_COMPOSE=${{ secrets.IMAGE_COMPOSE }} >> .env
+            echo ST=${{ secrets.ST }} >> .env
 
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             echo DEBUG=${{ secrets.DEBUG }} >> .env
             echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+            echo CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }} >> .env
 
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
@@ -97,13 +99,15 @@ jobs:
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
 
             cd infra/stage/
+            sudo systemctl stop adaptive_hockey_federation.service
             docker system prune --force
 
             # Installing defend service for app
             sudo cp -f /home/developer/adaptive_hockey_federation/infra/stage/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
             sudo systemctl daemon-reload
-            sudo systemctl restart adaptive_hockey_federation.service
+            sudo systemctl start adaptive_hockey_federation.service
 
             sleep 20
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+            docker exec adaptive_hockey_federation python manage.py makemigrations
             docker exec adaptive_hockey_federation python manage.py migrate
