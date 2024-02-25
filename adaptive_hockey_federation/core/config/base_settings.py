@@ -102,10 +102,6 @@ STATICFILES_FINDERS = (
 
 LOGIN_REDIRECT_URL = 'main:main'
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-
-EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
-
 MEDIA_URL = '/media/'
 
 LOGIN_URL = 'login'

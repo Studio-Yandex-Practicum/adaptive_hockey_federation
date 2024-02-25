@@ -46,3 +46,10 @@ def send_user_data_after_create(email, password):
         [email],
         fail_silently=False,
     )
+
+
+def set_team_curator(user, choice_team):
+    """
+    Функция назначения представителя команды
+    """
+    pass

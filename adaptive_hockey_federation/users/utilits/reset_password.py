@@ -4,6 +4,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from core.config import dev_settings
 from users.models import User
 from users.utilits.render import render_email_message
 
@@ -26,7 +27,7 @@ def send_password_reset_email(
             "message": message,
             "user": instance,
         },
-        from_email='admin@admin.ru',
+        from_email=dev_settings.EMAIL_HOST_USER,
         to=[
             instance.email,
         ],

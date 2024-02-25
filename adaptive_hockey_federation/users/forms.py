@@ -5,15 +5,13 @@ from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.forms import Select
 from django.utils.crypto import get_random_string
 from main.models import Team
-from users.utilits.create_password import generate_random_password
 from users.utilits.reset_password import send_password_reset_email
-from users.utils import set_permission_create_user
+from users.utils import set_permission_create_user, set_team_curator
 
 User = get_user_model()
 
@@ -158,19 +156,19 @@ class UsersCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
-        user.patronymic = self.cleaned_data["patronymic"]
-        user.email = self.cleaned_data["email"]
-        user.password = make_password(generate_random_password())
         set_permission_create_user(self.cleaned_data["role"], user)
+        set_team_curator(user, self.cleaned_data["team"])
         send_password_reset_email(user)
         return user
 
 
 class UpdateUserForm(UsersCreationForm):
     """Форма редактирования пользователя"""
+
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
-        user.patronymic = self.cleaned_data["patronymic"]
-        user.email = self.cleaned_data["email"]
         set_permission_create_user(self.cleaned_data["role"], user)
+        set_team_curator(user, self.cleaned_data["team"])
+        if commit:
+            user.save()
         return user

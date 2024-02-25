@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import (
 )
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
@@ -93,11 +94,14 @@ class UpdateUserView(
     form_class = UpdateUserForm
     success_url = '/users'
 
+    def get_object(self, queryset=None):
+        user_id = self.kwargs.get("pk")
+        return get_object_or_404(User, pk=user_id)
+
     def get_context_data(self, **kwargs):
         context = super(UpdateUserView, self).get_context_data(**kwargs)
         context['form'] = self.form_class(
             instance=self.object,
-            initial=self.get_initial()
         )
         return context
 
