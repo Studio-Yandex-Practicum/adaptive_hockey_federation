@@ -6,9 +6,11 @@
         {% for head_item in table_head.values %}
         <th class="col">{{ head_item }}</th>
         {% endfor %}
-        <th class="cell__buttons">
-          {% include 'base/active_edit_icon.html' %}
-          {% include 'base/active_delete_icon.html' %}
+        <th>
+          <div class="cell__buttons">
+            {% include 'base/active_edit_icon.html' %}
+            {% include 'base/active_delete_icon.html' %}
+          </div>
         </th>
       </tr>
     </thead>
@@ -38,9 +40,11 @@
             {% if view_name == 'main:players' %}
               {% include "main/players/create_delete_button_players.html" %}
             {% else %}
-              <td class="cell__buttons">
-                {% include 'base/edit_icon.html' %}
-                {% include 'base/delete_icon.html' %}
+              <td>
+                <div class="cell__buttons">
+                  {% include 'base/active_edit_icon.html' %}
+                  {% include 'base/active_delete_icon.html' %}
+                </div>
               </td>
             {% endif %}
         {% endwith %}
