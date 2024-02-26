@@ -154,6 +154,16 @@ class UsersCreationForm(forms.ModelForm):
         self.fields["role"].required = True
         self.fields["phone"].required = True
 
+    def clean_team(self):
+        choice_team = self.cleaned_data["team"]
+        if choice_team:
+            curator = Team.objects.get(id=choice_team.id).curator
+            if curator is not None:
+                raise ValidationError(
+                    f"У команды уже есть куратор! {curator.get_full_name()}"
+                )
+        return choice_team
+
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
         set_permission_create_user(self.cleaned_data["role"], user)
@@ -164,9 +174,6 @@ class UsersCreationForm(forms.ModelForm):
 
 class UpdateUserForm(UsersCreationForm):
     """Форма редактирования пользователя"""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
