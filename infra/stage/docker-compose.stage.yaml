@@ -31,14 +31,15 @@ services:
     cap_add:
       - NET_ADMIN
     environment:
-      - PUID=1000
-      - PGID=1001
+      - PUID=1002
+      - PGID=1004
       - TZ=Europe/Moscow
       - URL=${HOST}
       - VALIDATION=http
       - STAGING=${ST}
     volumes:
       - ../nginx/nginx_stage.conf:/config/nginx/site-confs/default.conf
+      - swag_volume_stage:/config
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     ports:
@@ -54,3 +55,4 @@ volumes:
   static_value:
   media_value:
   postgres_data:
+  swag_volume_stage:

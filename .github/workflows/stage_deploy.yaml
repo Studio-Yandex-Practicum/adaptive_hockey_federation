@@ -68,7 +68,7 @@ jobs:
       - name: Copy dev folder to VPS
         run: |
           scp -r $GITHUB_WORKSPACE/infra/stage/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
-          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/nginx/
+          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
 
       - name: Execute commands on VPS
         uses: appleboy/ssh-action@master
