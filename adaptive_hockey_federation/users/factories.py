@@ -1,5 +1,4 @@
 import factory  # type: ignore
-from core.constants import ROLE_ADMIN, ROLE_MODERATOR
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
