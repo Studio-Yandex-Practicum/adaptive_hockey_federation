@@ -56,11 +56,13 @@ class UrlToTest:
         permission_required: str | None = None,
         authorized_only: bool = True,
         unauthorized_code_estimated: int | list | tuple = HTTPStatus.FOUND,
+        admin_only: bool = False,
     ):
         self.path = path
         self.authorized_only = authorized_only
         self.code_estimated = code_estimated
         self.permission = None
+        self.admin_only = admin_only
         if permission_required:
             self.permission = Permission.objects.get(
                 codename=permission_required
@@ -71,10 +73,17 @@ class UrlToTest:
             self.unauthorized_code = HTTPStatus.OK
 
     def _get_auth_response(
-        self, client: Client, user: User, clear_permissions: bool = True
+        self,
+        client: Client,
+        user: User,
+        clear_permissions: bool = True,
+        clear_admin: bool = True,
     ):
         if clear_permissions:
             user.user_permissions.clear()
+        if user.is_staff and clear_admin:
+            user.is_staff = False
+            user.save()
         client.force_login(user)
         return client.get(self.path)
 
@@ -138,6 +147,39 @@ class UrlToTest:
         )
         return response.status_code, HTTPStatus.FORBIDDEN, message
 
+    def admin_test(self, client: Client, user: User):
+        """Возвращает "ответ-ожидание" для авторизованного пользователя,
+        обладающего полномочиями администратора (is_staff=true).
+        Последним значением возвращает сообщение, которое можно использовать
+        в тестах."""
+        user.is_staff = True
+        user.save()
+        response = self._get_auth_response(client, user, clear_admin=False)
+        message = (
+            f"Для пользователя, являющегося администратором (is_staff=True) "
+            f"страница {self.path} должна вернуть ответ со статусом "
+            f"{self.code_estimated}."
+        )
+        return response.status_code, self.code_estimated, message
+
+    def non_admin_test(self, client: Client, user: User):
+        """Возвращает "ответ-ожидание" для авторизованного пользователя,
+        НЕ обладающего полномочиями администратора (is_staff=False).
+        Последним значением возвращает сообщение, которое можно использовать
+        в тестах."""
+        response = self._get_auth_response(client, user)
+        message = (
+            f"Для пользователя, НЕ являющегося администратором ("
+            f"is_staff=False) страница {self.path} должна вернуть ответ с "
+            f"одним из статусов "
+            f"{HTTPStatus.FOUND, HTTPStatus.MOVED_PERMANENTLY}."
+        )
+        return (
+            response.status_code,
+            (HTTPStatus.FOUND, HTTPStatus.MOVED_PERMANENTLY),
+            message,
+        )
+
     def execute_tests(self, client: Client, user: User):
         """Основной метод класса.
         Возвращает список кортежей (ответ, ожидаемый ответ, сообщение)
@@ -146,7 +188,11 @@ class UrlToTest:
         if self.permission and isinstance(self.permission, Permission):
             res.append(self.user_with_permission_test(client, user))
             res.append(self.user_without_permission_test(client, user))
-        else:
+        elif not self.admin_only:
             res.append(self.authorized_test(client, user))
+
+        if self.admin_only:
+            res.append(self.admin_test(client, user))
+            res.append(self.non_admin_test(client, user))
 
         return res

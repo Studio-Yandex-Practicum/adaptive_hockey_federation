@@ -142,6 +142,11 @@ class TestUrls(TestCase):
         UrlToTest в список urls (см. документацию к классу UrlToTest)."""
         urls = [
             UrlToTest("/"),
+            UrlToTest(
+                "/admin/",
+                admin_only=True,
+                unauthorized_code_estimated=HTTPStatus.FOUND,
+            ),
             UrlToTest("/auth/login/", authorized_only=False),
             UrlToTest("/auth/logout/", code_estimated=HTTPStatus.FOUND),
             UrlToTest("/auth/password_change/"),
