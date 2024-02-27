@@ -180,6 +180,7 @@ class TestUrls(TestCase):
         urls_responses_results = []
 
         for url in urls:
+            print(url.path)
             urls_responses_results += url.execute_tests(self.client, self.user)
 
         for fact, estimated, message in urls_responses_results:
