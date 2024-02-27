@@ -90,6 +90,7 @@ class NosologyFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Nosology
+        skip_postgeneration_save = True
 
     name = factory.Faker("sentence", nb_words=5, locale="ru_RU")
     diagnosis = factory.RelatedFactoryList(
@@ -117,6 +118,7 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Diagnosis
         django_get_or_create = ["name"]
+        skip_postgeneration_save = True
 
     nosology = factory.SubFactory(NosologyFactory)
     name = factory.Faker("sentence", nb_words=5, locale="ru_RU")
@@ -220,6 +222,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Player
         django_get_or_create = ["birthday"]
+        skip_postgeneration_save = True
 
     surname = factory.Faker("last_name", locale="ru_RU")
     name = factory.Faker("first_name", locale="ru_RU")

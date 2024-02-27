@@ -56,7 +56,14 @@ class UrlToTest:
             авторизованного пользователя будут проведены два
             теста: на ответы авторизованному пользователю, обладающему
             полномочиями администратора, и авторизованному пользователю,
-            не обладающему такими полномочиями.
+            не обладающему такими полномочиями;
+        use_post:
+            == False (по умолчанию)
+            == True - передавать такое значение следует только для url,
+            чей view наследуется от LogoutView, чтобы не отображался
+            warning, связанный с устареванием метода "get" для выхода
+            пользователя в Django 5.0, либо в иных случаях, когда необходимо
+            протестировать post-запросы к странице.
     """
 
     def __init__(
@@ -68,6 +75,7 @@ class UrlToTest:
         authorized_only: bool = True,
         unauthorized_code_estimated: int | list | tuple = HTTPStatus.FOUND,
         admin_only: bool = False,
+        use_post: bool = False,
     ):
         self.path = path
         self.authorized_only = authorized_only
@@ -82,6 +90,12 @@ class UrlToTest:
             self.unauthorized_code = unauthorized_code_estimated
         else:
             self.unauthorized_code = HTTPStatus.OK
+        self.use_post = use_post
+
+    def _get_response(self, client: Client):
+        if self.use_post:
+            return client.post(self.path)
+        return client.get(self.path)
 
     def _get_auth_response(
         self,
@@ -96,14 +110,14 @@ class UrlToTest:
             user.is_staff = False
             user.save()
         client.force_login(user)
-        return client.get(self.path)
+        return self._get_response(client)
 
     def unauthorized_test(self, client: Client) -> tuple[int, Any, str]:
         """Возвращает "ответ-ожидание" для неавторизованного пользователя.
         Последним значением возвращает сообщение, которое можно использовать
         в тестах."""
         client.logout()
-        response = client.get(self.path)
+        response = self._get_response(client)
         message = (
             f"Для неавторизованного пользователя страница {self.path} "
             f"должна вернуть ответ со статусом "

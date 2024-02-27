@@ -131,11 +131,6 @@ class TestUrls(TestCase):
         delete_result = self.delete_user(self.user.id)
         self.assertTrue(delete_result, "Ошибка при удалении пользователя")
 
-    def test_users_list_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get("/users/")
-        self.assertEqual(response.status_code, 200)
-
     def test_main_urls(self):
         """Тесты основных урл.
         Для тестирования нового урл - добавить соответствующий объект класса
@@ -148,7 +143,9 @@ class TestUrls(TestCase):
                 unauthorized_code_estimated=HTTPStatus.FOUND,
             ),
             UrlToTest("/auth/login/", authorized_only=False),
-            UrlToTest("/auth/logout/", code_estimated=HTTPStatus.FOUND),
+            UrlToTest(
+                "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True
+            ),
             UrlToTest("/auth/password_change/"),
             UrlToTest("/auth/password_reset/", authorized_only=False),
             UrlToTest("/analytics/"),
