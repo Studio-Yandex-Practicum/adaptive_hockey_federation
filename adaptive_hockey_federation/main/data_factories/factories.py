@@ -110,7 +110,7 @@ class NosologyFactory(factory.django.DjangoModelFactory):
 
 class DiagnosisFactory(factory.django.DjangoModelFactory):
     """
-    Cозданиt диагнозов, и связанных с ними нозологий.  Колонка "name"
+    Создание диагнозов, и связанных с ними нозологий.  Колонка "name"
     является уникальной.
     """
 
@@ -129,7 +129,7 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
 
 
 class DisciplineNameFactory(factory.django.DjangoModelFactory):
-    """Cоздание адаптивных дисциплин. Колонка "name" является уникальной."""
+    """Создание адаптивных дисциплин. Колонка "name" является уникальной."""
 
     class Meta:
         model = DisciplineName

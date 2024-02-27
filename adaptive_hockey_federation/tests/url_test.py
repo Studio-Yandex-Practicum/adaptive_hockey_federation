@@ -1,15 +1,20 @@
+from copy import copy
+from collections import namedtuple
+from http import HTTPStatus
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
-from fixture_user import (
+from tests.fixture_user import (
     test_email,
     test_lastname,
     test_name,
     test_password,
     test_role,
 )
-from main.data_factories.factories import EventFactory
+from main.data_factories.factories import EventFactory, PlayerFactory, \
+    DiagnosisFactory
 from main.models import (
     City,
     DisciplineName,
@@ -19,6 +24,81 @@ from main.models import (
 )
 
 User = get_user_model()
+
+
+class UrlToTest:
+    """Класс для использования в автоматизации тестирования урлов."""
+
+    def __init__(
+            self,
+            path: str,
+            code_estimated: int = HTTPStatus.OK,
+            permission_required: str = None,
+            authorized_only: bool = True,
+            unauthorized_code_estimated: int = HTTPStatus.FOUND
+    ):
+        self.path = path
+        self.authorized_only = authorized_only
+        self.code_estimated = code_estimated
+        if permission_required:
+            self.permission = Permission.objects.get(
+                codename=permission_required
+            )
+        else:
+            self.permission = None
+        if self.authorized_only:
+            self.unauthorized_code = unauthorized_code_estimated
+        else:
+            self.unauthorized_code = HTTPStatus.OK
+
+    def unauthorized_test(self, client: Client):
+        """Возвращает "ответ-ожидание" для неавторизованного пользователя."""
+        client.logout()
+        response = client.get(self.path)
+        message = (f'Для неавторизованного пользователя страница {self.path} '
+                   f'должна вернуть ответ со статусом '
+                   f'{self.unauthorized_code}.')
+        return response.status_code, self.unauthorized_code, message
+
+    def permissioned_test(self, client: Client, user: User):
+        user.user_permissions.add(self.permission)
+        client.force_login(user)
+        response = client.get(self.path)
+        message = (f'Для пользователя, обладающего разрешением '
+                   f'{self.permission.codename} страница {self.path} '
+                   f'должна вернуть ответ со статусом '
+                   f'{self.code_estimated}.')
+        return response.status_code, self.code_estimated, message
+
+    def unpermissioned_test(self, client: Client, user: User):
+        user.user_permissions.clear()
+        client.force_login(user)
+        response = client.get(self.path)
+        message = (f'Для пользователя, не обладающего разрешением '
+                   f'{self.permission.codename} страница {self.path} '
+                   f'должна вернуть ответ со статусом '
+                   f'{HTTPStatus.FORBIDDEN}.')
+        return response.status_code, HTTPStatus.FORBIDDEN, message
+
+    def authorized_test(self, client: Client, user: User):
+        """Возвращает "ответ-ожидание" для авторизованного пользователя."""
+        user.user_permissions.clear()
+        client.force_login(user)
+        response = client.get(self.path)
+        message = (f'Для любого авторизованного пользователя, страница '
+                   f'{self.path} должна вернуть ответ со статусом '
+                   f'{self.code_estimated}.')
+        return response.status_code, self.code_estimated, message
+
+    def get_equals(self, client: Client, user: User):
+        res = [self.unauthorized_test(client)]
+        if self.permission:
+            res.append(self.permissioned_test(client, user))
+            res.append(self.unpermissioned_test(client, user))
+        else:
+            res.append(self.authorized_test(client, user))
+
+        return res
 
 
 class TestAuthUrls:
@@ -44,6 +124,35 @@ class TestAuthUrls:
 
 
 class TestUrls(TestCase):
+    user: User
+    team: Team
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Создает необходимые сущности (объекты моделей БД).
+        Запускается только один раз (в отличие от метода setUp),
+        не сбрасывается после каждого теста, что помогает
+        избежать многократного создания сущностей и, как следствие, смены id
+        каждой сущности после каждого теста."""
+        super().setUpClass()
+        cls.user = User.objects.create_user(
+            password=test_password,
+            first_name="cls_" + test_name,
+            last_name="cls_" + test_lastname,
+            role=test_role,
+            email="cls_" + test_email,
+        )
+
+        cls.team = Team.objects.create(
+            name='cls_Test Team',
+            city=City.objects.create(name='cls_Test City'),
+            discipline_name=DisciplineName.objects.create(
+                name='cls_Test DisciplineName'),
+            curator=cls.user,
+        )
+        cls.competition = EventFactory.create()
+        cls.diagnosis = DiagnosisFactory.create()
+        cls.player = PlayerFactory.create()
 
     def setUp(self):
         self.client = Client()
@@ -54,15 +163,19 @@ class TestUrls(TestCase):
             role=test_role,
             email=test_email,
         )
+        self.permissions = {
+            'view_team': Permission.objects.get(codename='view_team')
+        }
+
         self.staff_member = StaffMember.objects.create(
             name='Test Name', surname='Test Surname')
         self.staff_team_member = StaffTeamMember.objects.create(
             staff_member=self.staff_member, staff_position='Test Staff')
         self.team = Team.objects.create(
-            name='Test Team',
-            city=City.objects.create(name='Test City'),
+            name='Test Team 2',
+            city=City.objects.create(name='Test City 2'),
             discipline_name=DisciplineName.objects.create(
-                name='Tetst DisciplineName'),
+                name='Tetst DisciplineName 2'),
             curator=self.user,
         )
         self.competition = EventFactory.create()
@@ -134,10 +247,14 @@ class TestUrls(TestCase):
         self.assertEqual(response.status_code, 200)
 
     # TODO Раскомментировать и изменить при работе с тестами на пермишены
-    # def test_main_teams_id_view_returns_200(self):
-    #     self.client.force_login(self.user)
-    #     response = self.client.get('/teams/1/')
-    #     self.assertEqual(response.status_code, 200)
+    def test_main_teams_id_view_returns_200(self):
+
+        self.user.user_permissions.add(self.permissions['view_team'])
+        print(self.user.user_permissions.all())
+        print(self.team.id)
+        self.client.force_login(self.user)
+        response = self.client.get('/teams/1/')
+        self.assertEqual(response.status_code, 200)
 
     def test_main_teams_view_returns_200(self):
         self.client.force_login(self.user)
@@ -163,3 +280,30 @@ class TestUrls(TestCase):
         self.client.force_login(self.user)
         response = self.client.get('/unloads/')
         self.assertEqual(response.status_code, 200)
+
+    def test_main_urls(self):
+        urls = [
+            UrlToTest('/', HTTPStatus.OK, None),
+            UrlToTest('/analytics/', HTTPStatus.OK, None),
+            UrlToTest('/competitions/', HTTPStatus.OK, None),
+            UrlToTest('/competitions/1/', HTTPStatus.OK, None),
+            UrlToTest('/player_create/', HTTPStatus.OK, None),
+            UrlToTest('/players/', HTTPStatus.OK, None),
+            UrlToTest('/players/1/', HTTPStatus.OK, None),
+            UrlToTest('/players/1/edit/', HTTPStatus.OK, None),
+            UrlToTest('/teams/', HTTPStatus.OK, None),
+            UrlToTest('/teams/1/', HTTPStatus.OK, 'view_team'),
+            UrlToTest('/teams/1/edit/', HTTPStatus.OK, 'change_team'),
+            UrlToTest('/teams/create/', HTTPStatus.OK, 'add_team'),
+            UrlToTest('/unloads/', HTTPStatus.OK, None),
+            UrlToTest('/user_create/', HTTPStatus.OK, 'add_user'),
+            UrlToTest('/user_update/1/', HTTPStatus.OK, 'change_user'),
+        ]
+        urls_responses_results = []
+
+        for url in urls:
+            urls_responses_results += url.get_equals(self.client, self.user)
+
+        for fact, estimated, message in urls_responses_results:
+            with self.subTest(msg=message, fact=fact, estimated=estimated):
+                self.assertEqual(fact, estimated, message)
