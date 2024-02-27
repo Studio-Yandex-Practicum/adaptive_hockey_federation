@@ -157,10 +157,14 @@ class UsersCreationForm(forms.ModelForm):
     def clean_team(self):
         choice_team = self.cleaned_data["team"]
         if choice_team:
-            curator = Team.objects.get(id=choice_team.id).curator
-            if curator is not None:
+            choice_team = Team.objects.get(id=choice_team.id)
+            current_team = self.instance.team.all()
+            if current_team and current_team[0] == choice_team:
+                return choice_team
+            if choice_team.curator is not None:
                 raise ValidationError(
-                    f"У команды уже есть куратор! {curator.get_full_name()}"
+                    "У команды есть куратор!"
+                    f"{choice_team.curator.get_full_name()}"
                 )
         return choice_team
 
