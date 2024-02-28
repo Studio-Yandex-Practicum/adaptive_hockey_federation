@@ -1,3 +1,4 @@
+from core.constants import ROLE_SUPERUSER
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
@@ -27,7 +28,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        extra_fields['role'] = 'admin'
+        extra_fields['role'] = ROLE_SUPERUSER
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('Суперюзер должен иметь is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
