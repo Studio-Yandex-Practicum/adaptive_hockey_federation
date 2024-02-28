@@ -1,3 +1,4 @@
+from django.http import HttpRequest, HttpResponse
 from core.utils import generate_file_name
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -102,6 +103,7 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
     permission_required = "main.add_player"
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока.")
+    team_id = None
 
     def form_valid(self, form):
         player = form.save()
@@ -111,6 +113,19 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
                 player=player, file=file, name=file.name
             )
         return super().form_valid(form)
+
+    def get(
+            self,
+            request: HttpRequest,
+            *args: str,
+            **kwargs) -> HttpResponse:
+        self.team_id = request.GET.get('team')
+        self.success_url = request.META.get('HTTP_REFERER')
+        print(f'request.GET --->>> {request.GET}')
+        print(f'self.success_url --->>> {self.success_url}')
+        print(f'team_id --->>> {self.team_id}')
+        print(f'request --->>> {request.path}')
+        return super().get(request, *args, **kwargs)
 
 
 class PlayerIdView(PermissionRequiredMixin, DetailView):

@@ -9,7 +9,7 @@
         {% if view_name  == 'main:competitions' %}{% include "base/button.html" with name="+ Соревнование" %}{% endif %}
         {% if view_name  == 'main:players' %}{% include "main/players/player_button_create.html"%}{% endif %}
         {% if view_name  != 'main:unloads' %}{% include "base/button.html" with name="Выгрузить" %}{% endif %}
-        {% if view_name  == 'main:teams_id' %}{% include "base/button_list.html" with name="+ Добавить" %}{% endif %}
+        {% if view_name  == 'main:teams_id' %}{% include "main/teams_id/button_create_team_member.html" with name="+ Добавить" %}{% endif %}
       {% endwith %}
     </ul>
   </nav>
