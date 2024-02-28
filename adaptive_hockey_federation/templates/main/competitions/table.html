@@ -17,7 +17,17 @@
     {% for table_string in table_data %}
     <tr>
       {% for cell_name, cell_value in table_string.items %}
-        {% if forloop.counter0 == 0 and 'url' in table_string %}
+        {% if cell_name == 'pk' %}
+          <td class="rounded-md">{{ cell_value }}</td>
+        {% elif cell_name == 'is_active' %}
+          <td class="rounded-md">
+            {% if cell_value %}
+              {% include "base/active_check_icon.html" %} <!-- Галочка -->
+            {% else %}
+            {% include "base/check_icon.html" %} <!-- Крестик -->
+            {% endif %}
+          </td>
+        {% elif forloop.counter0 == 0 and 'url' in table_string %}
           <td class="border rounded-full table-li">
             <a href="{{ table_string.url }}">{{ cell_value }} </a>
           </td>
@@ -36,22 +46,18 @@
         {% endif %}
       {% endfor %}
       {% with request.resolver_match.view_name as view_name %}
-          {% if view_name == 'users:users' %}
-            {% include "base/create_delete_buttons.html" %}
-          {% elif view_name == 'main:players' %}
-            {% include "base/create_delete_button_players.html" %}
-          {% elif view_name == 'main:teams' %}
-              {% include "base/team_edit_delete_buttons.html" %}
-          {% else %}
-              <td>
-                <div class="cell__buttons">
-                  {% include 'base/active_edit_icon.html' %}
-                  {% include 'base/active_delete_icon.html' %}
-                </div>
-              </td>
-          {% endif %}
+        {% if view_name == 'events:competitions' %}
+          {% include "main/competitions/competition_edit_delete_buttons.html" %}
+        {% else %}
+          <td>
+            <div class="cell__buttons">
+              {% include 'base/active_edit_icon.html' %}
+              {% include 'base/active_delete_icon.html' %}
+            </div>
+          </td>
+        {% endif %}
       {% endwith %}
     </tr>
-    {% endfor %}
+  {% endfor %}
   </tbody>
 </table>
