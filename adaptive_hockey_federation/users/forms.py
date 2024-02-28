@@ -155,12 +155,11 @@ class UsersCreationForm(forms.ModelForm):
         self.fields["phone"].required = True
 
     def clean_team(self):
-        choice_team = self.cleaned_data["team"]
-        if choice_team:
+        """
+        Проверка команды при создании пользователя
+        """
+        if choice_team := self.cleaned_data["team"]:
             choice_team = Team.objects.get(id=choice_team.id)
-            current_team = self.instance.team.all()
-            if current_team and current_team[0] == choice_team:
-                return choice_team
             if choice_team.curator is not None:
                 raise ValidationError(
                     "У команды есть куратор!"
@@ -178,6 +177,22 @@ class UsersCreationForm(forms.ModelForm):
 
 class UpdateUserForm(UsersCreationForm):
     """Форма редактирования пользователя"""
+
+    def clean_team(self):
+        """
+        Проверка команды при редактировании пользователя
+        """
+        if choice_team := self.cleaned_data["team"]:
+            choice_team = Team.objects.get(id=choice_team.id)
+            current_team = self.instance.team.all()
+            if current_team and current_team[0] == choice_team:
+                return choice_team
+            if choice_team.curator is not None:
+                raise ValidationError(
+                    "У команды есть куратор!"
+                    f"{choice_team.curator.get_full_name()}"
+                )
+        return choice_team
 
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)

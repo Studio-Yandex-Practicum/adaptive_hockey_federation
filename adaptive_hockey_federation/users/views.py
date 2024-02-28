@@ -106,7 +106,7 @@ class UpdateUserView(
             team = self.object.team.all()[0]
         context['form'] = self.form_class(
             instance=self.object,
-            initial={'team': team}
+            initial={'team': team},
         )
         return context
 
