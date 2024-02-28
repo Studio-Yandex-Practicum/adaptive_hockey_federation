@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from events.utils import pluralize_days
 from main.models import City, Team
-
-from .services import pluralize_days
 
 CHAR_FIELD_LENGTH = 250
 

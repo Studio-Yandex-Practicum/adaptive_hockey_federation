@@ -1,4 +1,4 @@
-def pluralize_days(days):
+def pluralize_days(days: int) -> str:
     """
     Вспомогательная функция для коректного отображения дней.
     """
