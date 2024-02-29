@@ -1,6 +1,3 @@
-from core.constants import GROUPS_BY_ROLE
-
-
 def set_default_permission_group(sender, **kwargs) -> None:
     """Функция для назначение прав группам пользователей"""
     from django.contrib.auth.models import Permission
@@ -23,21 +20,6 @@ def set_default_permission_group(sender, **kwargs) -> None:
                     Permission.objects.get(codename=codename)
                 )
         group_obj.save()
-
-
-def set_permission_create_user(role, user):
-    """
-    Функция установки прав доступа после создания пользователя
-    """
-    from users.models import ProxyGroup
-
-    user.is_staff = False
-    if role == "Администратор":
-        user.is_staff = True
-    user.save()
-    group = ProxyGroup.objects.get(name=GROUPS_BY_ROLE[role])
-    user.groups.clear()
-    user.groups.add(group)
 
 
 def set_team_curator(user, choice_team):
