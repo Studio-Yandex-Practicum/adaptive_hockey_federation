@@ -11,7 +11,7 @@ from django.forms import Select
 from django.utils.crypto import get_random_string
 from main.models import Team
 from users.utilits.reset_password import send_password_reset_email
-from users.utils import set_permission_create_user, set_team_curator
+from users.utils import set_team_curator
 
 User = get_user_model()
 
@@ -27,7 +27,7 @@ class GroupAdminForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        fields = ['name', 'users', 'permissions']
+        fields = ["name", "users", "permissions"]
 
     users = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
@@ -43,7 +43,8 @@ class GroupAdminForm(forms.ModelForm):
 
     def save_m2m(self):
         self.instance.user_set.through.objects.filter(
-            user__in=self.cleaned_data["users"]).delete()
+            user__in=self.cleaned_data["users"]
+        ).delete()
 
         self.instance.user_set.set(self.cleaned_data["users"])
 
@@ -114,29 +115,27 @@ class UsersCreationForm(forms.ModelForm):
     role = forms.ChoiceField(
         choices=ROLES_CHOICES[:-1],
         required=True,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='Роль пользователя',
-        error_messages={
-            'required': 'Пожалуйста, выберите роль из списка.'
-        }
+        widget=forms.Select(attrs={"class": "form-control"}),
+        label="Роль пользователя",
+        error_messages={"required": "Пожалуйста, выберите роль из списка."},
     )
     team = forms.ModelChoiceField(
         queryset=Team.objects.all(),
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='Команда представителя',
+        widget=forms.Select(attrs={"class": "form-control"}),
+        label="Команда представителя",
     )
 
     class Meta:
         model = User
         fields = (
-            'first_name',
-            'last_name',
-            'patronymic',
-            'email',
-            'phone',
-            'role',
-            'team',
+            "first_name",
+            "last_name",
+            "patronymic",
+            "email",
+            "phone",
+            "role",
+            "team",
         )
         error_messages = {
             "email": {
@@ -144,8 +143,8 @@ class UsersCreationForm(forms.ModelForm):
             },
         }
         widgets = {
-            'role': Select(),
-            'team': Select(),
+            "role": Select(),
+            "team": Select(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -169,7 +168,6 @@ class UsersCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
-        set_permission_create_user(self.cleaned_data["role"], user)
         set_team_curator(user, self.cleaned_data["team"])
         send_password_reset_email(user)
         return user
@@ -196,7 +194,6 @@ class UpdateUserForm(UsersCreationForm):
 
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
-        set_permission_create_user(self.cleaned_data["role"], user)
         set_team_curator(user, self.cleaned_data["team"])
         if commit:
             user.save()

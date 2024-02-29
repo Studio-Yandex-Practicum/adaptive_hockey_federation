@@ -3,21 +3,28 @@ NAME_MAX_LENGTH = 256
 EMAIL_MAX_LENGTH = 256
 QUERY_SET_LENGTH = 15
 
-ROLE_AGENT = 'Представитель команды'
-ROLE_MODERATOR = 'Модератор'
-ROLE_ADMIN = 'Администратор'
-ROLE_SUPERUSER = 'admin'
+ROLE_AGENT = "Представитель команды"
+ROLE_MODERATOR = "Модератор"
+ROLE_ADMIN = "Администратор"
+ROLE_SUPERUSER = "admin"
 ROLES_CHOICES = (
-    (ROLE_AGENT, 'Представитель команды'),
-    (ROLE_MODERATOR, 'Модератор'),
-    (ROLE_ADMIN, 'Администратор'),
-    (ROLE_SUPERUSER, 'Суперпользователь'),
+    (ROLE_AGENT, "Представитель команды"),
+    (ROLE_MODERATOR, "Модератор"),
+    (ROLE_ADMIN, "Администратор"),
+    (ROLE_SUPERUSER, "Суперпользователь"),
 )
-GROUP_CHOICES = {
-    ROLE_AGENT: 'Представители команд',
-    ROLE_MODERATOR: 'Модераторы',
-    ROLE_ADMIN: 'Администраторы',
+
+GROUP_ADMINS = "Администраторы"
+GROUP_MODERATORS = "Модераторы"
+GROUP_AGENTS = "Представители команд"
+
+GROUPS_BY_ROLE = {
+    ROLE_ADMIN: GROUP_ADMINS,
+    ROLE_AGENT: GROUP_AGENTS,
+    ROLE_MODERATOR: GROUP_MODERATORS,
+    ROLE_SUPERUSER: GROUP_ADMINS,
 }
+
 # constants for main/models.py
 CHAR_FIELD_LENGTH = 256
 EMPTY_VALUE_DISPLAY = ""

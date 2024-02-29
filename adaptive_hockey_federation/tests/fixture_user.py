@@ -1,11 +1,12 @@
 import pytest
 from core.constants import ROLE_SUPERUSER
 
-test_password = 'admin'
-test_name = 'admin'
-test_lastname = 'admin'
-test_role = ROLE_SUPERUSER
-test_email = 'admin@admin.ru'
+test_password = "admin"
+test_name = "admin"
+test_lastname = "admin"
+test_role_admin = ROLE_SUPERUSER
+test_role_user = "user"
+test_email = "admin@admin.ru"
 
 
 @pytest.fixture
@@ -14,7 +15,7 @@ def user(django_user_model):
         password=test_password,
         first_name=test_name,
         last_name=test_lastname,
-        role=test_role,
+        role=test_role_admin,
         email=test_email,
     )
 
@@ -28,9 +29,7 @@ def user_client(user, client):
 @pytest.fixture
 def adminuser(djangousermodel):
     admin = djangousermodel.objects.createsuperuser(
-        first_name='admin',
-        email='admin@admin.com',
-        password='admin'
+        first_name="admin", email="admin@admin.com", password="admin"
     )
     admin.isstaff = True
     admin.issuperuser = True
@@ -41,8 +40,8 @@ def adminuser(djangousermodel):
 @pytest.fixture
 def moderatoruser(djangousermodel):
     moderator = djangousermodel.objects.createuser(
-        first_name='moderator',
-        email='moderator@moderator.com',
-        password='moderator'
+        first_name="moderator",
+        email="moderator@moderator.com",
+        password="moderator",
     )
     return moderator
