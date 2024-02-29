@@ -2,6 +2,7 @@ from http import HTTPStatus
 from typing import Any
 
 import pytest
+from core import constants
 from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
 from events.models import Event
@@ -16,10 +17,13 @@ from tests.fixture_user import (
     test_lastname,
     test_name,
     test_password,
-    test_role,
+    test_role_admin,
+    test_role_user,
 )
 from tests.utils import UrlToTest
-from users.models import User
+from users.models import ProxyGroup, User
+
+TEST_GROUP_NAME = "no_permission_group"
 
 
 class TestAuthUrls:
@@ -59,11 +63,13 @@ class TestUrls(TestCase):
         избежать многократного создания сущностей и, как следствие, смены id
         каждой сущности после каждого теста."""
         super().setUpClass()
+        ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
+        constants.GROUPS_BY_ROLE[test_role_user] = TEST_GROUP_NAME
         cls.user = User.objects.create_user(
             password=test_password,
             first_name="cls_" + test_name,
             last_name="cls_" + test_lastname,
-            role=test_role,
+            role=test_role_user,
             email="cls_" + test_email,
         )
 
@@ -85,7 +91,7 @@ class TestUrls(TestCase):
             password=test_password,
             first_name=test_name,
             last_name=test_lastname,
-            role=test_role,
+            role=test_role_user,
             email=test_email,
         )
         self.permissions = {
@@ -104,14 +110,14 @@ class TestUrls(TestCase):
         """Тест - создание пользователя."""
         self.assertEqual(self.user.first_name, test_name)
         self.assertEqual(self.user.last_name, test_lastname)
-        self.assertEqual(self.user.role, test_role)
+        self.assertEqual(self.user.role, test_role_user)
         self.assertEqual(self.user.email, test_email)
 
     def test_edit_user(self):
         """Тест - редактирование существующего пользователя."""
         new_name = "Test"
         new_lastname = "User"
-        new_role = "Tester"
+        new_role = test_role_admin
         new_email = "test@example.com"
 
         self.user.first_name = new_name
@@ -177,7 +183,6 @@ class TestUrls(TestCase):
         urls_responses_results = []
 
         for url in urls:
-            print(url.path)
             urls_responses_results += url.execute_tests(self.client, self.user)
 
         for fact, estimated, message in urls_responses_results:

@@ -12,6 +12,16 @@ ROLES_CHOICES = (
     (ROLE_ADMIN, "Администратор"),
 )
 
+GROUP_ADMINS = "Администраторы"
+GROUP_MODERATORS = "Модераторы"
+GROUP_AGENTS = "Агенты"
+
+GROUPS_BY_ROLE = {
+    ROLE_ADMIN: GROUP_ADMINS,
+    ROLE_AGENT: GROUP_AGENTS,
+    ROLE_MODERATOR: GROUP_MODERATORS,
+}
+
 # constants for main/models.py
 CHAR_FIELD_LENGTH = 256
 EMPTY_VALUE_DISPLAY = ""

@@ -159,7 +159,9 @@ class UrlToTest:
         НЕ обладающего разрешением с codename, сохраненным в self.permission.
         Последним значением возвращает сообщение, которое можно использовать
         в тестах."""
-        response = self._get_auth_response(client, user)
+        response = self._get_auth_response(
+            client, user, clear_permissions=True
+        )
         if isinstance(self.permission, Permission):
             codename = self.permission.codename
         else:
