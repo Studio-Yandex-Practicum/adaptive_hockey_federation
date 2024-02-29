@@ -3,10 +3,13 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from users.forms import CreateUserForm, UpdateUserForm
+from users.forms import UpdateUserForm, UsersCreationForm
 
 User = get_user_model()
 
@@ -82,17 +85,28 @@ class UpdateUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
         UpdateView):
+    """
+    Вьюха редактирования пользователя
+    """
     model = User
     template_name = 'main/users/user_update.html'
     permission_required = 'users.change_user'
     form_class = UpdateUserForm
     success_url = '/users'
 
+    def get_object(self, queryset=None):
+        user_id = self.kwargs.get("pk")
+        return get_object_or_404(User, pk=user_id)
+
     def get_context_data(self, **kwargs):
         context = super(UpdateUserView, self).get_context_data(**kwargs)
+        queryset = self.object.team.all()
+        team = None
+        if queryset:
+            team = self.object.team.all()[0]
         context['form'] = self.form_class(
             instance=self.object,
-            initial=self.get_initial()
+            initial={'team': team},
         )
         return context
 
@@ -101,6 +115,9 @@ class DeleteUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
         DeleteView):
+    """
+    Вьюха удаления пользователя
+    """
     object = User
     model = User
     success_url = '/users'
@@ -111,13 +128,21 @@ class CreateUserView(
         LoginRequiredMixin,
         PermissionRequiredMixin,
         CreateView):
+    """
+    Вьюха создания пользователя
+    """
     model = User
-    form_class = CreateUserForm
+    form_class = UsersCreationForm
     template_name = 'main/users/user_create.html'
     success_url = '/users'
     permission_required = 'users.create_user'
 
+
+class PasswordSetView(PasswordResetConfirmView):
+    """Вьюха изменения пароля пользователя"""
+    success_url = reverse_lazy("users:users")
+
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.save()
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        self.user.save()
+        return response

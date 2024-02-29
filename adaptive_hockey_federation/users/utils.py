@@ -1,8 +1,12 @@
+from core.constants import GROUPS_BY_ROLE
+
+
 def set_default_permission_group(sender, **kwargs) -> None:
     """Функция для назначение прав группам пользователей"""
     from django.contrib.auth.models import Permission
     from users.constants import AGENTS_PERMS, GROUP_NAMES, MODERATORS_PERMS
     from users.models import ProxyGroup
+
     for group in GROUP_NAMES:
         group_obj, created = ProxyGroup.objects.get_or_create(name=group)
         if group == "Администраторы":
@@ -10,10 +14,40 @@ def set_default_permission_group(sender, **kwargs) -> None:
                 group_obj.permissions.add(perm)
         elif group == "Модераторы":
             for codename in MODERATORS_PERMS:
-                group_obj.permissions.add(Permission.objects.get(
-                    codename=codename))
-        elif group == "Агенты":
+                group_obj.permissions.add(
+                    Permission.objects.get(codename=codename)
+                )
+        elif group == "Представители команд":
             for codename in AGENTS_PERMS:
-                group_obj.permissions.add(Permission.objects.get(
-                    codename=codename))
+                group_obj.permissions.add(
+                    Permission.objects.get(codename=codename)
+                )
         group_obj.save()
+
+
+def set_permission_create_user(role, user):
+    """
+    Функция установки прав доступа после создания пользователя
+    """
+    from users.models import ProxyGroup
+
+    user.is_staff = False
+    if role == "Администратор":
+        user.is_staff = True
+    user.save()
+    group = ProxyGroup.objects.get(name=GROUPS_BY_ROLE[role])
+    user.groups.clear()
+    user.groups.add(group)
+
+
+def set_team_curator(user, choice_team):
+    """
+    Функция назначения представителя команды
+    """
+    from main.models import Team
+
+    Team.objects.filter(curator=user).update(curator=None)
+    if choice_team is not None:
+        team = Team.objects.get(id=choice_team.id)
+        team.curator = user
+        team.save()

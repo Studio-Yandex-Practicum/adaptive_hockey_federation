@@ -2,6 +2,7 @@ from django.urls import path
 from users.views import (
     CreateUserView,
     DeleteUserView,
+    PasswordSetView,
     UpdateUserView,
     UsersListView,
 )
@@ -28,5 +29,10 @@ urlpatterns = [
         'user_create/',
         CreateUserView.as_view(),
         name='user_create'
+    ),
+    path(
+        "set_password/<uidb64>/<token>/",
+        PasswordSetView.as_view(),
+        name="password_set",
     ),
 ]
