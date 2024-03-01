@@ -35,6 +35,11 @@
                     {% if field_value %}
                       Да
                     {% endif %}
+                  {% elif field_name == 'Команда' %}
+                    {% for team in field_value %}
+                      <a href="{{ team.url }}">{{ team.name }}</a>
+                      {% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
                   {% else %}
                     {{ field_value }}
                   {% endif %}
