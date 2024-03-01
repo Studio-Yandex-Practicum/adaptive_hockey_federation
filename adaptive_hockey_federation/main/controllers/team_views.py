@@ -22,8 +22,9 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
     template_name = "main/teams_id/teams_id.html"
     success_url = "/teams/"
     permission_required = "main.view_team"
-    permission_denied_message = ("Отсутствует разрешение на просмотр "
-                                 "содержимого.")
+    permission_denied_message = (
+        "Отсутствует разрешение на просмотр " "содержимого."
+    )
 
     def get_object(self, queryset=None):
         return get_object_or_404(Team, id=self.kwargs["team_id"])
@@ -44,7 +45,6 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                     "number": "№",
                     "surname": "Фамилия",
                     "name": "Имя",
-                    "function": "Должность",
                     "position": "Квалификация",
                     "note": "Примечание",
                 },
@@ -53,7 +53,6 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                         "number": i + 1,
                         "surname": staff.staff_member.surname,
                         "name": staff.staff_member.name,
-                        "function": staff.staff_position,
                         "position": staff.qualification,
                         "note": staff.notes,
                     }
@@ -62,7 +61,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                             staff_position=staff_position[1].title()
                         )
                     )
-                ]
+                ],
             }
             for staff_position in STAFF_POSITION_CHOICES
         ]
@@ -70,8 +69,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
             "name": "Игроки",
             "head": {
                 "number": "№",
-                "surname": "Фамилия",
-                "name": "Имя",
+                "full_name": "Фамилия, Имя",
                 "birthday": "Д.Р.",
                 "gender": "Пол",
                 "position": "Квалификация",
@@ -82,19 +80,20 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
             "data": [
                 {
                     "number": player.number,
-                    "surname": player.surname,
-                    "name": player.name,
+                    "full_name_link": self.get_player_href(player),
                     "birthday": player.birthday,
                     "gender": player.get_gender_display(),
                     "position": player.get_position_display(),
-                    "diagnosis": player.diagnosis.name
-                    if player.diagnosis else None,
-                    "discipline": player.discipline
-                    if player.discipline else None,
+                    "diagnosis": (
+                        player.diagnosis.name if player.diagnosis else None
+                    ),
+                    "discipline": (
+                        player.discipline if player.discipline else None
+                    ),
                     "level_revision": player.level_revision,
                 }
                 for player in players
-            ]
+            ],
         }
 
         context["players_table"] = players_table
@@ -102,6 +101,13 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
         context["team"] = team
 
         return context
+
+    @staticmethod
+    def get_player_href(player: Player) -> dict[str, str]:
+        """Возвращает словарь с информацией для ссылки на игрока."""
+        url = reverse("main:player_id", args=[player.id])
+        name = " ".join((player.surname, player.name))
+        return {"name": name, "url": url}
 
 
 class TeamListView(LoginRequiredMixin, ListView):
@@ -118,6 +124,14 @@ class TeamListView(LoginRequiredMixin, ListView):
         search = self.request.GET.get("search")
         if search:
             search_column = self.request.GET.get("search_column")
+            team_structure_lookup = (
+                Q(team_players__name__icontains=search)
+                | Q(team_players__surname__icontains=search)
+                | Q(team_players__patronymic__icontains=search)
+                | Q(team_members__staff_member__name__icontains=search)
+                | Q(team_members__staff_member__surname__icontains=search)
+                | Q(team_members__staff_member__patronymic__icontains=search)
+            )
             if not search_column or search_column.lower() in ["все", "all"]:
                 or_lookup = (
                     Q(discipline_name_id__name__icontains=search)
@@ -125,15 +139,8 @@ class TeamListView(LoginRequiredMixin, ListView):
                     | Q(city__name__icontains=search)
                 )
                 queryset = queryset.filter(or_lookup)
-            elif search_column == 'team_structure':
-                or_lookup = (
-                    Q(team_players__name__icontains=search)
-                    | Q(team_players__surname__icontains=search)
-                    | Q(team_players__patronymic__icontains=search)
-                    | Q(team_members__staff_member__name__icontains=search)
-                    | Q(team_members__staff_member__surname__icontains=search)
-                    | Q(team_members__staff_member__patronymic__icontains=search)  # Noqa
-                )
+            elif search_column == "team_structure":
+                or_lookup = team_structure_lookup
                 queryset = queryset.filter(or_lookup)
             else:
                 search_fields = {
@@ -185,22 +192,19 @@ class CityListMixin:
     @staticmethod
     def get_cities():
         """Возвращает список имен всех городов из БД."""
-        return City.objects.values_list('name', flat=True)
+        return City.objects.values_list("name", flat=True)
 
 
 class UpdateTeamView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    UpdateView,
-    CityListMixin
+    LoginRequiredMixin, PermissionRequiredMixin, UpdateView, CityListMixin
 ):
     """Вид с формой изменения основных данных спортивной команды."""
 
     model = Team
     form_class = TeamForm
     template_name = "main/teams/team_update.html"
-    success_url = '/teams/'
-    permission_required = 'main.change_team'
+    success_url = "/teams/"
+    permission_required = "main.change_team"
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get("team_id")
@@ -208,44 +212,36 @@ class UpdateTeamView(
 
     def get_context_data(self, **kwargs):
         context = super(UpdateTeamView, self).get_context_data(**kwargs)
-        context['form'] = self.form_class(
-            instance=self.object,
-            initial={'city': self.object.city.name}
+        context["form"] = self.form_class(
+            instance=self.object, initial={"city": self.object.city.name}
         )
-        context['cities'] = self.get_cities()
+        context["cities"] = self.get_cities()
         return context
 
 
-class DeleteTeamView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    DeleteView
-):
+class DeleteTeamView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     """Вид удаления спортивной команды."""
 
     object = Team
     model = Team
-    success_url = '/teams/'
-    permission_required = 'main.delete_team'
+    success_url = "/teams/"
+    permission_required = "main.delete_team"
 
     def get_object(self, queryset=None):
-        team_id = self.kwargs.get('team_id')
+        team_id = self.kwargs.get("team_id")
         return get_object_or_404(Team, pk=team_id)
 
 
 class CreateTeamView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    CreateView,
-    CityListMixin
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin
 ):
     """Вид с формой создания новой спортивной команды."""
 
     model = Team
     form_class = TeamForm
-    template_name = 'main/teams/team_create.html'
-    permission_required = 'main.add_team'
-    success_url = '/teams/?page=last'
+    template_name = "main/teams/team_create.html"
+    permission_required = "main.add_team"
+    success_url = "/teams/?page=last"
 
     def form_valid(self, form):
         form.save()
@@ -253,5 +249,5 @@ class CreateTeamView(
 
     def get_context_data(self, **kwargs):
         context = super(CreateTeamView, self).get_context_data(**kwargs)
-        context['cities'] = self.get_cities()
+        context["cities"] = self.get_cities()
         return context
