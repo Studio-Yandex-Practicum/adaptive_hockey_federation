@@ -58,7 +58,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                     }
                     for i, staff in enumerate(
                         team.team_members.filter(
-                            staff_position=staff_position[1].title()
+                            staff_position=staff_position[1]
                         )
                     )
                 ],
