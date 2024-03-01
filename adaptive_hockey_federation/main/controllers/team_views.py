@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+from main.controllers.utils import get_player_href
 from main.forms import TeamForm
 from main.models import City, Player, Team
 
@@ -80,7 +81,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
             "data": [
                 {
                     "number": player.number,
-                    "full_name_link": self.get_player_href(player),
+                    "full_name_link": get_player_href(player),
                     "birthday": player.birthday,
                     "gender": player.get_gender_display(),
                     "position": player.get_position_display(),
@@ -101,13 +102,6 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
         context["team"] = team
 
         return context
-
-    @staticmethod
-    def get_player_href(player: Player) -> dict[str, str]:
-        """Возвращает словарь с информацией для ссылки на игрока."""
-        url = reverse("main:player_id", args=[player.id])
-        name = " ".join((player.surname, player.name))
-        return {"name": name, "url": url}
 
 
 class TeamListView(LoginRequiredMixin, ListView):
