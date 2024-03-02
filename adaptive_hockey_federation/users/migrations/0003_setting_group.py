@@ -7,7 +7,7 @@ def set_default_groups(apps, schema_editor):
         [
             Group(name="Администраторы"),
             Group(name="Модераторы"),
-            Group(name="Агенты"),
+            Group(name="Представители команд"),
         ]
     )
 

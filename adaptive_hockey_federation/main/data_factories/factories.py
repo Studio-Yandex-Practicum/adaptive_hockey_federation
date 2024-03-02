@@ -90,6 +90,7 @@ class NosologyFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Nosology
+        skip_postgeneration_save = True
 
     name = factory.Faker("sentence", nb_words=5, locale="ru_RU")
     diagnosis = factory.RelatedFactoryList(
@@ -110,13 +111,14 @@ class NosologyFactory(factory.django.DjangoModelFactory):
 
 class DiagnosisFactory(factory.django.DjangoModelFactory):
     """
-    Cозданиt диагнозов, и связанных с ними нозологий.  Колонка "name"
+    Создание диагнозов, и связанных с ними нозологий.  Колонка "name"
     является уникальной.
     """
 
     class Meta:
         model = Diagnosis
         django_get_or_create = ["name"]
+        skip_postgeneration_save = True
 
     nosology = factory.SubFactory(NosologyFactory)
     name = factory.Faker("sentence", nb_words=5, locale="ru_RU")
@@ -129,7 +131,7 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
 
 
 class DisciplineNameFactory(factory.django.DjangoModelFactory):
-    """Cоздание адаптивных дисциплин. Колонка "name" является уникальной."""
+    """Создание адаптивных дисциплин. Колонка "name" является уникальной."""
 
     class Meta:
         model = DisciplineName
@@ -220,6 +222,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Player
         django_get_or_create = ["birthday"]
+        skip_postgeneration_save = True
 
     surname = factory.Faker("last_name", locale="ru_RU")
     name = factory.Faker("first_name", locale="ru_RU")

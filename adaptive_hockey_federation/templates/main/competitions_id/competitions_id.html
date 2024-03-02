@@ -28,12 +28,15 @@
           <td>{{ team.discipline_name }}</td>
           <td><a href="{{ team.ref.url }}" class="btn btn-secondary text-white"
             style="background-color: #64C2D1; border: 1px solid #fff;"
-            role="button">Игроки</a>
+            role="button">Посмотреть</a>
           </td>
           <td>
-            <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить команду {{ table_string.name }}?');"></a>
-              {% include 'base/delete_icon.html' %}
-            </button>
+            <form action="{{ team.delete_url }}" method="post">
+              {% csrf_token %}
+              <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить команду?');">
+                {% include 'base/delete_icon.html' %}
+              </button>
+            </form>
           </td>
         </tr>
       {% endfor %}

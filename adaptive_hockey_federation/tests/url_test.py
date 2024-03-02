@@ -1,49 +1,89 @@
+from http import HTTPStatus
+from typing import Any
+
 import pytest
-from django.contrib.auth import get_user_model
+from core import constants
 from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
-from fixture_user import (
+from events.models import Event
+from main.data_factories.factories import (
+    DiagnosisFactory,
+    EventFactory,
+    PlayerFactory,
+)
+from main.models import City, Diagnosis, DisciplineName, Player, Team
+from tests.fixture_user import (
     test_email,
     test_lastname,
     test_name,
     test_password,
-    test_role,
+    test_role_admin,
+    test_role_user,
 )
-from main.data_factories.factories import EventFactory
-from main.models import (
-    City,
-    DisciplineName,
-    StaffMember,
-    StaffTeamMember,
-    Team,
-)
+from tests.utils import UrlToTest
+from users.models import ProxyGroup, User
 
-User = get_user_model()
+TEST_GROUP_NAME = "no_permission_group"
 
 
 class TestAuthUrls:
 
     @pytest.mark.django_db(transaction=True)
     def test_auth_urls(self, client):
-        urls = {'/auth/login/': 200, '/auth/logout/': 302}
+        urls = {"/auth/login/": 200, "/auth/logout/": 302}
         for url, status in urls.items():
             try:
                 response = client.post(url)
             except Exception as e:
-                assert False, (
-                    f'''Страница `{url}` работает неправильно. Ошибка: `{e}`'''
-                )
+                assert (
+                    False
+                ), f"Страница {url} работает неправильно. Ошибка: {e}"
             assert response.status_code != 404, (
-                f'''Страница `{url}` не найдена,
-                проверьте этот адрес в *urls.py*'''
+                f"Страница {url} не найдена, проверьте этот адрес в "
+                f"*urls.py*"
             )
             assert response.status_code == status, (
-                f'''Ошибка {response.status_code} при открытиии `{url}`.
-                Проверьте ее view-функцию'''
+                f"Ошибка {response.status_code} при открытии {url}. "
+                f"Проверьте ее view-функцию"
             )
 
 
 class TestUrls(TestCase):
+    user: User | Any = None
+    team: Team | Any = None
+    competition: Event | Any = None
+    diagnosis: Diagnosis | Any = None
+    player: Player | Any = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Создает необходимые сущности (объекты моделей БД).
+        Запускается только один раз (в отличие от метода setUp),
+        не сбрасывается после каждого теста, что помогает
+        избежать многократного создания сущностей и, как следствие, смены id
+        каждой сущности после каждого теста."""
+        super().setUpClass()
+        ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
+        constants.GROUPS_BY_ROLE[test_role_user] = TEST_GROUP_NAME
+        cls.user = User.objects.create_user(
+            password=test_password,
+            first_name="cls_" + test_name,
+            last_name="cls_" + test_lastname,
+            role=test_role_user,
+            email="cls_" + test_email,
+        )
+
+        cls.team = Team.objects.create(
+            name="cls_Test Team",
+            city=City.objects.create(name="cls_Test City"),
+            discipline_name=DisciplineName.objects.create(
+                name="cls_Test DisciplineName"
+            ),
+            curator=cls.user,
+        )
+        cls.competition = EventFactory.create()
+        cls.diagnosis = DiagnosisFactory.create()
+        cls.player = PlayerFactory.create()
 
     def setUp(self):
         self.client = Client()
@@ -51,21 +91,12 @@ class TestUrls(TestCase):
             password=test_password,
             first_name=test_name,
             last_name=test_lastname,
-            role=test_role,
+            role=test_role_user,
             email=test_email,
         )
-        self.staff_member = StaffMember.objects.create(
-            name='Test Name', surname='Test Surname')
-        self.staff_team_member = StaffTeamMember.objects.create(
-            staff_member=self.staff_member, staff_position='Test Staff')
-        self.team = Team.objects.create(
-            name='Test Team',
-            city=City.objects.create(name='Test City'),
-            discipline_name=DisciplineName.objects.create(
-                name='Tetst DisciplineName'),
-            curator=self.user,
-        )
-        self.competition = EventFactory.create()
+        self.permissions = {
+            "view_team": Permission.objects.get(codename="view_team")
+        }
 
     def delete_user(self, user_id):
         try:
@@ -76,18 +107,18 @@ class TestUrls(TestCase):
             return False
 
     def test_create_user(self):
-        # Тест - создание пользователя
+        """Тест - создание пользователя."""
         self.assertEqual(self.user.first_name, test_name)
         self.assertEqual(self.user.last_name, test_lastname)
-        self.assertEqual(self.user.role, test_role)
+        self.assertEqual(self.user.role, test_role_user)
         self.assertEqual(self.user.email, test_email)
 
     def test_edit_user(self):
-        # Тест - редактирование существующего пользователя
-        new_name = 'Test'
-        new_lastname = 'User'
-        new_role = 'Tester'
-        new_email = 'test@example.com'
+        """Тест - редактирование существующего пользователя."""
+        new_name = "Test"
+        new_lastname = "User"
+        new_role = test_role_admin
+        new_email = "test@example.com"
 
         self.user.first_name = new_name
         self.user.last_name = new_lastname
@@ -102,64 +133,61 @@ class TestUrls(TestCase):
         self.assertEqual(edited_user.email, new_email)
 
     def test_delete_user(self):
-        # Тест - удаление пользователя
+        """Тест - удаление пользователя."""
         delete_result = self.delete_user(self.user.id)
-        self.assertTrue(delete_result, 'Ошибка при удалении пользователя')
+        self.assertTrue(delete_result, "Ошибка при удалении пользователя")
 
-    def test_users_list_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/users/')
-        self.assertEqual(response.status_code, 200)
+    def test_main_urls(self):
+        """Тесты основных урл.
+        Для тестирования нового урл - добавить соответствующий объект класса
+        UrlToTest в список urls (см. документацию к классу UrlToTest)."""
+        urls = [
+            UrlToTest("/"),
+            UrlToTest(
+                "/admin/",
+                admin_only=True,
+                unauthorized_code_estimated=HTTPStatus.FOUND,
+            ),
+            UrlToTest("/auth/login/", authorized_only=False),
+            UrlToTest(
+                "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True
+            ),
+            UrlToTest("/auth/password_change/"),
+            UrlToTest("/auth/password_reset/", authorized_only=False),
+            UrlToTest("/analytics/"),
+            UrlToTest("/competitions/"),
+            # TODO Раскомментировать при доработке пермишенов для страниц с
+            #  соревнованиями.
+            # UrlToTest('/competitions/1/'),
+            # TODO Раскомментировать при доработке пермишенов для страниц с
+            #  игроками.
+            # UrlToTest('/player_create/'),
+            UrlToTest("/players/"),
+            # TODO Раскомментировать при доработке пермишенов для страниц с
+            #  игроками.
+            # UrlToTest('/players/1/'),
+            # UrlToTest('/players/1/edit/'),
+            UrlToTest("/teams/"),
+            UrlToTest("/teams/1/", permission_required="view_team"),
+            UrlToTest("/teams/1/edit/", permission_required="change_team"),
+            UrlToTest("/teams/create/", permission_required="add_team"),
+            UrlToTest("/unloads/"),
+            # TODO Раскомментировать при доработке пермишенов для страниц с
+            #  пользователями.
+            # UrlToTest('/user_create/',
+            #           permission_required='add_user'),
+            # UrlToTest('/users/',
+            #           permission_required='view_user')
+            UrlToTest("/user_update/1/", permission_required="change_user"),
+        ]
+        urls_responses_results = []
 
-    def test_user_update_view_returns_200(self):
-        self.adminuser = User.objects.get(first_name='admin')
+        for url in urls:
+            urls_responses_results += url.execute_tests(self.client, self.user)
 
-        self.permission = Permission.objects.get(codename='change_user')
-        self.adminuser.user_permissions.add(self.permission)
-        self.adminuser.save()
-
-        self.client.force_login(self.adminuser)
-
-        response = self.client.get('/user_update/1/')
-        assert response.status_code == 200
-
-    def test_main_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_main_players_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/players/')
-        self.assertEqual(response.status_code, 200)
-
-    # TODO Раскомментировать и изменить при работе с тестами на пермишены
-    # def test_main_teams_id_view_returns_200(self):
-    #     self.client.force_login(self.user)
-    #     response = self.client.get('/teams/1/')
-    #     self.assertEqual(response.status_code, 200)
-
-    def test_main_teams_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/teams/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_main_competitions_id_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/competitions/1/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_main_competitions_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/competitions/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_main_analytics_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/analytics/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_main_unloads_view_returns_200(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/unloads/')
-        self.assertEqual(response.status_code, 200)
+        for fact, estimated, message in urls_responses_results:
+            with self.subTest(msg=message, fact=fact, estimated=estimated):
+                if isinstance(estimated, (str, int)):
+                    self.assertEqual(fact, estimated, message)
+                elif isinstance(estimated, (list, tuple)):
+                    self.assertIn(fact, estimated, message)

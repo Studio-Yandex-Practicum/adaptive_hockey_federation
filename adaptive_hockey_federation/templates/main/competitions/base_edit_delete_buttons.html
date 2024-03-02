@@ -1,0 +1,25 @@
+{% load static %}
+<td class="border rounded-md">
+  <div class="items__group">
+    <form action="{% url action_url table_string.pk %}" method="post">
+      {% csrf_token %}
+      {% if perms.events.competition_update %}
+        <button class="btns-edit-del" type="submit">
+          {% include 'base/edit_icon.html' %}
+        </button>
+      {% endif %}
+    </form>
+    <form action="{% url delete_url table_string.pk %}" method="post">
+      {% csrf_token %}
+      {% if perms.events.competition_delete %}
+        <button
+                class="btns-edit-del"
+                type="submit"
+                onclick="return confirm('{{ delete_message }}{{ table_string.name }} ?');"
+        >
+          {% include 'base/delete_icon.html' %}
+        </button>
+      {% endif %}
+    </form>
+  </div>
+</td>

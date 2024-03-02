@@ -237,6 +237,7 @@ class Team(BaseUniqueName):
         null=True,
         verbose_name=_("Куратор команды"),
         help_text=_("Куратор команды"),
+        related_name='team'
     )
 
     class Meta:
