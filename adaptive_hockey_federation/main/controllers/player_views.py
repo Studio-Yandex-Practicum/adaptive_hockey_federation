@@ -1,10 +1,10 @@
-from django.http import HttpRequest, HttpResponse
 from core.utils import generate_file_name
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
 from django.db.models import Q
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -124,7 +124,6 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
         print(f'request.GET --->>> {request.GET}')
         print(f'self.success_url --->>> {self.success_url}')
         print(f'team_id --->>> {self.team_id}')
-        print(f'request --->>> {request.path}')
         return super().get(request, *args, **kwargs)
 
 
