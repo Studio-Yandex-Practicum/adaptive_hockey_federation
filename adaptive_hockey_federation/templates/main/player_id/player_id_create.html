@@ -34,10 +34,10 @@
             <tbody>
               {% for field in form.visible_fields %}
                 {% if field.name in 'team level_revision is_captain is_assistent position number' %}
-                  <tr>
-                    <th>{{ field.label_tag }}</th>
-                    <td>{{ field }}</td>
-                    <td>{{ field.errors }}</td>
+                  <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
+                      <th>{{ field.label_tag }}</th>
+                      <td>{{ field }}</td>
+                      <td>{{ field.errors }}</td>
                   </tr>
                 {% endif %}
               {% endfor %}
@@ -55,7 +55,8 @@
             </form>
           </table>
         </div>
-
+    
+    <input type="hidden" value="{{ team_id }}" name="team_id" >
     <!-- Save Button -->
     <div class="container">
       <div class="row">

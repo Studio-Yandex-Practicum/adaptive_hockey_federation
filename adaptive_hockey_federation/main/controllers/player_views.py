@@ -4,7 +4,6 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.db.models import Q
-from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -99,7 +98,6 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
     model = Player
     form_class = PlayerForm
     template_name = "main/player_id/player_id_create.html"
-    success_url = "/players"
     permission_required = "main.add_player"
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока.")
@@ -114,17 +112,27 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
             )
         return super().form_valid(form)
 
-    def get(
-            self,
-            request: HttpRequest,
-            *args: str,
-            **kwargs) -> HttpResponse:
-        self.team_id = request.GET.get('team')
-        self.success_url = request.META.get('HTTP_REFERER')
-        print(f'request.GET --->>> {request.GET}')
-        print(f'self.success_url --->>> {self.success_url}')
-        print(f'team_id --->>> {self.team_id}')
+    def get(self, request, *args, **kwargs):
+        self.team_id = request.GET.get('team', None)
+        if self.team_id is not None:
+            self.initial = {'team': self.team_id}
         return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['team_id'] = self.team_id
+        return context
+
+    def get_success_url(self):
+        print(f'>>> get_success_url self.team_id >>> {type(self.team_id)}')
+        if 'None' in self.team_id or self.team_id is None:
+            return reverse('main:players')
+        else:
+            return reverse('main:teams_id', kwargs={'team_id': self.team_id})
+
+    def post(self, request, *args, **kwargs):
+        self.team_id = request.POST.get('team_id')
+        return super().post(request, *args, **kwargs)
 
 
 class PlayerIdView(PermissionRequiredMixin, DetailView):
