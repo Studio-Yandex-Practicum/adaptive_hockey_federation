@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from events.forms import EventForm
 from events.models import Event, Team
@@ -156,3 +156,30 @@ class DeleteTeamFromEvent(
         return reverse_lazy(
             "events:competitions_id", kwargs={"pk": self.kwargs["event_id"]}
         )
+
+
+class CreateEventView(
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin
+):
+    """Представление создания соревнования."""
+
+    model = Event
+    form_class = EventForm
+    template_name = "main/competitions/competition_update.html"
+    permission_required = "events.competition_update"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "events:competition_update", kwargs={"pk": self.object.pk}
+        )
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Event, id=self.kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateEventView, self).get_context_data(**kwargs)
+        context["form"] = self.form_class(
+            instance=self.object, initial={"city": self.object.city.name}
+        )
+        context["cities"] = self.get_cities()
+        return context
