@@ -45,7 +45,7 @@ PLAYER_POSITION_CHOICES = (
 
 STAFF_POSITION_CHOICES = (
     ("trainer", "тренер"),
-    ("other", "другой"),
+    ("other", "пушер-тьютор"),
 )
 
 TIME_FORMAT = "%H-%M-%S"
