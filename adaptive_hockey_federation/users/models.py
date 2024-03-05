@@ -105,9 +105,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.email = self.__class__.objects.normalize_email(self.email)
 
     def __str__(self):
-        return self.email[:QUERY_SET_LENGTH].capitalize()
+        return self.get_initials()
 
-    def get_full_name(self):
+    def get_initials(self) -> str:
+        """Возвращает фамилию и инициалы пользователя.
+        При отсутствии отчества возвращается фамилия и инициал имени."""
+        name_i = self.first_name[:1].upper() + "."
+        if patronymic_i := self.patronymic[:1]:
+            patronymic_i = patronymic_i.upper() + "."
+        return f"{self.last_name} {name_i} {patronymic_i}"
+
+    def get_full_name(self) -> str:
         return (
             f"{self.last_name[:QUERY_SET_LENGTH]} "
             f"{self.first_name[:QUERY_SET_LENGTH]} "
