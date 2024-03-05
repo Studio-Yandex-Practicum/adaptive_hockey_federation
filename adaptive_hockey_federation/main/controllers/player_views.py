@@ -1,4 +1,3 @@
-from core.utils import generate_file_name
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -110,7 +109,7 @@ class PlayerIDCreateView(
 
     model = Player
     form_class = PlayerForm
-    template_name = "main/player_id/player_id_create.html"
+    template_name = "main/player_id/player_id_create_edit.html"
     success_url = "/players"
     permission_required = "main.add_player"
     permission_denied_message = (
@@ -119,10 +118,17 @@ class PlayerIDCreateView(
 
     def form_valid(self, form):
         player = form.save()
-        for iter, file in enumerate(self.request.FILES.getlist("documents")):
-            file.name = generate_file_name(file.name, player.name, iter)
-            Document.objects.create(player=player, file=file, name=file.name)
+        names = self.request.POST.getlist("name[]")
+        files = self.request.FILES.getlist("file[]")
+
+        for iter, file in enumerate(zip(names, files)):
+            Document.objects.create(player=player, file=file[1], name=file[0])
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Создание профиля нового игрока"
+        return context
 
 
 class PlayerIdView(
@@ -206,7 +212,7 @@ class PlayerIDEditView(
     LoginRequiredMixin, PermissionRequiredMixin, UpdateView
 ):
     model = Player
-    template_name = "main/player_id/player_id_edit.html"
+    template_name = "main/player_id/player_id_create_edit.html"
     form_class = PlayerForm
     permission_required = "main.change_player"
     permission_denied_message = (
@@ -221,35 +227,20 @@ class PlayerIDEditView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        player = self.get_object()
+        player_documents = self.get_object().player_documemts.all()
 
-        player_fields_personal = [
-            ("Фамилия", player.surname),
-            ("Имя", player.name),
-            ("Отчество", player.patronymic),
-            ("Пол", player.gender),
-            ("Дата рождения", player.birthday),
-            ("Удостоверение личности", player.identity_document),
-            ("Дисциплина", player.discipline),
-            ("Диагноз", player.diagnosis),
-        ]
-
-        player_fields = [
-            ("Команда", ", ".join([team.name for team in player.team.all()])),
-            ("Уровень ревизии", player.level_revision),
-            ("Капитан", player.is_captain),
-            ("Ассистент", player.is_assistent),
-            ("Игровая позиция", player.position),
-            ("Номер игрока", player.number),
-        ]
-
-        player_fields_doc = [("Документ", player.identity_document)]
-        player_documents = player.player_documemts.all()
+        context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
-        context["player_fields_personal"] = player_fields_personal
-        context["player_fields"] = player_fields
-        context["player_fields_doc"] = player_fields_doc
         return context
+
+    def form_valid(self, form):
+        player = form.save()
+        names = self.request.POST.getlist("name[]")
+        files = self.request.FILES.getlist("file[]")
+
+        for iter, file in enumerate(zip(names, files)):
+            Document.objects.create(player=player, file=file[1], name=file[0])
+        return super().form_valid(form)
 
 
 class PlayerIDDeleteView(

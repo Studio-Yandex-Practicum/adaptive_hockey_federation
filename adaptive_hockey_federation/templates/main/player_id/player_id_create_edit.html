@@ -1,0 +1,103 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ page_title }}
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">{{ page_title }}</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container text-center">
+        <div class="full-container">
+            <h4 class="text-center mb-4">Личная информация</h4>
+            <table class="table-table">
+                <tbody>
+                {% for field in form.visible_fields %}
+                    {% if field.name in 'surname name patronymic gender birthday discipline diagnosis' or field.name == 'identity_document' %}
+                        <tr>
+                            <th>{{ field.label_tag }}</th>
+                            <td>{{ field }}</td>
+                            <td>{{ field.errors }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="full-container">
+            <h4 class="text-center mb-4">Игровая информация</h4>
+            <table class="table-table">
+                <tbody>
+                    {% for field in form.visible_fields %}
+                        {% if field.name in 'team level_revision is_captain is_assistent position number' %}
+                        <tr>
+                            <th>{{ field.label_tag }}</th>
+                            <td>{{ field }}</td>
+                            <td>{{ field.errors }}</td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <h4 class="text-center mb-4">Документы</h4>
+        <table class="table-table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Файл</th>
+                </tr>
+            </thead>
+            <tbody id="fileUploadContainer">
+            {% if player_documents %}
+                {% for doc in player_documents %}
+                    <tr>
+                        <td>{{ doc.name }}</td>
+                        <td><a href="{{ doc.file.url }}" target="_blank">Просмотреть</a></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr class="file-upload-container m-2">
+                    <td><input type="text" name="name[]" placeholder="Name" class="form-control"></td>
+                    <td><input type="file" name="file[]" accept="image/*" class="form-control"></td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        <button type="button" id="addFileButton" type="button" class="btn btn-primary">+</button>
+        <!-- Save Button -->
+        <div class="container">
+            <div class="row">
+                <div class="col text-center text-white flex justify-start">
+                    <button
+                    type="submit"
+                    class="btn btn-secondary text-white"
+                    style="background-color: #64C2D1; border: 1px solid #fff;"
+                    >
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block JavaScript %}
+<script>
+document.getElementById('addFileButton').addEventListener('click', function() {
+    var fileUploadContainer = document.getElementById('fileUploadContainer');
+    var newFileUpload = document.createElement('tr');
+    newFileUpload.classList.add('file-upload-container');
+    newFileUpload.classList.add('m-2');
+    newFileUpload.innerHTML = `
+            <td><input type="text" name="name[]" placeholder="Name" class="form-control"></td>
+            <td><input type="file" name="file[]" accept="image/*" class="form-control"></td>
+        `;
+        fileUploadContainer.appendChild(newFileUpload);
+    });
+</script>
+{% endblock %}
