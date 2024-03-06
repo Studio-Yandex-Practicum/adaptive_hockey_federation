@@ -1,3 +1,4 @@
+from core.utils import is_uploaded_file_valid
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -238,8 +239,12 @@ class PlayerIDEditView(
         names = self.request.POST.getlist("name[]")
         files = self.request.FILES.getlist("file[]")
 
-        for iter, file in enumerate(zip(names, files)):
-            Document.objects.create(player=player, file=file[1], name=file[0])
+        invalid_files = []
+        for name, file in zip(names, files):
+            if not is_uploaded_file_valid(file):
+                invalid_files.append((name, file))
+            else:
+                Document.objects.create(player=player, file=file, name=name)
         return super().form_valid(form)
 
 
