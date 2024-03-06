@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from users.views import (
     CreateUserView,
     DeleteUserView,
@@ -9,24 +9,24 @@ from users.views import (
 
 app_name = 'users'
 
-urlpatterns = [
+users_urlpatterns = [
     path(
-        'users/',
+        '',
         UsersListView.as_view(),
         name='users'
     ),
     path(
-        'user_update/<int:pk>/',
+        '<int:pk>/edit',
         UpdateUserView.as_view(),
         name='user_update'
     ),
     path(
-        'user_delete/<int:pk>/',
+        '<int:pk>/delete',
         DeleteUserView.as_view(),
         name='user_delete'
     ),
     path(
-        'user_create/',
+        'create/',
         CreateUserView.as_view(),
         name='user_create'
     ),
@@ -35,4 +35,8 @@ urlpatterns = [
         PasswordSetView.as_view(),
         name="password_set",
     ),
+]
+
+urlpatterns = [
+    path('users/', include(users_urlpatterns))
 ]
