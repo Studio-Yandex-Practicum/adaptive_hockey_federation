@@ -14,10 +14,18 @@ from users.forms import UpdateUserForm, UsersCreationForm
 User = get_user_model()
 
 
-class UsersListView(LoginRequiredMixin, ListView):
+class UsersListView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    ListView,
+):
     model = User
-    template_name = 'main/users/list.html'
-    context_object_name = 'users'
+    template_name = "main/users/list.html"
+    permission_required = "users.list_view_user"
+    permission_denied_message = (
+        "Отсутствует разрешение на просмотр списка пользователей."
+    )
+    context_object_name = "users"
     paginate_by = 10
 
     def get_queryset(self):
@@ -40,7 +48,7 @@ class UsersListView(LoginRequiredMixin, ListView):
                     "date": "date_joined",
                     "role": "role",
                     "email": "email",
-                    "phone": "phone"
+                    "phone": "phone",
                 }
                 if search_column == "name":
                     queryset = queryset.filter(
@@ -48,51 +56,53 @@ class UsersListView(LoginRequiredMixin, ListView):
                         | Q(last_name__icontains=search)
                     )
                 else:
-                    queryset = queryset.filter(**{
-                        f"{search_fields[search_column]}__icontains": search
-                    })
+                    queryset = queryset.filter(
+                        **{
+                            f"{search_fields[search_column]}__icontains": search  # noqa
+                        }
+                    )
 
-        return (
-            queryset
-            .order_by("last_name")
-        )
+        return queryset.order_by("last_name")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        users = context['users']
+        users = context["users"]
         table_data = []
         for user in users:
-            table_data.append({
-                'name': user.get_full_name(),
-                'date': user.date_joined,
-                'role': user.get_role_display(),
-                'email': user.email,
-                'phone': user.phone,
-                'id': user.pk,
-            })
-        context['table_head'] = {
-            'name': 'Имя',
-            'date': 'Дата регистрации',
-            'role': 'Роль',
-            'email': 'Email',
-            'phone': 'Телефон',
+            table_data.append(
+                {
+                    "name": user.get_full_name(),
+                    "date": user.date_joined,
+                    "role": user.get_role_display(),
+                    "email": user.email,
+                    "phone": user.phone,
+                    "id": user.pk,
+                }
+            )
+        context["table_head"] = {
+            "name": "Имя",
+            "date": "Дата регистрации",
+            "role": "Роль",
+            "email": "Email",
+            "phone": "Телефон",
         }
-        context['table_data'] = table_data
+        context["table_data"] = table_data
         return context
 
 
-class UpdateUserView(
-        LoginRequiredMixin,
-        PermissionRequiredMixin,
-        UpdateView):
+class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
     Вьюха редактирования пользователя
     """
+
     model = User
-    template_name = 'main/users/user_update.html'
-    permission_required = 'users.change_user'
+    template_name = "main/users/user_update.html"
+    permission_required = "users.change_user"
+    permission_denied_message = (
+        "Отсутствует разрешение на изменение пользователя."
+    )
     form_class = UpdateUserForm
-    success_url = '/users'
+    success_url = "/users"
 
     def get_object(self, queryset=None):
         user_id = self.kwargs.get("pk")
@@ -104,42 +114,45 @@ class UpdateUserView(
         team = None
         if queryset:
             team = self.object.team.all()[0]
-        context['form'] = self.form_class(
+        context["form"] = self.form_class(
             instance=self.object,
-            initial={'team': team},
+            initial={"team": team},
         )
         return context
 
 
-class DeleteUserView(
-        LoginRequiredMixin,
-        PermissionRequiredMixin,
-        DeleteView):
+class DeleteUserView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     """
     Вьюха удаления пользователя
     """
+
     object = User
     model = User
-    success_url = '/users'
-    permission_required = 'users.delete_user'
+    success_url = "/users"
+    permission_required = "users.delete_user"
+    permission_denied_message = (
+        "Отсутствует разрешение на удаление пользователей."
+    )
 
 
-class CreateUserView(
-        LoginRequiredMixin,
-        PermissionRequiredMixin,
-        CreateView):
+class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """
     Вьюха создания пользователя
     """
+
     model = User
     form_class = UsersCreationForm
-    template_name = 'main/users/user_create.html'
-    success_url = '/users'
-    permission_required = 'users.create_user'
+    template_name = "main/users/user_create.html"
+    success_url = "/users"
+    permission_required = "users.create_user"
+    permission_denied_message = (
+        "Отсутствует разрешение на создание пользователей."
+    )
 
 
 class PasswordSetView(PasswordResetConfirmView):
     """Вьюха изменения пароля пользователя"""
+
     success_url = reverse_lazy("users:users")
 
     def form_valid(self, form):

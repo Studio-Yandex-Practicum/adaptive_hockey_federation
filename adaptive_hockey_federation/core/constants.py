@@ -17,12 +17,13 @@ ROLES_CHOICES = (
 GROUP_ADMINS = "Администраторы"
 GROUP_MODERATORS = "Модераторы"
 GROUP_AGENTS = "Представители команд"
+GROUP_SUPERUSER = "Суперпользователь"
 
 GROUPS_BY_ROLE = {
     ROLE_ADMIN: GROUP_ADMINS,
     ROLE_AGENT: GROUP_AGENTS,
     ROLE_MODERATOR: GROUP_MODERATORS,
-    ROLE_SUPERUSER: GROUP_ADMINS,
+    ROLE_SUPERUSER: GROUP_SUPERUSER,  # superuser
 }
 
 # constants for main/models.py

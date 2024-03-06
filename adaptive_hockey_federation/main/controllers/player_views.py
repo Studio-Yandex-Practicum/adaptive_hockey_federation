@@ -13,9 +13,17 @@ from main.forms import PlayerForm
 from main.models import Document, Player
 
 
-class PlayersListView(LoginRequiredMixin, ListView):
+class PlayersListView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    ListView,
+):
     model = Player
     template_name = "main/players/players.html"
+    permission_required = "main.list_view_player"
+    permission_denied_message = (
+        "У Вас нет разрешения на просмотр списка игроков игрока."
+    )
     context_object_name = "players"
     paginate_by = 10
     fields = [
@@ -93,7 +101,11 @@ class PlayersListView(LoginRequiredMixin, ListView):
         return context
 
 
-class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
+class PlayerIDCreateView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView,
+):
     """Представление для создания нового игрока."""
 
     model = Player
@@ -113,9 +125,17 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PlayerIdView(PermissionRequiredMixin, DetailView):
+class PlayerIdView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DetailView,
+):
     model = Player
     template_name = "main/player_id/player_id.html"
+    permission_required = "main.view_player"
+    permission_denied_message = (
+        "У Вас нет разрешения на просмотр карточки игрока."
+    )
     context_object_name = "player"
     fields = [
         "surname",
@@ -182,7 +202,9 @@ class PlayerIdView(PermissionRequiredMixin, DetailView):
         return context
 
 
-class PlayerIDEditView(PermissionRequiredMixin, UpdateView):
+class PlayerIDEditView(
+    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+):
     model = Player
     template_name = "main/player_id/player_id_edit.html"
     form_class = PlayerForm
@@ -230,7 +252,11 @@ class PlayerIDEditView(PermissionRequiredMixin, UpdateView):
         return context
 
 
-class PlayerIDDeleteView(PermissionRequiredMixin, DeleteView):
+class PlayerIDDeleteView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView,
+):
     model = Player
     object = Player
     success_url = reverse_lazy("main:players")
