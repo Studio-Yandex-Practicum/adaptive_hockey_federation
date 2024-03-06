@@ -16,12 +16,12 @@ users_urlpatterns = [
         name='users'
     ),
     path(
-        '<int:pk>/edit',
+        '<int:pk>/edit/',
         UpdateUserView.as_view(),
         name='user_update'
     ),
     path(
-        '<int:pk>/delete',
+        '<int:pk>/delete/',
         DeleteUserView.as_view(),
         name='user_delete'
     ),

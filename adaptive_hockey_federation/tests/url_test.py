@@ -178,7 +178,7 @@ class TestUrls(TestCase):
             #           permission_required='add_user'),
             # UrlToTest('/users/',
             #           permission_required='view_user')
-            UrlToTest("/users/1/edit", permission_required="change_user"),
+            UrlToTest("/users/1/edit/", permission_required="change_user"),
         ]
         urls_responses_results = []
 
