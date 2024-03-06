@@ -16,6 +16,11 @@ users_urlpatterns = [
         name='users'
     ),
     path(
+        'create/',
+        CreateUserView.as_view(),
+        name='user_create'
+    ),
+    path(
         '<int:pk>/edit/',
         UpdateUserView.as_view(),
         name='user_update'
@@ -24,11 +29,6 @@ users_urlpatterns = [
         '<int:pk>/delete/',
         DeleteUserView.as_view(),
         name='user_delete'
-    ),
-    path(
-        'create/',
-        CreateUserView.as_view(),
-        name='user_create'
     ),
     path(
         "set_password/<uidb64>/<token>/",
