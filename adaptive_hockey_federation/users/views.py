@@ -144,7 +144,7 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = UsersCreationForm
     template_name = "main/users/user_create.html"
     success_url = "/users"
-    permission_required = "users.create_user"
+    permission_required = "users.add_user"
     permission_denied_message = (
         "Отсутствует разрешение на создание пользователей."
     )
