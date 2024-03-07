@@ -176,7 +176,7 @@ class TestUrls(TestCase):
             UrlToTest("/unloads/"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  пользователями.
-            UrlToTest("/user_create/", permission_required="add_user"),
+            UrlToTest("/users/create/", permission_required="add_user"),
             UrlToTest("/users/", permission_required="list_view_user"),
             UrlToTest("/user_update/1/", permission_required="change_user"),
             UrlToTest("/users/1/edit/", permission_required="change_user"),
