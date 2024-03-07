@@ -178,7 +178,6 @@ class TestUrls(TestCase):
             #  пользователями.
             UrlToTest("/users/create/", permission_required="add_user"),
             UrlToTest("/users/", permission_required="list_view_user"),
-            UrlToTest("/user_update/1/", permission_required="change_user"),
             UrlToTest("/users/1/edit/", permission_required="change_user"),
         ]
         urls_responses_results = []
