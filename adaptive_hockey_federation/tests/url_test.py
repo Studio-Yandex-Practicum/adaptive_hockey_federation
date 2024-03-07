@@ -163,7 +163,7 @@ class TestUrls(TestCase):
             ),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  игроками.
-            UrlToTest("/player_create/", permission_required="add_player"),
+            UrlToTest("/players/create/", permission_required="add_player"),
             UrlToTest("/players/", permission_required="list_view_player"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  игроками.
