@@ -1,12 +1,6 @@
-from core.constants import (
-    GROUP_ADMINS,
-    GROUP_AGENTS,
-    GROUP_MODERATORS,
-    GROUP_SUPERUSER,
-)
+from core.constants import GROUP_ADMINS, GROUP_AGENTS, GROUP_MODERATORS
 
 GROUP_PERMISSION = {
-    GROUP_SUPERUSER: ("exclude", tuple()),
     GROUP_ADMINS: (
         "exclude",
         (
