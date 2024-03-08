@@ -1,6 +1,6 @@
-from competitions.models import Competition
 from django import forms
 from main.forms import CityChoiceField
+from competitions.models import Competition
 from main.models import Team
 
 

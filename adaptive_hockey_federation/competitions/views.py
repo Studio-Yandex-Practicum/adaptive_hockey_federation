@@ -1,5 +1,3 @@
-from competitions.forms import CompetitionForm
-from competitions.models import Competition, Team
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -11,6 +9,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.controllers.team_views import CityListMixin
+from competitions.forms import CompetitionForm
+from competitions.models import Competition, Team
 
 
 class CompetitionListView(
