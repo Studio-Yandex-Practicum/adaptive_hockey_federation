@@ -33,7 +33,7 @@ LOCAL_APPS = [
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
-    'events.apps.EventsConfig',
+    'competitions.apps.CompetitionsConfig',
     'analytics.apps.AnalyticsConfig',
 ]
 

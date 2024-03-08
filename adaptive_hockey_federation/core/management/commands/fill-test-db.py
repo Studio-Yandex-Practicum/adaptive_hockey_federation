@@ -11,7 +11,7 @@ from main.data_factories.factories import (
     DiagnosisFactory,
     DisciplineFactory,
     DocumentFactory,
-    EventFactory,
+    CompetitionFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
     TeamFactory,
@@ -75,8 +75,8 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы Document",
         )
         parser.add_argument(
-            "-e", "--event", action="store_true",
-            help="Фикстуры для таблицы Event",
+            "-e", "--competition", action="store_true",
+            help="Фикстуры для таблицы Competition",
         )
         parser.add_argument(
             "-a",
@@ -94,7 +94,7 @@ class Command(BaseCommand):
         team = options.get("team", False)
         player = options.get("player", False)
         document = options.get("document", False)
-        event = options.get('event', False)
+        competition = options.get('competition', False)
         amount = options.get("amount")
         if test_users:
             users_amount = sum(USERS.values())
@@ -155,10 +155,10 @@ class Command(BaseCommand):
                 self.style.SUCCESS(
                     f"{num_docs} фикстур для таблицы Document созданы!"
                 ))
-        if event:
-            EventFactory.create_batch(amount)
+        if competition:
+            CompetitionFactory.create_batch(amount)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Event созданы!"
+                    f"{amount} фикстур для таблицы Competition созданы!"
                 )
             )

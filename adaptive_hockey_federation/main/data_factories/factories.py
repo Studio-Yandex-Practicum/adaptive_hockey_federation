@@ -5,7 +5,7 @@ from io import BytesIO
 import factory
 from django.core.files.base import File
 from django.db.models import Count
-from events.models import Event
+from competitions.models import Competition
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -191,14 +191,14 @@ class TeamFactory(factory.django.DjangoModelFactory):
         return get_random_objects(User)
 
 
-class EventFactory(factory.django.DjangoModelFactory):
+class CompetitionFactory(factory.django.DjangoModelFactory):
     """
     Создание соревнований. Привязка к ним уже созданных городов, команд
     создание локации, времени начала и окончания, активно или закончено
     """
 
     class Meta:
-        model = Event
+        model = Competition
         skip_postgeneration_save = True
         django_get_or_create = ["title"]
 

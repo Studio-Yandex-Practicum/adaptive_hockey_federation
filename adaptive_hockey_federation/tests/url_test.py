@@ -2,13 +2,13 @@ from http import HTTPStatus
 from typing import Any
 
 import pytest
+from competitions.models import Competition
 from core import constants
 from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
-from events.models import Event
 from main.data_factories.factories import (
+    CompetitionFactory,
     DiagnosisFactory,
-    EventFactory,
     PlayerFactory,
 )
 from main.models import City, Diagnosis, DisciplineName, Player, Team
@@ -51,7 +51,7 @@ class TestAuthUrls:
 class TestUrls(TestCase):
     user: User | Any = None
     team: Team | Any = None
-    competition: Event | Any = None
+    competition: Competition | Any = None
     diagnosis: Diagnosis | Any = None
     player: Player | Any = None
 
@@ -81,7 +81,7 @@ class TestUrls(TestCase):
             ),
             curator=cls.user,
         )
-        cls.competition = EventFactory.create()
+        cls.competition = CompetitionFactory.create()
         cls.diagnosis = DiagnosisFactory.create()
         cls.player = PlayerFactory.create()
 

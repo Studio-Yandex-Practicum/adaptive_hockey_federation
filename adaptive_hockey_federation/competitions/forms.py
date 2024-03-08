@@ -1,14 +1,14 @@
+from competitions.models import Competition
 from django import forms
-from events.models import Event
 from main.forms import CityChoiceField
 from main.models import Team
 
 
-class EventForm(forms.ModelForm):
+class CompetitionForm(forms.ModelForm):
     """Форма для соревнований."""
 
     def __init__(self, *args, **kwargs):
-        super(EventForm, self).__init__(*args, **kwargs)
+        super(CompetitionForm, self).__init__(*args, **kwargs)
 
     title = forms.CharField(label="Название")
     city = CityChoiceField
@@ -38,5 +38,5 @@ class EventForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Event
+        model = Competition
         fields = ["title", "city", "teams", "date_start", "date_end"]

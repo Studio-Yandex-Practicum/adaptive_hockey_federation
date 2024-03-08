@@ -1,8 +1,8 @@
+from competitions.models import Competition
 from django.contrib import admin
-from events.models import Event
 
 
-class EventAdmin(admin.ModelAdmin):
+class CompetitionAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
         'title'
@@ -11,4 +11,4 @@ class EventAdmin(admin.ModelAdmin):
     ordering = ['title']
 
 
-admin.site.register(Event, EventAdmin)
+admin.site.register(Competition, CompetitionAdmin)

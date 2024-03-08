@@ -1,3 +1,5 @@
+from competitions.forms import CompetitionForm
+from competitions.models import Competition, Team
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -8,39 +10,42 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import ListView
-from events.forms import EventForm
-from events.models import Event, Team
 from main.controllers.team_views import CityListMixin
 
 
-class EventListView(LoginRequiredMixin, ListView):
-    """Временная view для отображения работы модели Event"""
+class CompetitionListView(
+    LoginRequiredMixin,
+    ListView
+):
+    """Временная view для отображения работы модели Competition"""
 
-    model = Event
+    model = Competition
     template_name = "main/competitions/competitions.html"
-    context_object_name = "events"
+    context_object_name = "competitions"
     paginate_by = 10
     ordering = ["id"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        events = context["events"]
+        competitions = context["competitions"]
         table_data = []
-        for event in events:
+        for competition in competitions:
             table_data.append(
                 {
-                    "pk": event.pk,
-                    "data": event.date_start,
-                    "data_end": event.date_end,
-                    "title": event.title,
-                    "city": event.city,
-                    "duration": event.period_duration,
-                    "is_active": event.is_active,
+                    "pk": competition.pk,
+                    "data": competition.date_start,
+                    "data_end": competition.date_end,
+                    "title": competition.title,
+                    "city": competition.city,
+                    "duration": competition.period_duration,
+                    "is_active": competition.is_active,
                     "_ref_": {
                         "name": "Участники",
                         "type": "button",
                         "url": reverse(
-                            "events:competitions_id", args=[event.pk]
+                            "competitions:competitions_id", args=[
+                                competition.pk
+                            ]
                         ),
                     },
                 }
@@ -60,26 +65,29 @@ class EventListView(LoginRequiredMixin, ListView):
         return context
 
 
-class UpdateEventView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView, CityListMixin
+class UpdateCompetitionView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView,
+    CityListMixin
 ):
     """Обновление информации о соревнованиях."""
 
-    model = Event
-    form_class = EventForm
+    model = Competition
+    form_class = CompetitionForm
     template_name = "main/competitions/competition_update.html"
-    permission_required = "events.competition_update"
+    permission_required = "competitions.competition_update"
 
     def get_success_url(self):
         return reverse_lazy(
-            "events:competition_update", kwargs={"pk": self.object.pk}
+            "competitions:competition_update", kwargs={"pk": self.object.pk}
         )
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Event, id=self.kwargs["pk"])
+        return get_object_or_404(Competition, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateEventView, self).get_context_data(**kwargs)
+        context = super(UpdateCompetitionView, self).get_context_data(**kwargs)
         context["form"] = self.form_class(
             instance=self.object, initial={"city": self.object.city.name}
         )
@@ -87,33 +95,37 @@ class UpdateEventView(
         return context
 
 
-class DeleteEventView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class DeleteCompetitionView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView
+):
     """Удаление соревнований."""
 
-    object = Event
-    model = Event
-    success_url = reverse_lazy("events:competitions")
-    permission_required = "events.competition_delete"
+    object = Competition
+    model = Competition
+    success_url = reverse_lazy("competitions:competitions")
+    permission_required = "competitions.competition_delete"
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Event, id=self.kwargs["pk"])
+        return get_object_or_404(Competition, id=self.kwargs["pk"])
 
 
-class TeamsOnEvent(DetailView):
+class TeamsOnCompetition(DetailView):
     """Отображение команд, принимающих участие в соревновании."""
 
-    model = Event
+    model = Competition
     template_name = "main/competitions_id/competitions_id.html"
 
     def get_success_url(self):
         return reverse_lazy(
-            "events:competitions_id", kwargs={"pk": self.object.pk}
+            "competitions:competitions_id", kwargs={"pk": self.object.pk}
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        event = self.get_object()
-        teams = event.teams.all()
+        competition = self.get_object()
+        teams = competition.teams.all()
         teams_table_data = [
             {
                 "id": team.id,
@@ -126,7 +138,10 @@ class TeamsOnEvent(DetailView):
                     "url": reverse("main:teams_id", args=[team.id]),
                 },
                 "delete_url": reverse(
-                    "events:competitions_id_delete", args=[event.id, team.id]
+                    "competitions:competitions_id_delete", args=[
+                        competition.id,
+                        team.id
+                    ]
                 ),
             }
             for team in teams
@@ -135,7 +150,7 @@ class TeamsOnEvent(DetailView):
         return context
 
 
-class DeleteTeamFromEvent(
+class DeleteTeamFromCompetition(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     DeleteView,
@@ -144,15 +159,19 @@ class DeleteTeamFromEvent(
 
     object = Team
     model = Team
-    permission_required = "events.competitions_id_delete"
+    permission_required = "competitions.competitions_id_delete"
 
     def delete(self, request, *args, **kwargs):
         team = self.get_object()
-        event = get_object_or_404(Event, id=self.kwargs["event_id"])
-        event.teams.remove(team)
+        competition = get_object_or_404(
+            Competition, id=self.kwargs["competition_id"]
+        )
+        competition.teams.remove(team)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse_lazy(
-            "events:competitions_id", kwargs={"pk": self.kwargs["event_id"]}
+            "competitions:competitions_id", kwargs={
+                "pk": self.kwargs["competition_id"]
+            }
         )

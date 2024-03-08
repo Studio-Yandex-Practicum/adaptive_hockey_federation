@@ -1,12 +1,12 @@
+from competitions.utils import pluralize_days
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from events.utils import pluralize_days
 from main.models import City, Team
 
 CHAR_FIELD_LENGTH = 250
 
 
-class Event(models.Model):
+class Competition(models.Model):
     """
     Модель соревнований.
     """
@@ -23,7 +23,7 @@ class Event(models.Model):
     location = models.CharField(max_length=CHAR_FIELD_LENGTH)
     teams = models.ManyToManyField(
         Team,
-        related_name="event_teams",
+        related_name="competition_teams",
         verbose_name=_("Состав команд участников"),
         help_text=_("Состав команд участников"),
     )
