@@ -8,10 +8,10 @@ from core.constants import (
 )
 from django.core.management.base import BaseCommand
 from main.data_factories.factories import (
+    CompetitionFactory,
     DiagnosisFactory,
     DisciplineFactory,
     DocumentFactory,
-    CompetitionFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
     TeamFactory,

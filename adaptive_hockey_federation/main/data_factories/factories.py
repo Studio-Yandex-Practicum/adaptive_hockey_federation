@@ -3,9 +3,9 @@ from datetime import date, timedelta
 from io import BytesIO
 
 import factory
+from competitions.models import Competition
 from django.core.files.base import File
 from django.db.models import Count
-from competitions.models import Competition
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
