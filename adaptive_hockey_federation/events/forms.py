@@ -47,6 +47,14 @@ class EventForm(forms.ModelForm):
 
 
 class TeamField(forms.ModelChoiceField):
+    """Заказное поле для выбора названия команды.
+    Работает с виджетом TextInput.
+    Для корректного отображения на вэб-странице должен быть элемент:
+        <datalist id="available_teams">
+            <option_value="Название команды"></option>
+            ...и так для каждой команды в списке.
+        </datalist>
+    """
 
     def __init__(self, event: Event):
         super(TeamField, self).__init__(
@@ -84,6 +92,7 @@ class TeamField(forms.ModelChoiceField):
 
 
 class EventTeamForm(forms.ModelForm):
+    """Форма для добавления команд в соревнование."""
 
     def __init__(self, *args, **kwargs):
         print(args, "kwargs in init", kwargs)
