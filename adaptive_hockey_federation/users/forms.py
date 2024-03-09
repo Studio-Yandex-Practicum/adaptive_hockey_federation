@@ -152,6 +152,8 @@ class UsersCreationForm(forms.ModelForm):
         self.fields["patronymic"].required = False
         self.fields["role"].required = True
         self.fields["phone"].required = True
+        self.fields["email"].required = False #(удалю её) Временная строка, т.к. 
+        # выходит ошибка при создании пользователя админом, 
 
     def clean_team(self):
         """
