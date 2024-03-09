@@ -8,28 +8,29 @@ from users.models import ProxyGroup, User
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
-        'first_name',
-        'last_name',
-        'email',
-        'phone',
-        'is_staff',
-        'is_superuser',
+        "id",
+        "last_name",
+        "first_name",
+        "email",
+        "phone",
+        "is_staff",
+        "is_superuser",
     )
     list_filter = (
         "groups",
         "is_active",
     )
     fields = [
-        ('first_name', 'last_name'),
-        'password',
-        'email',
-        'phone',
-        'is_staff',
-        'is_superuser',
-        'role',
+        "last_name",
+        ("first_name", "patronymic"),
+        "password",
+        "email",
+        "phone",
+        "is_staff",
+        "is_superuser",
+        "role",
     ]
-    empty_value_display = '-пусто-'
+    empty_value_display = "-пусто-"
 
     @admin.display(description="Роль")
     def role(self, obj):

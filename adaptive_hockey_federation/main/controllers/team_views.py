@@ -24,7 +24,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
     success_url = "/teams/"
     permission_required = "main.view_team"
     permission_denied_message = (
-        "Отсутствует разрешение на просмотр " "содержимого."
+        "Отсутствует разрешение на просмотр карточки команды."
     )
 
     def get_object(self, queryset=None):
@@ -104,11 +104,19 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
         return context
 
 
-class TeamListView(LoginRequiredMixin, ListView):
+class TeamListView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    ListView,
+):
     """Список спортивных команд."""
 
     model = Team
     template_name = "main/teams/teams.html"
+    permission_required = "main.list_view_team"
+    permission_denied_message = (
+        "Отсутствует разрешение на просмотр списка команд."
+    )
     context_object_name = "teams"
     paginate_by = 10
     ordering = ["id"]
@@ -190,7 +198,10 @@ class CityListMixin:
 
 
 class UpdateTeamView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView, CityListMixin
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView,
+    CityListMixin,
 ):
     """Вид с формой изменения основных данных спортивной команды."""
 
@@ -199,6 +210,7 @@ class UpdateTeamView(
     template_name = "main/teams/team_update.html"
     success_url = "/teams/"
     permission_required = "main.change_team"
+    permission_denied_message = "Отсутствует разрешение на изменение команд."
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get("team_id")
@@ -220,6 +232,7 @@ class DeleteTeamView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Team
     success_url = "/teams/"
     permission_required = "main.delete_team"
+    permission_denied_message = "Отсутствует разрешение на удаление команд."
 
     def get_object(self, queryset=None):
         team_id = self.kwargs.get("team_id")
@@ -234,8 +247,9 @@ class CreateTeamView(
     model = Team
     form_class = TeamForm
     template_name = "main/teams/team_create.html"
-    permission_required = "main.add_team"
     success_url = "/teams/?page=last"
+    permission_required = "main.add_team"
+    permission_denied_message = "Отсутствует разрешение на создание команд."
 
     def form_valid(self, form):
         form.save()

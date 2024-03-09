@@ -250,6 +250,9 @@ class Team(BaseUniqueName):
                 fields=["name", "city", "discipline_name"],
             )
         ]
+        permissions = [
+            ("list_view_team", "Can view list of Команда"),
+        ]
 
     def __str__(self):
         if self.city:
@@ -415,6 +418,9 @@ class Player(BasePerson):
                     # 'number'
                 ],
             ),
+        ]
+        permissions = [
+            ("list_view_player", "Can view list of Игрок"),
         ]
 
     def __str__(self):

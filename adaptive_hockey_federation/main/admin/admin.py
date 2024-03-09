@@ -25,7 +25,7 @@ class DiagnosisAdmin(admin.ModelAdmin):
     search_fields = (
         "pk",
         "name",
-        "nosology",
+        "nosology__name",
     )
     ordering = ["name"]
 
@@ -45,8 +45,8 @@ class DisciplineLevelAdmin(admin.ModelAdmin):
 class DisciplineAdmin(admin.ModelAdmin):
     list_display = ("pk", "discipline_name", "discipline_level")
     search_fields = (
-        "discipline_name",
-        "discipline_level",
+        "discipline_name__name",
+        "discipline_level__name",
     )
     ordering = ["discipline_name"]
 
@@ -71,7 +71,7 @@ class StaffMemberAdmin(admin.ModelAdmin):
     )
 
 
-class StaffTeamMemberAdmin(StaffMemberAdmin):
+class StaffTeamMemberAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "staff_member",
@@ -81,7 +81,9 @@ class StaffTeamMemberAdmin(StaffMemberAdmin):
     )
     search_fields = (
         "pk",
-        "staff_member",
+        "staff_member__name",
+        "staff_member__surname",
+        "staff_member__patronymic",
         "staff_position",
         "qualification",
         "notes",
@@ -114,8 +116,9 @@ class PlayerAdmin(admin.ModelAdmin):
         "patronymic",
         "birthday",
         "gender",
-        "diagnosis",
-        "discipline",
+        "diagnosis__nosology__name",
+        "discipline__discipline_name__name",
+        "discipline__discipline_level__name",
         "level_revision",
         "position",
         "number",
@@ -180,8 +183,8 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = (
         "pk",
         "name",
-        "city",
-        "discipline_name",
+        "city__name",
+        "discipline_name__name",
     )
     ordering = ["name"]
     inlines = (

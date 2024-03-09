@@ -15,11 +15,19 @@ from events.models import Event, Team
 from main.controllers.team_views import CityListMixin
 
 
-class EventListView(LoginRequiredMixin, ListView):
+class EventListView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    ListView,
+):
     """Временная view для отображения работы модели Event"""
 
     model = Event
     template_name = "main/competitions/competitions.html"
+    permission_required = "events.list_view_event"
+    permission_denied_message = (
+        "Отсутствует разрешение на просмотр списка соревнований."
+    )
     context_object_name = "events"
     paginate_by = 10
     ordering = ["id"]
@@ -63,14 +71,20 @@ class EventListView(LoginRequiredMixin, ListView):
 
 
 class UpdateEventView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView, CityListMixin
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView,
+    CityListMixin,
 ):
     """Обновление информации о соревнованиях."""
 
     model = Event
     form_class = EventForm
     template_name = "main/competitions/competition_update.html"
-    permission_required = "events.competition_update"
+    permission_required = "events.change_event"
+    permission_denied_message = (
+        "Отсутствует разрешение на изменение карточки соревнований."
+    )
 
     def get_success_url(self):
         return reverse_lazy(
@@ -101,7 +115,10 @@ class DeleteEventView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     object = Event
     model = Event
     success_url = reverse_lazy("events:competitions")
-    permission_required = "events.competition_delete"
+    permission_required = "events.delete_event"
+    permission_denied_message = (
+        "Отсутствует разрешение на изменение карточки соревнований."
+    )
 
     def get_object(self, queryset=None):
         return get_object_or_404(Event, id=self.kwargs["pk"])
@@ -114,7 +131,10 @@ class AddTeamToEvent(
 
     pattern_name = "events:competitions_id"
     http_method_names = ("post",)
-    permission_required = "events:competition_update"
+    permission_required = "events.competition_teams_change"
+    permission_denied_message = (
+        "Отсутствует разрешение на изменение списка команд на соревновании."
+    )
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() == "post":
@@ -201,7 +221,10 @@ class DeleteTeamFromEvent(
 
     object = Team
     model = Team
-    permission_required = "events.competitions_id_delete"
+    permission_required = "events.delete_team_event"
+    permission_denied_message = (
+        "Отсутствует разрешение на удаление команд с соревнования."
+    )
 
     def get_object(self, queryset=None):
         team_in_event = get_object_or_404(
