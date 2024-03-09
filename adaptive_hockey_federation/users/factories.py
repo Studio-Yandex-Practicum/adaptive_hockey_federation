@@ -1,5 +1,6 @@
 import factory  # type: ignore
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 
 User = get_user_model()
 
@@ -16,7 +17,10 @@ class UserFactory(factory.django.DjangoModelFactory):
     patronymic = factory.Faker("first_name", locale="ru_RU")
     email = factory.Faker("email", locale="ru_RU")
     phone = factory.Faker("phone_number", locale="ru_RU")
-    password = factory.PostGenerationMethodCall("set_password", "pass1234")
+
+    @factory.lazy_attribute
+    def password(self):
+        return make_password("pass1234")
 
     @factory.post_generation
     def admin_create(self, create, extracted, **kwargs):
