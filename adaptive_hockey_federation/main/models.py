@@ -29,6 +29,15 @@ class BaseUniqueName(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_by_name(cls, name: str):
+        """Возвращает объект БД по наименованию (полю "name")."""
+        name = name.strip()
+        res: QuerySet = cls.objects.filter(name=name)  # type: ignore
+        if res.exists():
+            return res.first()
+        return None
+
 
 class City(BaseUniqueName):
     """
@@ -41,15 +50,6 @@ class City(BaseUniqueName):
 
     def __str__(self):
         return self.name
-
-    @classmethod
-    def get_by_name(cls, name: str):
-        """Возвращает объект БД по наименованию (полю "name")."""
-        name = name.strip()
-        res: QuerySet = cls.objects.filter(name=name)
-        if res.exists():
-            return res.first()
-        return None
 
 
 class DisciplineName(BaseUniqueName):
@@ -237,7 +237,7 @@ class Team(BaseUniqueName):
         null=True,
         verbose_name=_("Куратор команды"),
         help_text=_("Куратор команды"),
-        related_name='team'
+        related_name="team",
     )
 
     class Meta:

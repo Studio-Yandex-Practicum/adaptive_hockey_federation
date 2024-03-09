@@ -1,0 +1,14 @@
+{% extends "main/competitions_id/components/competition_teams_table_base.html" %}
+{% block action_button %}
+  <form action="{{ team.action_button.url }}" method="post">
+    {% csrf_token %}
+    <button class="btns-edit-del" type="submit"
+            onclick="return confirm('Вы точно хотите отстранить команду от соревнований?');">
+      <a class="btn btn-secondary text-white"
+         style="background-color: #64C2D1; border: 1px solid #fff;"
+         role="button">
+        {{ team.action_button.name }}
+      </a>
+    </button>
+  </form>
+{% endblock %}

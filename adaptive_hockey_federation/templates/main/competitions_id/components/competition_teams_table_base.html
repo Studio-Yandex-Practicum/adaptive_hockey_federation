@@ -1,0 +1,27 @@
+<table class="table-table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Название</th>
+    <th>Город</th>
+    <th>Дисциплина</th>
+    <th>Состав</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for team in table_data %}
+    <tr>
+      <td>{{ team.id }}</td>
+      <td>{{ team.name }}</td>
+      <td>{{ team.city }}</td>
+      <td>{{ team.discipline_name }}</td>
+      <td>
+        {% block action_button %}
+{#          Здесь в шаблонах-потомках должна быть кнопка#}
+{#          для удаления или добавления команды в соревнование.#}
+        {% endblock %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
