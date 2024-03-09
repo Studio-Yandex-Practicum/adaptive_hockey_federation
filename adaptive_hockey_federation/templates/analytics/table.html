@@ -45,8 +45,10 @@
               {% include "main/players/create_delete_button_players.html" %}
             {% else %}
               <td>
-                <button type="button"><img src="{% static 'img/edit.png' %}"></button>
-                <button type="button"><img src="{% static 'img/delete.png' %}"></button>
+                <div class="cell__buttons">
+                  {% include 'base/active_edit_icon.html' %}
+                  {% include 'base/active_delete_icon.html' %}
+                </div>
               </td>
             {% endif %}
         {% endwith %}
