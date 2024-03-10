@@ -7,12 +7,12 @@ app_name = "events"
 competitions_urlpatterns = [
     path("", views.EventListView.as_view(), name="competitions"),
     path(
-        "<int:pk>/edit",
+        "<int:pk>/edit/",
         views.UpdateEventView.as_view(),
         name="competition_update",
     ),
     path(
-        "<int:pk>/delete",
+        "<int:pk>/delete/",
         views.DeleteEventView.as_view(),
         name="competition_delete",
     ),
@@ -22,7 +22,7 @@ competitions_urlpatterns = [
         name="competitions_id",
     ),
     path(
-        "<int:event_id>/teams/<int:pk>/delete",
+        "<int:event_id>/teams/<int:pk>/delete/",
         views.DeleteTeamFromEvent.as_view(),
         name="competitions_id_delete",
     ),
