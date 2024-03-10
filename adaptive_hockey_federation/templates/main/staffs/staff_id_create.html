@@ -1,22 +1,20 @@
 {% extends 'base/base.html' %}
 {% load static %}
-
 {% block title %}
-  Новый игрок
+  Новый сотрудник команды
 {% endblock %}
-
 {% block content %}
-  <h2 class="text-center mb-4">Новый игрок</h2>
+  <h2 class="text-center mb-4">Новый сотрудник команды</h2>
 
-  <form method="post" action="{% url 'main:player_create' %}" enctype="multipart/form-data">
+  <form method="post" action="{% url 'main:staff_create' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container text-center">
         <div class="full-container">
-          <h4 class="text-center mb-4">Личная информация</h4>
+          <h4 class="text-center mb-4">Информация о сотруднике</h4>
           <table class="table-table">
             <tbody>
               {% for field in form.visible_fields %}
-                  {% if field.name in 'surname name patronymic gender birthday discipline diagnosis' or field.name == 'identity_document' %}
+                  {% if field.name in 'surname name patronymic phone' %}
                   <tr>
                     <th>{{ field.label_tag }}</th>
                     <td>{{ field }}</td>
@@ -29,11 +27,11 @@
         </div>
 
         <div class="full-container">
-          <h4 class="text-center mb-4">Игровая информация</h4>
+          <h4 class="text-center mb-4">Информация о состоянии в команде</h4>
           <table class="table-table">
             <tbody>
               {% for field in form.visible_fields %}
-                {% if field.name in 'team level_revision is_captain is_assistent position number' %}
+                {% if field.name in 'team staff_position qualification notes' %}
                   <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
                       <th>{{ field.label_tag }}</th>
                       <td>{{ field }}</td>
@@ -45,19 +43,6 @@
           </table>
         </div>
 
-        <div class="full-container">
-          <h4 class="text-center mb-4">Документы</h4>
-          <table class="table-table">
-              <div>
-                Зажав клавишу Ctrl, можно выбрать несколько файлов:
-                <input type="file" name="documents" multiple>
-              </div>
-            </form>
-          </table>
-        </div>
-    {% if team_id %}
-      <input type="hidden" value="{{ team_id }}" name="team_id" >
-    {% endif %}
     <!-- Save Button -->
     <div class="container">
       <div class="row">

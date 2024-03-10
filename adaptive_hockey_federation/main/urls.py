@@ -1,9 +1,8 @@
 from django.urls import path
 from main import views as main_views
-from main.controllers import player_views, team_views
+from main.controllers import player_views, team_views, staff_views
 
 app_name = "main"
-
 
 urlpatterns = [
     path("", main_views.main, name="main"),
@@ -53,6 +52,36 @@ urlpatterns = [
         "teams/<int:team_id>/",
         team_views.TeamIdView.as_view(),
         name="teams_id",
+    ),
+    path(
+        "staffs/",
+        staff_views.StaffMemberListView.as_view(),
+        name="staffs",
+    ),
+    path(
+        "staffs/create/",
+        staff_views.StaffMemberIdCreateView.as_view(),
+        name="staff_create",
+    ),
+    path(
+        "staffs/<int:pk>/",
+        staff_views.StaffMemberIdView.as_view(),
+        name="staff_id",
+    ),
+    path(
+        "staffs/<int:pk>/edit/",
+        staff_views.StaffMemberIdEditView.as_view(),
+        name="staff_id_edit",
+    ),
+    path(
+        "staffs/<int:pk>/delete/",
+        staff_views.StaffMemberIdDeleteView.as_view(),
+        name="staff_id_delete",
+    ),
+    path(
+        "staffs/create/",
+        staff_views.StaffTeamMemberCreateView.as_view(),
+        name="staff_member_create",
     ),
     path("unloads/", main_views.unloads, name="unloads"),
 ]

@@ -121,18 +121,18 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['team_id'] = self.team_id
+        if self.team_id is not None:
+            context['team_id'] = self.team_id
         return context
 
     def get_success_url(self):
-        print(f'>>> get_success_url self.team_id >>> {type(self.team_id)}')
-        if 'None' in self.team_id or self.team_id is None:
+        if self.team_id is None:
             return reverse('main:players')
         else:
             return reverse('main:teams_id', kwargs={'team_id': self.team_id})
 
     def post(self, request, *args, **kwargs):
-        self.team_id = request.POST.get('team_id')
+        self.team_id = request.POST.get('team_id', None)
         return super().post(request, *args, **kwargs)
 
 
