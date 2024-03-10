@@ -9,7 +9,9 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("main", "0002_add_relations"),
+        (
+            "main", "0002_add_relations"
+        ),
     ]
 
     operations = [
@@ -44,10 +46,13 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "Соревнование",
                 "verbose_name_plural": "Соревнования",
-                "ordering": ("date_start",),
+                "ordering": (
+                    "date_start",
+                ),
                 "permissions": [
-                    ("list_view_competition",
-                     "Может видеть список Соревнований"),
+                    (
+                        "list_view_competition",
+                        "Может видеть список Соревнований"),
                     (
                         "list_team_competition",
                         "Может видеть список команд на Соревновании",

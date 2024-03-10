@@ -35,7 +35,9 @@ def set_permissions_to_groups(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("users", "0001_initial"),
+        (
+            "users", "0001_initial"
+        ),
     ]
 
     operations = [

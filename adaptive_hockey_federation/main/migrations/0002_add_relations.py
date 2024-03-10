@@ -10,7 +10,9 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("main", "0001_initial"),
+        (
+            "main", "0001_initial"
+        ),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -60,7 +62,11 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="staffmember",
             constraint=models.UniqueConstraint(
-                fields=("name", "surname", "patronymic"),
+                fields=(
+                    "name",
+                    "surname",
+                    "patronymic"
+                ),
                 name="staff_member_unique"
             ),
         ),
@@ -151,34 +157,53 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="team",
             constraint=models.UniqueConstraint(
-                fields=("name", "city", "discipline_name"),
+                fields=(
+                    "name",
+                    "city",
+                    "discipline_name"
+                ),
                 name="team_city_unique"
             ),
         ),
         migrations.AddConstraint(
             model_name="staffteammember",
             constraint=models.UniqueConstraint(
-                fields=("staff_member", "staff_position"),
+                fields=(
+                    "staff_member",
+                    "staff_position"
+                ),
                 name="staff_member_position_unique",
             ),
         ),
         migrations.AddConstraint(
             model_name="player",
             constraint=models.UniqueConstraint(
-                fields=("name", "surname", "patronymic", "birthday"),
+                fields=(
+                    "name",
+                    "surname",
+                    "patronymic",
+                    "birthday"
+                ),
                 name="player_unique",
             ),
         ),
         migrations.AddConstraint(
             model_name="document",
             constraint=models.UniqueConstraint(
-                fields=("file", "player"), name="player_docume_unique"
+                fields=(
+                    "file",
+                    "player"
+                ),
+                name="player_docume_unique"
             ),
         ),
         migrations.AddConstraint(
             model_name="discipline",
             constraint=models.UniqueConstraint(
-                fields=("discipline_name", "discipline_level"),
+                fields=(
+                    "discipline_name",
+                    "discipline_level"
+                ),
                 name="discipline_name_level_unique",
             ),
         ),

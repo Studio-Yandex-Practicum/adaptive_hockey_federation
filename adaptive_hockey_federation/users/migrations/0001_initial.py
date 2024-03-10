@@ -14,7 +14,9 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("auth", "0012_alter_user_first_name_max_length"),
+        (
+            "auth", "0012_alter_user_first_name_max_length"
+        ),
     ]
 
     operations = [
@@ -30,7 +32,9 @@ class Migration(migrations.Migration):
             },
             bases=("auth.group",),
             managers=[
-                ("objects", django.contrib.auth.models.GroupManager()),
+                (
+                    "objects", django.contrib.auth.models.GroupManager()
+                ),
             ],
         ),
         migrations.CreateModel(
@@ -51,7 +55,9 @@ class Migration(migrations.Migration):
                 (
                     "last_login",
                     models.DateTimeField(
-                        blank=True, null=True, verbose_name="last login"
+                        blank=True,
+                        null=True,
+                        verbose_name="last login"
                     ),
                 ),
                 (
@@ -145,13 +151,15 @@ class Migration(migrations.Migration):
                 (
                     "is_staff",
                     models.BooleanField(
-                        default=False, verbose_name="Статус администратора."
+                        default=False,
+                        verbose_name="Статус администратора."
                     ),
                 ),
                 (
                     "is_active",
                     models.BooleanField(
-                        default=True, verbose_name="Показывает статус он-лайн."
+                        default=True,
+                        verbose_name="Показывает статус он-лайн."
                     ),
                 ),
                 (
@@ -182,13 +190,20 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "Пользователь",
                 "verbose_name_plural": "Пользователи",
-                "ordering": ("last_name",),
+                "ordering": (
+                    "last_name",
+                ),
                 "permissions": [
-                    ("list_view_user", "Может видеть список пользователей")
+                    (
+                        "list_view_user",
+                        "Может видеть список пользователей"
+                    )
                 ],
             },
             managers=[
-                ("objects", users.managers.CustomUserManager()),
+                (
+                    "objects", users.managers.CustomUserManager()
+                ),
             ],
         ),
     ]

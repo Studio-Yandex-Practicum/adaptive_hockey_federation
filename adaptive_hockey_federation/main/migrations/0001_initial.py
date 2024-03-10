@@ -242,7 +242,8 @@ class Migration(migrations.Migration):
                 (
                     "birthday",
                     models.DateField(
-                        help_text="Дата рождения", verbose_name="Дата рождения"
+                        help_text="Дата рождения",
+                        verbose_name="Дата рождения"
                     ),
                 ),
                 (
@@ -256,8 +257,10 @@ class Migration(migrations.Migration):
                 (
                     "gender",
                     models.CharField(
-                        choices=[("male", "Мужской"),
-                                 ("female", "Женский")],
+                        choices=[
+                            ("male", "Мужской"),
+                            ("female", "Женский")
+                        ],
                         default="",
                         help_text="Пол",
                         max_length=256,
@@ -323,9 +326,17 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "Игрок",
                 "verbose_name_plural": "Игроки",
-                "ordering": ("surname", "name", "patronymic"),
-                "permissions": [("list_view_player",
-                                 "Может видеть список игроков")],
+                "ordering": (
+                    "surname",
+                    "name",
+                    "patronymic",
+                ),
+                "permissions": [
+                    (
+                        "list_view_player",
+                        "Может видеть список игроков"
+                    )
+                ],
                 "abstract": False,
                 "default_related_name": "players",
             },
@@ -401,8 +412,10 @@ class Migration(migrations.Migration):
                 (
                     "staff_position",
                     models.CharField(
-                        choices=[("trainer", "тренер"),
-                                 ("other", "пушер-тьютор")],
+                        choices=[
+                            ("trainer", "тренер"),
+                            ("other", "пушер-тьютор")
+                        ],
                         default="",
                         help_text="Статус сотрудника",
                         max_length=256,
@@ -468,8 +481,12 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "Команда",
                 "verbose_name_plural": "Команды",
-                "permissions": [("list_view_team",
-                                 "Может видеть список команд")],
+                "permissions": [
+                    (
+                        "list_view_team",
+                        "Может видеть список команд"
+                    )
+                ],
                 "default_related_name": "teams",
             },
         ),
