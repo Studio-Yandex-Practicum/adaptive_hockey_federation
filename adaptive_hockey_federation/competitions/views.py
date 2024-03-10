@@ -13,20 +13,20 @@ from django.views.generic.list import ListView
 from main.controllers.team_views import CityListMixin
 
 
-class EventListView(
+class CompetitionListView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     ListView,
 ):
-    """Временная view для отображения работы модели Event"""
+    """Временная view для отображения работы модели Competition"""
 
     model = Competition
     template_name = "main/competitions/competitions.html"
-    permission_required = "events.list_view_event"
+    permission_required = "competitions.list_view_competition"
     permission_denied_message = (
         "Отсутствует разрешение на просмотр списка соревнований."
     )
-    context_object_name = "events"
+    context_object_name = "competitions"
     paginate_by = 10
     ordering = ["id"]
 
@@ -70,7 +70,7 @@ class EventListView(
         return context
 
 
-class UpdateEventView(
+class UpdateCompetitionView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     UpdateView,
@@ -81,7 +81,7 @@ class UpdateEventView(
     model = Competition
     form_class = CompetitionForm
     template_name = "main/competitions/competition_update.html"
-    permission_required = "events.change_event"
+    permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение карточки соревнований."
     )
@@ -110,10 +110,10 @@ class DeleteCompetitionView(
 ):
     """Удаление соревнований."""
 
-    object = Event
-    model = Event
-    success_url = reverse_lazy("events:competitions")
-    permission_required = "events.delete_event"
+    object = Competition
+    model = Competition
+    success_url = reverse_lazy("competitions:competitions")
+    permission_required = "competitions.delete_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение карточки соревнований."
     )
@@ -122,7 +122,7 @@ class DeleteCompetitionView(
         return get_object_or_404(Competition, id=self.kwargs["pk"])
 
 
-class TeamsOnEvent(
+class TeamsOnCompetition(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     DetailView,
@@ -131,7 +131,7 @@ class TeamsOnEvent(
 
     model = Competition
     template_name = "main/competitions_id/competitions_id.html"
-    permission_required = "events.list_team_event"
+    permission_required = "competitions.list_team_competition"
     permission_denied_message = (
         "Отсутствует разрешение на просмотр списка команд на соревновании."
     )
@@ -178,7 +178,7 @@ class DeleteTeamFromCompetition(
 
     object = Team
     model = Team
-    permission_required = "events.delete_team_event"
+    permission_required = "competitions.delete_team_competition"
     permission_denied_message = (
         "Отсутствует разрешение на удаление команд с соревнования."
     )
