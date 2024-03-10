@@ -13,9 +13,17 @@ from main.forms import PlayerForm
 from main.models import Document, Player
 
 
-class PlayersListView(LoginRequiredMixin, ListView):
+class PlayersListView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    ListView,
+):
     model = Player
     template_name = "main/players/players.html"
+    permission_required = "main.list_view_player"
+    permission_denied_message = (
+        "У Вас нет разрешения на просмотр списка игроков игрока."
+    )
     context_object_name = "players"
     paginate_by = 10
     fields = [
@@ -80,9 +88,9 @@ class PlayersListView(LoginRequiredMixin, ListView):
                 "gender": player.get_gender_display(),
                 "number": player.number,
                 "discipline": player.discipline if player.discipline else None,
-                "diagnosis": player.diagnosis.name
-                if player.diagnosis
-                else None,  # Noqa
+                "diagnosis": (
+                    player.diagnosis.name if player.diagnosis else None
+                ),  # Noqa
                 "url": reverse("main:player_id", args=[player.id]),
                 "id": player.pk,
             }
@@ -93,14 +101,20 @@ class PlayersListView(LoginRequiredMixin, ListView):
         return context
 
 
-class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
+class PlayerIDCreateView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView,
+):
     """Представление для создания нового игрока."""
+
     model = Player
     form_class = PlayerForm
     template_name = "main/player_id/player_id_create.html"
     permission_required = "main.add_player"
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока."
+    
     )
     team_id = None
 
@@ -108,37 +122,21 @@ class PlayerIDCreateView(PermissionRequiredMixin, CreateView):
         player = form.save()
         for iter, file in enumerate(self.request.FILES.getlist("documents")):
             file.name = generate_file_name(file.name, player.name, iter)
-            Document.objects.create(
-                player=player, file=file, name=file.name
-            )
+            Document.objects.create(player=player, file=file, name=file.name)
         return super().form_valid(form)
 
-    def get(self, request, *args, **kwargs):
-        self.team_id = request.GET.get('team', None)
-        if self.team_id is not None:
-            self.initial = {'team': self.team_id}
-        return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.team_id is not None:
-            context['team_id'] = self.team_id
-        return context
-
-    def get_success_url(self):
-        if self.team_id is None:
-            return reverse('main:players')
-        else:
-            return reverse('main:teams_id', kwargs={'team_id': self.team_id})
-
-    def post(self, request, *args, **kwargs):
-        self.team_id = request.POST.get('team_id', None)
-        return super().post(request, *args, **kwargs)
-
-
-class PlayerIdView(PermissionRequiredMixin, DetailView):
+class PlayerIdView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DetailView,
+):
     model = Player
     template_name = "main/player_id/player_id.html"
+    permission_required = "main.view_player"
+    permission_denied_message = (
+        "У Вас нет разрешения на просмотр карточки игрока."
+    )
     context_object_name = "player"
     fields = [
         "surname",
@@ -157,9 +155,10 @@ class PlayerIdView(PermissionRequiredMixin, DetailView):
         "number",
         "document",
     ]
-    permission_required = 'main.view_player'
+    permission_required = "main.view_player"
     permission_denied_message = (
-        'У Вас нет разрешения на просмотр персональных данных игрока.')
+        "У Вас нет разрешения на просмотр персональных данных игрока."
+    )
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["pk"])
@@ -179,8 +178,16 @@ class PlayerIdView(PermissionRequiredMixin, DetailView):
             ("Диагноз", player.diagnosis),
         ]
 
+        player_teams = [
+            {
+                "name": team.name,
+                "url": reverse("main:teams_id", args=[team.id]),
+            }
+            for team in player.team.all()
+        ]
+
         player_fields = [
-            ("Команда", ", ".join([team.name for team in player.team.all()])),
+            ("Команда", player_teams),
             ("Уровень ревизии", player.level_revision),
             ("Капитан", player.is_captain),
             ("Ассистент", player.is_assistent),
@@ -196,13 +203,16 @@ class PlayerIdView(PermissionRequiredMixin, DetailView):
         return context
 
 
-class PlayerIDEditView(PermissionRequiredMixin, UpdateView):
+class PlayerIDEditView(
+    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+):
     model = Player
     template_name = "main/player_id/player_id_edit.html"
     form_class = PlayerForm
-    permission_required = 'main.change_player'
+    permission_required = "main.change_player"
     permission_denied_message = (
-        'У Вас нет разрешения на изменение персональных данных игрока.')
+        "У Вас нет разрешения на изменение персональных данных игрока."
+    )
 
     def get_success_url(self):
         return reverse("main:player_id", kwargs={"pk": self.object.pk})
@@ -243,13 +253,18 @@ class PlayerIDEditView(PermissionRequiredMixin, UpdateView):
         return context
 
 
-class PlayerIDDeleteView(PermissionRequiredMixin, DeleteView):
+class PlayerIDDeleteView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView,
+):
     model = Player
     object = Player
     success_url = reverse_lazy("main:players")
     permission_required = "main.delete_player"
     permission_denied_message = (
-        'У Вас нет разрешения на удаление карточки игрока.')
+        "У Вас нет разрешения на удаление карточки игрока."
+    )
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["pk"])

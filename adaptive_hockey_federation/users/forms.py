@@ -167,7 +167,7 @@ class UsersCreationForm(forms.ModelForm):
         return choice_team
 
     def save(self, commit=True):
-        user = super(UsersCreationForm, self).save(commit=False)
+        user = super(UsersCreationForm, self).save()
         set_team_curator(user, self.cleaned_data["team"])
         send_password_reset_email(user)
         return user

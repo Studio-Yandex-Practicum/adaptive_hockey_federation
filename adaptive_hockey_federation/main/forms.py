@@ -1,5 +1,6 @@
 from typing import Any
 
+from core.constants import ROLE_AGENT
 from core.constants import STAFF_POSITION_CHOICES
 from django import forms
 from django.core.exceptions import ValidationError
@@ -18,13 +19,13 @@ from users.models import User
 class PlayerForm(forms.ModelForm):
     identity_document = forms.CharField(
         widget=forms.TextInput,
-        label='Удостоверение личности',
-        help_text='Удостоверение личности'
+        label="Удостоверение личности",
+        help_text="Удостоверение личности",
     )
     level_revision = forms.CharField(
         widget=forms.TextInput,
-        label='Уровень ревизии',
-        help_text='Уровень ревизии',
+        label="Уровень ревизии",
+        help_text="Уровень ревизии",
     )
 
     class Meta:
@@ -53,16 +54,18 @@ class CityChoiceField(ModelChoiceField):
     def __init__(self):
         super().__init__(
             queryset=City.objects.all(),
-            widget=TextInput(attrs={
-                'class': 'form-control',
-                'list': 'cities',
-                'placeholder': 'Введите или выберите название города'
-            }),
+            widget=TextInput(
+                attrs={
+                    "class": "form-control",
+                    "list": "cities",
+                    "placeholder": "Введите или выберите название города",
+                }
+            ),
             required=True,
             error_messages={
-                'required': 'Пожалуйста, выберите город из списка.'
+                "required": "Пожалуйста, выберите город из списка."
             },
-            label='Город откуда команда',
+            label="Город откуда команда",
         )
 
     def clean(self, value: Any) -> Any:
@@ -73,9 +76,8 @@ class CityChoiceField(ModelChoiceField):
         соответствующий город (объект класса City) и возвращает его на
         дальнейшую стандартную валидацию формы."""
 
-        if (not isinstance(value, str)
-                or value in self.empty_values):
-            raise ValidationError(self.error_messages['required'])
+        if not isinstance(value, str) or value in self.empty_values:
+            raise ValidationError(self.error_messages["required"])
 
         value = value.strip()
 
@@ -89,49 +91,44 @@ class CityChoiceField(ModelChoiceField):
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
-        self.fields[
-            'curator'
-        ].label_from_instance = lambda obj: obj.get_full_name()
+        self.fields["curator"].label_from_instance = (
+            lambda obj: obj.get_full_name()
+        )
 
     city = CityChoiceField()
 
     curator = ModelChoiceField(
-        queryset=User.objects.filter(role='agent'),
+        queryset=User.objects.filter(role=ROLE_AGENT),
         required=True,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='Куратор команды',
-        empty_label='Выберите куратора',
+        widget=forms.Select(attrs={"class": "form-control"}),
+        label="Куратор команды",
+        empty_label="Выберите куратора",
         error_messages={
-            'required': 'Пожалуйста, выберите куратора из списка.'
-        }
+            "required": "Пожалуйста, выберите куратора из списка."
+        },
     )
     discipline_name = forms.ModelChoiceField(
         queryset=DisciplineName.objects.all(),
         required=True,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='Дисциплина команды',
-        empty_label='Выберите дисциплину команды',
+        widget=forms.Select(attrs={"class": "form-control"}),
+        label="Дисциплина команды",
+        empty_label="Выберите дисциплину команды",
         error_messages={
-            'required': 'Пожалуйста, выберите дисциплину из списка.'
-        }
+            "required": "Пожалуйста, выберите дисциплину из списка."
+        },
     )
 
     class Meta:
         model = Team
-        fields = [
-            'name',
-            'city',
-            'discipline_name',
-            'curator'
-        ]
+        fields = ["name", "city", "discipline_name", "curator"]
         widgets = {
-            'name': TextInput(
-                attrs={'placeholder': 'Введите название команды'}
+            "name": TextInput(
+                attrs={"placeholder": "Введите название команды"}
             ),
-            'staff_team_member': Select(),
-            'city': Select(),
-            'discipline_name': Select(),
-            'curator': Select(),
+            "staff_team_member": Select(),
+            "city": Select(),
+            "discipline_name": Select(),
+            "curator": Select(),
         }
 
         def save(self, commit=True):
@@ -144,14 +141,14 @@ class TeamForm(forms.ModelForm):
 class PlayerTeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PlayerTeamForm, self).__init__(*args, **kwargs)
-        self.fields[
-            'player'
-        ].label_from_instance = lambda obj: obj.get_name_and_position()
+        self.fields["player"].label_from_instance = (
+            lambda obj: obj.get_name_and_position()
+        )
 
     class Meta:
         labels = {
-            'player': 'Игрок',
-            'team': 'Название команды',
+            "player": "Игрок",
+            "team": "Название команды",
         }
 
 
@@ -159,9 +156,9 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(StaffTeamMemberTeamForm, self).__init__(*args, **kwargs)
-        self.fields[
-            'staffteammember'
-        ].label_from_instance = lambda obj: obj.get_name_and_staff_position()
+        self.fields["staffteammember"].label_from_instance = (
+            lambda obj: obj.get_name_and_staff_position()
+        )
 
     class Meta:
         labels = {

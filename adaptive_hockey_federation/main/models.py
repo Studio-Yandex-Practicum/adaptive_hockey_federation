@@ -237,7 +237,7 @@ class Team(BaseUniqueName):
         null=True,
         verbose_name=_("Куратор команды"),
         help_text=_("Куратор команды"),
-        related_name='team'
+        related_name="team",
     )
 
     class Meta:
@@ -249,6 +249,9 @@ class Team(BaseUniqueName):
                 name="team_city_unique",
                 fields=["name", "city", "discipline_name"],
             )
+        ]
+        permissions = [
+            ("list_view_team", "Can view list of Команда"),
         ]
 
     def __str__(self):
@@ -415,6 +418,9 @@ class Player(BasePerson):
                     # 'number'
                 ],
             ),
+        ]
+        permissions = [
+            ("list_view_player", "Can view list of Игрок"),
         ]
 
     def __str__(self):
