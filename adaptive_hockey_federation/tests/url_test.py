@@ -154,30 +154,30 @@ class TestUrls(TestCase):
             ),
             UrlToTest("/auth/password_change/"),
             UrlToTest("/auth/password_reset/", authorized_only=False),
-            UrlToTest("/analytics/"),
-            UrlToTest("/competitions/"),
+            UrlToTest("/analytics/", permission_required="list_view_player"),
+            UrlToTest("/competitions/", permission_required="list_view_event"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  соревнованиями.
-            # UrlToTest('/competitions/1/'),
+            UrlToTest(
+                "/competitions/1/", permission_required="list_team_event"
+            ),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  игроками.
-            # UrlToTest('/player_create/'),
-            UrlToTest("/players/"),
+            UrlToTest("/players/create/", permission_required="add_player"),
+            UrlToTest("/players/", permission_required="list_view_player"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  игроками.
-            # UrlToTest('/players/1/'),
-            # UrlToTest('/players/1/edit/'),
-            UrlToTest("/teams/"),
+            UrlToTest("/players/1/", permission_required="view_player"),
+            UrlToTest("/players/1/edit/", permission_required="change_player"),
+            UrlToTest("/teams/", permission_required="list_view_team"),
             UrlToTest("/teams/1/", permission_required="view_team"),
             UrlToTest("/teams/1/edit/", permission_required="change_team"),
             UrlToTest("/teams/create/", permission_required="add_team"),
             UrlToTest("/unloads/"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  пользователями.
-            # UrlToTest('/user_create/',
-            #           permission_required='add_user'),
-            # UrlToTest('/users/',
-            #           permission_required='view_user')
+            UrlToTest("/users/create/", permission_required="add_user"),
+            UrlToTest("/users/", permission_required="list_view_user"),
             UrlToTest("/users/1/edit/", permission_required="change_user"),
         ]
         urls_responses_results = []
