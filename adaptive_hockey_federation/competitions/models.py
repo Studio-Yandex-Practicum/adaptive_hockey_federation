@@ -35,9 +35,12 @@ class Competition(models.Model):
         verbose_name_plural = "Соревнования"
         ordering = ("date_start",)
         permissions = [
-            ("list_view_competition", "Can view list of Соревнование"),
-            ("list_team_competition", "Can view list of Команда on Соревнование"),
-            ("delete_team_competition", "Can delete Команда from Соревнование"),
+            ("list_view_competition",
+             "Может видеть список Соревнований"),
+            ("list_team_competition",
+             "Может видеть список команд на Соревновании"),
+            ("delete_team_competition",
+             "Может удалять команду из Соревнования"),
         ]
 
     def __str__(self):
