@@ -111,11 +111,11 @@ class PlayerIDCreateView(
     model = Player
     form_class = PlayerForm
     template_name = "main/player_id/player_id_create.html"
+    success_url = "/players"
     permission_required = "main.add_player"
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока."
     )
-    team_id = None
 
     def form_valid(self, form):
         player = form.save()

@@ -1,7 +1,6 @@
 from typing import Any
 
-from core.constants import ROLE_AGENT
-from core.constants import STAFF_POSITION_CHOICES
+from core.constants import ROLE_AGENT, STAFF_POSITION_CHOICES
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput

@@ -4,7 +4,6 @@ from main.controllers import player_views, team_views, staff_views
 
 app_name = "main"
 
-
 main_urlpatterns = [
     path("", main_views.main, name="main"),
 ]
@@ -69,37 +68,34 @@ teams_urlpatterns = [
         team_views.TeamIdView.as_view(),
         name="teams_id",
     ),
+]
+
+staffs_urlpatterns = [
     path(
-        "staffs/",
+        "",
         staff_views.StaffMemberListView.as_view(),
         name="staffs",
     ),
     path(
-        "staffs/create/",
+        "create/",
         staff_views.StaffMemberIdCreateView.as_view(),
         name="staff_create",
     ),
     path(
-        "staffs/<int:pk>/",
+        "<int:pk>/",
         staff_views.StaffMemberIdView.as_view(),
         name="staff_id",
     ),
     path(
-        "staffs/<int:pk>/edit/",
+        "<int:pk>/edit/",
         staff_views.StaffMemberIdEditView.as_view(),
         name="staff_id_edit",
     ),
     path(
-        "staffs/<int:pk>/delete/",
+        "<int:pk>/delete/",
         staff_views.StaffMemberIdDeleteView.as_view(),
         name="staff_id_delete",
     ),
-    path(
-        "staffs/create/",
-        staff_views.StaffTeamMemberCreateView.as_view(),
-        name="staff_member_create",
-    ),
-    path("unloads/", main_views.unloads, name="unloads"),
 ]
 
 unloads_urlpattern = [
@@ -110,5 +106,6 @@ urlpatterns = [
     path('', include(main_urlpatterns)),
     path('players/', include(players_urlpatterns)),
     path('teams/', include(teams_urlpatterns)),
+    path('staffs/', include(staffs_urlpatterns)),
     path('unloads/', include(unloads_urlpattern))
 ]

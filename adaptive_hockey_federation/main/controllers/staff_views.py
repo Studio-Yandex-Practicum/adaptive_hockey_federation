@@ -1,13 +1,6 @@
-from django.db.models.query import QuerySet
-from django.forms import BaseModelForm
-from django.http import HttpResponse
-from core.utils import generate_file_name
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -184,14 +177,6 @@ class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return get_object_or_404(self.model, id=self.kwargs["pk"])
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        staff = self.get_object()
-        staff_team = StaffTeamMember.objects.get(staff_member=staff)
-        
-        print(f'>>> context >>>> {context}')
-        return context
-
     def form_valid(self, form):
         staff = form.save()
         team = form.cleaned_data['team']
@@ -211,7 +196,6 @@ class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
                 qualification=qualification,
                 notes=notes
             )
-        print(f'>>> staff_team >>>> {staff_team}')
         staff_team.team.set([t.id for t in team])
         staff_team.save()
         return super().form_valid(form)

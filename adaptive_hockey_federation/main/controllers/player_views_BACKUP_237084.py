@@ -115,7 +115,10 @@ class PlayerIDCreateView(
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока."
     )
+<<<<<<< HEAD
     team_id = None
+=======
+>>>>>>> dev
 
     def form_valid(self, form):
         player = form.save()
@@ -123,6 +126,28 @@ class PlayerIDCreateView(
             file.name = generate_file_name(file.name, player.name, iter)
             Document.objects.create(player=player, file=file, name=file.name)
         return super().form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        self.team_id = request.GET.get('team', None)
+        if self.team_id is not None:
+            self.initial = {'team': self.team_id}
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.team_id is not None:
+            context['team_id'] = self.team_id
+        return context
+
+    def get_success_url(self):
+        if self.team_id is None:
+            return reverse('main:players')
+        else:
+            return reverse('main:teams_id', kwargs={'team_id': self.team_id})
+
+    def post(self, request, *args, **kwargs):
+        self.team_id = request.POST.get('team_id', None)
+        return super().post(request, *args, **kwargs)
 
 
 class PlayerIdView(
