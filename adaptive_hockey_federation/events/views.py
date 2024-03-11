@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import (
 )
 from django.db.models import QuerySet
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -13,6 +13,7 @@ from django.views.generic.list import ListView
 from events.forms import EventForm, EventTeamForm
 from events.models import Event, Team
 from main.controllers.team_views import CityListMixin
+from main.controllers.utils import get_team_href
 
 
 class EventListView(
@@ -220,7 +221,7 @@ def event_team_manage_view(request, pk):
     более тонкой настройки формы для работы с промежуточной моделью.
     """
 
-    event = get_object_or_404(Event, id=pk)
+    event = get_object_or_404(Event.objects.prefetch_related("teams"), id=pk)
 
     def _get_table_data(
         event_instance: Event,
@@ -231,7 +232,7 @@ def event_team_manage_view(request, pk):
         data = [
             {
                 "id": team.id,
-                "name": team.name,
+                "name": get_team_href(team),
                 "city": team.city,
                 "discipline_name": team.discipline_name,
                 "action_button": {
@@ -294,7 +295,4 @@ def event_team_manage_view(request, pk):
     event_team = form.save(commit=False)
     event_team.event = event
     event_team.save()
-    # return redirect("events:competitions_id", event.id)
-    return render(
-        request, "main/competitions_id/competitions_id.html", context
-    )
+    return redirect("events:competitions_id", event.id)

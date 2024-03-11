@@ -12,7 +12,7 @@
   {% for team in table_data %}
     <tr>
       <td>{{ team.id }}</td>
-      <td>{{ team.name }}</td>
+      <td><a href="{{ team.name.url }}">{{ team.name.name }} </a></td>
       <td>{{ team.city }}</td>
       <td>{{ team.discipline_name }}</td>
       <td>
