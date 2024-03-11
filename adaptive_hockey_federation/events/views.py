@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import (
 )
 from django.db.models import QuerySet
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -45,7 +45,7 @@ class EventListView(
                     "title": event.title,
                     "city": event.city,
                     "duration": event.period_duration,
-                    "is_active": event.is_in_process(),
+                    "is_active": event.is_in_process,
                     "_ref_": {
                         "name": "Участники",
                         "type": "button",
@@ -76,7 +76,7 @@ class UpdateEventView(
     UpdateView,
     CityListMixin,
 ):
-    """Обновление информации о соревнованиях."""
+    """Обновление информации о соревновании."""
 
     model = Event
     form_class = EventForm
@@ -135,7 +135,7 @@ class AddTeamToEvent(
 
     pattern_name = "events:competitions_id"
     http_method_names = ("post",)
-    permission_required = "events.competition_teams_change"
+    permission_required = "events.change_event"
     permission_denied_message = (
         "Отсутствует разрешение на изменение списка команд на соревновании."
     )
@@ -150,72 +150,6 @@ class AddTeamToEvent(
         )
 
 
-# class TeamsOnEvent(DetailView):
-#     # class TeamsOnEvent(CreateView):
-#     """Отображение команд, принимающих участие в соревновании."""
-#
-#     model = Event.teams.through
-#     template_name = "main/competitions_id/competitions_id.html"
-#
-#     def get_success_url(self):
-#         return reverse_lazy(
-#             "events:competitions_id", kwargs={"pk": self.object.pk}
-#         )
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         event = self.get_object()
-#         teams = event.teams.all()
-#         teams_table_data = [
-#             {
-#                 "id": team.id,
-#                 "name": team.name,
-#                 "city": team.city,
-#                 "discipline_name": team.discipline_name,
-#                 "ref": {
-#                     "name": "Отстранить",
-#                     "type": "button",
-#                     "url": reverse("events:competitions_id_delete",
-#                                    kwargs={"event_id": event.id,
-#                                            "pk": team.id}, )
-#                 },
-#                 "delete_url": reverse(
-#                     "events:competitions_id_delete", args=[event.id, team.id]
-#                 ),
-#             }
-#             for team in teams
-#         ]
-#         available_teams = Team.objects.exclude(
-#             event_teams=event)
-#         available_teams_table_data = [
-#             {
-#                 "id": team.id,
-#                 "name": team.name,
-#                 "city": team.city,
-#                 "discipline_name": team.discipline_name,
-#                 "ref": {
-#                     "name": "Допустить",
-#                     "type": "button",
-#                     "url": reverse("events:competitions_id_add",
-#                                    kwargs={"event_id": event.id,
-#                                            "pk": team.id}),
-#                 },
-#                 "delete_url": reverse(
-#                     "events:competitions_id_delete", args=[event.id, team.id]
-#                 ),
-#             }
-#             for team in available_teams
-#         ]
-#         context["table_data"] = teams_table_data
-#         context["available_table_data"] = available_teams_table_data
-#         context["available_teams_list"] = list(
-#             available_teams.values_list("name", flat=True)
-#         )
-#
-#         print(list(available_teams.values_list("name", flat=True)))
-#         return context
-
-
 class DeleteTeamFromEvent(
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -225,7 +159,7 @@ class DeleteTeamFromEvent(
 
     object = Team
     model = Team
-    permission_required = "events.delete_team_event"
+    permission_required = "events.change_event"
     permission_denied_message = (
         "Отсутствует разрешение на удаление команд с соревнования."
     )
@@ -274,8 +208,8 @@ class CreateEventView(
         return context
 
 
-@login_required
-@permission_required("events.competition_update")
+@login_required()
+@permission_required("events.list_team_event", raise_exception=True)
 def event_team_manage_view(request, pk):
     """Представление для управления соревнованием.
     -   Отображает команды, участвующие в соревновании, доступные команды
@@ -360,4 +294,7 @@ def event_team_manage_view(request, pk):
     event_team = form.save(commit=False)
     event_team.event = event
     event_team.save()
-    return redirect("events:competitions_id", event.id)
+    # return redirect("events:competitions_id", event.id)
+    return render(
+        request, "main/competitions_id/competitions_id.html", context
+    )
