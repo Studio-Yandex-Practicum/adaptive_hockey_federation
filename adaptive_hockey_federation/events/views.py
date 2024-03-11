@@ -20,7 +20,7 @@ class EventListView(
     PermissionRequiredMixin,
     ListView,
 ):
-    """Временная view для отображения работы модели Event"""
+    """Представление списка соревнований."""
 
     model = Event
     template_name = "main/competitions/competitions.html"
@@ -45,7 +45,7 @@ class EventListView(
                     "title": event.title,
                     "city": event.city,
                     "duration": event.period_duration,
-                    "is_active": event.is_active,
+                    "is_active": event.is_in_process(),
                     "_ref_": {
                         "name": "Участники",
                         "type": "button",
@@ -94,17 +94,16 @@ class UpdateEventView(
     def get_object(self, queryset=None):
         return get_object_or_404(Event, id=self.kwargs["pk"])
 
+    def get_initial(self):
+        initial = {
+            "city": self.object.city.name,
+            "date_start": self.object.date_start.isoformat(),
+            "date_end": self.object.date_end.isoformat(),
+        }
+        return initial
+
     def get_context_data(self, **kwargs):
-        context = super(UpdateEventView, self).get_context_data(**kwargs)
-        context["form"] = self.form_class(
-            instance=self.object,
-            initial={
-                "city": self.object.city.name,
-                "date_start": self.object.date_start.isoformat(),
-                "date_end": self.object.date_end.isoformat(),
-                "location": self.object.location,
-            },
-        )
+        context = super().get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         return context
 
@@ -127,7 +126,12 @@ class DeleteEventView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 class AddTeamToEvent(
     LoginRequiredMixin, PermissionRequiredMixin, RedirectView
 ):
-    """Представление добавления команды в соревнования."""
+    """Представление добавления команды в соревнования.
+    В данном виде не отображает какой-то отдельной страницы либо формы.
+    Используется для обработки нажатия кнопки либо соответствующего
+    post-запроса. Добавляет команду в соревнование, после чего делает
+    редирект на страницу управления соответствующим
+    соревнованием."""
 
     pattern_name = "events:competitions_id"
     http_method_names = ("post",)
@@ -253,8 +257,8 @@ class CreateEventView(
 
     model = Event
     form_class = EventForm
-    template_name = "main/competitions/competition_update.html"
-    permission_required = "events.competition_update"
+    template_name = "main/competitions/competition_create.html"
+    permission_required = "events.add_event"
 
     def get_success_url(self):
         return reverse_lazy(

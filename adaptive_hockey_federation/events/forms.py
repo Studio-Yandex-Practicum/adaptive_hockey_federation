@@ -1,17 +1,41 @@
+from datetime import datetime
 from typing import Any
 
 from django import forms
 from django.core.exceptions import ValidationError
 from events.models import CHAR_FIELD_LENGTH, Event
+from events.validators import date_not_before_today
 from main.forms import CityChoiceField
 from main.models import Team
+
+
+class CompetitionDate(forms.DateField):
+    widget = forms.DateInput(
+        attrs={"type": "date", "class": "form-control"},
+    )
+
+    def __init__(self, *, validators=(date_not_before_today,), **kwargs):
+        super(CompetitionDate, self).__init__(**kwargs)
+        self.validators = list(validators)
+        # self.default_error_messages["past_is_forbidden"] = ("Дата начала "
+        # "соревнования не должна быть в прошлом.")
+        if self.initial and self.initial < datetime.date(datetime.now()):
+            self.validators = []
+            self.widget.attrs["readonly"] = True
+
+    # def clean(self, value: Any) -> Any:
+    #     raise ValidationError("message", code="past_is_forbidden")
+    #     return super().clean(value)
 
 
 class EventForm(forms.ModelForm):
     """Форма для соревнований."""
 
-    def __init__(self, *args, **kwargs):
-        super(EventForm, self).__init__(*args, **kwargs)
+    # def __init__(self, *args, **kwargs):
+    #     super(EventForm, self).__init__(*args, **kwargs)
+    #     if self.instance and self.instance.id:
+    #         self.fields["date_start"].widget.attrs["readonly"] = True
+    #         self.fields["date_start"].initial = self.initial["date_start"]
 
     title = forms.CharField(label="Название")
     city = CityChoiceField(label="Город, где проводятся соревнования")
@@ -20,12 +44,18 @@ class EventForm(forms.ModelForm):
         label="Место проведения (адрес, учреждение и т.д.)",
         max_length=CHAR_FIELD_LENGTH,
     )
-    date_start = forms.DateField(
-        widget=forms.DateInput(
-            attrs={"type": "date", "class": "form-control"},
-        ),
+    # date_start = forms.DateField(
+    #     widget=forms.DateInput(
+    #         attrs={"type": "date", "class": "form-control"},
+    #     ),
+    #     label="Дата начала",
+    #     error_messages={"required": "Пожалуйста, укажите дату начала."},
+    #     validators=[date_not_before_today]
+    # )
+    date_start = CompetitionDate(
         label="Дата начала",
         error_messages={"required": "Пожалуйста, укажите дату начала."},
+        # validators=[date_not_before_today]
     )
     date_end = forms.DateField(
         widget=forms.DateInput(

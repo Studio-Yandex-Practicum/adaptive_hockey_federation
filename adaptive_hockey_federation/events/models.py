@@ -1,3 +1,5 @@
+import datetime as dt
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from events.utils import pluralize_days
@@ -49,3 +51,10 @@ class Event(models.Model):
         """
         duration = self.date_end - self.date_start
         return pluralize_days(duration.days)
+
+    def is_in_process(self) -> bool:
+        """Возвращает True, если соревнование сейчас идет.
+        Метод опирается на даты начала и окончания соревнования.
+        При этом поле is_active не используется."""
+        now = dt.datetime.date(dt.datetime.now())
+        return self.date_start <= now <= self.date_end
