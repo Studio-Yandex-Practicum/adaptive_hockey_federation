@@ -48,7 +48,7 @@ class EventForm(forms.ModelForm):
 
     def set_readonly(self, field: str, readonly_value: bool):
         """Делает поле формы неактивным при соблюдении условия.
-        - field - название формы.
+        - field - название поля.
         - readonly_value - любое bool условие. Если условие не
         соблюдается, поле активируется.
         """
