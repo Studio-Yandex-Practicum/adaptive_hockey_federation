@@ -1,7 +1,11 @@
 import factory  # type: ignore
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from faker import Faker
+from users.provaders import CustomPhoneProvider
 
+fake = Faker(locale="ru_RU")
+fake.add_provider(CustomPhoneProvider)
 User = get_user_model()
 
 
@@ -16,7 +20,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     last_name = factory.Faker("last_name", locale="ru_RU")
     patronymic = factory.Faker("first_name", locale="ru_RU")
     email = factory.Faker("email", locale="ru_RU")
-    phone = factory.Faker("phone_number", locale="ru_RU")
+    phone = factory.LazyAttribute(lambda _: fake.phone_number())
 
     @factory.lazy_attribute
     def password(self):

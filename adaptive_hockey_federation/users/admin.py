@@ -39,6 +39,11 @@ class UserAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related("groups")
 
+    def save_model(self, request, obj, form, change):
+        if form.cleaned_data.get("password"):
+            obj.set_password(form.cleaned_data["password"])
+        super().save_model(request, obj, form, change)
+
 
 class HiddenAdmin(DjangoGroupAdmin):
     """Удаление модели из панели администратора.

@@ -42,3 +42,4 @@ GROUP_PERMISSION = {
         ),
     ),
 }
+REGEX_AREA_CODE_IS_SEVEN_HUNDRED = "^7[0-9]{2,10}$"
