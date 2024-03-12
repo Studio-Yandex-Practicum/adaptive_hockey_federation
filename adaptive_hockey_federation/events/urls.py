@@ -3,9 +3,13 @@ from events import views
 
 app_name = "events"
 
-
 competitions_urlpatterns = [
     path("", views.EventListView.as_view(), name="competitions"),
+    path(
+        "create/",
+        views.CreateEventView.as_view(),
+        name="competition_add",
+    ),
     path(
         "<int:pk>/edit/",
         views.UpdateEventView.as_view(),
@@ -18,7 +22,7 @@ competitions_urlpatterns = [
     ),
     path(
         "<int:pk>/",
-        views.TeamsOnEvent.as_view(),
+        views.event_team_manage_view,
         name="competitions_id",
     ),
     path(
@@ -26,8 +30,13 @@ competitions_urlpatterns = [
         views.DeleteTeamFromEvent.as_view(),
         name="competitions_id_delete",
     ),
+    path(
+        "competitions/<int:event_id>/teams/<int:pk>/add",
+        views.AddTeamToEvent.as_view(),
+        name="competitions_id_add",
+    ),
 ]
 
 urlpatterns = [
-    path('competitions/', include(competitions_urlpatterns)),
+    path("competitions/", include(competitions_urlpatterns)),
 ]

@@ -1,3 +1,6 @@
+import datetime as dt
+
+
 def pluralize_days(days: int) -> str:
     """
     Вспомогательная функция для коректного отображения дней.
@@ -12,3 +15,8 @@ def pluralize_days(days: int) -> str:
         return f"{days} дня"
     else:
         return f"{days} дней"
+
+
+def get_now_day():
+    """Возвращает сегодняшнее число в формате date."""
+    return dt.datetime.date(dt.datetime.now())

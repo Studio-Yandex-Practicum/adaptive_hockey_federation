@@ -1,0 +1,7 @@
+{% if field.name == 'team' %}
+  <datalist id="available_teams">
+    {% for team in available_teams_list %}
+      <option value="{{ team }}"></option>
+    {% endfor %}
+  </datalist>
+{% endif %}

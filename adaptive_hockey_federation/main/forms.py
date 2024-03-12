@@ -43,7 +43,7 @@ class PlayerForm(forms.ModelForm):
 class CityChoiceField(ModelChoiceField):
     """Самодельное поле для выбора города."""
 
-    def __init__(self):
+    def __init__(self, label: str | None = None):
         super().__init__(
             queryset=City.objects.all(),
             widget=TextInput(
@@ -57,7 +57,7 @@ class CityChoiceField(ModelChoiceField):
             error_messages={
                 "required": "Пожалуйста, выберите город из списка."
             },
-            label="Город откуда команда",
+            label=label or "Выберите город",
         )
 
     def clean(self, value: Any) -> Any:
@@ -87,7 +87,7 @@ class TeamForm(forms.ModelForm):
             lambda obj: obj.get_full_name()
         )
 
-    city = CityChoiceField()
+    city = CityChoiceField(label="Выберите город, откуда команда.")
 
     curator = ModelChoiceField(
         queryset=User.objects.filter(role=ROLE_AGENT),
