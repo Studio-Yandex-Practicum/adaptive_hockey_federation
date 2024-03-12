@@ -13,7 +13,7 @@
           <h4 class="text-center mb-4">Информация о сотруднике</h4>
           <table class="table-table">
             <tbody>
-              {% for field in form.visible_fields %}
+            {% for field in form.visible_fields %}
                   {% if field.name in 'surname name patronymic phone' %}
                   <tr>
                     <th>{{ field.label_tag }}</th>
@@ -30,14 +30,14 @@
           <h4 class="text-center mb-4">Информация о состоянии в команде</h4>
           <table class="table-table">
             <tbody>
-              {% for field in form.visible_fields %}
-                {% if field.name in 'team staff_position qualification notes' %}
+                {{ staff_form.management_form }}
+                {{ staff_form.non_form_errors }}
+                {% for field in staff_form %}
                   <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
                       <th>{{ field.label_tag }}</th>
                       <td>{{ field }}</td>
                       <td>{{ field.errors }}</td>
                   </tr>
-                {% endif %}
               {% endfor %}
             </tbody>
           </table>

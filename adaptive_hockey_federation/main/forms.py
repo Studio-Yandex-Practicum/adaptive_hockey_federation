@@ -1,6 +1,6 @@
 from typing import Any
 
-from core.constants import ROLE_AGENT, STAFF_POSITION_CHOICES
+from core.constants import ROLE_AGENT
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
@@ -170,47 +170,11 @@ class StaffTeamMemberForm(forms.ModelForm):
 
     class Meta:
         model = StaffTeamMember
-        fields = ("staff_member", "team", "qualification", "notes",)
+        fields = ("staff_position", "team", "qualification", "notes",)
 
 
 class StaffMemberForm(forms.ModelForm):
 
-    team = forms.ModelMultipleChoiceField(
-        queryset=Team.objects.all(),
-        required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
-        label='Команда',
-    )
-
-    staff_position = forms.ChoiceField(
-        choices=STAFF_POSITION_CHOICES,
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='Статус сотрудника',
-    )
-
-    qualification = forms.CharField(
-        required=False,
-        label="Квалификация",
-        widget=forms.TextInput,
-    )
-
-    notes = forms.CharField(
-        required=False,
-        label="Описание",
-        widget=forms.TextInput,
-    )
-
     class Meta:
         model = StaffMember
-        fields = [
-            "id",
-            "surname",
-            "name",
-            "patronymic",
-            "phone",
-            "team",
-            "staff_position",
-            "qualification",
-            "notes",
-        ]
+        fields = ("id", "surname", "name", "patronymic", "phone",)

@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -136,32 +137,23 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки сотрудника команды.")
 
+    def form_valid(self, form):
+        context = self.get_context_data()
+        staff_form = context['staff_form']
+        with transaction.atomic():
+            self.object = form.save()
+            if staff_form.is_valid():
+                staff_form.instance.staff_member = self.object
+                staff_form.save()
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['staff_form'] = StaffTeamMemberForm(self.request.POST)
+        else:
+            context['staff_form'] = StaffTeamMemberForm()
         return context
-
-    def form_valid(self, form):
-        staff = form.save()
-        team = form.cleaned_data['team']
-        staff_position = form.cleaned_data['staff_position']
-        qualification = form.cleaned_data['qualification']
-        notes = form.cleaned_data['notes']
-        try:
-            staff_team = StaffTeamMember.objects.get(staff_member=staff)
-            staff_team.staff_member = staff
-            staff_team.staff_position = staff_position
-            staff_team.qualification = qualification
-            staff_team.notes = notes
-        except StaffTeamMember.DoesNotExist:
-            staff_team = StaffTeamMember.objects.create(
-                staff_member=staff,
-                staff_position=staff_position,
-                qualification=qualification,
-                notes=notes
-            )
-        staff_team.team.set([t.id for t in team])
-        staff_team.save()
-        return super().form_valid(form)
 
 
 class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
@@ -174,31 +166,24 @@ class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
     permission_denied_message = (
         "У Вас нет разрешения на редактирование карточки сотрудника команды.")
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(self.model, id=self.kwargs["pk"])
-
     def form_valid(self, form):
-        staff = form.save()
-        team = form.cleaned_data['team']
-        staff_position = form.cleaned_data['staff_position']
-        qualification = form.cleaned_data['qualification']
-        notes = form.cleaned_data['notes']
-        try:
-            staff_team = StaffTeamMember.objects.get(staff_member=staff)
-            staff_team.staff_member = staff
-            staff_team.staff_position = staff_position
-            staff_team.qualification = qualification
-            staff_team.notes = notes
-        except StaffTeamMember.DoesNotExist:
-            staff_team = StaffTeamMember.objects.create(
-                staff_member=staff,
-                staff_position=staff_position,
-                qualification=qualification,
-                notes=notes
-            )
-        staff_team.team.set([t.id for t in team])
-        staff_team.save()
+        context = self.get_context_data()
+        staff_form = context['staff_form']
+        with transaction.atomic():
+            form.save()
+            if staff_form.is_valid():
+                staff_form.save()
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        staff = StaffTeamMember.objects.get(staff_member=self.object)
+        if self.request.POST:
+            context['staff_form'] = StaffTeamMemberForm(
+                self.request.POST, instance=staff)
+        else:
+            context['staff_form'] = StaffTeamMemberForm(instance=staff)
+        return context
 
 
 class StaffMemberIdDeleteView(PermissionRequiredMixin, DeleteView):
