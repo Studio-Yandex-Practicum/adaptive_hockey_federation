@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Event',
+            name='Competition',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=250)),
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('location', models.CharField(max_length=250)),
                 ('is_active', models.BooleanField(default=True)),
                 ('city', models.ForeignKey(help_text='Город проведения соревнований', on_delete=django.db.models.deletion.CASCADE, to='main.city', verbose_name='Город проведения соревнований')),
-                ('teams', models.ManyToManyField(help_text='Состав команд участников', related_name='event_teams', to='main.team', verbose_name='Состав команд участников')),
+                ('teams', models.ManyToManyField(help_text='Состав команд участников', related_name='competition_teams', to='main.team', verbose_name='Состав команд участников')),
             ],
             options={
                 'verbose_name': 'Соревнование',

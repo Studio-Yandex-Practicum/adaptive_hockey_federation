@@ -1,0 +1,4 @@
+{% if perms.competition.add_competition %}
+  {% url 'competitions:competition_add' as competition_create_url %}
+  {% include 'base/button_create.html' with button_url=competition_create_url name="Создать соревнование" current_url_name=request.path %}
+{% endif %}
