@@ -5,7 +5,6 @@ from django.contrib.auth.mixins import (
 )
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
@@ -90,7 +89,11 @@ class UsersListView(
         return context
 
 
-class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class UpdateUserView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView
+):
     """
     Вьюха редактирования пользователя
     """
@@ -104,20 +107,24 @@ class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = UpdateUserForm
     success_url = "/users"
 
-    def get_object(self, queryset=None):
-        user_id = self.kwargs.get("pk")
-        return get_object_or_404(User, pk=user_id)
+    def get_initial(self):
+        team = None
+        if queryset := self.object.team.all():
+            team = queryset[0]
+        initial = {
+            'first_name': self.object.first_name,
+            'last_name': self.object.last_name,
+            'patronymic': self.object.patronymic,
+            'email': self.object.email,
+            'phone': self.object.phone,
+            'role': self.object.role,
+            'team': team
+        }
+        return initial
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateUserView, self).get_context_data(**kwargs)
-        queryset = self.object.team.all()
-        team = None
-        if queryset:
-            team = self.object.team.all()[0]
-        context["form"] = self.form_class(
-            instance=self.object,
-            initial={"team": team},
-        )
+        context = super().get_context_data(**kwargs)
+        context["form"].initial = self.get_initial()
         return context
 
 
