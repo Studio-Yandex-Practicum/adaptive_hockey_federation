@@ -8,6 +8,47 @@
 {% block content %}
   <h2 class="text-center mb-4">Редактирование профиля игрока</h2>
 
+  <form style="width: 100%;" action="">
+    <table class="table-table">
+      <tbody>
+        <tr>
+          <th>Фамилия</th>
+          <td class="base-wrapper">
+            <input placeholder="Введите фамилию" class="base-input" type="text">
+          </td>
+        </tr>
+        <tr>
+          <th>Имя</th>
+          <td class="base-wrapper">
+            <input value="Иван" class="base-input" type="text">
+          </td>
+        </tr>
+        <tr>
+          <th>Опции</th>
+          <td class="base-wrapper">
+            <select class="base-select" name="options" id="options">
+              <option class="base-option" value="1">Первый вариант</option>
+              <option class="base-option" value="2">Второй вариант</option>
+              <option class="base-option" value="3">Третий вариант</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>Текстовая область</th>
+          <td class="base-wrapper">
+            <textarea class="base-textarea" name="textarea" id="textarea" rows="4"></textarea>
+          </td>
+        </tr>
+        <tr>
+          <th>Чекбокс</th>
+          <td class="base-wrapper">
+            <input class="base-checkbox" type="checkbox" id="myCheckbox">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
   <form method="post" action="{% url 'main:player_id_edit' player.id %}">
     {% csrf_token %}
     <div class="container text-start">
