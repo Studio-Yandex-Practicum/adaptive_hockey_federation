@@ -109,7 +109,7 @@ fill-test-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --staffteam
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --player --amount 300
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --document
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --event --amount 10
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --competition --amount 10
 
 
 # Прогон тестов с помощью pytest

@@ -1,18 +1,18 @@
 from typing import Any
 
+from competitions.models import CHAR_FIELD_LENGTH, Competition
+from competitions.validators import date_not_before_today
 from django import forms
 from django.core.exceptions import ValidationError
-from events.models import CHAR_FIELD_LENGTH, Event
-from events.validators import date_not_before_today
 from main.forms import CityChoiceField
 from main.models import Team
 
 
-class EventForm(forms.ModelForm):
+class CompetitionForm(forms.ModelForm):
     """Форма для соревнований."""
 
     def __init__(self, *args, **kwargs):
-        super(EventForm, self).__init__(*args, **kwargs)
+        super(CompetitionForm, self).__init__(*args, **kwargs)
         if self.instance and self.instance.id:
             self.set_readonly("date_start", self.instance.is_started)
             self.set_readonly("date_end", self.instance.is_ended)
@@ -55,11 +55,11 @@ class EventForm(forms.ModelForm):
         self.fields[field].disabled = readonly_value
 
     class Meta:
-        model = Event
+        model = Competition
         fields = ["title", "city", "location", "date_start", "date_end"]
 
     def save(self, commit=True):
-        instance = super(EventForm, self).save(commit=True)
+        instance = super(CompetitionForm, self).save(commit=True)
         if commit:
             instance.save()
         return instance
@@ -87,7 +87,7 @@ class TeamField(forms.ModelChoiceField):
         </datalist>
     """
 
-    def __init__(self, event: Event):
+    def __init__(self, competition: Competition):
         super(TeamField, self).__init__(
             queryset=Team.objects.all(),
             widget=forms.TextInput(
@@ -102,7 +102,7 @@ class TeamField(forms.ModelChoiceField):
             ),
             label="Поиск команды для допуска",
         )
-        self.event = event
+        self.competition = competition
 
     def clean(self, value: Any) -> Any:
         """Переопределенный метод родительского класса."""
@@ -113,28 +113,28 @@ class TeamField(forms.ModelChoiceField):
         value = value.strip()
 
         if team := Team.get_by_name(value):
-            if self.event.teams.filter(id=team.id).exists():
+            if self.competition.teams.filter(id=team.id).exists():
                 raise ValidationError("Команда уже добавлена в соревнования.")
             return super().clean(team)
 
         raise ValidationError("Такой команды не существует")
 
 
-class EventTeamForm(forms.ModelForm):
+class CompetitionTeamForm(forms.ModelForm):
     """Форма для добавления команд в соревнование.
-    Работает с промежуточной моделью Event_Team."""
+    Работает с промежуточной моделью Competition_Team."""
 
     def __init__(self, *args, **kwargs):
-        self.event = kwargs.pop("event")
-        super(EventTeamForm, self).__init__(*args, **kwargs)
-        self.fields["team"] = TeamField(event=self.event)
+        self.competition = kwargs.pop("competition")
+        super(CompetitionTeamForm, self).__init__(*args, **kwargs)
+        self.fields["team"] = TeamField(competition=self.competition)
 
     class Meta:
-        model = Event.teams.through
+        model = Competition.teams.through
         fields = ["team"]
 
     def save(self, commit=True):
-        instance = super(EventTeamForm, self).save(commit=False)
+        instance = super(CompetitionTeamForm, self).save(commit=False)
         if commit:
             instance.save()
         return instance
