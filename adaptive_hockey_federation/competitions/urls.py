@@ -1,38 +1,38 @@
+from competitions import views
 from django.urls import include, path
-from events import views
 
-app_name = "events"
+app_name = "competitions"
 
 competitions_urlpatterns = [
-    path("", views.EventListView.as_view(), name="competitions"),
+    path("", views.CompetitionListView.as_view(), name="competitions"),
     path(
         "create/",
-        views.CreateEventView.as_view(),
+        views.CreateCompetitionView.as_view(),
         name="competition_add",
     ),
     path(
         "<int:pk>/edit/",
-        views.UpdateEventView.as_view(),
+        views.UpdateCompetitionView.as_view(),
         name="competition_update",
     ),
     path(
         "<int:pk>/delete/",
-        views.DeleteEventView.as_view(),
+        views.DeleteCompetitionView.as_view(),
         name="competition_delete",
     ),
     path(
         "<int:pk>/",
-        views.event_team_manage_view,
+        views.competition_team_manage_view,
         name="competitions_id",
     ),
     path(
-        "<int:event_id>/teams/<int:pk>/delete/",
-        views.DeleteTeamFromEvent.as_view(),
+        "<int:competition_id>/teams/<int:pk>/delete/",
+        views.DeleteTeamFromCompetition.as_view(),
         name="competitions_id_delete",
     ),
     path(
-        "competitions/<int:event_id>/teams/<int:pk>/add",
-        views.AddTeamToEvent.as_view(),
+        "competitions/<int:competition_id>/teams/<int:pk>/add",
+        views.AddTeamToCompetition.as_view(),
         name="competitions_id_add",
     ),
 ]

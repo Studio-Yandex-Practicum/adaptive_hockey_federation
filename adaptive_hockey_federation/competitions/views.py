@@ -1,3 +1,5 @@
+from competitions.forms import CompetitionForm, CompetitionTeamForm
+from competitions.models import Competition, Team
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -10,48 +12,47 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from events.forms import EventForm, EventTeamForm
-from events.models import Event, Team
 from main.controllers.team_views import CityListMixin
 from main.controllers.utils import get_team_href
 
 
-class EventListView(
+class CompetitionListView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     ListView,
 ):
     """Представление списка соревнований."""
 
-    model = Event
+    model = Competition
     template_name = "main/competitions/competitions.html"
-    permission_required = "events.list_view_event"
+    permission_required = "competitions.list_view_competition"
     permission_denied_message = (
         "Отсутствует разрешение на просмотр списка соревнований."
     )
-    context_object_name = "events"
+    context_object_name = "competitions"
     paginate_by = 10
     ordering = ["id"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        events = context["events"]
+        competitions = context["competitions"]
         table_data = []
-        for event in events:
+        for competition in competitions:
             table_data.append(
                 {
-                    "pk": event.pk,
-                    "data": event.date_start,
-                    "data_end": event.date_end,
-                    "title": event.title,
-                    "city": event.city,
-                    "duration": event.period_duration,
-                    "is_active": event.is_in_process,
+                    "pk": competition.pk,
+                    "data": competition.date_start,
+                    "data_end": competition.date_end,
+                    "title": competition.title,
+                    "city": competition.city,
+                    "duration": competition.period_duration,
+                    "is_active": competition.is_in_process,
                     "_ref_": {
                         "name": "Участники",
                         "type": "button",
                         "url": reverse(
-                            "events:competitions_id", args=[event.pk]
+                            "competitions:competitions_id",
+                            args=[competition.pk]
                         ),
                     },
                 }
@@ -71,7 +72,7 @@ class EventListView(
         return context
 
 
-class UpdateEventView(
+class UpdateCompetitionView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     UpdateView,
@@ -79,21 +80,21 @@ class UpdateEventView(
 ):
     """Обновление информации о соревновании."""
 
-    model = Event
-    form_class = EventForm
+    model = Competition
+    form_class = CompetitionForm
     template_name = "main/competitions/competition_update.html"
-    permission_required = "events.change_event"
+    permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение карточки соревнований."
     )
 
     def get_success_url(self):
         return reverse_lazy(
-            "events:competitions_id", kwargs={"pk": self.object.pk}
+            "competitions:competitions_id", kwargs={"pk": self.object.pk}
         )
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Event, id=self.kwargs["pk"])
+        return get_object_or_404(Competition, id=self.kwargs["pk"])
 
     def get_initial(self):
         initial = {
@@ -109,23 +110,29 @@ class UpdateEventView(
         return context
 
 
-class DeleteEventView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class DeleteCompetitionView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView
+):
     """Удаление соревнований."""
 
-    object = Event
-    model = Event
-    success_url = reverse_lazy("events:competitions")
-    permission_required = "events.delete_event"
+    object = Competition
+    model = Competition
+    success_url = reverse_lazy("competitions:competitions")
+    permission_required = "competitions.delete_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение карточки соревнований."
     )
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Event, id=self.kwargs["pk"])
+        return get_object_or_404(Competition, id=self.kwargs["pk"])
 
 
-class AddTeamToEvent(
-    LoginRequiredMixin, PermissionRequiredMixin, RedirectView
+class AddTeamToCompetition(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    RedirectView
 ):
     """Представление добавления команды в соревнования.
     В данном виде не отображает какой-то отдельной страницы либо формы.
@@ -134,24 +141,27 @@ class AddTeamToEvent(
     редирект на страницу управления соответствующим
     соревнованием."""
 
-    pattern_name = "events:competitions_id"
+    pattern_name = "competitions:competitions_id"
     http_method_names = ("post",)
-    permission_required = "events.change_event"
+    permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение списка команд на соревновании."
     )
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() == "post":
-            event = get_object_or_404(Event, id=kwargs["event_id"])
+            competition = get_object_or_404(
+                Competition,
+                id=kwargs["competition_id"]
+            )
             team = get_object_or_404(Team, id=kwargs["pk"])
-            event.teams.add(team)
-        return super(AddTeamToEvent, self).dispatch(
-            request, kwargs["event_id"]
+            competition.teams.add(team)
+        return super(AddTeamToCompetition, self).dispatch(
+            request, kwargs["competition_id"]
         )
 
 
-class DeleteTeamFromEvent(
+class DeleteTeamFromCompetition(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     DeleteView,
@@ -160,58 +170,65 @@ class DeleteTeamFromEvent(
 
     object = Team
     model = Team
-    permission_required = "events.change_event"
+    permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на удаление команд с соревнования."
     )
 
     def get_object(self, queryset=None):
-        team_in_event = get_object_or_404(
-            Event.teams.through,
-            event=self.kwargs["event_id"],
+        team_in_competition = get_object_or_404(
+            Competition.teams.through,
+            competition=self.kwargs["competition_id"],
             team=self.kwargs["pk"],
         )
-        return team_in_event
+        return team_in_competition
 
     def delete(self, request, *args, **kwargs):
         team = self.get_object()
-        event = get_object_or_404(Event, id=self.kwargs["event_id"])
-        event.teams.remove(team)
+        competition = get_object_or_404(
+            Competition,
+            id=self.kwargs["competition_id"]
+        )
+        competition.teams.remove(team)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse_lazy(
-            "events:competitions_id", kwargs={"pk": self.kwargs["event_id"]}
+            "competitions:competitions_id",
+            kwargs={"pk": self.kwargs["competition_id"]}
         )
 
 
-class CreateEventView(
+class CreateCompetitionView(
     LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin
 ):
     """Представление создания соревнования."""
 
-    model = Event
-    form_class = EventForm
+    model = Competition
+    form_class = CompetitionForm
     template_name = "main/competitions/competition_create.html"
-    permission_required = "events.add_event"
+    permission_required = "competitions.add_competition"
 
     def get_success_url(self):
         return reverse_lazy(
-            "events:competitions_id", kwargs={"pk": self.object.pk}
+            "competitions:competitions_id", kwargs={"pk": self.object.pk}
         )
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Event, id=self.kwargs["pk"])
+        return get_object_or_404(Competition, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
-        context = super(CreateEventView, self).get_context_data(**kwargs)
+        context = super(CreateCompetitionView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         return context
 
 
 @login_required()
-@permission_required("events.list_team_event", raise_exception=True)
-def event_team_manage_view(request, pk):
+@permission_required(
+    "competitions.list_team_competition",
+    raise_exception=True
+)
+def competition_team_manage_view(request, pk):
     """Представление для управления соревнованием.
     -   Отображает команды, участвующие в соревновании, доступные команды
         (т.е. те, которые в соревновании не участвуют),
@@ -221,10 +238,12 @@ def event_team_manage_view(request, pk):
     более тонкой настройки формы для работы с промежуточной моделью.
     """
 
-    event = get_object_or_404(Event.objects.prefetch_related("teams"), id=pk)
+    competition = get_object_or_404(
+        Competition.objects.prefetch_related("teams"), id=pk
+    )
 
     def _get_table_data(
-        event_instance: Event,
+        competition_instance: Competition,
         team_queryset: QuerySet,
         button_name: str | None = None,
         button_url_name: str | None = None,
@@ -239,7 +258,11 @@ def event_team_manage_view(request, pk):
                     "name": button_name,
                     "url": reverse(
                         button_url_name,
-                        kwargs={"event_id": event_instance.id, "pk": team.id},
+                        kwargs={
+                            "competition_id":
+                            competition_instance.id,
+                            "pk": team.id
+                        },
                     ),
                 },
             }
@@ -251,19 +274,19 @@ def event_team_manage_view(request, pk):
         """Внутренний метод получения контекста."""
         # Команды, участвующие в соревнованиях
         teams_table_data = _get_table_data(
-            event,
-            event.teams.all(),
+            competition,
+            competition.teams.all(),
             button_name="Отстранить",
-            button_url_name="events:competitions_id_delete",
+            button_url_name="competitions:competitions_id_delete",
         )
 
         # Команды, доступные для добавления к соревнованиям
-        available_teams = Team.objects.exclude(event_teams=event)
+        available_teams = Team.objects.exclude(competition_teams=competition)
         available_teams_table_data = _get_table_data(
-            event,
+            competition,
             available_teams,
             button_name="Допустить",
-            button_url_name="events:competitions_id_add",
+            button_url_name="competitions:competitions_id_add",
         )
 
         _context = {
@@ -272,19 +295,19 @@ def event_team_manage_view(request, pk):
             "available_teams_list": list(
                 available_teams.values_list("name", flat=True)
             ),
-            "object": event,
+            "object": competition,
         }
         return _context
 
     context = get_context()
 
     if request.method != "POST":
-        context["form"] = EventTeamForm(event=event)
+        context["form"] = CompetitionTeamForm(competition=competition)
         return render(
             request, "main/competitions_id/competitions_id.html", context
         )
 
-    form = EventTeamForm(request.POST, event=event)
+    form = CompetitionTeamForm(request.POST, competition=competition)
     context["form"] = form
 
     if not form.is_valid():
@@ -292,7 +315,7 @@ def event_team_manage_view(request, pk):
             request, "main/competitions_id/competitions_id.html", context
         )
 
-    event_team = form.save(commit=False)
-    event_team.event = event
-    event_team.save()
-    return redirect("events:competitions_id", event.id)
+    competition_team = form.save(commit=False)
+    competition_team.competition = competition
+    competition_team.save()
+    return redirect("competitions:competitions_id", competition.id)
