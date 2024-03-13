@@ -1,13 +1,14 @@
-{% extends "base/base.html" %}
-{% load static %}
+{% extends 'base/base.html' %}
 {% load user_filters %}
 {% block title %}
-   Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
+
 {% endblock %}
 {% block content %}
 <div class="card update_card">
   <h4 class="card-header">
-    Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
+    {% block form_title %}
+      Зарегистрировать новое соревнование
+    {% endblock %}
   </h4>
   <div class="card-body">
     <form method="post"
@@ -16,6 +17,15 @@
       enctype="multipart/form-data"
     {% endif %}>
       {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
       {% for field in form %}
       <div class="row my-3">
         <label for="{{ field.id_for_label }}">
@@ -25,8 +35,9 @@
             {% endif %}
         </label>
         {{ field |addclass:'form-control' }}
+        {% include 'main/teams/team_form_city_field_datalist.html' %}
       {% if field.errors %}
-      <small class="error">{{ field.errors|striptags  }}</small>
+      <small class="error" style="color: red">{{ field.errors|striptags  }}</small>
     {% endif %}
       </div>
       {% endfor %}

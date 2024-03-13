@@ -1,4 +1,4 @@
-from competitions.utils import pluralize_days
+from competitions.utils import get_now_day, pluralize_days
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from main.models import City, Team
@@ -35,12 +35,18 @@ class Competition(models.Model):
         verbose_name_plural = "Соревнования"
         ordering = ("date_start",)
         permissions = [
-            ("list_view_competition",
-             "Может видеть список Соревнований"),
-            ("list_team_competition",
-             "Может видеть список команд на Соревновании"),
-            ("delete_team_competition",
-             "Может удалять команду из Соревнования"),
+            (
+                "list_view_competition",
+                "Can view list of Соревнование"
+            ),
+            (
+                "list_team_competition",
+                "Can view list of Команда on Соревнование"
+            ),
+            (
+                "delete_team_competition",
+                "Can delete Команда from Соревнование"
+            ),
         ]
 
     def __str__(self):
@@ -48,7 +54,24 @@ class Competition(models.Model):
 
     def period_duration(self):
         """
-        Функция расчитывает длительность турнира
+        Функция рассчитывает длительность турнира.
         """
         duration = self.date_end - self.date_start
-        return pluralize_days(duration.days)
+        return pluralize_days(duration.days + 1)
+
+    @property
+    def is_in_process(self) -> bool:
+        """Возвращает True, если соревнование сейчас идет.
+        Метод опирается на даты начала и окончания соревнования.
+        При этом поле is_active не используется."""
+        return self.date_start <= get_now_day() <= self.date_end
+
+    @property
+    def is_started(self) -> bool:
+        """Проверяет, прошла ли дата начала соревнования."""
+        return self.date_start < get_now_day()
+
+    @property
+    def is_ended(self) -> bool:
+        """Проверяет, прошла ли дата окончания соревнования."""
+        return self.date_end < get_now_day()

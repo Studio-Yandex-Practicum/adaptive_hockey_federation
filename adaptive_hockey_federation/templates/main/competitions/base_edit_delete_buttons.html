@@ -1,8 +1,7 @@
 {% load static %}
 <td class="border rounded-md">
   <div class="items__group">
-    <form action="{% url action_url table_string.pk %}" method="post">
-      {% csrf_token %}
+    <form action="{% url action_url table_string.pk %}" method="get">
       {% if perms.competitions.competition_update %}
         <button class="btns-edit-del" type="submit">
           {% include 'base/edit_icon.html' %}

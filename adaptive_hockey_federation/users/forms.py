@@ -147,12 +147,6 @@ class UsersCreationForm(forms.ModelForm):
             "team": Select(),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["patronymic"].required = False
-        self.fields["role"].required = True
-        self.fields["phone"].required = True
-
     def clean_team(self):
         """
         Проверка команды при создании пользователя

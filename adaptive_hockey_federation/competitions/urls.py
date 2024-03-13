@@ -3,9 +3,13 @@ from django.urls import include, path
 
 app_name = "competitions"
 
-
 competitions_urlpatterns = [
     path("", views.CompetitionListView.as_view(), name="competitions"),
+    path(
+        "create/",
+        views.CreateCompetitionView.as_view(),
+        name="competition_add",
+    ),
     path(
         "<int:pk>/edit/",
         views.UpdateCompetitionView.as_view(),
@@ -18,16 +22,21 @@ competitions_urlpatterns = [
     ),
     path(
         "<int:pk>/",
-        views.TeamsOnCompetition.as_view(),
+        views.competition_team_manage_view,
         name="competitions_id",
     ),
     path(
-        "<int:competition_id>/teams/<int:pk>/delete",
+        "<int:competition_id>/teams/<int:pk>/delete/",
         views.DeleteTeamFromCompetition.as_view(),
         name="competitions_id_delete",
+    ),
+    path(
+        "competitions/<int:competition_id>/teams/<int:pk>/add",
+        views.AddTeamToCompetition.as_view(),
+        name="competitions_id_add",
     ),
 ]
 
 urlpatterns = [
-    path('competitions/', include(competitions_urlpatterns)),
+    path("competitions/", include(competitions_urlpatterns)),
 ]

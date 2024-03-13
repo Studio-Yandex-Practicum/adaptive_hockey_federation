@@ -295,6 +295,7 @@ li {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-left: 15px;
 }
 
 .btns-edit-del:disabled {
@@ -703,7 +704,7 @@ td {
   gap: 10px;
   justify-content: center;
   align-items: center;
-  padding: 15px;
+  padding-left: 15px;
 }
 
 .container-divs {
@@ -741,4 +742,238 @@ td {
   align-items: center;
   flex-direction: column;
   width: 100%;
+}
+
+.analitics-filter {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .analitics-filter {
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 50px;
+  }
+}
+
+.filter-item {
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .filter-item {
+    min-width: 68px;
+  }
+}
+
+.filter-item__wrapper {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .filter-item__wrapper {
+    width: 100%;
+  }
+}
+
+.analitics-text-item {
+  min-width: max-content;
+}
+
+.analitics-bg {
+  color: #fff;
+  margin: 30px 0;
+  background-color: #269FBD;
+  border-radius: 8px;
+}
+
+.analitics-dashbord-wrapper {
+  margin: 0 auto;
+  max-width: 90%;
+}
+
+.analitics-dashbord-panel-item {
+  width: 100%;
+  border-bottom: 2px dashed white;
+}
+
+.analitics-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .analitics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+.analitics-dashbord-number {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .analitics-dashbord-number {
+    font-size: 18px;
+  }
+}
+
+.analitics-dashbord-paragraph {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .analitics-dashbord-paragraph {
+    font-size: 10px;
+  }
+}
+
+.base-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.base-input {
+  margin: 0;
+  padding: 0;
+  min-width: 80%;
+  min-height: 100%;
+  border: none;
+  background-color: transparent;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  text-align: center;
+  transition: border-bottom 0.5s ease;
+}
+
+.base-input:focus {
+  outline: none;
+  background-color: #fff;
+  border-bottom: 2px solid rgba(38, 159, 189, 0.5);
+  text-align: left;
+}
+
+.base-select {
+  margin: 0;
+  padding: 2px;
+  min-width: 80%;
+  color: #340061;
+  border: 2px solid #269FBD;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.base-textarea {
+  margin: 0;
+  padding: 2px;
+  min-width: 80%;
+  border: 2px solid #269FBD;
+  border-radius: 8px;
+}
+
+.base-checkbox {
+  width: 25px;
+  height: 25px;
+}
+
+.error-page {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url('../img/fone.png');
+  background-size: contain;
+}
+
+.error-page__info-wrapper {
+  margin-top: 5%;
+  padding: 0;
+  width: 60%;
+  height: 50%;
+  border: 3px solid #269FBD;
+  border-radius: 8px;
+  background-color: rgba(100, 194, 209, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .error-page__info-wrapper {
+    width: 80%;
+    height: 40%;
+  }
+}
+
+.error-page__logo {
+  margin: 0;
+  padding: 0;
+}
+
+.error-page__heading {
+  margin-top: 5%;
+  padding: 0;
+  font-weight: 700;
+  font-size: 72px;
+  line-height: 53.2px;
+  color: #340061;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .error-page__heading {
+    font-size: 40px;
+  }
+}
+
+.error-page__paragraph {
+  margin: 5% 0;
+  padding: 0;
+  color: #FFF;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 42.56px;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .error-page__paragraph {
+    font-size: 20px;
+  }
+}
+
+.error-page__link {
+  margin: 3% 0;
+  padding: 15px 30px;
+  background-color: #E73259;
+  border-radius: 39px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 30px;
+  color: #fff;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .error-page__link {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
 }

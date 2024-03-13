@@ -156,7 +156,9 @@ class TestUrls(TestCase):
             UrlToTest("/auth/password_reset/", authorized_only=False),
             UrlToTest("/analytics/", permission_required="list_view_player"),
             UrlToTest(
-                "/competitions/", permission_required="list_view_competition"),
+                "/competitions/",
+                permission_required="list_view_competition"
+            ),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  соревнованиями.
             UrlToTest(
