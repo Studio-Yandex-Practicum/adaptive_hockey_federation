@@ -1,8 +1,15 @@
-<div class="error-page">
-  <img class="error-page__logo" src="../../staticfiles/img/logo.png" alt="Логотип">
-  <div class="error-page__info-wrapper">
-    <h1 class="error-page__heading">Ошибка 403</h1>
-    <p class="error-page__paragraph">Произошла ошибка на сервере!</p>
-    <a class="error-page__link" href="/">Вернуться на главную</a>
+{% extends 'base/base.html' %}
+{% block title %}
+  Ошибка
+{% endblock %}
+{% block content %}
+  <div class="error-page">
+    {% load static %}
+    <img class="error-page__logo" src={% static "img/logo.png" %} alt="Логотип">
+    <div class="error-page__info-wrapper">
+      <h1 class="error-page__heading">Ошибка 403</h1>
+      <p class="error-page__paragraph">Отказано в доступе</p>
+      <a class="error-page__link" href="/">Вернуться на главную</a>
+    </div>
   </div>
-</div>
+{% endblock %}
