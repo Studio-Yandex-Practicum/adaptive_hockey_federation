@@ -13,4 +13,4 @@ urlpatterns = [
     path("auth/", include("django.contrib.auth.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-handler404 = "main.controllers.errors_views.not_found"
+handler404 = "core.views.not_found"
