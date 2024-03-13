@@ -6,13 +6,11 @@ app_name = "main"
 
 
 main_urlpatterns = [
-    path("", main_views.main, name="main"),
+    path("", main_views.MainView.as_view(), name="main"),
 ]
 
 players_urlpatterns = [
-    path("",
-         player_views.PlayersListView.as_view(),
-         name="players"),
+    path("", player_views.PlayersListView.as_view(), name="players"),
     path(
         "create/",
         player_views.PlayerIDCreateView.as_view(),
@@ -41,9 +39,7 @@ players_urlpatterns = [
 ]
 
 teams_urlpatterns = [
-    path("",
-         team_views.TeamListView.as_view(),
-         name="teams"),
+    path("", team_views.TeamListView.as_view(), name="teams"),
     path(
         "create/",
         team_views.CreateTeamView.as_view(),
@@ -71,8 +67,8 @@ unloads_urlpattern = [
 ]
 
 urlpatterns = [
-    path('', include(main_urlpatterns)),
-    path('players/', include(players_urlpatterns)),
-    path('teams/', include(teams_urlpatterns)),
-    path('unloads/', include(unloads_urlpattern))
+    path("", include(main_urlpatterns)),
+    path("players/", include(players_urlpatterns)),
+    path("teams/", include(teams_urlpatterns)),
+    path("unloads/", include(unloads_urlpattern)),
 ]
