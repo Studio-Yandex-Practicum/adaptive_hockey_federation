@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% block header %}{% endblock %}
 {% block title %}
   {{ title }}
 {% endblock %}
@@ -8,8 +9,9 @@
     <img class="error-page__logo" src={% static "img/logo.png" %} alt="Логотип">
     <div class="error-page__info-wrapper">
       <h1 class="error-page__heading">{% block error_heading %}{% endblock %}</h1>
-      <p class="error-page__paragraph">{% block error_paragraph %}{% endblock %}</p>
+      <p class="error-page__paragraph" style="color: darkred">{% block error_paragraph %}{% endblock %}</p>
       <a class="error-page__link" href="/">Вернуться на главную</a>
     </div>
   </div>
 {% endblock %}
+{% block footer %}{% endblock %}
