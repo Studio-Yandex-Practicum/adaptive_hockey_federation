@@ -1,8 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse
@@ -12,15 +9,10 @@ from main.models import Player
 
 class MainView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
     ListView,
 ):
     model = Player
     template_name = "main/players/players.html"
-    permission_required = "main.list_view_player"
-    permission_denied_message = (
-        "У Вас нет разрешения на просмотр списка игроков игрока."
-    )
     context_object_name = "players"
     paginate_by = 10
     fields = [
