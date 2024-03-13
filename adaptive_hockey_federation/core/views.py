@@ -11,3 +11,13 @@ def not_found(request, exception):
         context={"path": request.path},
         status=HTTPStatus.NOT_FOUND,
     )
+
+
+def forbidden(request, exception):
+    """Представление ошибки 404."""
+    return render(
+        request=request,
+        template_name="error-pages/403.html",
+        context={"path": request.path},
+        status=HTTPStatus.FORBIDDEN,
+    )
