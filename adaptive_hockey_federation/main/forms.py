@@ -1,14 +1,49 @@
+from datetime import datetime
 from typing import Any
 
-from core.constants import ROLE_AGENT
+from core.constants import MAXIMUM_AGE, MINIMUM_AGE, ROLE_AGENT
 from django import forms
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.forms import ModelChoiceField, Select, TextInput
 from main.models import City, DisciplineName, Player, Team
 from users.models import User
 
+my_validator = RegexValidator(
+    r"^[А-Яа-яё -]+$",
+    (
+        "Строка должны состоять из кирилических символов. "
+        "Возможно использование дефиса."
+    ),
+)
+now = datetime.now()
+month_day = format(now.strftime("%m-%d"))
+min_date = f"{str(now.year - MAXIMUM_AGE)}-{month_day}"
+max_date = f"{str(now.year - MINIMUM_AGE)}-{month_day}"
+
 
 class PlayerForm(forms.ModelForm):
+    surname = forms.CharField(
+        widget=forms.TextInput,
+        label="Фамилия",
+        help_text="Фамилия",
+        validators=[my_validator],
+    )
+
+    name = forms.CharField(
+        widget=forms.TextInput,
+        label="Имя",
+        help_text="Имя",
+        validators=[my_validator],
+    )
+
+    patronymic = forms.CharField(
+        widget=forms.TextInput,
+        label="Отчество",
+        help_text="Отчество",
+        validators=[my_validator],
+    )
+
     identity_document = forms.CharField(
         widget=forms.TextInput,
         label="Удостоверение личности",
@@ -18,6 +53,20 @@ class PlayerForm(forms.ModelForm):
         widget=forms.TextInput,
         label="Уровень ревизии",
         help_text="Уровень ревизии",
+    )
+
+    birthday = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "placeholder": "yyyy-mm-dd (DOB)",
+                "class": "form-control",
+                "min": min_date,
+                "max": max_date,
+            }
+        ),
+        label="Дата рождения",
+        help_text="Дата рождения",
     )
 
     class Meta:
