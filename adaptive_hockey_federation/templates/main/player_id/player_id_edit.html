@@ -1,89 +1,87 @@
 {% extends 'base/base.html' %}
 {% load static %}
-
+{% load user_filters %}
 {% block title %}
   Редактирование профиля игрока
 {% endblock %}
 
 {% block content %}
-  <h2 class="text-center mb-4">Редактирование профиля игрока</h2>
-
-  <form style="width: 100%;" action="">
-    <table class="table-table">
-      <tbody>
-        <tr>
-          <th>Фамилия</th>
-          <td class="base-wrapper">
-            <input placeholder="Введите фамилию" class="base-input" type="text">
-          </td>
-        </tr>
-        <tr>
-          <th>Имя</th>
-          <td class="base-wrapper">
-            <input value="Иван" class="base-input" type="text">
-          </td>
-        </tr>
-        <tr>
-          <th>Опции</th>
-          <td class="base-wrapper">
-            <select class="base-select" name="options" id="options">
-              <option class="base-option" value="1">Первый вариант</option>
-              <option class="base-option" value="2">Второй вариант</option>
-              <option class="base-option" value="3">Третий вариант</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Текстовая область</th>
-          <td class="base-wrapper">
-            <textarea class="base-textarea" name="textarea" id="textarea" rows="4"></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th>Чекбокс</th>
-          <td class="base-wrapper">
-            <input class="base-checkbox" type="checkbox" id="myCheckbox">
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </form>
-
-  <form method="post" action="{% url 'main:player_id_edit' player.id %}">
+<h2 class="text-center mb-4">Редактирование профиля игрока</h2>
+<div class="profile-col">
+  <form style="width: 100%;" method="post" action="{% url 'main:player_id_edit' player.id %}">
     {% csrf_token %}
     <div class="container text-start">
-      <div class="profile-col">
         <h4 class="text-center mb-4">Личная информация</h4>
         <table class="table-table">
           <tbody>
             {% for field in form.visible_fields %}
-                {% if field.name in 'surname name patronymic gender birthday discipline diagnosis' or field.name == 'identity_document' %}
+              {% if field.name in 'surname name patronymic birthday identity_document'%}
                 <tr>
                   <th>{{ field.label_tag }}</th>
-                  <td>{{ field }}</td>
-                  <td>{{ field.errors }}</td>
+                    <td>
+                      {% if field.errors %}
+                        {{ field |addclass:'base-input-errors'}}
+                        {{ field.errors }}
+                      {% else %}
+                        {{ field |addclass:'base-input'}}
+                      {% endif %}
+                    </td>
+                <tr>
+              {% elif  field.name in 'gender discipline diagnosis' %}
+                <tr>
+                  <th>{{ field.label_tag }}</th>
+                      <td>
+                        {% if field.errors %}
+                          {{ field |addclass:'base-select-errors'}}
+                          {{ field.errors|striptags}}
+                        {% else %}
+                          {{ field |addclass:'base-select'}}
+                        {% endif %}
+                      </td>
                 </tr>
-              {% endif %}
+                  {% endif %}
             {% endfor %}
           </tbody>
         </table>
 
         <h4 class="text-center mb-4">Игровая информация</h4>
         <table class="table-table">
-          <tbody>
             {% for field in form.visible_fields %}
-              {% if field.name in 'team level_revision is_captain is_assistent position number' %}
+              {% if field.name in 'level_revision number'%}
                 <tr>
                   <th>{{ field.label_tag }}</th>
-                  <td>{{ field }}</td>
-                  <td>{{ field.errors }}</td>
+                    <td>
+                      {% if field.errors %}
+                        {{ field |addclass:'base-input-errors'}}
+                        {{ field.errors }}
+                      {% else %}
+                        {{ field |addclass:'base-input'}}
+                      {% endif %}
+                    </td>
+                <tr>
+              {% elif  field.name in 'team position' %}
+                <tr>
+                  <th>{{ field.label_tag }}</th>
+                      <td>
+                        {% if field.errors %}
+                          {{ field |addclass:'base-select-errors'}}
+                          {{ field.errors|striptags}}
+                        {% else %}
+                          {{ field |addclass:'base-select'}}
+                        {% endif %}
+                      </td>
+                </tr>
+              {% elif  field.name in 'is_captain is_assistent' %}
+                <tr>
+                  <th>{{ field.label_tag }}</th>
+                    <td>
+                      {{ field |addclass:'base-checkbox'}}
+                    </td>
                 </tr>
               {% endif %}
             {% endfor %}
           </tbody>
         </table>
-      </div>
-
       <h4 class="text-center mb-4">Документы</h4>
       <table class="table-table">
         {% if player_documents %}
@@ -98,7 +96,7 @@
               {% for doc in player_documents %}
                 <tr>
                   <td>{{ doc.name }}</td>
-                  <td><a href="{{ doc.file.url }}" target="_blank">Просмотреть</a></td>
+                  <td><a class='documents-link-player' href="{{ doc.file.url }}" target="_blank">Просмотреть</a></td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -107,7 +105,7 @@
           <p class="text-center">Документы отсутствуют</p>
         {% endif %}
       </table>
-
+    </div>
     <!-- Save Button -->
     <div class="container">
       <div class="row">
@@ -123,5 +121,5 @@
       </div>
     </div>
   </form>
-  <div class="container mb-4"></div>
+</div>
 {% endblock %}

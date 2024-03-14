@@ -317,6 +317,32 @@ li {
   width: 100%;
 }
 
+.error-input-fields-playerid {
+  width: 100%;
+  border-radius: 8px;
+  color: rgb(255, 0, 0);
+}
+
+.input-fields-playerid {
+  width: 100%;
+  border-radius: 8px;
+  color: black;
+  border: 2px solid #269FBD;
+}
+
+.documents-link-player {
+  text-decoration: none;
+  color: #269FBD;
+}
+
+.documents-link-player:hover {
+  text-decoration: none;
+  color: #340061;
+}
+.testborder {
+  border-color: #E73259 ;
+}
+
 .button_out {
   display: flex;
   justify-content: center;
@@ -859,6 +885,37 @@ td {
   transition: border-bottom 0.5s ease;
 }
 
+.errorlist {
+  color: #E73259;
+  margin: 0;
+  padding: 0;
+  min-width: 80%;
+  min-height: 100%;
+  transition: border-bottom 0.5s ease;
+}
+
+.base-input-errors {
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  min-height: 100%;
+  border: none;
+  background-color: transparent;
+  border: 2px red solid;
+  border-radius: 8px;
+  color: #E73259;
+  display: flex;
+  text-align: center;
+  transition: border-bottom 0.5s ease;
+}
+
+.base-input-errors:focus {
+  color: #920000;
+  outline: none;
+  background-color: #fff;
+  text-align: left;
+}
+
 .base-input:focus {
   outline: none;
   background-color: #fff;
@@ -874,6 +931,19 @@ td {
   border: 2px solid #269FBD;
   border-radius: 8px;
   font-weight: 700;
+}
+
+
+.base-select-errors {
+  margin: 0;
+  padding: 2px;
+  min-width: 80%;
+  color: #340061;
+  border: 2px solid #269FBD;
+  border-radius: 8px;
+  font-weight: 700;
+  border: 2px red solid;
+  color: #E73259;
 }
 
 .base-textarea {

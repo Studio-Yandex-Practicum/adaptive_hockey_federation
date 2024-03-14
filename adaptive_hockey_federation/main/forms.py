@@ -1,6 +1,6 @@
 from typing import Any
 
-from core.constants import ROLE_AGENT
+from core.constants import PLAYER_DOCUMENTS_NAME, ROLE_AGENT
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
@@ -38,6 +38,40 @@ class PlayerForm(forms.ModelForm):
             "number",
             "identity_document",
         ]
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if name.replace(" ", "").isalpha():
+            return name
+        raise ValidationError(
+            "Введите корректное имя например: <Иван>"
+        )
+
+    def clean_surname(self):
+        name = self.cleaned_data["surname"]
+        if name.replace(" ", "").isalpha():
+            return name
+        raise ValidationError(
+            "Введите корректную фамилию например: <Иванов>"
+        )
+
+    def clean_patronymic(self):
+        if name := self.cleaned_data["patronymic"]:
+            if name.replace(" ", "").isalpha():
+                return name
+            raise ValidationError(
+                "Введите корректное отчество например: <Иванович>"
+            )
+        return self.cleaned_data["patronymic"]
+
+    def clean_identity_document(self):
+        document_name = self.cleaned_data["identity_document"]
+        if document_name in PLAYER_DOCUMENTS_NAME:
+            return document_name
+        raise ValidationError(
+            "Введите документ в"
+            " формате <Свидетельство о рождении> или <Паспорт>"
+        )
 
 
 class CityChoiceField(ModelChoiceField):

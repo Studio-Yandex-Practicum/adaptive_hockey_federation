@@ -235,7 +235,7 @@ class PlayerIDEditView(
         ]
 
         player_fields = [
-            ("Команда", ", ".join([team.name for team in player.team.all()])),
+            ("Команда", [team.name for team in player.team.all()]),
             ("Уровень ревизии", player.level_revision),
             ("Капитан", player.is_captain),
             ("Ассистент", player.is_assistent),
