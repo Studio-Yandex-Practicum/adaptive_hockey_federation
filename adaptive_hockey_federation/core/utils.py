@@ -6,11 +6,10 @@ from core.constants import TIME_FORMAT
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
-def generate_file_name(filename: str, prefix: str, suffix) -> str:
+def generate_file_name(filename: str, prefix: str) -> str:
     filename, file_extension = os.path.splitext(filename)
     return (
-        f"{prefix}-{datetime.now().strftime(TIME_FORMAT)}-"
-        f"{suffix}{file_extension}"
+        f"{prefix}-{datetime.now().strftime(TIME_FORMAT)}" f"{file_extension}"
     )
 
 
