@@ -31,6 +31,11 @@ EMPTY_VALUE_DISPLAY = ""
 CLASS_FIELD_LENGTH = 10
 DEFAULT_VALUE = 0
 
+PLAYER_DOCUMENTS_NAME = [
+    "Свидетельство о рождении",
+    "Паспорт"
+]
+
 GENDER_CHOICES = (
     ("male", "Мужской"),
     ("female", "Женский"),
