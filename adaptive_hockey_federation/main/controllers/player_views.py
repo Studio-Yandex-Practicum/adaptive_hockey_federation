@@ -10,8 +10,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm
+from main.mixins import FileUploadMixin
 from main.models import Player
-from mixins import FileUploadMixin
 
 
 class PlayersListView(
