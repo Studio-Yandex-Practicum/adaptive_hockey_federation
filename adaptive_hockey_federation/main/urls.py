@@ -1,9 +1,8 @@
 from django.urls import include, path
 from main import views as main_views
-from main.controllers import player_views, team_views
+from main.controllers import player_views, staff_views, team_views
 
 app_name = "main"
-
 
 main_urlpatterns = [
     path("", main_views.main, name="main"),
@@ -64,6 +63,39 @@ teams_urlpatterns = [
         team_views.DeleteTeamView.as_view(),
         name="team_delete",
     ),
+    path(
+        "teams/<int:team_id>/",
+        team_views.TeamIdView.as_view(),
+        name="teams_id",
+    ),
+]
+
+staffs_urlpatterns = [
+    path(
+        "",
+        staff_views.StaffMemberListView.as_view(),
+        name="staffs",
+    ),
+    path(
+        "create/",
+        staff_views.StaffMemberIdCreateView.as_view(),
+        name="staff_create",
+    ),
+    path(
+        "<int:pk>/",
+        staff_views.StaffMemberIdView.as_view(),
+        name="staff_id",
+    ),
+    path(
+        "<int:pk>/edit/",
+        staff_views.StaffMemberIdEditView.as_view(),
+        name="staff_id_edit",
+    ),
+    path(
+        "<int:pk>/delete/",
+        staff_views.StaffMemberIdDeleteView.as_view(),
+        name="staff_id_delete",
+    ),
 ]
 
 unloads_urlpattern = [
@@ -74,5 +106,6 @@ urlpatterns = [
     path('', include(main_urlpatterns)),
     path('players/', include(players_urlpatterns)),
     path('teams/', include(teams_urlpatterns)),
+    path('staffs/', include(staffs_urlpatterns)),
     path('unloads/', include(unloads_urlpattern))
 ]

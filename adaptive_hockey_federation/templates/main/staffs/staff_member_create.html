@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block title %}
-  Новый игрок
+  Создание профиля сотрудника команды
 {% endblock %}
 
 {% block content %}
-  <h2 class="text-center mb-4">Новый игрок</h2>
+  <h2 class="text-center mb-4">Создание профиля сотрудника команды</h2>
 
-  <form method="post" action="{% url 'main:player_create' %}" enctype="multipart/form-data">
+  <form method="post" action="{% url 'main:staff_member_create' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container text-center">
         <div class="full-container">
@@ -55,9 +55,8 @@
             </form>
           </table>
         </div>
-    {% if team_id %}
-      <input type="hidden" value="{{ team_id }}" name="team_id" >
-    {% endif %}
+    
+    <input type="hidden" value="{{ team_id }}" name="team_id" >
     <!-- Save Button -->
     <div class="container">
       <div class="row">
