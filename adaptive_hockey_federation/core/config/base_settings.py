@@ -125,5 +125,5 @@ LOGIN_REDIRECT_URL = '/players/'
 
 LOGOUT_REDIRECT_URL = 'login'
 
-FILE_RESOLUTION = ['png', 'jpeg', 'pdf']
+FILE_RESOLUTION = ('png', 'jpeg', 'jpg', 'pdf')
 MAX_UPLOAD_SIZE = 10485760

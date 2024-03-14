@@ -62,11 +62,6 @@
                         <td><button id="deleteFileButton" type="button" class="btn btn-danger">-</button></td>
                     </tr>
                 {% endfor %}
-            {% else %}
-                <tr class="file-upload-container m-2">
-                    <td><input type="text" name="new_file_name[]" placeholder="Name" class="form-control"></td>
-                    <td><input type="file" name="new_file_path[]" accept="png, .jpg, .jpeg, .pdf" class="form-control"></td>
-                </tr>
             {% endif %}
             </tbody>
         </table>
@@ -115,7 +110,7 @@ function addNewFileField() {
     newFileUpload.classList.add("m-2");
     newFileUpload.innerHTML = `
             <td><input type="text" name="new_file_name[]" placeholder="Name" class="form-control"></td>
-            <td><input type="file" name="new_file_path[]" accept=".png, .jpg, .jpeg, .pdf" class="form-control"></td>
+            <td><input type="file" name="new_file_path[]" accept="{{ file_resolution }}" class="form-control"></td>
         `;
     const deleteButton = document.createElement("button");
     deleteButton.id = "deleteFileButton";

@@ -1,4 +1,4 @@
-from core.utils import is_uploaded_file_valid
+from core.config.base_settings import FILE_RESOLUTION
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -10,7 +10,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm
-from main.models import Document, Player
+from main.models import Player
+from mixins import FileUploadMixin
 
 
 class PlayersListView(
@@ -105,6 +106,7 @@ class PlayerIDCreateView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     CreateView,
+    FileUploadMixin,
 ):
     """Представление для создания нового игрока."""
 
@@ -119,18 +121,27 @@ class PlayerIDCreateView(
 
     def form_valid(self, form):
         player = form.save()
-        names = self.request.POST.getlist("name[]")
-        new_files = self.request.FILES.getlist("new_files[]")
-        # deleted_files = self.request.POST.getlist("deleted_file_path[]")
 
-        for name, file in zip(names, new_files):
-            if is_uploaded_file_valid(file):
-                Document.objects.create(player=player, file=file, name=name)
+        self.add_new_documents(
+            player=player,
+            new_files_names=self.request.POST.getlist("new_file_name[]"),
+            new_files_paths=self.request.FILES.getlist("new_file_path[]"),
+        )
+
+        self.delete_documents(
+            player=player,
+            deleted_files_paths=self.request.POST.getlist(
+                "deleted_file_path[]"
+            ),
+        )
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Создание профиля нового игрока"
+        context["file_resolution"] = ", ".join(
+            ["." + res for res in FILE_RESOLUTION]
+        )
         return context
 
 
@@ -203,16 +214,19 @@ class PlayerIdView(
             ("Номер игрока", player.number),
         ]
 
-        player_fields_doc = [("Документ", player.identity_document)]
+        player_documents = self.get_object().player_documemts.all()
 
         context["player_fields_personal"] = player_fields_personal
         context["player_fields"] = player_fields
-        context["player_fields_doc"] = player_fields_doc
+        context["player_documents"] = player_documents
         return context
 
 
 class PlayerIDEditView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView,
+    FileUploadMixin,
 ):
     model = Player
     template_name = "main/player_id/player_id_create_edit.html"
@@ -239,17 +253,27 @@ class PlayerIDEditView(
 
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
+        context["file_resolution"] = ", ".join(
+            ["." + res for res in FILE_RESOLUTION]
+        )
         return context
 
     def form_valid(self, form):
         player = form.save()
-        names = self.request.POST.getlist("new_file_name[]")
-        new_files = self.request.FILES.getlist("new_file_path[]")
-        # deleted_files = self.request.POST.getlist("deleted_file_path[]")
 
-        for name, file in zip(names, new_files):
-            if is_uploaded_file_valid(file):
-                Document.objects.create(player=player, file=file, name=name)
+        self.add_new_documents(
+            player=player,
+            new_files_names=self.request.POST.getlist("new_file_name[]"),
+            new_files_paths=self.request.FILES.getlist("new_file_path[]"),
+        )
+
+        self.delete_documents(
+            player=player,
+            deleted_files_paths=self.request.POST.getlist(
+                "deleted_file_path[]"
+            ),
+        )
+
         return super().form_valid(form)
 
 
