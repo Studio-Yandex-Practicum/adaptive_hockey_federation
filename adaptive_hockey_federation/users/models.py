@@ -104,8 +104,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _("Пользователи")
         ordering = ("last_name",)
         permissions = [
-            ("list_view_user",
-             "Может видеть список пользователей"),
+            ("list_view_user", "Can view list of Пользователь"),
         ]
 
     def clean(self):
