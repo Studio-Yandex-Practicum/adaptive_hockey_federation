@@ -840,6 +840,55 @@ td {
   }
 }
 
+.base-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.base-input {
+  margin: 0;
+  padding: 0;
+  min-width: 80%;
+  min-height: 100%;
+  border: none;
+  background-color: transparent;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  text-align: center;
+  transition: border-bottom 0.5s ease;
+}
+
+.base-input:focus {
+  outline: none;
+  background-color: #fff;
+  border-bottom: 2px solid rgba(38, 159, 189, 0.5);
+  text-align: left;
+}
+
+.base-select {
+  margin: 0;
+  padding: 2px;
+  min-width: 80%;
+  color: #340061;
+  border: 2px solid #269FBD;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.base-textarea {
+  margin: 0;
+  padding: 2px;
+  min-width: 80%;
+  border: 2px solid #269FBD;
+  border-radius: 8px;
+}
+
+.base-checkbox {
+  width: 25px;
+  height: 25px;
+}
+
 .error-page {
   margin: 0;
   padding: 0;
