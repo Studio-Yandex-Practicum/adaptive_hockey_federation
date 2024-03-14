@@ -8,7 +8,7 @@
 {% block content %}
 <h2 class="text-center mb-4">{{ page_title }}</h2>
 
-<form method="post" enctype="multipart/form-data">
+<form id="playerForm" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container text-center">
         <div class="full-container">
@@ -50,6 +50,7 @@
                 <tr>
                     <th>Название</th>
                     <th>Файл</th>
+                    <th>Удалить</th>
                 </tr>
             </thead>
             <tbody id="fileUploadContainer">
@@ -58,17 +59,18 @@
                     <tr>
                         <td>{{ doc.name }}</td>
                         <td><a href="{{ doc.file.url }}" target="_blank">Просмотреть</a></td>
+                        <td><button id="deleteFileButton" type="button" class="btn btn-danger">-</button></td>
                     </tr>
                 {% endfor %}
             {% else %}
                 <tr class="file-upload-container m-2">
-                    <td><input type="text" name="name[]" placeholder="Name" class="form-control"></td>
-                    <td><input type="file" name="file[]" accept="image/*" class="form-control"></td>
+                    <td><input type="text" name="new_file_name[]" placeholder="Name" class="form-control"></td>
+                    <td><input type="file" name="new_file_path[]" accept="png, .jpg, .jpeg, .pdf" class="form-control"></td>
                 </tr>
             {% endif %}
             </tbody>
         </table>
-        <button type="button" id="addFileButton" type="button" class="btn btn-primary">+</button>
+        <button id="addFileButton" type="button" class="btn btn-primary">+</button>
         <!-- Save Button -->
         <div class="container">
             <div class="row">
@@ -88,16 +90,54 @@
 {% endblock %}
 {% block JavaScript %}
 <script>
-document.getElementById('addFileButton').addEventListener('click', function() {
-    var fileUploadContainer = document.getElementById('fileUploadContainer');
-    var newFileUpload = document.createElement('tr');
-    newFileUpload.classList.add('file-upload-container');
-    newFileUpload.classList.add('m-2');
-    newFileUpload.innerHTML = `
-            <td><input type="text" name="name[]" placeholder="Name" class="form-control"></td>
-            <td><input type="file" name="file[]" accept="image/*" class="form-control"></td>
-        `;
-        fileUploadContainer.appendChild(newFileUpload);
+let deleteButtons = document.querySelectorAll("#deleteFileButton");
+
+function addDeleteButtonEvent(button) {
+    button.addEventListener("click", function() {
+        const parentRow = this.closest("tr");
+        const a_tag = parentRow.querySelector("a");
+        if (a_tag) {
+            const fileName = a_tag.getAttribute("href");
+            let hiddenInput = document.createElement("input");
+            hiddenInput.style.display = "none";
+            hiddenInput.name = "deleted_file_path[]";
+            hiddenInput.value = fileName;
+            parentRow.appendChild(hiddenInput);
+        }
+        parentRow.style.display = "none";
     });
+}
+
+function addNewFileField() {
+        let fileUploadContainer = document.getElementById('fileUploadContainer');
+    let newFileUpload = document.createElement("tr");
+    newFileUpload.classList.add("file-upload-container");
+    newFileUpload.classList.add("m-2");
+    newFileUpload.innerHTML = `
+            <td><input type="text" name="new_file_name[]" placeholder="Name" class="form-control"></td>
+            <td><input type="file" name="new_file_path[]" accept=".png, .jpg, .jpeg, .pdf" class="form-control"></td>
+        `;
+    const deleteButton = document.createElement("button");
+    deleteButton.id = "deleteFileButton";
+    deleteButton.type = "button";
+    deleteButton.className = "btn btn-danger";
+    deleteButton.textContent = "-";
+    addDeleteButtonEvent(deleteButton);
+
+    const newTd = document.createElement("td");
+    newTd.appendChild(deleteButton);
+    newFileUpload.appendChild(newTd);
+    fileUploadContainer.appendChild(newFileUpload);
+}
+
+deleteButtons.forEach(function(button) {
+    addDeleteButtonEvent(button);
+});
+
+document.getElementById('addFileButton').addEventListener('click', function() {
+    addNewFileField()
+});
+
+addNewFileField()
 </script>
 {% endblock %}

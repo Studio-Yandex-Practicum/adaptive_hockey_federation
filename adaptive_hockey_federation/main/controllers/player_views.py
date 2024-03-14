@@ -120,10 +120,12 @@ class PlayerIDCreateView(
     def form_valid(self, form):
         player = form.save()
         names = self.request.POST.getlist("name[]")
-        files = self.request.FILES.getlist("file[]")
+        new_files = self.request.FILES.getlist("new_files[]")
+        # deleted_files = self.request.POST.getlist("deleted_file_path[]")
 
-        for iter, file in enumerate(zip(names, files)):
-            Document.objects.create(player=player, file=file[1], name=file[0])
+        for name, file in zip(names, new_files):
+            if is_uploaded_file_valid(file):
+                Document.objects.create(player=player, file=file, name=name)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -221,7 +223,12 @@ class PlayerIDEditView(
     )
 
     def get_success_url(self):
-        return reverse("main:player_id", kwargs={"pk": self.object.pk})
+        return reverse(
+            "main:player_id",
+            kwargs={
+                "pk": self.object.pk,
+            },
+        )
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["pk"])
@@ -236,14 +243,12 @@ class PlayerIDEditView(
 
     def form_valid(self, form):
         player = form.save()
-        names = self.request.POST.getlist("name[]")
-        files = self.request.FILES.getlist("file[]")
+        names = self.request.POST.getlist("new_file_name[]")
+        new_files = self.request.FILES.getlist("new_file_path[]")
+        # deleted_files = self.request.POST.getlist("deleted_file_path[]")
 
-        invalid_files = []
-        for name, file in zip(names, files):
-            if not is_uploaded_file_valid(file):
-                invalid_files.append((name, file))
-            else:
+        for name, file in zip(names, new_files):
+            if is_uploaded_file_valid(file):
                 Document.objects.create(player=player, file=file, name=name)
         return super().form_valid(form)
 
