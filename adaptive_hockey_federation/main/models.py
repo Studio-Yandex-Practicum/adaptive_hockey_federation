@@ -251,8 +251,7 @@ class Team(BaseUniqueName):
             )
         ]
         permissions = [
-            ("list_view_team",
-             "Может видеть список команд"),
+            ("list_view_team", "Can view list of Команда"),
         ]
 
     def __str__(self):
@@ -421,8 +420,7 @@ class Player(BasePerson):
             ),
         ]
         permissions = [
-            ("list_view_player",
-             "Может видеть список игроков"),
+            ("list_view_player", "Can view list of Игрок"),
         ]
 
     def __str__(self):
