@@ -9,6 +9,10 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+from main.controllers.permissions import (
+    CustomPermissionMixin,
+    agent_has_player_permission,
+)
 from main.forms import PlayerForm
 from main.models import Document, Player
 
@@ -127,7 +131,8 @@ class PlayerIDCreateView(
 
 class PlayerIdView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    # PermissionRequiredMixin,
+    CustomPermissionMixin,
     DetailView,
 ):
     model = Player
@@ -200,6 +205,13 @@ class PlayerIdView(
         context["player_fields"] = player_fields
         context["player_fields_doc"] = player_fields_doc
         return context
+
+    def test_func(self) -> bool | None:
+        """Переопределенная функция для проверки разрешения представителя.
+        Проверяет разрешение на конкретного игрока."""
+        return agent_has_player_permission(
+            self.request.user, self.get_object()
+        )
 
 
 class PlayerIDEditView(
