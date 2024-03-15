@@ -1,6 +1,6 @@
 from django.urls import include, path
-from main import views as main_views
-from main.controllers import player_views, team_views
+from main import views as temp_views
+from main.controllers import main_views, player_views, team_views
 
 app_name = "main"
 
@@ -63,7 +63,7 @@ teams_urlpatterns = [
 ]
 
 unloads_urlpattern = [
-    path("", main_views.unloads, name="unloads"),
+    path("", temp_views.unloads, name="unloads"),
 ]
 
 urlpatterns = [
