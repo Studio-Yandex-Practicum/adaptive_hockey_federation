@@ -45,6 +45,24 @@ class PlayerForm(forms.ModelForm):
             "number",
             "identity_document",
         ]
+        widgets = {
+            "surname": forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите фамилию'}
+            ),
+            "name": forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите Имя'}
+            ),
+            "patronymic": forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите фамилию'}
+            ),
+            "birthday": forms.DateInput(
+                attrs={
+                    'placeholder': 'Введите дату рождения'}
+            ),
+        }
 
     def clean_name(self):
         name = self.cleaned_data["name"]
