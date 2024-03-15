@@ -62,6 +62,10 @@ class PlayerForm(forms.ModelForm):
                 attrs={
                     'placeholder': 'Введите дату рождения'}
             ),
+            "identity_document": forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите название документа'}
+            ),
         }
 
     def clean_name(self):
