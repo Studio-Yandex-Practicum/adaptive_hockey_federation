@@ -56,7 +56,7 @@ class PlayerForm(forms.ModelForm):
             ),
             "patronymic": forms.TextInput(
                 attrs={
-                    'placeholder': 'Введите фамилию'}
+                    'placeholder': 'Введите отчество'}
             ),
             "birthday": forms.DateInput(
                 attrs={
