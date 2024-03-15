@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from core.constants import MAXIMUM_AGE, MINIMUM_AGE, ROLE_AGENT
+from core.constants import ROLE_AGENT, MAX_AGE_PlAYER, MIN_AGE_PlAYER
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -18,8 +18,8 @@ my_validator = RegexValidator(
 )
 now = datetime.now()
 month_day = format(now.strftime("%m-%d"))
-min_date = f"{str(now.year - MAXIMUM_AGE)}-{month_day}"
-max_date = f"{str(now.year - MINIMUM_AGE)}-{month_day}"
+min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
+max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
 
 
 class PlayerForm(forms.ModelForm):
