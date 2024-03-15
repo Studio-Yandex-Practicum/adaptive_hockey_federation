@@ -9,10 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.controllers.permissions import (
-    CustomPermissionMixin,
-    agent_has_player_permission,
-)
+from main.controllers.permissions import PlayerIdPermissionsMixin
 from main.forms import PlayerForm
 from main.models import Document, Player
 
@@ -129,32 +126,31 @@ class PlayerIDCreateView(
         return super().form_valid(form)
 
     def get(self, request, *args, **kwargs):
-        self.team_id = request.GET.get('team', None)
+        self.team_id = request.GET.get("team", None)
         if self.team_id is not None:
-            self.initial = {'team': self.team_id}
+            self.initial = {"team": self.team_id}
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.team_id is not None:
-            context['team_id'] = self.team_id
+            context["team_id"] = self.team_id
         return context
 
     def get_success_url(self):
         if self.team_id is None:
-            return reverse('main:players')
+            return reverse("main:players")
         else:
-            return reverse('main:teams_id', kwargs={'team_id': self.team_id})
+            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
 
     def post(self, request, *args, **kwargs):
-        self.team_id = request.POST.get('team_id', None)
+        self.team_id = request.POST.get("team_id", None)
         return super().post(request, *args, **kwargs)
 
 
 class PlayerIdView(
     LoginRequiredMixin,
-    # PermissionRequiredMixin,
-    CustomPermissionMixin,
+    PlayerIdPermissionsMixin,
     DetailView,
 ):
     model = Player
@@ -228,16 +224,17 @@ class PlayerIdView(
         context["player_fields_doc"] = player_fields_doc
         return context
 
-    def test_func(self) -> bool | None:
-        """Переопределенная функция для проверки разрешения представителя.
-        Проверяет разрешение на конкретного игрока."""
-        return agent_has_player_permission(
-            self.request.user, self.get_object()
-        )
+    # def test_func(self) -> bool | None:
+    #     """Переопределенная функция для проверки разрешения представителя.
+    #     Проверяет разрешение на конкретного игрока."""
+    #     return agent_has_player_permission(
+    #         # self.request.user, self.get_object()
+    #         self.__getattribute__("request").user, self.get_object()
+    #     )
 
 
 class PlayerIDEditView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+    LoginRequiredMixin, PlayerIdPermissionsMixin, UpdateView
 ):
     model = Player
     template_name = "main/player_id/player_id_edit.html"
