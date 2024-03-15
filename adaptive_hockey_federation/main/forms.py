@@ -4,7 +4,14 @@ from core.constants import ROLE_AGENT
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
-from main.models import City, DisciplineName, Player, Team
+from main.models import (
+    City,
+    DisciplineName,
+    Player,
+    StaffMember,
+    StaffTeamMember,
+    Team,
+)
 from users.models import User
 
 
@@ -154,6 +161,20 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
     class Meta:
         labels = {
-            "staffteammember": "Сотрудник команды",
-            "team": "Команда",
+            'staffteammember': 'Сотрудник команды',
+            'team': 'Команда',
         }
+
+
+class StaffTeamMemberForm(forms.ModelForm):
+
+    class Meta:
+        model = StaffTeamMember
+        fields = ("staff_position", "team", "qualification", "notes",)
+
+
+class StaffMemberForm(forms.ModelForm):
+
+    class Meta:
+        model = StaffMember
+        fields = ("id", "surname", "name", "patronymic", "phone",)

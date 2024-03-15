@@ -21,6 +21,9 @@
         {% url 'main:teams' as url_name %}{% include "base/button.html" with name="Команды" %}
       </li>
       <li class="nav-item py-2">
+        {% url 'main:staffs' as url_name %}{% include "base/button.html" with name="Персонал команд" %}
+      </li>
+      <li class="nav-item py-2">
         {% url 'competitions:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
       </li>
       <li class="nav-item py-2">
