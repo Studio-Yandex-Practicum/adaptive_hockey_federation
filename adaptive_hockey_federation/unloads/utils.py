@@ -3,16 +3,14 @@ from typing import Any, List
 
 from django.db.models import QuerySet
 from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 
 def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
     """Выгрузка данных в excel."""
     wb = Workbook()
-
-    ws = wb.active
-
-    if ws is None:
-        ws = wb.create_sheet()
+    del wb["Sheet"]
+    ws: Worksheet = wb.create_sheet("Лист1")
 
     ws.append([title])
 
