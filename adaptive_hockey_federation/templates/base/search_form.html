@@ -1,12 +1,10 @@
 <form method="GET">
   <div class="group-input">
-      {% if request.resolver_match.url_name != 'main' %}
         <select class="form-select select-form" aria-label="Default select example" name="search_column">
         <option selected>Все</option>
         {% for key, column_name in table_head.items %}
           <option value="{{ key }}">{{ column_name }}</option>
         {% endfor %}
-      {% endif %}
     </select>
     <input type="search" id="form1" class="form-control select-form" name="search" aria-label="search"
       placeholder="{% if request.resolver_match.url_name in 'players' or 'main' %}Игрок
