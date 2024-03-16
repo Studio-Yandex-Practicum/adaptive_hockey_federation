@@ -5,16 +5,6 @@ from django.contrib.auth.mixins import (
 from django.shortcuts import get_object_or_404
 from main.models import Team
 
-# def agent_has_player_permission(user: User | AnonymousUser, player: Player):
-#     """Проверка, имеет ли представитель право доступа к игроку.
-#     Проверяет только пользователей с role == agent. Остальным просто выдает
-#     разрешение."""
-#     if isinstance(user, AnonymousUser):
-#         return False
-#     if not user.is_agent:
-#         return True
-#     return player.team.filter(curator=user).exists()
-
 
 class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):
     """Миксин, объединяющий функционал миксинов-родителей.
