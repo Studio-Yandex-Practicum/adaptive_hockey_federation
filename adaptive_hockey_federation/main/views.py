@@ -1,9 +1,9 @@
 import os
 
+from competitions.models import Competition
 from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
 from django.shortcuts import render
-from events.models import Event
 from unloads.utils import export_excel
 
 
@@ -20,7 +20,7 @@ def unloads(request):
     """
     # TODO: Нужно изменить функцию Выгрузки,
     # чтоб ее работа соотвествовала тех. заданию
-    queryset = Event.objects.all()
+    queryset = Competition.objects.all()
     filename = "data.xlsx"
     title = "Данные соревнований"
     export_excel(queryset, filename, title)
