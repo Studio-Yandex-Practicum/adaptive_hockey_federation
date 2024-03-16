@@ -11,6 +11,9 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
 
     ws = wb.active
 
+    if ws is None:
+        ws = wb.create_sheet()
+
     ws.append([title])
 
     if queryset:
