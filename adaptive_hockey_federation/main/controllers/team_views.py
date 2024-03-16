@@ -220,7 +220,9 @@ class UpdateTeamView(
     def get_context_data(self, **kwargs):
         context = super(UpdateTeamView, self).get_context_data(**kwargs)
         context["form"] = self.form_class(
-            instance=self.object, initial={"city": self.object.city.name}
+            instance=self.object,
+            initial={"city": self.object.city.name},
+            user=self.request.user,
         )
         context["cities"] = self.get_cities()
         return context

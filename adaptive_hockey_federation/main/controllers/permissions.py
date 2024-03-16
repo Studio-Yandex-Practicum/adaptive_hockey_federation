@@ -13,9 +13,14 @@ class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):
     AccessMixin и оба переопределяют родительский метод dispatch(), в связи с
     чем их одновременное прямое использование во вью-классе невозможно.
 
-    Данный класс позволяет обойти это ограничение.
+    Данный класс-миксин позволяет обойти это ограничение.
 
-    !!! Во вью-классе или классе-наследнике необходимо переопределить метод
+    Работает следующим образом: сначала проверяется наличие общих разрешений
+    (которые указываются в permission_required соответствующего представления).
+    Затем производится тест пользователя на какие-то конкретные условия,
+    которые определяются в методе test_func().
+
+    !!! Во вью-классе или миксине-наследнике необходимо переопределить метод
         test_func() либо get_test_func()."""
 
     def dispatch(self, request, *args, **kwargs):
@@ -30,11 +35,26 @@ class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):
 
 
 class PlayerIdPermissionsMixin(CustomPermissionMixin):
-    """Миксин настройки разрешений для вью-классов PlayerIdView."""
+    """Миксин настройки разрешений для вью-классов PlayerIdView.
+    Ограничивает права представителя на доступ к представлениям игроков не
+    своих команд.
+
+    Если пользователь не является представителем (т.е. role != AGENT),
+    разрешения будут определяться только общим permission_required,
+    определенным во вью-классе.
+
+    Если пользователь является представителем, то проверяется условие,
+    что он имеет отношение к команде, к которой принадлежит игрок или в
+    которую добавляется новый игрок.
+
+    При создании игрока, когда request не содержит ключа "team", считается,
+    что игрок добавляется в БД без связки с конкретной командой и
+    представителю будет отказано в доступе."""
 
     def test_func(self) -> bool | None:
         request = self.__getattribute__("request")
-        user = request.user
+        if not (user := request.user).is_agent:
+            return True
         if self.__getattribute__("kwargs").get("pk", None):
             player = self.__getattribute__("get_object")()
             return player.team.filter(curator=user).exists()
@@ -47,9 +67,18 @@ class PlayerIdPermissionsMixin(CustomPermissionMixin):
 
 
 class TeamEditPermissionsMixin(CustomPermissionMixin):
-    """Миксин настройки разрешений для вью-классов TeamIdView."""
+    """Миксин настройки разрешений для вью-классов TeamIdView.
+    Ограничивает права представителя на доступ к представлениям не своих
+    команд.
+
+    В текущем виде подходит только для страниц просмотра или редактирования
+    основных данных команды, поскольку считается, что создание новой команды
+    не разрешается для представителя в принципе.
+
+    Работает аналогично PlayerIdPermissionsMixin, кроме функционала создания
+    объекта."""
 
     def test_func(self) -> bool | None:
         user = self.__getattribute__("request").user
         team = self.__getattribute__("get_object")()
-        return team.curator == user
+        return not user.is_agent or team.curator == user
