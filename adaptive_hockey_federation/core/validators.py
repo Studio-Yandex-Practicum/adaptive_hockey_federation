@@ -23,7 +23,7 @@ def validate_date_birth(value: datetime.date):
     min_date = datetime.date(now.year - MAX_AGE_PlAYER, now.month, now.day)
     max_date = datetime.date(now.year - MIN_AGE_PlAYER, now.month, now.day)
 
-    if not (min_date < value < max_date):
+    if not (min_date <= value <= max_date):
         raise ValidationError(
             f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет"
         )
