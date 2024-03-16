@@ -4,56 +4,17 @@ from typing import Any
 from core.constants import ROLE_AGENT, MAX_AGE_PlAYER, MIN_AGE_PlAYER
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
 from django.forms import ModelChoiceField, Select, TextInput
 from main.models import City, DisciplineName, Player, Team
 from users.models import User
 
-my_validator = RegexValidator(
-    r"^[А-Яа-яё -]+$",
-    (
-        "Строка должны состоять из кирилических символов. "
-        "Возможно использование дефиса."
-    ),
-)
-now = datetime.now()
-month_day = format(now.strftime("%m-%d"))
-min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
-max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
-
 
 class PlayerForm(forms.ModelForm):
-    surname = forms.CharField(
-        widget=forms.TextInput,
-        label="Фамилия",
-        help_text="Фамилия",
-        validators=[my_validator],
-    )
 
-    name = forms.CharField(
-        widget=forms.TextInput,
-        label="Имя",
-        help_text="Имя",
-        validators=[my_validator],
-    )
-
-    patronymic = forms.CharField(
-        widget=forms.TextInput,
-        label="Отчество",
-        help_text="Отчество",
-        validators=[my_validator],
-    )
-
-    identity_document = forms.CharField(
-        widget=forms.TextInput,
-        label="Удостоверение личности",
-        help_text="Удостоверение личности",
-    )
-    level_revision = forms.CharField(
-        widget=forms.TextInput,
-        label="Уровень ревизии",
-        help_text="Уровень ревизии",
-    )
+    now = datetime.now()
+    month_day = format(now.strftime("%m-%d"))
+    min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
+    max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
 
     birthday = forms.DateField(
         widget=forms.DateInput(
@@ -67,6 +28,17 @@ class PlayerForm(forms.ModelForm):
         ),
         label="Дата рождения",
         help_text="Дата рождения",
+    )
+
+    identity_document = forms.CharField(
+        widget=forms.TextInput,
+        label="Удостоверение личности",
+        help_text="Удостоверение личности",
+    )
+    level_revision = forms.CharField(
+        widget=forms.TextInput,
+        label="Уровень ревизии",
+        help_text="Уровень ревизии",
     )
 
     class Meta:
