@@ -104,7 +104,8 @@ class PlayersListView(
 
 class PlayerIDCreateView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    PlayerIdPermissionsMixin,
+    # PermissionRequiredMixin,
     CreateView,
 ):
     """Представление для создания нового игрока."""
