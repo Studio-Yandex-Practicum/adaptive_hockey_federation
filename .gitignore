@@ -175,5 +175,9 @@ static/
 #Data .csv
 csv/
 
+#Data .xlxs
+data/
+*.xlxs
+
 #MediaFiles
 media/
