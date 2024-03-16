@@ -6,14 +6,12 @@
         {% for head_item in table_head.values %}
         <th class="col">{{ head_item }}</th>
         {% endfor %}
-        {% if request.resolver_match.url_name != 'main' %}
         <th>
           <div class="cell__buttons">
             {% include 'base/active_edit_icon.html' %}
             {% include 'base/active_delete_icon.html' %}
           </div>
         </th>
-        {% endif %}
       </tr>
     </thead>
     <tbody>
@@ -46,14 +44,12 @@
             {% if view_name == 'main:players' %}
               {% include "main/players/create_delete_button_players.html" %}
             {% else %}
-              {% if request.resolver_match.url_name != 'main' %}
               <td>
                 <div class="cell__buttons">
                   {% include 'base/active_edit_icon.html' %}
                   {% include 'base/active_delete_icon.html' %}
                 </div>
               </td>
-              {% endif %}
             {% endif %}
         {% endwith %}
       </tr>
