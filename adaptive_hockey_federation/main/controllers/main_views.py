@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.search import SearchVector
+from django.db.models import Q
 from django.urls import reverse
 from django.views.generic.list import ListView
 from main.models import Player
@@ -9,9 +10,11 @@ class MainView(
     LoginRequiredMixin,
     ListView,
 ):
+    """Main_view. Поиск игроков по фамилии/имени."""
+
     model = Player
-    template_name = "main/players/players.html"
-    context_object_name = "players"
+    template_name = "main/home/main.html"
+    context_object_name = "main"
     fields = [
         "id",
         "surname",
@@ -26,16 +29,19 @@ class MainView(
     def get_queryset(self):
         query = self.request.GET.get("search")
         search_vector = SearchVector("surname", "name")
+        queryset = None
         if query:
             queryset = Player.objects.annotate(search=search_vector).filter(
-                search=query
+                Q(surname__icontains=query) | Q(name__icontains=query)
             )
 
-        return (
-            queryset.select_related("diagnosis")
-            .select_related("discipline")
-            .order_by("surname")
-        )
+            queryset = (
+                queryset.select_related("diagnosis")
+                .select_related("discipline")
+                .order_by("surname")
+            )
+
+        return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -64,7 +70,7 @@ class MainView(
                     "url": reverse("main:player_id", args=[player.id]),
                     "id": player.pk,
                 }
-                for player in context["players"]
+                for player in context["main"]
             ]
             context["table_data"] = table_data
 
