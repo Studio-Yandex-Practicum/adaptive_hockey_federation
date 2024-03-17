@@ -59,7 +59,42 @@
                       {% endif %}
                     </td>
                 <tr>
-              {% elif  field.name in 'team position' %}
+                  {% elif  field.name in "team" %}
+                  <tr>
+                    <th>{{ field.label_tag }}</th>
+                        <td>
+                          {% if field.errors %}
+                            {{ field |addclass:"base-select-errors"}}
+                            {{ field.errors|striptags}}
+                          {% else %}
+                          <div class="container">
+                            <div class="selectors-teams">
+                              <div class="selector-left">
+                                <h2> Доступные команды 
+                                  <span class="help-icon" title="Список доступных команд, действующие команды обозначены серым цветом, чтобы выбрать\удалить зажмите ctrl"></span>
+                                </h2>
+                                {{ field |addclass:"base-select-teams"}}
+                              </div>
+                              <ul class="selectors-chooser">
+                                <li>
+                                  <a title="Выбрать" href="#" id="id_users_add_link" class="selector-add active">Выбрать</a>
+                                </li>
+                                <li>
+                                  <a title="Удалить" href="#" id="id_users_remove_link" class="selector-remove active">Удалить</a>
+                                </li>
+                              </ul>
+                            <div class="selector-right">
+                              <h2> Выбранные команды 
+                                <span class="help-icon" title="Пока в разработке, поле не функционирует"></span>
+                              </h2>
+                              {{ form.player_teams |addclass:"base-select-teams"}}
+                            </div>
+                            </div>
+                          </div>
+                          {% endif %}
+                        </td>
+                  </tr>
+              {% elif  field.name in 'position' %}
                 <tr>
                   <th>{{ field.label_tag }}</th>
                       <td>

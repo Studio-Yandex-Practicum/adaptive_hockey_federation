@@ -1,6 +1,7 @@
+import re
 from typing import Any
 
-from core.constants import PLAYER_DOCUMENTS_NAME, ROLE_AGENT
+from core.constants import ROLE_AGENT
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
@@ -16,16 +17,6 @@ from users.models import User
 
 
 class PlayerForm(forms.ModelForm):
-    identity_document = forms.CharField(
-        widget=forms.TextInput,
-        label="Удостоверение личности",
-        help_text="Удостоверение личности",
-    )
-    level_revision = forms.CharField(
-        widget=forms.TextInput,
-        label="Уровень ревизии",
-        help_text="Уровень ревизии",
-    )
 
     class Meta:
         model = Player
@@ -39,6 +30,7 @@ class PlayerForm(forms.ModelForm):
             "diagnosis",
             "level_revision",
             "team",
+            "player_teams",
             "is_captain",
             "is_assistent",
             "position",
@@ -68,6 +60,26 @@ class PlayerForm(forms.ModelForm):
             ),
         }
 
+    level_revision = forms.CharField(
+        widget=forms.TextInput,
+        label="Уровень ревизии",
+        help_text="Уровень ревизии",
+    )
+    player_teams = forms.MultipleChoiceField(
+        required=False,
+    )
+
+    def save_m2m(self):
+        self.instance.team.through.objects.filter(
+            team__in=self.cleaned_data["team"]
+        ).delete()
+        self.instance.team.set(self.cleaned_data["team"])
+
+    def save(self, *args, **kwargs):
+        instance = super().save()
+        self.save_m2m()
+        return instance
+
     def clean_name(self):
         name = self.cleaned_data["name"]
         if name.replace(" ", "").isalpha():
@@ -94,12 +106,17 @@ class PlayerForm(forms.ModelForm):
         return self.cleaned_data["patronymic"]
 
     def clean_identity_document(self):
-        document_name = self.cleaned_data["identity_document"]
-        if document_name in PLAYER_DOCUMENTS_NAME:
-            return document_name
+        document = self.cleaned_data["identity_document"]
+        if (re.fullmatch(
+            r'Паспорт \d{4}\s\d{6}', document
+        )
+                or re.fullmatch(
+                    r'Свидетельство о рождении \D{4}\s\d{6}', document)
+        ):
+            return document
         raise ValidationError(
-            "Введите документ в"
-            " формате <Свидетельство о рождении> или <Паспорт>"
+            "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или"
+            "'Свидетельство о рождении X-XX XXXXXX'"
         )
 
 

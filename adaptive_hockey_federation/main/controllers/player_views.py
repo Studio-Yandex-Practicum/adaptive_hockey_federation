@@ -244,32 +244,9 @@ class PlayerIDEditView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         player = self.get_object()
-
-        player_fields_personal = [
-            ("Фамилия", player.surname),
-            ("Имя", player.name),
-            ("Отчество", player.patronymic),
-            ("Пол", player.gender),
-            ("Дата рождения", player.birthday),
-            ("Удостоверение личности", player.identity_document),
-            ("Дисциплина", player.discipline),
-            ("Диагноз", player.diagnosis),
-        ]
-
-        player_fields = [
-            ("Команда", ", ".join([team.name for team in player.team.all()])),
-            ("Уровень ревизии", player.level_revision),
-            ("Капитан", player.is_captain),
-            ("Ассистент", player.is_assistent),
-            ("Игровая позиция", player.position),
-            ("Номер игрока", player.number),
-        ]
-
         player_fields_doc = [("Документ", player.identity_document)]
         player_documents = player.player_documemts.all()
         context["player_documents"] = player_documents
-        context["player_fields_personal"] = player_fields_personal
-        context["player_fields"] = player_fields
         context["player_fields_doc"] = player_fields_doc
         return context
 
