@@ -152,7 +152,13 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
         if self.request.POST:
             context['staff_form'] = StaffTeamMemberForm(self.request.POST)
         else:
-            context['staff_form'] = StaffTeamMemberForm()
+            if self.request.method == 'GET':
+                context['staff_form'] = StaffTeamMemberForm(
+                    initial={'team': self.request.GET.get('team')},
+                )
+            else:
+                context['staff_form'] = StaffTeamMemberForm()
+        print(f'>>> {self.request.path_info}')
         return context
 
 

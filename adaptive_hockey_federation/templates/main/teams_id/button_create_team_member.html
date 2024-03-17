@@ -4,6 +4,6 @@
     </button>
     <ul class="dropdown-menu" style="background-color: #64C2D1" aria-labelledby="dropdownMenuButton1">
       <li><a class="dropdown-item drawler_menu" style="color: #fff" href="{% url 'main:player_create' %}?team={{ team.id }}">Игрок</a></li>
-      <li><a class="dropdown-item drawler_menu" style="color: #fff" href="#">Тренер</a></li>
+      <li><a class="dropdown-item drawler_menu" style="color: #fff" href="{% url 'main:staff_create' %}?team={{ team.id }}">Тренер</a></li>
     </ul>
 </div>
