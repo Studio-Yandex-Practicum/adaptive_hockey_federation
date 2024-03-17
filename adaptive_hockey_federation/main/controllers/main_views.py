@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.search import SearchVector
-from django.db.models import Q
 from django.urls import reverse
 from django.views.generic.list import ListView
 from main.models import Player
@@ -32,9 +31,8 @@ class MainView(
         queryset = None
         if query:
             queryset = Player.objects.annotate(search=search_vector).filter(
-                Q(surname__icontains=query) | Q(name__icontains=query)
+                search=query
             )
-
             queryset = (
                 queryset.select_related("diagnosis")
                 .select_related("discipline")
