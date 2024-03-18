@@ -225,14 +225,6 @@ class PlayerIdView(
         context["player_fields_doc"] = player_fields_doc
         return context
 
-    # def test_func(self) -> bool | None:
-    #     """Переопределенная функция для проверки разрешения представителя.
-    #     Проверяет разрешение на конкретного игрока."""
-    #     return agent_has_player_permission(
-    #         # self.request.user, self.get_object()
-    #         self.__getattribute__("request").user, self.get_object()
-    #     )
-
 
 class PlayerIDEditView(
     LoginRequiredMixin, PlayerIdPermissionsMixin, UpdateView
