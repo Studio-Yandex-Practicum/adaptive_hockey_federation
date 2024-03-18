@@ -1,17 +1,15 @@
 from django.urls import include, path
-from main import views as main_views
-from main.controllers import player_views, staff_views, team_views
+from main import views as unload_views
+from main.controllers import main_views, player_views, staff_views, team_views
 
 app_name = "main"
 
 main_urlpatterns = [
-    path("", main_views.main, name="main"),
+    path("", main_views.MainView.as_view(), name="main"),
 ]
 
 players_urlpatterns = [
-    path("",
-         player_views.PlayersListView.as_view(),
-         name="players"),
+    path("", player_views.PlayersListView.as_view(), name="players"),
     path(
         "create/",
         player_views.PlayerIDCreateView.as_view(),
@@ -40,9 +38,7 @@ players_urlpatterns = [
 ]
 
 teams_urlpatterns = [
-    path("",
-         team_views.TeamListView.as_view(),
-         name="teams"),
+    path("", team_views.TeamListView.as_view(), name="teams"),
     path(
         "create/",
         team_views.CreateTeamView.as_view(),
@@ -99,13 +95,13 @@ staffs_urlpatterns = [
 ]
 
 unloads_urlpattern = [
-    path("", main_views.unloads, name="unloads"),
+    path("", unload_views.unloads, name="unloads"),
 ]
 
 urlpatterns = [
-    path('', include(main_urlpatterns)),
-    path('players/', include(players_urlpatterns)),
-    path('teams/', include(teams_urlpatterns)),
-    path('staffs/', include(staffs_urlpatterns)),
-    path('unloads/', include(unloads_urlpattern))
+    path("", include(main_urlpatterns)),
+    path("players/", include(players_urlpatterns)),
+    path("teams/", include(teams_urlpatterns)),
+    path("staffs/", include(staffs_urlpatterns)),
+    path("unloads/", include(unloads_urlpattern)),
 ]
