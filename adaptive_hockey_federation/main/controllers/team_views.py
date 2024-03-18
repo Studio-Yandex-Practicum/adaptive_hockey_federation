@@ -217,13 +217,16 @@ class UpdateTeamView(
         team_id = self.kwargs.get("team_id")
         return get_object_or_404(Team, pk=team_id)
 
-    def get_context_data(self, **kwargs):
-        context = super(UpdateTeamView, self).get_context_data(**kwargs)
-        context["form"] = self.form_class(
-            instance=self.object,
+    def get_form_kwargs(self):
+        kwargs = super(UpdateTeamView, self).get_form_kwargs()
+        kwargs.update(
             initial={"city": self.object.city.name},
             user=self.request.user,
         )
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateTeamView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         return context
 

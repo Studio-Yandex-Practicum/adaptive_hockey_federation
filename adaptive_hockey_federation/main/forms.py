@@ -133,11 +133,16 @@ class TeamForm(forms.ModelForm):
             "curator": Select(),
         }
 
-        def save(self, commit=True):
-            instance = super(TeamForm, self).save(commit=False)
-            if commit:
-                instance.save()
-            return instance
+    def save(self, commit=True):
+        instance = super(TeamForm, self).save(commit=False)
+        if commit:
+            instance.save()
+        return instance
+
+    @property
+    def is_edit(self):
+        """Возвращает True, если форма находится в режиме редактирования."""
+        return bool(self.instance and self.instance.pk)
 
 
 class PlayerTeamForm(forms.ModelForm):
@@ -170,7 +175,6 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
 
 class StaffTeamMemberForm(forms.ModelForm):
-
     class Meta:
         model = StaffTeamMember
         fields = (
@@ -182,7 +186,6 @@ class StaffTeamMemberForm(forms.ModelForm):
 
 
 class StaffMemberForm(forms.ModelForm):
-
     class Meta:
         model = StaffMember
         fields = (
