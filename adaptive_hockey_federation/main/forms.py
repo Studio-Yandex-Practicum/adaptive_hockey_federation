@@ -160,11 +160,6 @@ class TeamForm(forms.ModelForm):
             instance.save()
         return instance
 
-    @property
-    def is_edit(self):
-        """Возвращает True, если форма находится в режиме редактирования."""
-        return bool(self.instance and self.instance.pk)
-
 
 class PlayerTeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

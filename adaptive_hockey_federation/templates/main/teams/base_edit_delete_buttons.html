@@ -2,7 +2,6 @@
 <td class="border rounded-md">
   <div class="items__group">
     <form action="{% url action_url table_string.id %}" method="get">
-{#      {% csrf_token %}#}
       {% if perms.main.change_team %}
         <button class="btns-edit-del" type="submit">
           {% include 'base/edit_icon.html' %}
