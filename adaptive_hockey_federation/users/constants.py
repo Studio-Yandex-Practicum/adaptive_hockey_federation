@@ -34,6 +34,7 @@ GROUP_PERMISSION = {
         (
             "change_player",
             "view_player",
+            "add_player",
             "list_view_player",
             "change_team",
             "view_team",

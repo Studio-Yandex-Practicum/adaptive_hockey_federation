@@ -237,8 +237,13 @@ class TestUrls(TestCase):
             ),
             f"/players/{self.player_2.id}/edit/": (
                 "страница редактирования игрока из этой команды (страница "
-                "/players/<player_id>/edit должна вернуть ответ со статусом "
+                "/players/<player_id>/edit/ должна вернуть ответ со статусом "
                 "200)"
+            ),
+            f"/players/create/?team={self.team_2.id}": (
+                "страница создания игрока из этой команды (страница "
+                "/players/create/?team=<team_id> должна вернуть ответ со "
+                "статусом 200)"
             ),
         }
         self.client.force_login(self.user_agent)
@@ -260,19 +265,29 @@ class TestUrls(TestCase):
         #  когда функционал ограничения доступа к этим сущностям будет
         #  разработан.
         urls_agent_has_no_access_to = {
-            f"/teams/{self.team_2.id}/edit/": (
+            f"/teams/{self.team.id}/edit/": (
                 "страница /teams/<team_id>/edit/ редактирования общих "
                 "сведений ЧУЖОЙ команды (ожидается ответ со статусом 403)"
             ),
-            f"/players/{self.player_2.id}/": (
+            f"/players/{self.player.id}/": (
                 "страница просмотра подробных сведений об игроке ЧУЖОЙ "
                 "команды (страница /players/<player_id>/ должна вернуть "
                 "ответ со статусом 403)"
             ),
-            f"/players/{self.player_2.id}/edit/": (
+            f"/players/{self.player.id}/edit/": (
                 "страница редактирования игрока ЧУЖОЙ команды (страница "
                 "/players/<player_id>/edit должна вернуть ответ со статусом "
                 "403)"
+            ),
+            f"/players/create/?team={self.team.id}": (
+                "страница создания игрока с привязкой к ЧУЖОЙ команде "
+                "(страница /players/create/?team=<team_id> должна вернуть "
+                "ответ со статусом 403)"
+            ),
+            "/players/create/": (
+                "страница создания игрока без привязки к какой-либо команде "
+                "(страница /players/create/ должна вернуть ответ со "
+                "статусом 403)"
             ),
         }
         self.client.force_login(self.user_agent)
@@ -281,7 +296,7 @@ class TestUrls(TestCase):
                 response = self.client.get(url)
                 self.assertEqual(
                     response.status_code,
-                    HTTPStatus.OK,
+                    HTTPStatus.FORBIDDEN,
                     msg=(
                         "Представителю команды НЕ должна "
                         "быть доступна " + message
