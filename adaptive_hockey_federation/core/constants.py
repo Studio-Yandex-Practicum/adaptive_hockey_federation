@@ -49,3 +49,6 @@ STAFF_POSITION_CHOICES = (
 )
 
 TIME_FORMAT = "%H-%M-%S"
+
+MIN_AGE_PlAYER: int = 6
+MAX_AGE_PlAYER: int = 18
