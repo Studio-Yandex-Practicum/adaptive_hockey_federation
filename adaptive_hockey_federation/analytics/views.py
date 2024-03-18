@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from analytics.forms import AnalyticsFilterForm
+from analytics.mixins import AdminRequiredMixin
 from core.constants import GENDER_CHOICES
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
@@ -9,6 +10,7 @@ from main.models import Nosology, Team
 
 
 class AnalyticsListView(
+    AdminRequiredMixin,
     PlayersListView,
 ):
     template_name = "analytics/analytics.html"
