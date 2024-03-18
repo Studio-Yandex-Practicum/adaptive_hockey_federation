@@ -27,7 +27,9 @@
       {% include 'base/drawer.html' %}
       <div class="page">
         <header class="header">
+          {% block header %}
           {% include 'base/header.html' %}
+          {% endblock %}
         </header>
         <main class="main">
           <div class="table-container">
@@ -38,7 +40,7 @@
             {% endblock %}
           </div>
         </main>
-        {% include 'base/footer.html' %}
+        {% block footer %}{% include 'base/footer.html' %}{% endblock %}
       </div>
     </div>
     <!-- JS block -->

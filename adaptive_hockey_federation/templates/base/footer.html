@@ -6,10 +6,11 @@
       {% with request.resolver_match.view_name as view_name %}
         {% if view_name == 'users:users' and perms.add_user %}{% include "base/user_button_create!.html" with name="+ Пользователь"%}{% endif %}
         {% if view_name  == 'main:teams' %}{% include "base/team_button_create.html" with name="+ Команда" %}{% endif %}
-        {% if view_name  == 'main:competitions' %}{% include "base/button.html" with name="+ Соревнование" %}{% endif %}
+        {% if view_name  == 'competitions:competitions' %}{% include "base/competition_button_create.html" %}{% endif %}
         {% if view_name  == 'main:players' %}{% include "main/players/player_button_create.html"%}{% endif %}
+        {% if view_name  == 'main:staffs' %}{% include "main/staffs/staff_button_create.html"%}{% endif %}
         {% if view_name  != 'main:unloads' %}{% include "base/button.html" with name="Выгрузить" %}{% endif %}
-        {% if view_name  == 'main:teams_id' %}{% include "base/button_list.html" with name="+ Добавить" %}{% endif %}
+        {% if view_name  == 'main:teams_id' %}{% include "main/teams_id/button_create_team_member.html" with name="+ Добавить" %}{% endif %}
       {% endwith %}
     </ul>
   </nav>

@@ -7,6 +7,7 @@ from core.constants import (
     PLAYER_POSITION_CHOICES,
     STAFF_POSITION_CHOICES,
 )
+from core.validators import fio_validator, validate_date_birth
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -29,6 +30,15 @@ class BaseUniqueName(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_by_name(cls, name: str):
+        """Возвращает объект БД по наименованию (полю "name")."""
+        name = name.strip()
+        res: QuerySet = cls.objects.filter(name=name)  # type: ignore
+        if res.exists():
+            return res.first()
+        return None
+
 
 class City(BaseUniqueName):
     """
@@ -41,15 +51,6 @@ class City(BaseUniqueName):
 
     def __str__(self):
         return self.name
-
-    @classmethod
-    def get_by_name(cls, name: str):
-        """Возвращает объект БД по наименованию (полю "name")."""
-        name = name.strip()
-        res: QuerySet = cls.objects.filter(name=name)
-        if res.exists():
-            return res.first()
-        return None
 
 
 class DisciplineName(BaseUniqueName):
@@ -160,12 +161,14 @@ class BasePerson(models.Model):
         verbose_name=_("Фамилия"),
         help_text=_("Фамилия"),
         default=EMPTY_VALUE_DISPLAY,
+        validators=[fio_validator()],
     )
     name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
         verbose_name=_("Имя"),
         help_text=_("Имя"),
         default=EMPTY_VALUE_DISPLAY,
+        validators=[fio_validator()],
     )
     patronymic = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -173,6 +176,7 @@ class BasePerson(models.Model):
         verbose_name=_("Отчество"),
         help_text=_("Отчество"),
         default=EMPTY_VALUE_DISPLAY,
+        validators=[fio_validator()],
     )
 
     class Meta:
@@ -353,7 +357,9 @@ class Player(BasePerson):
         help_text=_("Команда"),
     )
     birthday = models.DateField(
-        verbose_name=_("Дата рождения"), help_text=_("Дата рождения")
+        verbose_name=_("Дата рождения"),
+        help_text=_("Дата рождения"),
+        validators=[validate_date_birth],
     )
     addition_date = models.DateField(
         verbose_name=_("Дата добавления"),

@@ -1,0 +1,47 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+  Профиль сотрудника команды
+{% endblock %}
+{% block content %}
+  <h2 class="text-center mb-4">Профиль сотрудника команды</h2>
+  <div class="container text-start">
+    <div class="row">
+      <div class="col-md-6">
+        <h4 class="text-center mb-4">Личная информация</h4>
+        <table class="table-table">
+          <tbody>
+            {% for field_name, field_value in staff_fields %}
+              <tr>
+                <th scope="row">{{ field_name }}:</th>
+                <td>
+                  {{ field_value }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-6">
+        <h4 class="text-center mb-4">Информация о состоянии в команде</h4>
+        <table class="table-table">
+          <tbody>
+            {% for field_name, field_value in team_fields %}
+              <tr>
+                <th scope="row">{{ field_name }}:</th>
+                <td>
+                  {{ field_value }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+  </div>
+
+  <div class="container">
+    {% include 'main/staffs/edit_delete_buttons.html' %}
+  </div>
+{% endblock content %}

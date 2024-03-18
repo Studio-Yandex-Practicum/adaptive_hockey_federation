@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+  Редактирование сотрудника команды
+{% endblock %}
+{% block content %}
+  <h2 class="text-center mb-4">Редактирование сотрудника команды</h2>
+
+  <form method="post" action="{% url 'main:staff_id_edit' staffmember.id %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container text-center">
+        <div class="full-container">
+          <h4 class="text-center mb-4">Информация о сотруднике</h4>
+          <table class="table-table">
+            <tbody>
+            {% for field in form.visible_fields %}
+                  {% if field.name in 'surname name patronymic phone' %}
+                  <tr>
+                    <th>{{ field.label_tag }}</th>
+                    <td>{{ field }}</td>
+                    <td>{{ field.errors }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="full-container">
+          <h4 class="text-center mb-4">Информация о состоянии в команде</h4>
+          <table class="table-table">
+            <tbody>
+                {{ staff_form.management_form }}
+                {{ staff_form.non_form_errors }}
+                {% for field in staff_form %}
+                  <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
+                      <th>{{ field.label_tag }}</th>
+                      <td>{{ field }}</td>
+                      <td>{{ field.errors }}</td>
+                  </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+    <!-- Save Button -->
+    <div class="container">
+      <div class="row">
+        <div class="col text-center text-white flex justify-start">
+          <button
+            type="submit"
+            class="btn btn-secondary text-white"
+            style="background-color: #64C2D1; border: 1px solid #fff;">
+            Сохранить
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="container mb-4"></div>
+{% endblock %}

@@ -1,14 +1,42 @@
+from datetime import datetime
 from typing import Any
 
-from core.constants import ROLE_AGENT
+from core.constants import ROLE_AGENT, MAX_AGE_PlAYER, MIN_AGE_PlAYER
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
-from main.models import City, DisciplineName, Player, Team
+from main.models import (
+    City,
+    DisciplineName,
+    Player,
+    StaffMember,
+    StaffTeamMember,
+    Team,
+)
 from users.models import User
 
 
 class PlayerForm(forms.ModelForm):
+
+    now = datetime.now()
+    month_day = format(now.strftime("%m-%d"))
+    min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
+    max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
+
+    birthday = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "placeholder": "yyyy-mm-dd (DOB)",
+                "class": "form-control",
+                "min": min_date,
+                "max": max_date,
+            }
+        ),
+        label="Дата рождения",
+        help_text="Дата рождения",
+    )
+
     identity_document = forms.CharField(
         widget=forms.TextInput,
         label="Удостоверение личности",
@@ -43,7 +71,7 @@ class PlayerForm(forms.ModelForm):
 class CityChoiceField(ModelChoiceField):
     """Самодельное поле для выбора города."""
 
-    def __init__(self):
+    def __init__(self, label: str | None = None):
         super().__init__(
             queryset=City.objects.all(),
             widget=TextInput(
@@ -57,7 +85,7 @@ class CityChoiceField(ModelChoiceField):
             error_messages={
                 "required": "Пожалуйста, выберите город из списка."
             },
-            label="Город откуда команда",
+            label=label or "Выберите город",
         )
 
     def clean(self, value: Any) -> Any:
@@ -87,7 +115,7 @@ class TeamForm(forms.ModelForm):
             lambda obj: obj.get_full_name()
         )
 
-    city = CityChoiceField()
+    city = CityChoiceField(label="Выберите город, откуда команда.")
 
     curator = ModelChoiceField(
         queryset=User.objects.filter(role=ROLE_AGENT),
@@ -154,6 +182,20 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
     class Meta:
         labels = {
-            "staffteammember": "Сотрудник команды",
-            "team": "Команда",
+            'staffteammember': 'Сотрудник команды',
+            'team': 'Команда',
         }
+
+
+class StaffTeamMemberForm(forms.ModelForm):
+
+    class Meta:
+        model = StaffTeamMember
+        fields = ("staff_position", "team", "qualification", "notes",)
+
+
+class StaffMemberForm(forms.ModelForm):
+
+    class Meta:
+        model = StaffMember
+        fields = ("id", "surname", "name", "patronymic", "phone",)

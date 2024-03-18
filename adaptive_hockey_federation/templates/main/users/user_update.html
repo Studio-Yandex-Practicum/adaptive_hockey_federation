@@ -1,47 +1,39 @@
-{% extends 'base/base.html' %}
+{% extends "base/base.html" %}
+{% load static %}
 {% load user_filters %}
 {% block title %}
-    Изменить пользователя
+   Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
 {% endblock %}
 {% block content %}
-      <div class="card update_card">
-        <h4 class="card-header">
-          Редактированние данных пользователя </br> {{ object.first_name }} {{ object.last_name }}
-        </h4>
-        <div class="card-body">
-          <form method="post"
-          {% if action_url %}
-            action="{% url action_url %}"
-            enctype="multipart/form-data"
-          {% endif %}>
-            {% csrf_token %}
-
-            {% if form.non_field_errors %}
-              <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
+<div class="card update_card">
+  <h4 class="card-header">
+    Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
+  </h4>
+  <div class="card-body">
+    <form method="post"
+    {% if action_url %}
+      action="{% url action_url %}"
+      enctype="multipart/form-data"
+    {% endif %}>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="row my-3">
+        <label for="{{ field.id_for_label }}">
+          {{ field.label }}
+            {% if field.field.required %}
+              <span class="required text-danger">*</span>
             {% endif %}
-
-            {% for field in form %}
-            <div class="row my-3">
-              <label for="{{ field.id_for_label }}">
-                {{ field.label }}
-                  {% if field.field.required %}
-                    <span class="required text-danger">*</span>
-                  {% endif %}
-              </label>
-              {{ field |addclass:'form-control' }}
-            {% if field.errors %}
-            <small class="error">{{ field.errors|striptags  }}</small>
-          {% endif %}
-            </div>
-            {% endfor %}
-            <button type="submit" class="update_btn">
-              Сохранить
-            </button>
-          </form>
-        </div>
+        </label>
+        {{ field |addclass:'form-control' }}
+      {% if field.errors %}
+      <small class="error">{{ field.errors|striptags  }}</small>
+    {% endif %}
       </div>
+      {% endfor %}
+      <button type="submit" class="update_btn">
+        Сохранить
+      </button>
+    </form>
+  </div>
+</div>
 {% endblock %}
