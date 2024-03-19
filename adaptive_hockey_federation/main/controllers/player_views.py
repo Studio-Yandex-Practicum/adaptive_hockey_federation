@@ -9,9 +9,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.controllers.permissions import PlayerIdPermissionsMixin
 from main.forms import PlayerForm
 from main.models import Document, Player
+from main.permissions import PlayerIdPermissionsMixin
 
 
 class PlayersListView(

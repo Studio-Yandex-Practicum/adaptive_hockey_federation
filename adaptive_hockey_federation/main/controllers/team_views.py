@@ -9,10 +9,10 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.controllers.permissions import TeamEditPermissionsMixin
 from main.controllers.utils import get_player_href
 from main.forms import TeamForm
 from main.models import City, Player, Team
+from main.permissions import TeamEditPermissionsMixin
 
 
 class TeamIdView(PermissionRequiredMixin, DetailView):
