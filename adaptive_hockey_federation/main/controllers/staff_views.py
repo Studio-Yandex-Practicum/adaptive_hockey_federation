@@ -12,6 +12,7 @@ from main.models import StaffMember, StaffTeamMember
 
 class StaffMemberListView(ListView):
     """Представление для работы со списком сотрудников команд."""
+
     model = StaffMember
     template_name = "main/staffs/staffs.html"
     context_object_name = "staffs"
@@ -54,9 +55,9 @@ class StaffMemberListView(ListView):
         table_head = {}
         for field in self.fields:
             if field != "id":
-                table_head[field] = (
-                    self.model._meta.get_field(field).verbose_name
-                )
+                table_head[field] = self.model._meta.get_field(
+                    field
+                ).verbose_name
         context["table_head"] = table_head
 
         table_data = [
@@ -86,9 +87,10 @@ class StaffMemberIdView(PermissionRequiredMixin, DetailView):
         "patronymic",
         "phone",
     )
-    permission_required = 'main.view_staff'
+    permission_required = "main.view_staff"
     permission_denied_message = (
-        "У Вас нет разрешения на просмотр данных персонала комаив.")
+        "У Вас нет разрешения на просмотр данных персонала комаив."
+    )
 
     def get_object(self, queryset=None):
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
@@ -110,8 +112,10 @@ class StaffMemberIdView(PermissionRequiredMixin, DetailView):
         team_fields = []
         for staff_team in queryset:
             team_fields.append(
-                ("Команда",
-                 ", ".join([team.name for team in staff_team.team.all()]))
+                (
+                    "Команда",
+                    ", ".join([team.name for team in staff_team.team.all()]),
+                )
             )
             team_fields.append(
                 ("Статус сотрудника", staff_team.staff_position),
@@ -129,17 +133,19 @@ class StaffMemberIdView(PermissionRequiredMixin, DetailView):
 
 class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
     """Представление создания сотрудника команды."""
+
     model = StaffMember
     form_class = StaffMemberForm
     template_name = "main/staffs/staff_id_create.html"
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.add_staff"
     permission_denied_message = (
-        "У Вас нет разрешения на создание карточки сотрудника команды.")
+        "У Вас нет разрешения на создание карточки сотрудника команды."
+    )
 
     def form_valid(self, form):
         context = self.get_context_data()
-        staff_form = context['staff_form']
+        staff_form = context["staff_form"]
         with transaction.atomic():
             self.object = form.save()
             if staff_form.is_valid():
@@ -150,7 +156,7 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            context['staff_form'] = StaffTeamMemberForm(self.request.POST)
+            context["staff_form"] = StaffTeamMemberForm(self.request.POST)
         else:
             if self.request.method == 'GET':
                 context['staff_form'] = StaffTeamMemberForm(
@@ -164,17 +170,19 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
 
 class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
     """Представление редактирования сотрудника команды."""
+
     model = StaffMember
     form_class = StaffMemberForm
     template_name = "main/staffs/staff_id_edit.html"
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.change_staff"
     permission_denied_message = (
-        "У Вас нет разрешения на редактирование карточки сотрудника команды.")
+        "У Вас нет разрешения на редактирование карточки сотрудника команды."
+    )
 
     def form_valid(self, form):
         context = self.get_context_data()
-        staff_form = context['staff_form']
+        staff_form = context["staff_form"]
         with transaction.atomic():
             form.save()
             if staff_form.is_valid():
@@ -185,21 +193,24 @@ class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         staff = StaffTeamMember.objects.get(staff_member=self.object)
         if self.request.POST:
-            context['staff_form'] = StaffTeamMemberForm(
-                self.request.POST, instance=staff)
+            context["staff_form"] = StaffTeamMemberForm(
+                self.request.POST, instance=staff
+            )
         else:
-            context['staff_form'] = StaffTeamMemberForm(instance=staff)
+            context["staff_form"] = StaffTeamMemberForm(instance=staff)
         return context
 
 
 class StaffMemberIdDeleteView(PermissionRequiredMixin, DeleteView):
     """Представление для удаления сотрудника команды."""
+
     model = StaffMember
     object = StaffMember
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.delete_staff"
     permission_denied_message = (
-        'У Вас нет разрешения на удаление персонала команд.')
+        "У Вас нет разрешения на удаление персонала команд."
+    )
 
     def get_object(self, queryset=None):
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
@@ -207,12 +218,14 @@ class StaffMemberIdDeleteView(PermissionRequiredMixin, DeleteView):
 
 class StaffTeamMemberCreateView(PermissionRequiredMixin, CreateView):
     """Представление для создания нового сотрудника команды."""
+
     model = StaffTeamMember
     form_class = StaffTeamMemberForm
     template_name = "main/staffs/staff_member_create.html"
     permission_required = "main.add_staff"
     permission_denied_message = (
-        "У Вас нет разрешения на создание карточки сотрудника команды.")
+        "У Вас нет разрешения на создание карточки сотрудника команды."
+    )
     team_id = None
 
     def form_valid(self, form):
@@ -220,22 +233,22 @@ class StaffTeamMemberCreateView(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get(self, request, *args, **kwargs):
-        self.team_id = request.GET.get('team', None)
+        self.team_id = request.GET.get("team", None)
         if self.team_id is not None:
-            self.initial = {'team': self.team_id}
+            self.initial = {"team": self.team_id}
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['team_id'] = self.team_id
+        context["team_id"] = self.team_id
         return context
 
     def get_success_url(self):
-        if 'None' in self.team_id or self.team_id is None:
-            return reverse('main:players')
+        if "None" in self.team_id or self.team_id is None:
+            return reverse("main:players")
         else:
-            return reverse('main:teams_id', kwargs={'team_id': self.team_id})
+            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
 
     def post(self, request, *args, **kwargs):
-        self.team_id = request.POST.get('team_id')
+        self.team_id = request.POST.get("team_id")
         return super().post(request, *args, **kwargs)

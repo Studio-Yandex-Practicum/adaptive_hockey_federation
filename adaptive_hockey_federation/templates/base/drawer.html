@@ -26,9 +26,11 @@
       <li class="nav-item py-2">
         {% url 'competitions:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
       </li>
-      <li class="nav-item py-2">
-        {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
-      </li>
+      {% if user.is_admin and not user.is_moderator and not user.is_agent %}
+        <li class="nav-item py-2">
+          {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
+        </li>
+      {% endif %}
       <li class="nav-item py-2">
         {% url 'main:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
       </li>
