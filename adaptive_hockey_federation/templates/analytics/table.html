@@ -6,16 +6,6 @@
         {% for head_item in table_head.values %}
         <th class="col">{{ head_item }}</th>
         {% endfor %}
-        <th class="col">
-          <div class="row">
-            <div class="col text-right">
-              <img src="{% static 'img/edit.png' %}" class="float-end">
-            </div>
-            <div class="col text-left">
-              <img src="{% static 'img/delete.png' %}" class="float-start">
-            </div>
-          </div>
-        </th>
       </tr>
     </thead>
     <tbody>
@@ -40,18 +30,6 @@
             <td class="border rounded-md table-light">{{ cell_value }}</td>
           {% endif %}
         {% endfor %}
-        {% with request.resolver_match.view_name as view_name %}
-            {% if view_name == 'main:players' %}
-              {% include "main/players/create_delete_button_players.html" %}
-            {% else %}
-              <td>
-                <div class="cell__buttons">
-                  {% include 'base/active_edit_icon.html' %}
-                  {% include 'base/active_delete_icon.html' %}
-                </div>
-              </td>
-            {% endif %}
-        {% endwith %}
       </tr>
       {% endfor %}
     </tbody>
