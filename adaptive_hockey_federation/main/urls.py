@@ -1,6 +1,6 @@
 from django.urls import include, path
 from main import views as unload_views
-from main.controllers import main_views, player_views, staff_views, team_views
+from main.main_views import main_views, player_views, staff_views, team_views
 
 app_name = "main"
 

@@ -12,8 +12,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.controllers.team_views import CityListMixin
-from main.controllers.utils import get_team_href
+from main.main_views.team_views import CityListMixin
+from main.main_views.utils import get_team_href
 
 
 class CompetitionListView(
@@ -52,7 +52,7 @@ class CompetitionListView(
                         "type": "button",
                         "url": reverse(
                             "competitions:competitions_id",
-                            args=[competition.pk]
+                            args=[competition.pk],
                         ),
                     },
                 }
@@ -111,9 +111,7 @@ class UpdateCompetitionView(
 
 
 class DeleteCompetitionView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    DeleteView
+    LoginRequiredMixin, PermissionRequiredMixin, DeleteView
 ):
     """Удаление соревнований."""
 
@@ -130,9 +128,7 @@ class DeleteCompetitionView(
 
 
 class AddTeamToCompetition(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    RedirectView
+    LoginRequiredMixin, PermissionRequiredMixin, RedirectView
 ):
     """Представление добавления команды в соревнования.
     В данном виде не отображает какой-то отдельной страницы либо формы.
@@ -151,8 +147,7 @@ class AddTeamToCompetition(
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() == "post":
             competition = get_object_or_404(
-                Competition,
-                id=kwargs["competition_id"]
+                Competition, id=kwargs["competition_id"]
             )
             team = get_object_or_404(Team, id=kwargs["pk"])
             competition.teams.add(team)
@@ -186,8 +181,7 @@ class DeleteTeamFromCompetition(
     def delete(self, request, *args, **kwargs):
         team = self.get_object()
         competition = get_object_or_404(
-            Competition,
-            id=self.kwargs["competition_id"]
+            Competition, id=self.kwargs["competition_id"]
         )
         competition.teams.remove(team)
         return HttpResponseRedirect(self.get_success_url())
@@ -195,7 +189,7 @@ class DeleteTeamFromCompetition(
     def get_success_url(self):
         return reverse_lazy(
             "competitions:competitions_id",
-            kwargs={"pk": self.kwargs["competition_id"]}
+            kwargs={"pk": self.kwargs["competition_id"]},
         )
 
 
@@ -225,8 +219,7 @@ class CreateCompetitionView(
 
 @login_required()
 @permission_required(
-    "competitions.list_team_competition",
-    raise_exception=True
+    "competitions.list_team_competition", raise_exception=True
 )
 def competition_team_manage_view(request, pk):
     """Представление для управления соревнованием.
@@ -259,9 +252,8 @@ def competition_team_manage_view(request, pk):
                     "url": reverse(
                         button_url_name,
                         kwargs={
-                            "competition_id":
-                            competition_instance.id,
-                            "pk": team.id
+                            "competition_id": competition_instance.id,
+                            "pk": team.id,
                         },
                     ),
                 },
