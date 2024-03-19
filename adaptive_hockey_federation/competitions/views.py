@@ -12,8 +12,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.main_views.team_views import CityListMixin
-from main.main_views.utils import get_team_href
+from main.controllers.team_views import CityListMixin
+from main.controllers.utils import get_team_href
 
 
 class CompetitionListView(
