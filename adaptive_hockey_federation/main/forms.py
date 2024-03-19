@@ -110,10 +110,13 @@ class CityChoiceField(ModelChoiceField):
 
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        self.user: User | None = kwargs.pop("user", None)
         super(TeamForm, self).__init__(*args, **kwargs)
         self.fields["curator"].label_from_instance = (
             lambda obj: obj.get_full_name()
         )
+        if self.user:
+            self.fields["curator"].disabled = self.user.is_agent
 
     city = CityChoiceField(label="Выберите город, откуда команда.")
 
@@ -151,11 +154,11 @@ class TeamForm(forms.ModelForm):
             "curator": Select(),
         }
 
-        def save(self, commit=True):
-            instance = super(TeamForm, self).save(commit=False)
-            if commit:
-                instance.save()
-            return instance
+    def save(self, commit=True):
+        instance = super(TeamForm, self).save(commit=False)
+        if commit:
+            instance.save()
+        return instance
 
 
 class PlayerTeamForm(forms.ModelForm):
@@ -182,20 +185,29 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
     class Meta:
         labels = {
-            'staffteammember': 'Сотрудник команды',
-            'team': 'Команда',
+            "staffteammember": "Сотрудник команды",
+            "team": "Команда",
         }
 
 
 class StaffTeamMemberForm(forms.ModelForm):
-
     class Meta:
         model = StaffTeamMember
-        fields = ("staff_position", "team", "qualification", "notes",)
+        fields = (
+            "staff_position",
+            "team",
+            "qualification",
+            "notes",
+        )
 
 
 class StaffMemberForm(forms.ModelForm):
-
     class Meta:
         model = StaffMember
-        fields = ("id", "surname", "name", "patronymic", "phone",)
+        fields = (
+            "id",
+            "surname",
+            "name",
+            "patronymic",
+            "phone",
+        )
