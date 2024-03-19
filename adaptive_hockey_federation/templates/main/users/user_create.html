@@ -36,4 +36,32 @@
     </form>
   </div>
 </div>
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+      var roleSelect = document.getElementById("id_role");
+      var teamSelectContainer = document.getElementById("id_team");
+      var teamContainer = document.querySelector("label[for='id_team']");
+
+      function toggleTeamSelect() {
+          var role = roleSelect.value;
+          // Меняем свойство display в зависимости от выбранной роли
+          // 'moderator' заменяем на значение value вашего селекта для модератора
+          if(role === "Модератор" || role === "Администратор") {
+              teamSelectContainer.style.display = "none";
+              teamSelectContainer.value = "";
+              teamContainer.style.display = "none";
+          } else {
+              teamSelectContainer.style.display = "block";
+              teamContainer.style.display = "block";
+          }
+      }
+
+      // Вызываем функцию при изменении значения селекта роли
+      roleSelect.addEventListener("change", toggleTeamSelect);
+
+      // И при загрузке страницы тоже неплохо бы проверить и скрыть/показать поле если надо
+      toggleTeamSelect();
+  });
+  </script>
 {% endblock %}
