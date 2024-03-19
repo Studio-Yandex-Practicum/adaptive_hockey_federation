@@ -12,6 +12,7 @@ class AnalyticsFilterForm(forms.Form):
         ),
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
+        label="Год рождения",
         empty_label="Все",
     )
     timespan = forms.ChoiceField(
@@ -24,12 +25,14 @@ class AnalyticsFilterForm(forms.Form):
         queryset=City.objects.all(),
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
+        label="Город",
         empty_label="Все",
     )
     discipline = forms.ModelChoiceField(
         queryset=DisciplineName.objects.all(),
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
+        label="Дисциплина",
         empty_label="Все",
     )
 
