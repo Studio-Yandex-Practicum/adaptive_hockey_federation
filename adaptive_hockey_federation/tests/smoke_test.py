@@ -22,7 +22,8 @@ from main.models import (
 from users.models import User
 
 URL_MSG_GET = (
-    "GET запрос по адресу: {url} должен вернуть ответ со статусом " "200."
+    "{method} запрос по адресу: {url} должен вернуть ответ со статусом "
+    "{status_code}."
 )
 
 COMPETITIONS_URLS = (
@@ -36,9 +37,9 @@ COMPETITIONS_URLS = (
 )
 PLAYER_URLS = (
     "/players/",
-    "/players/<int:pk>/",
-    "/players/<int:pk>/delete/",
-    "/players/<int:pk>/edit/",
+    "/players/1/",
+    "/players/1/delete/",
+    "/players/1/edit/",
     "/players/create/",
     "/players/deleted/",
 )
@@ -96,23 +97,30 @@ class TestUrlsSmoke(TestCase):
         self.super_client = Client()
         self.super_client.force_login(self.superuser)
 
-    def url_get_test(self, urls: Iterable):
-        for url in COMPETITIONS_URLS:
+    def url_get_test(
+        self,
+        urls: Iterable,
+        method: str = "get",
+        status_code: int = HTTPStatus.OK,
+    ):
+        """Унифицированный метод для урл-тестов.
+        - urls: список или кортеж урл-адресов, подлежащих тестированию
+        - method: метод запроса (обычно "get" или "post", по умолчанию -
+        "get")
+        - status_code: ожидаемый ответ."""
+        for url in urls:
             with self.subTest(url=url):
-                response = self.super_client.get(url)
+                response = self.super_client.__getattribute__(method.lower())(
+                    url
+                )
                 self.assertEqual(
                     response.status_code,
-                    HTTPStatus.OK,
-                    msg=URL_MSG_GET.format(url=url),
+                    status_code,
+                    msg=URL_MSG_GET.format(
+                        method=method.upper(), url=url, status_code=status_code
+                    ),
                 )
 
     def test_competitions_simple_access(self):
         """Тест доступности страниц с соревнованиями."""
-        for url in COMPETITIONS_URLS:
-            with self.subTest(url=url):
-                response = self.super_client.get(url)
-                self.assertEqual(
-                    response.status_code,
-                    HTTPStatus.OK,
-                    msg=URL_MSG_GET.format(url=url),
-                )
+        self.url_get_test(COMPETITIONS_URLS)
