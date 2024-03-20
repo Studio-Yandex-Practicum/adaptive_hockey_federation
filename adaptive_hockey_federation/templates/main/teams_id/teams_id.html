@@ -1,9 +1,10 @@
 {% extends 'base/base.html' %}
 {% block title %}
-  Профиль команды
+  Профиль команды: {{ team }}
 {% endblock %}
 {% block content %}
-  {% for staff in staff_table %}
+  <h2 class="text-center mb-4">Команда: {{ team }}</h2>
+{% for staff in staff_table %}
       <div class="container">
         <h3 class="text-start mb-4">{{ staff.position }}</h3>
         {% include 'main/teams_id/table.html' with table_head=staff.head table_data=staff.data %}

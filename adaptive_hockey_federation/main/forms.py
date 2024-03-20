@@ -1,14 +1,42 @@
+from datetime import datetime
 from typing import Any
 
-from core.constants import ROLE_AGENT
+from core.constants import ROLE_AGENT, MAX_AGE_PlAYER, MIN_AGE_PlAYER
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
-from main.models import City, DisciplineName, Player, Team
+from main.models import (
+    City,
+    DisciplineName,
+    Player,
+    StaffMember,
+    StaffTeamMember,
+    Team,
+)
 from users.models import User
 
 
 class PlayerForm(forms.ModelForm):
+
+    now = datetime.now()
+    month_day = format(now.strftime("%m-%d"))
+    min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
+    max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
+
+    birthday = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                "type": "date",
+                "placeholder": "yyyy-mm-dd (DOB)",
+                "class": "form-control",
+                "min": min_date,
+                "max": max_date,
+            }
+        ),
+        label="Дата рождения",
+        help_text="Дата рождения",
+    )
+
     identity_document = forms.CharField(
         widget=forms.TextInput,
         label="Удостоверение личности",
@@ -82,10 +110,13 @@ class CityChoiceField(ModelChoiceField):
 
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        self.user: User | None = kwargs.pop("user", None)
         super(TeamForm, self).__init__(*args, **kwargs)
         self.fields["curator"].label_from_instance = (
             lambda obj: obj.get_full_name()
         )
+        if self.user:
+            self.fields["curator"].disabled = self.user.is_agent
 
     city = CityChoiceField(label="Выберите город, откуда команда.")
 
@@ -123,11 +154,11 @@ class TeamForm(forms.ModelForm):
             "curator": Select(),
         }
 
-        def save(self, commit=True):
-            instance = super(TeamForm, self).save(commit=False)
-            if commit:
-                instance.save()
-            return instance
+    def save(self, commit=True):
+        instance = super(TeamForm, self).save(commit=False)
+        if commit:
+            instance.save()
+        return instance
 
 
 class PlayerTeamForm(forms.ModelForm):
@@ -157,3 +188,26 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
             "staffteammember": "Сотрудник команды",
             "team": "Команда",
         }
+
+
+class StaffTeamMemberForm(forms.ModelForm):
+    class Meta:
+        model = StaffTeamMember
+        fields = (
+            "staff_position",
+            "team",
+            "qualification",
+            "notes",
+        )
+
+
+class StaffMemberForm(forms.ModelForm):
+    class Meta:
+        model = StaffMember
+        fields = (
+            "id",
+            "surname",
+            "name",
+            "patronymic",
+            "phone",
+        )

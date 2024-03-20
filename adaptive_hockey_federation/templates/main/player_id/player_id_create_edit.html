@@ -75,7 +75,7 @@
                 <tbody>
                     {% for field in form.visible_fields %}
                         {% if field.name in 'team level_revision is_captain is_assistent position number' %}
-                        <tr>
+                        <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
                             <th>{{ field.label_tag }}</th>
                             <td>{{ field }}</td>
                             <td>{{ field.errors }}</td>
@@ -107,6 +107,9 @@
             </tbody>
         </table>
         <button id="addFileButton" type="button" class="btn btn-primary">+</button>
+        {% if team_id %}
+        <input type="hidden" value="{{ team_id }}" name="team_id" >
+        {% endif %}
         <!-- Save Button -->
         <div class="container">
             <div class="row">

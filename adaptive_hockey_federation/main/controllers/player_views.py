@@ -12,6 +12,7 @@ from django.views.generic.list import ListView
 from main.forms import PlayerForm
 from main.mixins import FileUploadMixin
 from main.models import Player
+from main.permissions import PlayerIdPermissionsMixin
 
 
 class PlayersListView(
@@ -104,7 +105,7 @@ class PlayersListView(
 
 class PlayerIDCreateView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    PlayerIdPermissionsMixin,
     CreateView,
     FileUploadMixin,
 ):
@@ -113,11 +114,11 @@ class PlayerIDCreateView(
     model = Player
     form_class = PlayerForm
     template_name = "main/player_id/player_id_create_edit.html"
-    success_url = "/players"
     permission_required = "main.add_player"
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока."
     )
+    team_id = None
 
     def form_valid(self, form):
         player = form.save()
@@ -136,18 +137,36 @@ class PlayerIDCreateView(
         )
         return super().form_valid(form)
 
+    def get(self, request, *args, **kwargs):
+        self.team_id = request.GET.get("team", None)
+        if self.team_id is not None:
+            self.initial = {"team": self.team_id}
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.team_id is not None:
+            context["team_id"] = self.team_id
         context["page_title"] = "Создание профиля нового игрока"
         context["file_resolution"] = ", ".join(
             ["." + res for res in FILE_RESOLUTION]
         )
         return context
 
+    def get_success_url(self):
+        if self.team_id is None:
+            return reverse("main:players")
+        else:
+            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
+
+    def post(self, request, *args, **kwargs):
+        self.team_id = request.POST.get("team_id", None)
+        return super().post(request, *args, **kwargs)
+
 
 class PlayerIdView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    PlayerIdPermissionsMixin,
     DetailView,
 ):
     model = Player
@@ -224,9 +243,9 @@ class PlayerIdView(
 
 class PlayerIDEditView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
-    UpdateView,
     FileUploadMixin,
+    PlayerIdPermissionsMixin,
+    UpdateView,
 ):
     model = Player
     template_name = "main/player_id/player_id_create_edit.html"

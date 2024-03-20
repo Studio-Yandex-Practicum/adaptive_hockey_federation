@@ -7,7 +7,11 @@
     </div>
   </ul>
   <div class="height">
-    {% include 'base/search_form.html' %}
+    {% if request.resolver_match.url_name in 'main' %}
+      {% include 'main/home/search_form.html' %}
+    {% else %}
+      {% include 'base/search_form.html' %}
+    {% endif%}
   </div>
   <div class="nav-item ms-2">
     <a  href="{% url 'logout' %}">

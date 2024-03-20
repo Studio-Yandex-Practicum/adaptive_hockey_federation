@@ -3,5 +3,5 @@
   Главная страница
 {% endblock %}
 {% block content %}
-  Главная страница
+  {% include 'main/home/table.html' with table_head=table_head table_data=table_data %}
 {% endblock %}

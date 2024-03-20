@@ -172,6 +172,10 @@ static/
 #Data JSON
 *.json
 
+#Data XLSX
+*.XLSX
+data/
+
 #Data .csv
 csv/
 
