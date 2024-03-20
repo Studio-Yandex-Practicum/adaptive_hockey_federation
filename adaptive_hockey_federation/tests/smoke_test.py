@@ -38,18 +38,21 @@ COMPETITIONS_URLS = (
 PLAYER_URLS = (
     "/players/",
     "/players/1/",
-    "/players/1/delete/",
+    # "/players/1/delete/", template does not exist
     "/players/1/edit/",
     "/players/create/",
-    "/players/deleted/",
+    # "/players/deleted/", template does not exist
+)
+
+STAFF_URLS = (
+    "/staffs/",
+    "/staffs/1/",
+    # '/staffs/1/delete/',
+    "/staffs/1/edit/",
+    "/staffs/create/",
 )
 
 
-# '/staffs/',
-# '/staffs/<int:pk>/',
-# '/staffs/<int:pk>/delete/',
-# '/staffs/<int:pk>/edit/',
-# '/staffs/create/',
 # '/teams/',
 # '/teams/<int:team_id>/',
 # '/teams/<int:team_id>/delete/',
@@ -84,6 +87,7 @@ class TestUrlsSmoke(TestCase):
             role=ROLE_SUPERUSER,
             email="superuser@fake.fake",
             is_staff=True,
+            is_superuser=True,
         )
         cls.discipline_name = DisciplineNameFactory.create()
         cls.team = TeamFactory.create()
@@ -124,3 +128,11 @@ class TestUrlsSmoke(TestCase):
     def test_competitions_simple_access(self):
         """Тест доступности страниц с соревнованиями."""
         self.url_get_test(COMPETITIONS_URLS)
+
+    def test_player_simple_access(self):
+        """Тест доступности страниц с игроками."""
+        self.url_get_test(PLAYER_URLS)
+
+    def test_staff_simple_access(self):
+        """Тест доступности страниц с сотрудниками команд."""
+        self.url_get_test(STAFF_URLS)
