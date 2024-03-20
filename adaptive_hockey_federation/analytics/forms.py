@@ -11,28 +11,25 @@ class AnalyticsFilterForm(forms.Form):
             ExtractYear("birthday"), flat=True
         ),
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        label="Год рождения",
+        widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
     timespan = forms.ChoiceField(
         choices=[],
         required=False,
         label="За время",
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(attrs={"class": "form-control arrow-before"}),
     )
     city = forms.ModelChoiceField(
         queryset=City.objects.all(),
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        label="Город",
+        widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
     discipline = forms.ModelChoiceField(
         queryset=DisciplineName.objects.all(),
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        label="Дисциплина",
+        widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
 

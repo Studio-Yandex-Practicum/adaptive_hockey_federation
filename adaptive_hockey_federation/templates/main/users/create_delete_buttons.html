@@ -1,8 +1,8 @@
 {% load static %}
 <td class="border rounded-md btsss">
-  <div class="input-group justify-content-md-center">
+  <div class="cell-table">
     <div style="display: flex; justify-content: center;">
-      <a href="{% url 'users:user_update' table_string.id %}" class=" btns-edit-del">
+      <a href="{% url 'users:user_update' table_string.id %}" class="btns-edit-del">
         {% include 'base/edit_icon.html' %}
       </a>
     </div>
