@@ -931,7 +931,7 @@ td {
   font-weight: 700;
 }
 
-.base-select-teams {
+.selector-list {
   margin: 0px 10px 0 10px;
   padding: 2px;
   min-width: 80%;
@@ -942,13 +942,13 @@ td {
   font-weight: 700;
 }
 
-.selectors-teams {
+.selector {
   display: flex;
   float: left;
   width: 800px;
 }
 
-.selector-left {
+.selector-available {
   width: 380px;
   text-align: center;
   margin-bottom: 5px;
@@ -956,15 +956,42 @@ td {
   flex-direction: column;
 }
 
-.selector-right {
+.selector-chosen {
   width: 380px;
   text-align: center;
   margin-bottom: 5px;
   display: flex;
   flex-direction: column;
 }
+.selector .selector-filter {
+  border: 1px solid #ccc;
+  border-width: 0;
+  padding: 8px;
+  color: #666;
+  font-size: 0.625rem;
+  margin: 0;
+  text-align: left;
+}
 
-.selectors-teams ul.selectors-chooser {
+.selector .selector-filter label,
+.inline-group .aligned .selector .selector-filter label {
+  float: left;
+  margin: 7px 0 0;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  overflow: hidden;
+  line-height: 1;
+  min-width: auto;
+}
+
+.selector .selector-available input,
+.selector .selector-chosen input {
+  width: 320px;
+  margin-left: 8px;
+}
+
+.selector ul.selector-chooser {
   align-self: center;
   width: 22px;
   background-color:#ffffff;
@@ -974,11 +1001,37 @@ td {
   transform: translateY(-17px);
 }
 
+.selector .search-label-icon {
+  background: url(../img/search.svg) 0 0 no-repeat;
+  display: inline-block;
+  height: 1.125rem;
+  width: 1.125rem;
+  margin-top: 0;
+}
 
-.selectors-chooser li {
+.selector .selector-chosen:not(.selector-chosen--with-filtered) .list-footer-display {
+  display: none;
+}
+
+.selector-chooser li {
   margin-top: 10px;
   padding: 3px;
   list-style-type: none;
+}
+.selector-chosen .list-footer-display {
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  margin: 0 0 10px;
+  padding: 8px;
+  text-align: center;
+  background: #79aec8;
+  color: #fff;
+  cursor: pointer;
+}
+
+.selector-chosen .list-footer-display__clear {
+  color: var(--breadcrumbs-fg);
 }
 
 .selector-add, .selector-remove {
@@ -1020,13 +1073,13 @@ td {
   background-position: 0 -80px;
 }
 
-.selector-chooser li {
+.selector-chosen li {
   margin: 0;
   padding: 3px;
   list-style-type: none;
 }
 
-.selectors-teams .help-icon {
+.selector .help-icon {
   background: url(../img/icon-unknown.svg) 0 0 no-repeat;
   display: inline-block;
   vertical-align: middle;
@@ -1035,7 +1088,7 @@ td {
   height: 13px;
 }
 
-.table-table .selectors-teams h2 {
+.table-table .selector h2 {
     margin: 0 15px 5px 15px;
     padding: 8px;
     font-weight: 400;
@@ -1044,6 +1097,69 @@ td {
     background:#269FBD;
     color: #fff;
     border-radius: 10px;
+}
+
+a.selector-chooseall, a.selector-clearall {
+  display: inline-block;
+  height: 16px;
+  text-align: left;
+  margin: 1px auto 3px;
+  overflow: hidden;
+  font-weight: bold;
+  line-height: 16px;
+  color: #666;
+  text-decoration: none;
+  opacity: 0.55;
+}
+
+a.active.selector-chooseall:focus, a.active.selector-clearall:focus,
+a.active.selector-chooseall:hover, a.active.selector-clearall:hover {
+  color: #417893;
+}
+
+a.active.selector-chooseall, a.active.selector-clearall {
+  opacity: 1;
+}
+
+a.active.selector-chooseall:hover, a.active.selector-clearall:hover {
+  cursor: pointer;
+}
+
+a.selector-chooseall {
+  padding: 0 18px 0 0;
+  background: url(../img/selector-icons.svg) right -160px no-repeat;
+  cursor: default;
+}
+
+a.active.selector-chooseall:focus, a.active.selector-chooseall:hover {
+  background-position: 100% -176px;
+}
+
+a.selector-clearall {
+  padding: 0 0 0 18px;
+  background: url(../img/selector-icons.svg) 0 -128px no-repeat;
+  cursor: default;
+}
+
+a.active.selector-clearall:focus, a.active.selector-clearall:hover {
+  background-position: 0 -144px;
+}
+
+.help, p.help, form p.help, div.help, form div.help, div.help li {
+  font-size: 0.6875rem;
+  color: #666;
+}
+
+div.help ul {
+   margin-bottom: 0;
+}
+
+.help-tooltip {
+  cursor: help;
+}
+
+form .form-row p {
+  padding-left: 0;
 }
 
 .base-select-errors {

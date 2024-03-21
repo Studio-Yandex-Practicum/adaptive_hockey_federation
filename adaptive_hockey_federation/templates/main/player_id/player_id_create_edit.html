@@ -1,53 +1,12 @@
 {% extends 'base/base.html' %}
 {% load static %}
-
+{% load user_filters %}
 {% block title %}
     {{ page_title }}
 {% endblock %}
 
 {% block content %}
 <h2 class="text-center mb-4">{{ page_title }}</h2>
-
-<form style="width: 100%;" action="">
-    <table class="table-table">
-      <tbody>
-        <tr>
-          <th>Фамилия</th>
-          <td class="base-wrapper">
-            <input placeholder="Введите фамилию" class="base-input" type="text">
-          </td>
-        </tr>
-        <tr>
-          <th>Имя</th>
-          <td class="base-wrapper">
-            <input value="Иван" class="base-input" type="text">
-          </td>
-        </tr>
-        <tr>
-          <th>Опции</th>
-          <td class="base-wrapper">
-            <select class="base-select" name="options" id="options">
-              <option class="base-option" value="1">Первый вариант</option>
-              <option class="base-option" value="2">Второй вариант</option>
-              <option class="base-option" value="3">Третий вариант</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Текстовая область</th>
-          <td class="base-wrapper">
-            <textarea class="base-textarea" name="textarea" id="textarea" rows="4"></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th>Чекбокс</th>
-          <td class="base-wrapper">
-            <input class="base-checkbox" type="checkbox" id="myCheckbox">
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </form>
 
 <form id="playerForm" method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -56,33 +15,125 @@
             <h4 class="text-center mb-4">Личная информация</h4>
             <table class="table-table">
                 <tbody>
-                {% for field in form.visible_fields %}
-                    {% if field.name in 'surname name patronymic gender birthday discipline diagnosis' or field.name == 'identity_document' %}
-                        <tr>
-                            <th>{{ field.label_tag }}</th>
-                            <td>{{ field }}</td>
-                            <td>{{ field.errors }}</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
+                  {% for field in form.visible_fields %}
+                    {% if field.name in 'surname name patronymic birthday identity_document'%}
+                      <tr>
+                        <th>{{ field.label_tag }}</th>
+                          <td>
+                            {% if field.errors %}
+                              {{ field |addclass:'base-input-errors'}}
+                              {{ field.errors }}
+                            {% else %}
+                              {{ field |addclass:'base-input'}}
+                            {% endif %}
+                          </td>
+                      <tr>
+                    {% elif  field.name in 'gender discipline diagnosis' %}
+                      <tr>
+                        <th>{{ field.label_tag }}</th>
+                            <td>
+                              {% if field.errors %}
+                                {{ field |addclass:'base-select-errors'}}
+                                {{ field.errors|striptags}}
+                              {% else %}
+                                {{ field |addclass:'base-select'}}
+                              {% endif %}
+                            </td>
+                      </tr>
+                        {% endif %}
+                  {% endfor %}
                 </tbody>
-            </table>
+              </table>
         </div>
-
         <div class="full-container">
             <h4 class="text-center mb-4">Игровая информация</h4>
             <table class="table-table">
-                <tbody>
-                    {% for field in form.visible_fields %}
-                        {% if field.name in 'team level_revision is_captain is_assistent position number' %}
-                        <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
-                            <th>{{ field.label_tag }}</th>
-                            <td>{{ field }}</td>
-                            <td>{{ field.errors }}</td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
+              {% for field in form.visible_fields %}
+                {% if field.name in "level_revision number"%}
+                    <tr>
+                      <th>{{ field.label_tag }}</th>
+                        <td>
+                          {% if field.errors %}
+                            {{ field |addclass:"base-input-errors"}}
+                            {{ field.errors }}
+                          {% else %}
+                            {{ field |addclass:"base-input"}}
+                          {% endif %}
+                        </td>
+                    <tr>
+                  {% elif  field.name in "team" %}
+                  <tr>
+                    <th>{{ field.label_tag }}</th>
+                        <td>
+                          {% if field.errors %}
+                            {{ field |addclass:"base-select-errors"}}
+                            {{ field.errors|striptags}}
+                          {% else %}
+                            <div class="selector">
+                              <div class="selector-available">
+                                <h2> Доступные команды 
+                                  <span class="help help-tooltip help-icon" title="Список доступных команд, можно выбрать несколько"></span>
+                                </h2>
+                                <p id="id_teams_filter" class="selector-filter">
+                                  <label for="id_teams_input">
+                                      <span class="help-tooltip search-label-icon" title="Начните вводить текст в этом поле, чтобы отфитровать список доступных команд."></span>
+                                  </label>
+                                  <input type="text" placeholder="Фильтр" id="id_teams_input">
+                                </p>
+                                {{ field |addclass:"selector-list"}}
+                                <div class="list-footer-display">
+                                  <span id="id_users_list-footer-display-text"></span>
+                                  <span class="list-footer-display__clear"></span>
+                                </div>
+                                <a title="Нажмите, чтобы выбрать все команды сразу." href="#" id="id_teams_add_all_link" class="selector-chooseall active">Выбрать все</a>
+                              </div>
+                                <ul class="selector-chooser">
+                                  <li>
+                                    <a title="Выбрать" href="#" id="id_teams_add_link" class="selector-add active">Выбрать</a>
+                                  </li>
+                                  <li>
+                                    <a title="Удалить" href="#" id="id_teams_remove_link" class="selector-remove active">Удалить</a>
+                                  </li>
+                                </ul>
+                              <div id="id_team_selector_chosen" class="selector-chosen">
+                                <h2> Выбранные команды 
+                                  <span class="help help-tooltip help-icon" title="Команды в которых состоит игрок"></span>
+                                </h2>
+                                <p id="id_player_teams_filter" class="selector-filter">
+                                  <label for="id_player_teams_input">
+                                      <span class="help-tooltip search-label-icon" title="Начните вводить текст в этом поле, чтобы отфитровать список команд игрока."></span>
+                                  </label>
+                                  <input type="text" placeholder="Фильтр" id="id_player_teams_input">
+                                </p>
+                                {{ form.player_team |addclass:"selector-list"}}
+                                <a title="Нажмите чтобы удалить все команды сразу." href="#" id="id_teams_remove_all_link" class="selector-clearall active">Удалить все</a>
+                              </div>
+                            </div>
+                          {% endif %}
+                        </td>
+                  </tr>
+                  {% elif  field.name in "is_captain is_assistent" %}
+                    <tr>
+                      <th>{{ field.label_tag }}</th>
+                        <td>
+                          {{ field |addclass:"base-checkbox"}}
+                        </td>
+                    </tr>
+                  {% elif  field.name in "position" %}
+                    <tr>
+                      <th>{{ field.label_tag }}</th>
+                        <td>
+                          {% if field.errors %}
+                            {{ field |addclass:'base-select-errors'}}
+                            {{ field.errors|striptags}}
+                          {% else %}
+                            {{ field |addclass:'base-select'}}
+                          {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+              </tbody>
             </table>
         </div>
         <h4 class="text-center mb-4">Документы</h4>
@@ -179,4 +230,45 @@ document.getElementById('addFileButton').addEventListener('click', function() {
 
 addNewFileField()
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const availableCommands = [
+      'Артемьев Э. Н.',
+      'Афхимов Р. Ф.',
+      'Белозеров С. Л.',
+      'Белоусова П. З.',
+      'Беляков Т. О.',
+      'Голубев С. В.',
+      'Данилов Г. П.',
+      'Дорзадов Г. П.',
+      'Зимин М. Ф.',
+      'Иванов Е. Т.',
+      'Костина О. А.',
+      'Куликов И. С.'
+      ]
+  
+      const availableList = document.getElementById('available-list')
+      const selectedList = document.getElementById('select-list')
+      const deleteAllButton = document.getElementById('delete-all-button')
+      const selectAllButton = document.getElementById('select-all-button')
+      const searchAvailableInput = document.getElementById(
+      'search-available-selector'
+      )
+      const searchSelectInput = document.getElementById(
+      'search-select-selector'
+      )
+  
+      const elements = {
+      availableList,
+      selectedList,
+      deleteAllButton,
+      selectAllButton,
+      searchAvailableInput,
+      searchSelectInput
+      }
+  
+      const selector = new Selector(availableCommands, elements)
+    })
+  </script>
 {% endblock %}
