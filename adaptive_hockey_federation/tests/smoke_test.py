@@ -47,18 +47,18 @@ PLAYER_URLS = (
 STAFF_URLS = (
     "/staffs/",
     "/staffs/1/",
-    # '/staffs/1/delete/',
+    # '/staffs/1/delete/', template does not exist
     "/staffs/1/edit/",
     "/staffs/create/",
 )
 
-
-# '/teams/',
-# '/teams/<int:team_id>/',
-# '/teams/<int:team_id>/delete/',
-# '/teams/<int:team_id>/edit/',
-# '/teams/create/',
-# '/teams/teams/<int:team_id>/',
+TEAM_URLS = (
+    "/teams/",
+    "/teams/1/",
+    # '/teams/1/delete/', template does not exist
+    "/teams/1/edit/",
+    "/teams/create/",
+)
 # '/unloads/',
 # '/users/',
 # '/users/<int:pk>/delete/',
@@ -136,3 +136,7 @@ class TestUrlsSmoke(TestCase):
     def test_staff_simple_access(self):
         """Тест доступности страниц с сотрудниками команд."""
         self.url_get_test(STAFF_URLS)
+
+    def test_team_simple_access(self):
+        """Тест доступности страниц с сотрудниками команд."""
+        self.url_get_test(TEAM_URLS)
