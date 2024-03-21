@@ -1,4 +1,4 @@
-from core.utils import generate_file_name
+from core.config.base_settings import FILE_RESOLUTION
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -10,7 +10,9 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm
-from main.models import Document, Player
+from main.mixins import FileUploadMixin
+from main.models import Player
+from main.permissions import PlayerIdPermissionsMixin
 
 
 class PlayersListView(
@@ -103,14 +105,15 @@ class PlayersListView(
 
 class PlayerIDCreateView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    PlayerIdPermissionsMixin,
     CreateView,
+    FileUploadMixin,
 ):
     """Представление для создания нового игрока."""
 
     model = Player
     form_class = PlayerForm
-    template_name = "main/player_id/player_id_create.html"
+    template_name = "main/player_id/player_id_create_edit.html"
     permission_required = "main.add_player"
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока."
@@ -119,37 +122,51 @@ class PlayerIDCreateView(
 
     def form_valid(self, form):
         player = form.save()
-        for iter, file in enumerate(self.request.FILES.getlist("documents")):
-            file.name = generate_file_name(file.name, player.name, iter)
-            Document.objects.create(player=player, file=file, name=file.name)
+
+        self.add_new_documents(
+            player=player,
+            new_files_names=self.request.POST.getlist("new_file_name[]"),
+            new_files_paths=self.request.FILES.getlist("new_file_path[]"),
+        )
+
+        self.delete_documents(
+            player=player,
+            deleted_files_paths=self.request.POST.getlist(
+                "deleted_file_path[]"
+            ),
+        )
         return super().form_valid(form)
 
     def get(self, request, *args, **kwargs):
-        self.team_id = request.GET.get('team', None)
+        self.team_id = request.GET.get("team", None)
         if self.team_id is not None:
-            self.initial = {'team': self.team_id}
+            self.initial = {"team": self.team_id}
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.team_id is not None:
-            context['team_id'] = self.team_id
+            context["team_id"] = self.team_id
+        context["page_title"] = "Создание профиля нового игрока"
+        context["file_resolution"] = ", ".join(
+            ["." + res for res in FILE_RESOLUTION]
+        )
         return context
 
     def get_success_url(self):
         if self.team_id is None:
-            return reverse('main:players')
+            return reverse("main:players")
         else:
-            return reverse('main:teams_id', kwargs={'team_id': self.team_id})
+            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
 
     def post(self, request, *args, **kwargs):
-        self.team_id = request.POST.get('team_id', None)
+        self.team_id = request.POST.get("team_id", None)
         return super().post(request, *args, **kwargs)
 
 
 class PlayerIdView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    PlayerIdPermissionsMixin,
     DetailView,
 ):
     model = Player
@@ -216,19 +233,22 @@ class PlayerIdView(
             ("Номер игрока", player.number),
         ]
 
-        player_fields_doc = [("Документ", player.identity_document)]
+        player_documents = self.get_object().player_documemts.all()
 
         context["player_fields_personal"] = player_fields_personal
         context["player_fields"] = player_fields
-        context["player_fields_doc"] = player_fields_doc
+        context["player_documents"] = player_documents
         return context
 
 
 class PlayerIDEditView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+    LoginRequiredMixin,
+    FileUploadMixin,
+    PlayerIdPermissionsMixin,
+    UpdateView,
 ):
     model = Player
-    template_name = "main/player_id/player_id_edit.html"
+    template_name = "main/player_id/player_id_create_edit.html"
     form_class = PlayerForm
     permission_required = "main.change_player"
     permission_denied_message = (
@@ -236,19 +256,44 @@ class PlayerIDEditView(
     )
 
     def get_success_url(self):
-        return reverse("main:player_id", kwargs={"pk": self.object.pk})
+        return reverse(
+            "main:player_id",
+            kwargs={
+                "pk": self.object.pk,
+            },
+        )
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        player = self.get_object()
-        player_fields_doc = [("Документ", player.identity_document)]
-        player_documents = player.player_documemts.all()
+        player_documents = self.get_object().player_documemts.all()
+
+        context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
-        context["player_fields_doc"] = player_fields_doc
+        context["file_resolution"] = ", ".join(
+            ["." + res for res in FILE_RESOLUTION]
+        )
         return context
+
+    def form_valid(self, form):
+        player = form.save()
+
+        self.add_new_documents(
+            player=player,
+            new_files_names=self.request.POST.getlist("new_file_name[]"),
+            new_files_paths=self.request.FILES.getlist("new_file_path[]"),
+        )
+
+        self.delete_documents(
+            player=player,
+            deleted_files_paths=self.request.POST.getlist(
+                "deleted_file_path[]"
+            ),
+        )
+
+        return super().form_valid(form)
 
 
 class PlayerIDDeleteView(

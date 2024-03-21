@@ -482,6 +482,8 @@ li {
   padding: 0;
   margin: 0;
   width: 100%;
+  position: fixed;
+  bottom: 0;
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
@@ -539,11 +541,17 @@ li {
 
 .main {
   margin: 30px 0;
-  padding: 0;
+  padding-bottom: 90px;
   display: flex;
   align-items: center;
   flex: 1;
   flex-direction: column;
+}
+
+@media screen and (min-width: 320px) and (max-width: 768px) {
+  .main {
+    padding-bottom: 130px;
+  }
 }
 
 .page {
@@ -617,7 +625,6 @@ td {
   overflow-y: auto;
   text-align: center;
   display: flex;
-  align-items: center;
   flex-direction: column;
 }
 
@@ -647,13 +654,19 @@ td {
 .nav-button {
   position: absolute;
   right: -50px;
-  bottom: 4%;
+  bottom: 1%;
   margin: 0;
   padding: 5px 15px;
   border: none;
   border-radius: 0 8px 8px 0 / 8px 8px 8px 8px;
   background-color: #340061;
   outline: none;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .nav-button {
+    bottom: 10%;
+  }
 }
 
 .navbar-footer {
@@ -666,6 +679,7 @@ td {
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
   .navbar-footer {
+    gap: 0;
     flex-direction: column;
   }
 }
@@ -1144,4 +1158,17 @@ td {
     padding: 8px 16px;
     font-size: 12px;
   }
+}
+
+.arrow-before {
+  padding-right: 26px;
+  background-image: url('../img/arrow.svg');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 8px;
+}
+
+.analitics-button {
+  background-color: #269FBD;
+  color: #fff;
 }
