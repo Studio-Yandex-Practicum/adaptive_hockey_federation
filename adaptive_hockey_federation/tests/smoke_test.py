@@ -107,7 +107,7 @@ class TestUrlsSmoke(TestCase):
 
     def url_get_test(
         self,
-        urls: Iterable,
+        urls: Iterable | str,
         method: str = "get",
         status_code: int = HTTPStatus.OK,
     ):
@@ -116,6 +116,8 @@ class TestUrlsSmoke(TestCase):
         - method: метод запроса (обычно "get" или "post", по умолчанию -
         "get")
         - status_code: ожидаемый ответ."""
+        if isinstance(urls, str):
+            urls = (urls,)
         for url in urls:
             with self.subTest(url=url):
                 response = self.super_client.__getattribute__(method.lower())(
