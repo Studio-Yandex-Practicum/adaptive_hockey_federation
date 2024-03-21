@@ -1,7 +1,11 @@
 class Selector {
-  constructor(availableItems, elements) {
+  constructor(availableItems, elements, selectItems) {
     this.availableItems = availableItems
-    this.selectedItems = []
+    this.selectedItems = selectItems || []
+
+    this.availableItems = this.availableItems.filter(
+      item => !this.selectedItems.includes(item)
+    )
 
     this.elements = elements
     this.availableList = elements.availableList
@@ -61,10 +65,15 @@ class Selector {
       this.selectedItems = this.selectedItems.filter(
         selectedItem => selectedItem !== item
       )
+      this.availableItems.push(item)
     } else {
       this.selectedItems.push(item)
+      this.availableItems = this.availableItems.filter(
+        availableItem => availableItem !== item
+      )
     }
     this.renderSelectedItems()
+    this.renderAvailableItems()
   }
 
   setupEventListeners() {
@@ -80,12 +89,16 @@ class Selector {
 
   selectAll() {
     this.selectedItems = [...this.availableItems]
+    this.availableItems = []
     this.renderSelectedItems()
+    this.renderAvailableItems()
   }
 
   removeAll() {
+    this.availableItems = [...this.availableItems, ...this.selectedItems]
     this.selectedItems = []
     this.renderSelectedItems()
+    this.renderAvailableItems()
   }
 
   getSelectedItems() {
