@@ -68,13 +68,13 @@
                         <div class="selector_old">
                           <p class="selector-heading">Доступные команды</p>
                           <input class="selector-input_old" type="search" id="search-available-selector" placeholder="Поиск">
-                          <ul id="available-list" class="selector-list_old"></ul>
+                          <ul id="available-list" class="selector-list-teams"></ul>
                           <button class="selector-button_old add-all-button" id="select-all-button" type="button">Выбрать все</button>
                         </div>
                         <div class="selector_old">
                           <p class="selector-heading">Выбранные команды</p>
                           <input class="selector-input_old" type="search" id="search-select-selector" placeholder="Поиск">
-                          <ul id="select-list" class="selector-list_old"></ul>
+                          <ul id="select-list" class="selector-list-teams"></ul>
                           <button class="selector-button_old remove-all-button" id="delete-all-button" type="button">Удалить все</button>
                         </div>
                       </div>
@@ -146,6 +146,7 @@
     </div>
 </form>
 {{ available_teams|json_script:"available_teams" }}
+{{ current_teams|json_script:"current_teams" }}
 {% endblock %}
 {% block JavaScript %}
 <script>
@@ -202,7 +203,9 @@ addNewFileField()
 
 <script>
     var avalible = JSON.parse(document.getElementById('available_teams').textContent);
-    var availableArray = avalible.split(',').map(item => item.trim())
+    var availableArray = avalible.split(',').map(item => item.trim());
+    var current = JSON.parse(document.getElementById('current_teams').textContent);
+    var currentArray = current.split(',').map(item => item.trim());
     document.addEventListener('DOMContentLoaded', () => {
       const availableCommands = availableArray
 
@@ -222,10 +225,7 @@ addNewFileField()
         searchSelectInput
       }
 
-      const selections = [ // вместо это вставляй массив в таком же виде как availableArray
-        'Полностью.',
-        'Торопливый.'
-      ]
+      const selections = currentArray
 
       const selector = new Selector(availableCommands, elements, selections)
     })
