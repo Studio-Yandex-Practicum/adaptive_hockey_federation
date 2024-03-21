@@ -24,7 +24,9 @@ class Selector {
     this.setupEventListeners()
   }
 
-  renderAvailableItems() {
+  renderAvailableItems() 
+  {
+    var number = 0
     this.availableList.innerHTML = ''
     this.availableItems.forEach(item => {
       if (
@@ -33,16 +35,20 @@ class Selector {
           .toLowerCase()
           .includes(this.searchAvailableInput.value.toLowerCase().trim())
       ) {
-        const li = document.createElement('li')
-        li.classList.add('selector-item')
-        li.textContent = item
-        li.addEventListener('click', () => this.toggleSelection(item))
-        this.availableList.appendChild(li)
+
+        const option = document.createElement('option')
+        option.value = number
+        option.classList.add('selector-item')
+        option.textContent = item
+        option.addEventListener('click', () => this.toggleSelection(item))
+        this.availableList.appendChild(option)
+        number = number + 1
       }
     })
   }
 
   renderSelectedItems() {
+    var number = 0
     this.selectedList.innerHTML = ''
     this.selectedItems.forEach(item => {
       if (
@@ -51,11 +57,13 @@ class Selector {
           .toLowerCase()
           .includes(this.searchSelectInput.value.toLowerCase().trim())
       ) {
-        const li = document.createElement('li')
-        li.classList.add('selector-item')
-        li.textContent = item
-        li.addEventListener('click', () => this.toggleSelection(item))
-        this.selectedList.appendChild(li)
+        const option = document.createElement('option')
+        option.value = number
+        option.classList.add('selector-item')
+        option.textContent = item
+        option.addEventListener('click', () => this.toggleSelection(item))
+        this.selectedList.appendChild(option)
+        number = number + 1
       }
     })
   }

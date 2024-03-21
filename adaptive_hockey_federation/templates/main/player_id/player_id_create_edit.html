@@ -64,17 +64,20 @@
                   <tr>
                     <th>{{ field.label_tag }}</th>
                     <td class="base-wrapper">
-                      <div class="selector-wrapper_old">
-                        <div class="selector_old">
+                      {% if field.errors %}
+                        {{ field.errors|striptags}}
+                      {% endif %}
+                      <div class="selector-wrapper">
+                        <div class="selector-teams">
                           <p class="selector-heading">Доступные команды</p>
-                          <input class="selector-input_old" type="search" id="search-available-selector" placeholder="Поиск">
-                          <ul id="available-list" class="selector-list-teams"></ul>
-                          <button class="selector-button_old add-all-button" id="select-all-button" type="button">Выбрать все</button>
-                        </div>
-                        <div class="selector_old">
+                            <input class="selector-input_old" type="search" id="search-available-selector" placeholder="Поиск">
+                            {{ field|addclass:"selector-list-teams"}}
+                            <button class="selector-button_old add-all-button" id="select-all-button" type="button">Выбрать все</button>
+                          </div>
+                        <div class="selector-teams">
                           <p class="selector-heading">Выбранные команды</p>
                           <input class="selector-input_old" type="search" id="search-select-selector" placeholder="Поиск">
-                          <ul id="select-list" class="selector-list-teams"></ul>
+                          {{ form.player_team|addclass:"selector-list-teams"}}
                           <button class="selector-button_old remove-all-button" id="delete-all-button" type="button">Удалить все</button>
                         </div>
                       </div>

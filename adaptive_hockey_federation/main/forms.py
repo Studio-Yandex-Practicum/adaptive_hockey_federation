@@ -33,6 +33,13 @@ class PlayerForm(forms.ModelForm):
         required=False,
     )
 
+    def __init__(self, *args, **kwargs):
+        super(PlayerForm, self).__init__(*args, **kwargs)
+        self.fields['team'].widget.attrs['id'] = 'available-list'
+        self.fields['team'].required = False
+        self.fields['player_team'].widget.attrs['id'] = 'select-list'
+        self.fields['player_team'].required = False
+
     class Meta:
         model = Player
         fields = [
