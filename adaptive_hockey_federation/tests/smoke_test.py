@@ -19,6 +19,7 @@ from main.models import (
     StaffTeamMember,
     Team,
 )
+from users.factories import UserFactory
 from users.models import User
 
 URL_MSG = (
@@ -74,11 +75,12 @@ TEAM_POST_URL = "/teams/1/delete/"
 
 USER_GET_URLS = (
     "/users/",
-    # '/users/1/delete/', template does not exist
     "/users/1/edit/",
     "/users/create/",
     "/users/set_password/1/fake_token/",
 )
+
+USER_POST_URL = "/users/2/delete/"
 
 UNLOAD_URLS = ("/unloads/",)
 
@@ -86,6 +88,7 @@ UNLOAD_URLS = ("/unloads/",)
 class TestUrlsSmoke(TestCase):
 
     superuser: User
+    user: User
     discipline_name: DisciplineName
     teams: Team
     diagnosis: Diagnosis
@@ -105,6 +108,7 @@ class TestUrlsSmoke(TestCase):
             is_staff=True,
             is_superuser=True,
         )
+        cls.user = UserFactory.create()
         cls.discipline_name = DisciplineNameFactory.create()
         cls.teams = TeamFactory.create()
         cls.competition = CompetitionFactory.create()
@@ -124,9 +128,10 @@ class TestUrlsSmoke(TestCase):
         status_code: int = HTTPStatus.OK,
     ):
         """Унифицированный метод для урл-тестов.
-        - urls: список или кортеж урл-адресов, подлежащих тестированию
+        - urls: урл-адрес либо список или кортеж урл-адресов, подлежащих
+            тестированию;
         - method: метод запроса (обычно "get" или "post", по умолчанию -
-        "get")
+            "get");
         - status_code: ожидаемый ответ."""
         if isinstance(urls, str):
             urls = (urls,)
@@ -166,6 +171,7 @@ class TestUrlsSmoke(TestCase):
     def test_user_simple_access(self):
         """Тест доступности страниц с пользователями."""
         self.url_get_test(USER_GET_URLS)
+        self.url_get_test(USER_POST_URL, "post", HTTPStatus.FOUND)
 
     def test_unload_simple_access(self):
         """Тест доступности страниц с выгрузками."""
