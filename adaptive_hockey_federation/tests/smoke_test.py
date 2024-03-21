@@ -21,12 +21,12 @@ from main.models import (
 )
 from users.models import User
 
-URL_MSG_GET = (
+URL_MSG = (
     "{method} запрос по адресу: {url} должен вернуть ответ со статусом "
     "{status_code}."
 )
 
-COMPETITIONS_URLS = (
+COMPETITION_GET_URLS = (
     "/competitions/",
     "/competitions/create/",
     # "/competitions/competitions/1/teams/1/add/", 404 (нужен post запрос)
@@ -35,7 +35,8 @@ COMPETITIONS_URLS = (
     "/competitions/1/edit/",
     # "/competitions/1/delete/", template does not exist
 )
-PLAYER_URLS = (
+
+PLAYER_GET_URLS = (
     "/players/",
     "/players/1/",
     # "/players/1/delete/", template does not exist
@@ -44,7 +45,7 @@ PLAYER_URLS = (
     # "/players/deleted/", template does not exist
 )
 
-STAFF_URLS = (
+STAFF_GET_URLS = (
     "/staffs/",
     "/staffs/1/",
     # '/staffs/1/delete/', template does not exist
@@ -52,7 +53,7 @@ STAFF_URLS = (
     "/staffs/create/",
 )
 
-TEAM_URLS = (
+TEAM_GET_URLS = (
     "/teams/",
     "/teams/1/",
     # '/teams/1/delete/', template does not exist
@@ -60,7 +61,7 @@ TEAM_URLS = (
     "/teams/create/",
 )
 
-USER_URLS = (
+USER_GET_URLS = (
     "/users/",
     # '/users/1/delete/', template does not exist
     "/users/1/edit/",
@@ -126,30 +127,30 @@ class TestUrlsSmoke(TestCase):
                 self.assertEqual(
                     response.status_code,
                     status_code,
-                    msg=URL_MSG_GET.format(
+                    msg=URL_MSG.format(
                         method=method.upper(), url=url, status_code=status_code
                     ),
                 )
 
     def test_competitions_simple_access(self):
         """Тест доступности страниц с соревнованиями."""
-        self.url_get_test(COMPETITIONS_URLS)
+        self.url_get_test(COMPETITION_GET_URLS)
 
     def test_player_simple_access(self):
         """Тест доступности страниц с игроками."""
-        self.url_get_test(PLAYER_URLS)
+        self.url_get_test(PLAYER_GET_URLS)
 
     def test_staff_simple_access(self):
         """Тест доступности страниц с сотрудниками команд."""
-        self.url_get_test(STAFF_URLS)
+        self.url_get_test(STAFF_GET_URLS)
 
     def test_team_simple_access(self):
         """Тест доступности страниц со спортивными командами."""
-        self.url_get_test(TEAM_URLS)
+        self.url_get_test(TEAM_GET_URLS)
 
     def test_user_simple_access(self):
         """Тест доступности страниц с пользователями."""
-        self.url_get_test(USER_URLS)
+        self.url_get_test(USER_GET_URLS)
 
     def test_unload_simple_access(self):
         """Тест доступности страниц с выгрузками."""
