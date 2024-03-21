@@ -272,11 +272,17 @@ class PlayerIDEditView(
         context["available_teams"] = ", ".join(
             [team.name for team in Team.objects.all()]
         )
+        context["current_teams"] = None
+        if player_teams := self.get_object().team.all():
+            context["current_teams"] = ", ".join(
+                [team.name for team in player_teams]
+            )
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
         context["file_resolution"] = ", ".join(
             ["." + res for res in FILE_RESOLUTION]
         )
+        print(context["current_teams"])
         return context
 
     def form_valid(self, form):

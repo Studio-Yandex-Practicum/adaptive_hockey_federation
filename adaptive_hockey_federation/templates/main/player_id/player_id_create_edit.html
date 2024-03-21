@@ -202,8 +202,9 @@ addNewFileField()
 
 <script>
     var avalible = JSON.parse(document.getElementById('available_teams').textContent);
+    var availableArray = avalible.split(',').map(item => item.trim())
     document.addEventListener('DOMContentLoaded', () => {
-      const availableCommands = [avalible]
+      const availableCommands = availableArray
   
       const availableList = document.getElementById('available-list')
       const selectedList = document.getElementById('select-list')
