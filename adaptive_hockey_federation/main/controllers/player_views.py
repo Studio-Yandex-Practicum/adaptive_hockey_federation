@@ -274,7 +274,10 @@ class PlayerIDEditView(
         [available_teams.append(team.name) for team in Team.objects.all()]
         if player_teams := self.get_object().team.all():
             [current_teams.append(team.name) for team in player_teams]
-        available_teams = list(set(available_teams) - set(current_teams))
+            context["current_teams"] = ", ".join(
+                team for team in current_teams
+            )
+            available_teams = list(set(available_teams) - set(current_teams))
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
         context["file_resolution"] = ", ".join(
@@ -282,9 +285,6 @@ class PlayerIDEditView(
         )
         context["available_teams"] = ", ".join(
             team for team in available_teams
-        )
-        context["current_teams"] = ", ".join(
-            team for team in current_teams
         )
         return context
 
