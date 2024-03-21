@@ -59,12 +59,16 @@ TEAM_URLS = (
     "/teams/1/edit/",
     "/teams/create/",
 )
-# '/unloads/',
-# '/users/',
-# '/users/<int:pk>/delete/',
-# '/users/<int:pk>/edit/',
-# '/users/create/',
-# '/users/set_password/<uidb64>/<token>/'
+
+USER_URLS = (
+    "/users/",
+    # '/users/1/delete/', template does not exist
+    "/users/1/edit/",
+    "/users/create/",
+    "/users/set_password/1/fake_token/",
+)
+
+UNLOAD_URLS = ("/unloads/",)
 
 
 class TestUrlsSmoke(TestCase):
@@ -138,5 +142,13 @@ class TestUrlsSmoke(TestCase):
         self.url_get_test(STAFF_URLS)
 
     def test_team_simple_access(self):
-        """Тест доступности страниц с сотрудниками команд."""
+        """Тест доступности страниц со спортивными командами."""
         self.url_get_test(TEAM_URLS)
+
+    def test_user_simple_access(self):
+        """Тест доступности страниц с пользователями."""
+        self.url_get_test(USER_URLS)
+
+    def test_unload_simple_access(self):
+        """Тест доступности страниц с выгрузками."""
+        self.url_get_test(UNLOAD_URLS)
