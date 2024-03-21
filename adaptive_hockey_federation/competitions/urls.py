@@ -31,7 +31,7 @@ competitions_urlpatterns = [
         name="competitions_id_delete",
     ),
     path(
-        "competitions/<int:competition_id>/teams/<int:pk>/add",
+        "<int:competition_id>/teams/<int:pk>/add/",
         views.AddTeamToCompetition.as_view(),
         name="competitions_id_add",
     ),

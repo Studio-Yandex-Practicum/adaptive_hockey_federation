@@ -35,7 +35,7 @@ COMPETITION_GET_URLS = (
 )
 
 COMPETITION_POST_URLS = (
-    "/competitions/competitions/1/teams/1/add",
+    "/competitions/1/teams/1/add/",
     "/competitions/1/teams/1/delete/",
     "/competitions/1/delete/",
 )
