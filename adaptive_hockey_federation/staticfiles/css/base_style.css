@@ -1288,3 +1288,132 @@ form .form-row p {
   background-color: #269FBD;
   color: #fff;
 }
+
+.selector-wrapper_old {
+  margin: 0;
+  padding: 15px 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .selector-wrapper {
+    flex-direction: column;
+  }
+}
+
+.selector-list_old {
+  margin: 10px 0;
+  padding: 4px;
+  height: 150px;
+  overflow-y: auto;
+  border: 2px solid #269fbd;
+  border-radius: 8px;
+}
+
+.selector-list_old::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 8px;
+}
+
+.selector-list_old::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.selector-list_old::-webkit-scrollbar-thumb {
+  background: #269fbd;
+  border-radius: 8px;
+}
+
+.selector-list_old::-webkit-scrollbar-button {
+  display: none;
+}
+
+.selector_old {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.selector-button_old {
+  margin-bottom: 10px;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-all-button_old::after {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  margin-left: 5px;
+  content: '▶';
+}
+
+.remove-all-button_old::before {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  margin-right: 5px;
+  content: '◀';
+}
+
+.selector-button_old:hover {
+  opacity: 0.7;
+}
+
+.selector-input_old {
+  margin: 0;
+  padding: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  border-bottom: 2px solid #00000050;
+  outline: none;
+  transition: border-bottom 0.5s ease;
+}
+
+.selector-input_old:focus {
+  border-bottom: 2px solid #269fbd;
+}
+
+.selector-item {
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.selector-item:hover {
+  background-color: #269fbd80;
+}
+
+.selector-heading {
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  font-size: 18px;
+  font-weight: 700;
+  background-color: #269fbd;
+  color: white;
+  border-radius: 8px;
+}

@@ -7,7 +7,6 @@
 
 {% block content %}
 <h2 class="text-center mb-4">{{ page_title }}</h2>
-
 <form id="playerForm" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container text-center">
@@ -64,53 +63,22 @@
                   {% elif  field.name in "team" %}
                   <tr>
                     <th>{{ field.label_tag }}</th>
-                        <td>
-                          {% if field.errors %}
-                            {{ field |addclass:"base-select-errors"}}
-                            {{ field.errors|striptags}}
-                          {% else %}
-                            <div class="selector">
-                              <div class="selector-available">
-                                <h2> Доступные команды 
-                                  <span class="help help-tooltip help-icon" title="Список доступных команд, можно выбрать несколько"></span>
-                                </h2>
-                                <p id="id_teams_filter" class="selector-filter">
-                                  <label for="id_teams_input">
-                                      <span class="help-tooltip search-label-icon" title="Начните вводить текст в этом поле, чтобы отфитровать список доступных команд."></span>
-                                  </label>
-                                  <input type="text" placeholder="Фильтр" id="id_teams_input">
-                                </p>
-                                {{ field |addclass:"selector-list"}}
-                                <div class="list-footer-display">
-                                  <span id="id_users_list-footer-display-text"></span>
-                                  <span class="list-footer-display__clear"></span>
-                                </div>
-                                <a title="Нажмите, чтобы выбрать все команды сразу." href="#" id="id_teams_add_all_link" class="selector-chooseall active">Выбрать все</a>
-                              </div>
-                                <ul class="selector-chooser">
-                                  <li>
-                                    <a title="Выбрать" href="#" id="id_teams_add_link" class="selector-add active">Выбрать</a>
-                                  </li>
-                                  <li>
-                                    <a title="Удалить" href="#" id="id_teams_remove_link" class="selector-remove active">Удалить</a>
-                                  </li>
-                                </ul>
-                              <div id="id_team_selector_chosen" class="selector-chosen">
-                                <h2> Выбранные команды 
-                                  <span class="help help-tooltip help-icon" title="Команды в которых состоит игрок"></span>
-                                </h2>
-                                <p id="id_player_teams_filter" class="selector-filter">
-                                  <label for="id_player_teams_input">
-                                      <span class="help-tooltip search-label-icon" title="Начните вводить текст в этом поле, чтобы отфитровать список команд игрока."></span>
-                                  </label>
-                                  <input type="text" placeholder="Фильтр" id="id_player_teams_input">
-                                </p>
-                                {{ form.player_team |addclass:"selector-list"}}
-                                <a title="Нажмите чтобы удалить все команды сразу." href="#" id="id_teams_remove_all_link" class="selector-clearall active">Удалить все</a>
-                              </div>
-                            </div>
-                          {% endif %}
-                        </td>
+                    <td class="base-wrapper">
+                      <div class="selector-wrapper_old">
+                        <div class="selector_old">
+                          <p class="selector-heading">Доступные команды</p>
+                          <input class="selector-input_old" type="search" id="search-available-selector" placeholder="Поиск">
+                          <ul id="available-list" class="selector-list_old"></ul>
+                          <button class="selector-button_old add-all-button" id="select-all-button" type="button">Выбрать все</button>
+                        </div>
+                        <div class="selector_old">
+                          <p class="selector-heading">Выбранные команды</p>
+                          <input class="selector-input_old" type="search" id="search-select-selector" placeholder="Поиск">
+                          <ul id="select-list" class="selector-list_old"></ul>
+                          <button class="selector-button_old remove-all-button" id="delete-all-button" type="button">Удалить все</button>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                   {% elif  field.name in "is_captain is_assistent" %}
                     <tr>
@@ -177,6 +145,7 @@
         </div>
     </div>
 </form>
+{{ available_teams|json_script:"available_teams" }}
 {% endblock %}
 {% block JavaScript %}
 <script>
@@ -232,21 +201,9 @@ addNewFileField()
 </script>
 
 <script>
+    var avalible = JSON.parse(document.getElementById('available_teams').textContent);
     document.addEventListener('DOMContentLoaded', () => {
-      const availableCommands = [
-      'Артемьев Э. Н.',
-      'Афхимов Р. Ф.',
-      'Белозеров С. Л.',
-      'Белоусова П. З.',
-      'Беляков Т. О.',
-      'Голубев С. В.',
-      'Данилов Г. П.',
-      'Дорзадов Г. П.',
-      'Зимин М. Ф.',
-      'Иванов Е. Т.',
-      'Костина О. А.',
-      'Куликов И. С.'
-      ]
+      const availableCommands = [avalible]
   
       const availableList = document.getElementById('available-list')
       const selectedList = document.getElementById('select-list')
