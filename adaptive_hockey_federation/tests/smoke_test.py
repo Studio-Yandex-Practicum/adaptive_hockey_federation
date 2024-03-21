@@ -29,37 +29,48 @@ URL_MSG = (
 COMPETITION_GET_URLS = (
     "/competitions/",
     "/competitions/create/",
-    # "/competitions/competitions/1/teams/1/add/", 404 (нужен post запрос)
-    # "/competitions/1/teams/1/delete/", template does not exist
     "/competitions/1/",
     "/competitions/1/edit/",
-    # "/competitions/1/delete/", template does not exist
+)
+
+COMPETITION_POST_URLS = (
+    "/competitions/competitions/1/teams/1/add",
+    "/competitions/1/teams/1/delete/",
+    "/competitions/1/delete/",
 )
 
 PLAYER_GET_URLS = (
     "/players/",
     "/players/1/",
-    # "/players/1/delete/", template does not exist
     "/players/1/edit/",
     "/players/create/",
-    # "/players/deleted/", template does not exist
+)
+
+PLAYER_POST_URLS = (
+    "/players/1/delete/",
+    # TODO: Тест на данный урл выдает TemplateDoesNotExist. Необходимо
+    #  раскомментировать, когда будет починен player_id_deleted() в
+    #  main.views или вообще удалить, если эта страница не нужна.
+    # "/players/deleted/",
 )
 
 STAFF_GET_URLS = (
     "/staffs/",
     "/staffs/1/",
-    # '/staffs/1/delete/', template does not exist
     "/staffs/1/edit/",
     "/staffs/create/",
 )
 
+STAFF_POST_URL = ("/staffs/1/delete/",)
+
 TEAM_GET_URLS = (
     "/teams/",
     "/teams/1/",
-    # '/teams/1/delete/', template does not exist
     "/teams/1/edit/",
     "/teams/create/",
 )
+
+TEAM_POST_URL = "/teams/1/delete/"
 
 USER_GET_URLS = (
     "/users/",
@@ -76,7 +87,7 @@ class TestUrlsSmoke(TestCase):
 
     superuser: User
     discipline_name: DisciplineName
-    team: Team
+    teams: Team
     diagnosis: Diagnosis
     player: Player
     staff: StaffTeamMember
@@ -95,7 +106,7 @@ class TestUrlsSmoke(TestCase):
             is_superuser=True,
         )
         cls.discipline_name = DisciplineNameFactory.create()
-        cls.team = TeamFactory.create()
+        cls.teams = TeamFactory.create()
         cls.competition = CompetitionFactory.create()
         cls.diagnosis = DiagnosisFactory.create()
         cls.player = PlayerFactory.create()
@@ -135,18 +146,22 @@ class TestUrlsSmoke(TestCase):
     def test_competitions_simple_access(self):
         """Тест доступности страниц с соревнованиями."""
         self.url_get_test(COMPETITION_GET_URLS)
+        self.url_get_test(COMPETITION_POST_URLS, "post", HTTPStatus.FOUND)
 
     def test_player_simple_access(self):
         """Тест доступности страниц с игроками."""
         self.url_get_test(PLAYER_GET_URLS)
+        self.url_get_test(PLAYER_POST_URLS, "post", HTTPStatus.FOUND)
 
     def test_staff_simple_access(self):
         """Тест доступности страниц с сотрудниками команд."""
         self.url_get_test(STAFF_GET_URLS)
+        self.url_get_test(STAFF_POST_URL, "post", HTTPStatus.FOUND)
 
     def test_team_simple_access(self):
         """Тест доступности страниц со спортивными командами."""
         self.url_get_test(TEAM_GET_URLS)
+        self.url_get_test(TEAM_POST_URL, "post", HTTPStatus.FOUND)
 
     def test_user_simple_access(self):
         """Тест доступности страниц с пользователями."""
