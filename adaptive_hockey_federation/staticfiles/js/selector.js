@@ -3,24 +3,23 @@ class Selector {
     this.availableItems = availableItems
     this.selectedItems = []
 
-    this.elements = elements
-    this.availableList = elements.availableList
-    this.selectedList = elements.selectedList
-    this.deleteAllButton = elements.deleteAllButton
-    this.selectAllButton = elements.selectAllButton
-    this.searchAvailableInput = elements.searchAvailableInput
-    this.searchSelectInput = elements.searchSelectInput
+    this.availableList = document.getElementById(elements.availableList)
+    this.selectedList = document.getElementById(elements.selectedList)
+    this.deleteAllButton = document.getElementById(elements.deleteAllButton)
+    this.selectAllButton = document.getElementById(elements.selectAllButton)
+    this.searchAvailableInput = document.getElementById(elements.searchAvailableInput)
+    this.searchSelectInput = document.getElementById(elements.searchSelectInput)
 
-    this.initialize()
+    this._initialize()
   }
 
-  initialize() {
-    this.renderAvailableItems()
-    this.renderSelectedItems()
-    this.setupEventListeners()
+  _initialize() {
+    this._renderAvailableItems()
+    this._renderSelectedItems()
+    this._setupEventListeners()
   }
 
-  renderAvailableItems() {
+  _renderAvailableItems() {
     this.availableList.innerHTML = ''
     this.availableItems.forEach(item => {
       if (
@@ -32,13 +31,13 @@ class Selector {
         const li = document.createElement('li')
         li.classList.add('selector-item')
         li.textContent = item
-        li.addEventListener('click', () => this.toggleSelection(item))
+        li.addEventListener('click', () => this._toggleSelection(item))
         this.availableList.appendChild(li)
       }
     })
   }
 
-  renderSelectedItems() {
+  _renderSelectedItems() {
     this.selectedList.innerHTML = ''
     this.selectedItems.forEach(item => {
       if (
@@ -50,13 +49,13 @@ class Selector {
         const li = document.createElement('li')
         li.classList.add('selector-item')
         li.textContent = item
-        li.addEventListener('click', () => this.toggleSelection(item))
+        li.addEventListener('click', () => this._toggleSelection(item))
         this.selectedList.appendChild(li)
       }
     })
   }
 
-  toggleSelection(item) {
+  _toggleSelection(item) {
     if (this.selectedItems.includes(item)) {
       this.selectedItems = this.selectedItems.filter(
         selectedItem => selectedItem !== item
@@ -64,28 +63,28 @@ class Selector {
     } else {
       this.selectedItems.push(item)
     }
-    this.renderSelectedItems()
+    this._renderSelectedItems()
   }
 
-  setupEventListeners() {
-    this.deleteAllButton.addEventListener('click', () => this.removeAll())
-    this.selectAllButton.addEventListener('click', () => this.selectAll())
+  _setupEventListeners() {
+    this.deleteAllButton.addEventListener('click', () => this._removeAll())
+    this.selectAllButton.addEventListener('click', () => this._selectAll())
     this.searchAvailableInput.addEventListener('input', () =>
-      this.renderAvailableItems()
+      this._renderAvailableItems()
     )
     this.searchSelectInput.addEventListener('input', () =>
-      this.renderSelectedItems()
+      this._renderSelectedItems()
     )
   }
 
-  selectAll() {
+  _selectAll() {
     this.selectedItems = [...this.availableItems]
-    this.renderSelectedItems()
+    this._renderSelectedItems()
   }
 
-  removeAll() {
+  _removeAll() {
     this.selectedItems = []
-    this.renderSelectedItems()
+    this._renderSelectedItems()
   }
 
   getSelectedItems() {

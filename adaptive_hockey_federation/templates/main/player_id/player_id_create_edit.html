@@ -223,27 +223,18 @@ addNewFileField()
     'Куликов И. С.'
     ]
 
-    const availableList = document.getElementById('available-list')
-    const selectedList = document.getElementById('select-list')
-    const deleteAllButton = document.getElementById('delete-all-button')
-    const selectAllButton = document.getElementById('select-all-button')
-    const searchAvailableInput = document.getElementById(
-    'search-available-selector'
-    )
-    const searchSelectInput = document.getElementById(
-    'search-select-selector'
-    )
-
     const elements = {
-    availableList,
-    selectedList,
-    deleteAllButton,
-    selectAllButton,
-    searchAvailableInput,
-    searchSelectInput
+    availableList: 'available-list',
+    selectedList: 'select-list',
+    deleteAllButton: 'delete-all-button',
+    selectAllButton: 'select-all-button',
+    searchAvailableInput: 'search-available-selector',
+    searchSelectInput: 'search-select-selector'
     }
 
     const selector = new Selector(availableCommands, elements)
+    const selectItems = selector.getSelectedItems()
+    console.log(selectItems)
   })
 </script>
 {% endblock %}
