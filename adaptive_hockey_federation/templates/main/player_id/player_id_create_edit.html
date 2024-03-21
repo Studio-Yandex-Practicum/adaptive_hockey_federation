@@ -64,10 +64,6 @@
                   <tr>
                     <th>{{ field.label_tag }}</th>
                     <td class="base-wrapper">
-                      {% if field.errors %}
-                        {{ field |addclass:"selector-list-teams"}}
-                        {{ field.errors|striptags}}
-                        {% else %}
                         <div class="selector-wrapper">
                           <div class="selector-teams">
                             <p class="selector-heading">Доступные команды</p>
@@ -75,18 +71,12 @@
                                 {{ field|addclass:"selector-list-teams"}}
                               <button class="selector-button_old add-all-button" id="select-all-button" type="button">Выбрать все</button>
                           </div>
-                      {% endif %}
-                      {% if form.player_team.errors %}
-                        {{ form.player_team |addclass:"selector-list-teams"}}
-                        {{ form.player_team.errors|striptags}}
-                      {% else %}
                           <div class="selector-teams">
                             <p class="selector-heading">Выбранные команды</p>
                               <input class="selector-input_old" type="search" id="search-select-selector" placeholder="Поиск">
                                 {{ form.player_team|addclass:"selector-list-teams"}}
                                 <button class="selector-button_old remove-all-button" id="delete-all-button" type="button">Удалить все</button>
                           </div>
-                      {% endif %}
                         </div>
                     </td>
                   </tr>
