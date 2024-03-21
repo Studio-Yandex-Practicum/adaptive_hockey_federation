@@ -1,48 +1,54 @@
-<aside id="container__fluid" class="aside-navbar">
-  <div class="navbar-container">
-    <ul class="navigate">
-      <div class="py-5 logo-zone">
-        <div class="col-auto flex justify-end">
-          <span class="logo-img">
-            <img src="https://paraicehockey.ru/wp-content/uploads/2022/02/FAH_q.png" width="100" height="100">
-          </span>
+{% if not user.is_moderator %}
+  <aside id="container__fluid" class="aside-navbar">
+    <div class="navbar-container">
+      <ul class="navigate">
+        <div class="py-5 logo-zone">
+          <div class="col-auto flex justify-end">
+            <span class="logo-img">
+              <img src="https://paraicehockey.ru/wp-content/uploads/2022/02/FAH_q.png" width="100" height="100">
+            </span>
+          </div>
+          <div class="col text-white flex justify-start">
+            Мир хоккея<br>для особенных<br>детей
+          </div>
         </div>
-        <div class="col text-white flex justify-start">
-          Мир хоккея<br>для особенных<br>детей
-        </div>
-      </div>
-      <li class="nav-item py-2 list-group">
-        {% url 'main:players' as url_name %}{% include "base/button.html" with name="Игроки" %}
-      </li>
-      <li class="nav-item py-2">
-        {% url 'users:users' as url_name %}{% include "base/button.html" with name="Пользователи" %}
-      </li>
-      <li class="nav-item py-2">
-        {% url 'main:teams' as url_name %}{% include "base/button.html" with name="Команды" %}
-      </li>
-      <li class="nav-item py-2">
-        {% url 'main:staffs' as url_name %}{% include "base/button.html" with name="Персонал команд" %}
-      </li>
-      <li class="nav-item py-2">
-        {% url 'competitions:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
-      </li>
-      {% if user.is_admin and not user.is_moderator and not user.is_agent %}
+        {% if not user.is_agent %}
+          <li class="nav-item py-2 list-group">
+            {% url 'main:players' as url_name %}{% include "base/button.html" with name="Игроки" %}
+          </li>
+          <li class="nav-item py-2">
+            {% url 'users:users' as url_name %}{% include "base/button.html" with name="Пользователи" %}
+          </li>
+        {% endif %}
         <li class="nav-item py-2">
-          {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
+          {% url 'main:teams' as url_name %}{% include "base/button.html" with name="Команды" %}
         </li>
-      {% endif %}
-      <li class="nav-item py-2">
-        {% url 'main:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
-      </li>
-    </ul>
-    <button
-      onclick="toggle_visibility(false);"
-      class="nav-button"
-      type="button"
-      aria-controls="staticBackdrop"
-      aria-expanded="true"
-    >
-      {% include "base/triangle.html" %}
-    </button>
-  </div>
-</aside>
+        {% if not user.is_agent %}
+          <li class="nav-item py-2">
+            {% url 'main:staffs' as url_name %}{% include "base/button.html" with name="Персонал команд" %}
+          </li>
+        {% endif %}
+        <li class="nav-item py-2">
+          {% url 'competitions:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
+        </li>
+        {% if not user.is_agent %}
+          <li class="nav-item py-2">
+            {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
+          </li>
+          <li class="nav-item py-2">
+            {% url 'main:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
+          </li>
+        {% endif %}
+      </ul>
+      <button
+        onclick="toggle_visibility(false);"
+        class="nav-button"
+        type="button"
+        aria-controls="staticBackdrop"
+        aria-expanded="true"
+      >
+        {% include "base/triangle.html" %}
+      </button>
+    </div>
+  </aside>
+{% endif %}
