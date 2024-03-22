@@ -37,7 +37,6 @@ ADMIN_APP_LABELS_URLS = (
     "/admin/main/",
     "/admin/users/",
 )
-# "/admin/<url>", не очень понятно, куда это должно вести
 
 ADMIN_AUTH_GROUP_302 = "/admin/auth/group/<path:object_id>/"
 ADMIN_AUTH_URLS = (
@@ -47,7 +46,6 @@ ADMIN_AUTH_URLS = (
     "/admin/auth/group/<path:object_id>/history/",
     "/admin/auth/group/add/",
 )
-# "/admin/autocomplete/", 403 даже на суперюзера.
 
 ADMIN_COMPETITIONS_URLS_302 = (
     "/admin/competitions/competition/<path:object_id>/",
@@ -59,7 +57,15 @@ ADMIN_COMPETITIONS_URLS = (
     "/admin/competitions/competition/<path:object_id>/history/",
     "/admin/competitions/competition/add/",
 )
-ADMIN_SERVICE_PAGES = ("/admin/jsi18n/",)
+ADMIN_SERVICE_PAGES = (
+    "/admin/jsi18n/",
+    # TODO: Раскомментировать, когда будет понятно, как это исправить,
+    #  либо удалить, если тест этих эндпоинтов не нужен.
+    # "/admin/<url>", не очень понятно, куда это должно вести
+    # "/admin/autocomplete/", 403 даже на суперюзера.
+    # "/admin/r/<int:content_type_id>/<path:object_id>/", для обработки
+    # этого урла нужен метод get_absolute_url() в моделях.
+)
 
 ADMIN_LOGIN = ("/admin/login/",)
 
@@ -74,9 +80,6 @@ ADMIN_CITY_URLS = (
     "/admin/main/city/<path:object_id>/history/",
     "/admin/main/city/add/",
 )
-
-ADMIN__URL_302 = ()
-ADMIN__URLS = ()
 ADMIN_DIAGNOSIS_URL_302 = ("/admin/main/diagnosis/<path:object_id>/",)
 ADMIN_DIAGNOSIS_URLS = (
     "/admin/main/diagnosis/",
@@ -168,7 +171,6 @@ ADMIN_PASSWORD_URLS = (
     "/admin/password_change/",
     "/admin/password_change/done/",
 )
-# "/admin/r/<int:content_type_id>/<path:object_id>/",
 
 ADMIN_PROXY_GROUP_URL_302 = ("/admin/users/proxygroup/<path:object_id>/",)
 ADMIN_PROXY_GROUP_URLS = (
@@ -393,95 +395,115 @@ class TestUrlsSmoke(TestCase):
         self.url_get_test(ADMIN_APP_LABELS_URLS)
 
     def test_admin_auth_group(self):
+        """Тесты страниц с группами в админке."""
         self.url_get_test(ADMIN_AUTH_GROUP_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_AUTH_URLS)
 
     def test_admin_log_in_out(self):
+        """Тесты страниц входа-выхода в/из админки."""
         self.url_get_test(ADMIN_LOGUOT, "post", status_code=HTTPStatus.FOUND)
         self.client.logout()
         self.url_get_test(ADMIN_LOGIN)
 
     def test_admin_city(self):
+        """Тесты страниц с городами в админке."""
         self.url_get_test(ADMIN_CITY_URL_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_CITY_URLS)
 
     def test_admin_competitions(self):
+        """Тесты страниц с соревнованиями в админке."""
         self.url_get_test(
             ADMIN_COMPETITIONS_URLS_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_COMPETITIONS_URLS)
 
     def test_admin_diagnosis(self):
+        """Тесты страниц с диагнозами в админке."""
         self.url_get_test(
             ADMIN_DIAGNOSIS_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_DIAGNOSIS_URLS)
 
     def test_admin_discipline(self):
+        """Тесты страниц с дисциплинами в админке."""
         self.url_get_test(
             ADMIN_DISCIPLINE_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_DISCIPLINE_URLS)
 
     def test_admin_discipline_level(self):
+        """Тесты страниц с уровнями дисциплин в админке."""
         self.url_get_test(
             ADMIN_DISCIPLINE_LEVEL_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_DISCIPLINE_LEVEL_URLS)
 
     def test_admin_discipline_name(self):
+        """Тесты страниц с наименованиями дисциплин в админке."""
         self.url_get_test(
             ADMIN_DISCIPLINE_NAME_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_DISCIPLINE_NAME_URLS)
 
     def test_admin_document(self):
+        """Тесты страниц с документом в админке."""
         self.url_get_test(ADMIN_DOCUMENT_URL_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_DOCUMENT_URLS)
 
     def test_admin_nosology(self):
+        """Тесты страниц с нозологией в админке."""
         self.url_get_test(ADMIN_NOSOLOGY_URL_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_NOSOLOGY_URLS)
 
     def test_admin_player(self):
+        """Тесты страниц с игроками в админке."""
         self.url_get_test(ADMIN_PLAYER_URL_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_PLAYER_URLS)
 
     def test_admin_staff_member(self):
+        """Тесты страниц с сотрудником в админке."""
         self.url_get_test(
             ADMIN_STAFF_MEMBER_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_STAFF_MEMBER_URLS)
 
     def test_admin_staff_team_member(self):
+        """Тесты страниц с сотрудником команды в админке."""
         self.url_get_test(
             ADMIN_STAFF_TEAM_MEMBER_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_STAFF_TEAM_MEMBER_URLS)
 
     def test_admin_team(self):
+        """Тесты страниц с командами в админке."""
         self.url_get_test(ADMIN_TEAM_URL_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_TEAM_URLS)
 
     def test_admin_password(self):
+        """Тесты страниц изменения-сброса пароля в админке."""
         self.url_get_test(ADMIN_PASSWORD_URLS)
 
     def test_admin_proxy_group(self):
+        """Тесты страниц с прокси-группами в админке."""
         self.url_get_test(
             ADMIN_PROXY_GROUP_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_PROXY_GROUP_URLS)
 
     def test_admin_user(self):
+        """Тесты страниц с пользователями в админке."""
         self.url_get_test(ADMIN_USER_URL_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_USER_URLS)
 
     def test_log_in_out_access(self):
+        """Тест доступности страниц входа-выхода на/с сайта."""
         self.url_get_test(LOG_OUT_URL, "post", HTTPStatus.FOUND)
         self.url_get_test(LOG_IN_URL)
 
     def test_password_simple_access(self):
+        """Тест доступности страниц с манипуляциями с паролем."""
         self.url_get_test(PASSWORD_URLS)
 
     def test_auth_reset_urls(self):
+        """Тест доступности страниц со сбросом пароля."""
         self.url_get_test(AUTH_RESET_URLS)
