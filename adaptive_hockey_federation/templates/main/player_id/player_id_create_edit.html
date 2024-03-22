@@ -55,7 +55,7 @@
                 {% if field.name in "level_revision number"%}
                     <tr>
                       <th>{{ field.label_tag }}</th>
-                        <td>
+                        <td class="base-wrapper">
                           {% if field.errors %}
                             {{ field |addclass:"base-input-errors"}}
                             {{ field.errors }}
@@ -67,7 +67,7 @@
                   {% elif  field.name in "team" %}
                   <tr>
                     <th>{{ field.label_tag }}</th>
-                        <td class="team-container">
+                        <td class="base-wrapper">
                           {% if field.errors %}
                             {{ field |addclass:"base-select-errors"}}
                             {{ field.errors|striptags}}
@@ -86,14 +86,14 @@
                   {% elif  field.name in "is_captain is_assistent" %}
                     <tr>
                       <th>{{ field.label_tag }}</th>
-                        <td>
+                        <td class="base-wrapper">
                           {{ field |addclass:"base-checkbox"}}
                         </td>
                     </tr>
                   {% elif  field.name in "position" %}
                     <tr>
                       <th>{{ field.label_tag }}</th>
-                        <td>
+                        <td class="base-wrapper">
                           {% if field.errors %}
                             {{ field |addclass:'base-select-errors'}}
                             {{ field.errors|striptags}}
