@@ -19,26 +19,26 @@ from users.models import User
 
 class PlayerForm(forms.ModelForm):
 
+    now = datetime.now()
+    month_day = format(now.strftime("%m-%d"))
+    min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
+    max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
+
     identity_document = forms.CharField(
         widget=forms.TextInput,
         label="Удостоверение личности",
         help_text="Удостоверение личности",
     )
+
     level_revision = forms.CharField(
         widget=forms.TextInput,
         label="Уровень ревизии",
         help_text="Уровень ревизии",
     )
-    player_team = forms.MultipleChoiceField(
-        required=False,
-    )
 
     def __init__(self, *args, **kwargs):
         super(PlayerForm, self).__init__(*args, **kwargs)
-        self.fields['team'].widget.attrs['id'] = 'available-list'
         self.fields['team'].required = False
-        self.fields['player_team'].widget.attrs['id'] = 'select-list'
-        self.fields['player_team'].required = False
 
     class Meta:
         model = Player
@@ -52,17 +52,12 @@ class PlayerForm(forms.ModelForm):
             "diagnosis",
             "level_revision",
             "team",
-            "player_team",
             "is_captain",
             "is_assistent",
             "position",
             "number",
             "identity_document",
         ]
-        now = datetime.now()
-        month_day = format(now.strftime("%m-%d"))
-        min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
-        max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
         widgets = {
             "surname": forms.TextInput(
                 attrs={
@@ -76,21 +71,18 @@ class PlayerForm(forms.ModelForm):
                 attrs={
                     'placeholder': 'Введите отчество'}
             ),
-            "birthday": forms.DateInput(
-                attrs={
-                    'placeholder': 'Введите дату рождения yyyy-mm-dd (DOB)',
-                    "type": "date",
-                    "min": min_date,
-                    "max": max_date,
-                }
-            ),
             "identity_document": forms.TextInput(
                 attrs={
                     'placeholder': 'Введите название документа'}
             ),
             "number": forms.TextInput(
                 attrs={
-                    'placeholder': 'Введите название документа'}
+                    'placeholder': 'Введите номер игрока'}
+            ),
+            "birthday": forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите дату рождения',
+                    "type": "date"}
             ),
         }
 

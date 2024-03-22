@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import PlayerForm
 from main.mixins import FileUploadMixin
-from main.models import Player, Team
+from main.models import Player
 from main.permissions import PlayerIdPermissionsMixin
 
 
@@ -269,22 +269,10 @@ class PlayerIDEditView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         player_documents = self.get_object().player_documemts.all()
-        available_teams = []
-        current_teams = []
-        [available_teams.append(team.name) for team in Team.objects.all()]
-        if player_teams := self.get_object().team.all():
-            [current_teams.append(team.name) for team in player_teams]
-            context["current_teams"] = ", ".join(
-                team for team in current_teams
-            )
-            available_teams = list(set(available_teams) - set(current_teams))
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
         context["file_resolution"] = ", ".join(
             ["." + res for res in FILE_RESOLUTION]
-        )
-        context["available_teams"] = ", ".join(
-            team for team in available_teams
         )
         return context
 
