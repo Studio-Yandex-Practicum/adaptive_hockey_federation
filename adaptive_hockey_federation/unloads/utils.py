@@ -1,7 +1,6 @@
 import os
 from typing import Any, List
 
-from django.conf import settings
 from django.db.models import QuerySet
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -27,7 +26,6 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
                     value = value.__str__()
                 row.append(value)
             ws.append(row)
-    media_data_path = os.path.join(settings.MEDIA_ROOT, "data")
-    os.makedirs(media_data_path, exist_ok=True)
-    file_path = os.path.join(media_data_path, filename)
-    wb.save(file_path)
+    os.makedirs("data", exist_ok=True)
+    filename = os.path.join("data", filename)
+    wb.save(filename)
