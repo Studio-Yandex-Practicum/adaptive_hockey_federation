@@ -1,3 +1,4 @@
+import re
 from http import HTTPStatus
 from typing import Iterable
 
@@ -8,6 +9,7 @@ from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,
     DisciplineNameFactory,
+    DocumentFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
     TeamFactory,
@@ -15,35 +17,207 @@ from main.data_factories.factories import (
 from main.models import (
     Diagnosis,
     DisciplineName,
+    Document,
     Player,
     StaffTeamMember,
     Team,
 )
+from tests.url_test import TEST_GROUP_NAME
 from users.factories import UserFactory
-from users.models import User
+from users.models import ProxyGroup, User
 
 URL_MSG = (
-    "{method} запрос по адресу: {url} должен вернуть ответ со статусом "
-    "{status_code}."
+    "{method} запрос по адресу: {msg_url} должен вернуть ответ со статусом "
+    "{status_code}. Тестировался запрос по адресу: {url}"
+)
+
+ADMIN_MAIN_URL = "/admin/"
+ADMIN_APP_LABELS_URLS = (
+    "/admin/competitions/",
+    "/admin/main/",
+    "/admin/users/",
+)
+# "/admin/<url>", не очень понятно, куда это должно вести
+
+ADMIN_AUTH_GROUP_302 = "/admin/auth/group/<path:object_id>/"
+ADMIN_AUTH_URLS = (
+    "/admin/auth/group/",
+    "/admin/auth/group/<path:object_id>/change/",
+    "/admin/auth/group/<path:object_id>/delete/",
+    "/admin/auth/group/<path:object_id>/history/",
+    "/admin/auth/group/add/",
+)
+# "/admin/autocomplete/", 403 даже на суперюзера.
+
+ADMIN_COMPETITIONS_URLS_302 = (
+    "/admin/competitions/competition/<path:object_id>/",
+)
+ADMIN_COMPETITIONS_URLS = (
+    "/admin/competitions/competition/",
+    "/admin/competitions/competition/<path:object_id>/change/",
+    "/admin/competitions/competition/<path:object_id>/delete/",
+    "/admin/competitions/competition/<path:object_id>/history/",
+    "/admin/competitions/competition/add/",
+)
+ADMIN_SERVICE_PAGES = ("/admin/jsi18n/",)
+
+ADMIN_LOGIN = ("/admin/login/",)
+
+ADMIN_LOGUOT = ("/admin/logout/",)
+
+ADMIN_CITY_URL_302 = ("/admin/main/city/<path:object_id>/",)
+
+ADMIN_CITY_URLS = (
+    "/admin/main/city/",
+    "/admin/main/city/<path:object_id>/change/",
+    "/admin/main/city/<path:object_id>/delete/",
+    "/admin/main/city/<path:object_id>/history/",
+    "/admin/main/city/add/",
+)
+
+ADMIN__URL_302 = ()
+ADMIN__URLS = ()
+ADMIN_DIAGNOSIS_URL_302 = ("/admin/main/diagnosis/<path:object_id>/",)
+ADMIN_DIAGNOSIS_URLS = (
+    "/admin/main/diagnosis/",
+    "/admin/main/diagnosis/<path:object_id>/change/",
+    "/admin/main/diagnosis/<path:object_id>/delete/",
+    "/admin/main/diagnosis/<path:object_id>/history/",
+    "/admin/main/diagnosis/add/",
+)
+ADMIN_DISCIPLINE_URL_302 = ("/admin/main/discipline/<path:object_id>/",)
+ADMIN_DISCIPLINE_URLS = (
+    "/admin/main/discipline/",
+    "/admin/main/discipline/<path:object_id>/change/",
+    "/admin/main/discipline/<path:object_id>/delete/",
+    "/admin/main/discipline/<path:object_id>/history/",
+    "/admin/main/discipline/add/",
+)
+ADMIN_DISCIPLINE_LEVEL_URL_302 = (
+    "/admin/main/disciplinelevel/<path:object_id>/",
+)
+ADMIN_DISCIPLINE_LEVEL_URLS = (
+    "/admin/main/disciplinelevel/",
+    "/admin/main/disciplinelevel/<path:object_id>/change/",
+    "/admin/main/disciplinelevel/<path:object_id>/delete/",
+    "/admin/main/disciplinelevel/<path:object_id>/history/",
+    "/admin/main/disciplinelevel/add/",
+)
+ADMIN_DISCIPLINE_NAME_URL_302 = (
+    "/admin/main/disciplinename/<path:object_id>/",
+)
+ADMIN_DISCIPLINE_NAME_URLS = (
+    "/admin/main/disciplinename/",
+    "/admin/main/disciplinename/<path:object_id>/change/",
+    "/admin/main/disciplinename/<path:object_id>/delete/",
+    "/admin/main/disciplinename/<path:object_id>/history/",
+    "/admin/main/disciplinename/add/",
+)
+ADMIN_DOCUMENT_URL_302 = ("/admin/main/document/<path:object_id>/",)
+ADMIN_DOCUMENT_URLS = (
+    "/admin/main/document/",
+    "/admin/main/document/<path:object_id>/change/",
+    "/admin/main/document/<path:object_id>/delete/",
+    "/admin/main/document/<path:object_id>/history/",
+    "/admin/main/document/add/",
+)
+
+ADMIN_NOSOLOGY_URL_302 = ("/admin/main/nosology/<path:object_id>/",)
+ADMIN_NOSOLOGY_URLS = (
+    "/admin/main/nosology/",
+    "/admin/main/nosology/<path:object_id>/change/",
+    "/admin/main/nosology/<path:object_id>/delete/",
+    "/admin/main/nosology/<path:object_id>/history/",
+    "/admin/main/nosology/add/",
+)
+ADMIN_PLAYER_URL_302 = ("/admin/main/player/<path:object_id>/",)
+ADMIN_PLAYER_URLS = (
+    "/admin/main/player/",
+    "/admin/main/player/<path:object_id>/change/",
+    "/admin/main/player/<path:object_id>/delete/",
+    "/admin/main/player/<path:object_id>/history/",
+    "/admin/main/player/add/",
+)
+ADMIN_STAFF_MEMBER_URL_302 = ("/admin/main/staffmember/<path:object_id>/",)
+ADMIN_STAFF_MEMBER_URLS = (
+    "/admin/main/staffmember/",
+    "/admin/main/staffmember/<path:object_id>/change/",
+    "/admin/main/staffmember/<path:object_id>/delete/",
+    "/admin/main/staffmember/<path:object_id>/history/",
+    "/admin/main/staffmember/add/",
+)
+ADMIN_STAFF_TEAM_MEMBER_URL_302 = (
+    "/admin/main/staffteammember/<path:object_id>/",
+)
+ADMIN_STAFF_TEAM_MEMBER_URLS = (
+    "/admin/main/staffteammember/",
+    "/admin/main/staffteammember/<path:object_id>/change/",
+    "/admin/main/staffteammember/<path:object_id>/delete/",
+    "/admin/main/staffteammember/<path:object_id>/history/",
+    "/admin/main/staffteammember/add/",
+)
+ADMIN_TEAM_URL_302 = ("/admin/main/team/<path:object_id>/",)
+ADMIN_TEAM_URLS = (
+    "/admin/main/team/",
+    "/admin/main/team/<path:object_id>/change/",
+    "/admin/main/team/<path:object_id>/delete/",
+    "/admin/main/team/<path:object_id>/history/",
+    "/admin/main/team/add/",
+)
+ADMIN_PASSWORD_URLS = (
+    "/admin/password_change/",
+    "/admin/password_change/done/",
+)
+# "/admin/r/<int:content_type_id>/<path:object_id>/",
+
+ADMIN_PROXY_GROUP_URL_302 = ("/admin/users/proxygroup/<path:object_id>/",)
+ADMIN_PROXY_GROUP_URLS = (
+    "/admin/users/proxygroup/",
+    "/admin/users/proxygroup/<path:object_id>/change/",
+    "/admin/users/proxygroup/<path:object_id>/delete/",
+    "/admin/users/proxygroup/<path:object_id>/history/",
+    "/admin/users/proxygroup/add/",
+)
+ADMIN_USER_URL_302 = ("/admin/users/user/<path:object_id>/",)
+ADMIN_USER_URLS = (
+    "/admin/users/user/",
+    "/admin/users/user/<path:object_id>/change/",
+    "/admin/users/user/<path:object_id>/delete/",
+    "/admin/users/user/<path:object_id>/history/",
+    "/admin/users/user/add/",
+)
+ANALYTICS_URL = "/analytics/"
+LOG_IN_URL = "/auth/login/"
+LOG_OUT_URL = "/auth/logout/"
+
+PASSWORD_URLS = (
+    "/auth/password_change/",
+    "/auth/password_change/done/",
+    "/auth/password_reset/",
+    "/auth/password_reset/done/",
+)
+AUTH_RESET_URLS = (
+    "/auth/reset/<uidb64>/<token>/",
+    "/auth/reset/done/",
 )
 
 COMPETITION_GET_URLS = (
     "/competitions/",
     "/competitions/create/",
-    "/competitions/1/",
-    "/competitions/1/edit/",
+    "/competitions/<int:pk>/",
+    "/competitions/<int:pk>/edit/",
 )
 
 COMPETITION_POST_URLS = (
-    "/competitions/1/teams/1/add/",
-    "/competitions/1/teams/1/delete/",
-    "/competitions/1/delete/",
+    "/competitions/<int:competition_id>/teams/<int:pk>/add/",
+    "/competitions/<int:competition_id>/teams/<int:pk>/delete/",
+    "/competitions/<int:pk>/delete/",
 )
 
 PLAYER_GET_URLS = (
     "/players/",
-    "/players/1/",
-    "/players/1/edit/",
+    "/players/<int:pk>/",
+    "/players/<int:pk>/edit/",
     "/players/create/",
 )
 
@@ -57,30 +231,30 @@ PLAYER_POST_URLS = (
 
 STAFF_GET_URLS = (
     "/staffs/",
-    "/staffs/1/",
-    "/staffs/1/edit/",
+    "/staffs/<int:pk>/",
+    "/staffs/<int:pk>/edit/",
     "/staffs/create/",
 )
 
-STAFF_POST_URL = ("/staffs/1/delete/",)
+STAFF_POST_URL = ("/staffs/<int:pk>/delete/",)
 
 TEAM_GET_URLS = (
     "/teams/",
-    "/teams/1/",
-    "/teams/1/edit/",
+    "/teams/<int:team_id>/",
+    "/teams/<int:team_id>/edit/",
     "/teams/create/",
 )
 
-TEAM_POST_URL = "/teams/1/delete/"
+TEAM_POST_URL = "/teams/<int:team_id>/delete/"
 
 USER_GET_URLS = (
     "/users/",
-    "/users/1/edit/",
+    "/users/<int:pk>/edit/",
     "/users/create/",
-    "/users/set_password/1/fake_token/",
+    "/users/set_password/<uidb64>/<token>/",
 )
 
-USER_POST_URL = "/users/2/delete/"
+USER_POST_URL = "/users/<int:pk>/delete/"
 
 UNLOAD_URLS = ("/unloads/",)
 
@@ -95,6 +269,7 @@ class TestUrlsSmoke(TestCase):
     player: Player
     staff: StaffTeamMember
     competition: Competition
+    document: Document
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -115,27 +290,56 @@ class TestUrlsSmoke(TestCase):
         cls.diagnosis = DiagnosisFactory.create()
         cls.player = PlayerFactory.create()
         cls.staff = StaffTeamMemberFactory.create()
+        ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
+        cls.document = DocumentFactory.create(player=cls.player)
 
     def setUp(self) -> None:
         self.client = Client()
         self.super_client = Client()
         self.super_client.force_login(self.superuser)
 
+    @staticmethod
+    def _render_url(url: str, subs: tuple | str):
+        pattern = re.compile(r"<[^/]+>")
+        if not re.search(pattern, url):
+            return url
+        if isinstance(subs, str):
+            subs = (subs,)
+        for sub in subs:
+            url = re.sub(pattern, sub, url, 1)
+        if re.search(pattern, url):
+            url = re.sub(pattern, subs[-1], url)
+        return url
+
     def url_get_test(
         self,
         urls: Iterable | str,
         method: str = "get",
         status_code: int = HTTPStatus.OK,
+        subs: tuple[str, ...] | str = "1",
     ):
         """Унифицированный метод для урл-тестов.
         - urls: урл-адрес либо список или кортеж урл-адресов, подлежащих
           тестированию;
         - method: метод запроса (обычно "get" или "post", по умолчанию -
           "get");
-        - status_code: ожидаемый ответ, по умолчанию - 200."""
+        - status_code: ожидаемый ответ, по умолчанию - 200.
+        - subs: строка или кортеж строк подстановки для идентификаторов
+          объектов типа <int:pk> в урл-путях.
+          Например, для обработки пути:
+          "/competitions/<int:competition_id>/teams/<int:pk>/add/"
+          если передать кортеж ("1", "2"), то он преобразует путь в
+          "/competitions/1/teams/2/add/").
+          Если подстановок больше, чем элементов в кортеже "subs", то для
+          оставшихся подстановок возьмется последний элемент. Если в примере
+          выше передать строку "1" или кортеж "1", то урл преобразуется в
+          "/competitions/1/teams/1/add/".
+        """
         if isinstance(urls, str):
             urls = (urls,)
         for url in urls:
+            url_for_message = url
+            url = self._render_url(url, subs)
             with self.subTest(url=url):
                 response = self.super_client.__getattribute__(method.lower())(
                     url
@@ -144,7 +348,10 @@ class TestUrlsSmoke(TestCase):
                     response.status_code,
                     status_code,
                     msg=URL_MSG.format(
-                        method=method.upper(), url=url, status_code=status_code
+                        method=method.upper(),
+                        msg_url=url_for_message,
+                        status_code=status_code,
+                        url=url,
                     ),
                 )
 
@@ -176,3 +383,105 @@ class TestUrlsSmoke(TestCase):
     def test_unload_simple_access(self):
         """Тест доступности страниц с выгрузками."""
         self.url_get_test(UNLOAD_URLS)
+
+    def test_admin_base(self):
+        """Тест главной страницы админки."""
+        self.url_get_test(ADMIN_MAIN_URL)
+
+    def test_admin_app_labels(self):
+        """Тесты страниц с приложениями в админке."""
+        self.url_get_test(ADMIN_APP_LABELS_URLS)
+
+    def test_admin_auth_group(self):
+        self.url_get_test(ADMIN_AUTH_GROUP_302, status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_AUTH_URLS)
+
+    def test_admin_log_in_out(self):
+        self.url_get_test(ADMIN_LOGUOT, "post", status_code=HTTPStatus.FOUND)
+        self.client.logout()
+        self.url_get_test(ADMIN_LOGIN)
+
+    def test_admin_city(self):
+        self.url_get_test(ADMIN_CITY_URL_302, status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_CITY_URLS)
+
+    def test_admin_competitions(self):
+        self.url_get_test(
+            ADMIN_COMPETITIONS_URLS_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_COMPETITIONS_URLS)
+
+    def test_admin_diagnosis(self):
+        self.url_get_test(
+            ADMIN_DIAGNOSIS_URL_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_DIAGNOSIS_URLS)
+
+    def test_admin_discipline(self):
+        self.url_get_test(
+            ADMIN_DISCIPLINE_URL_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_DISCIPLINE_URLS)
+
+    def test_admin_discipline_level(self):
+        self.url_get_test(
+            ADMIN_DISCIPLINE_LEVEL_URL_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_DISCIPLINE_LEVEL_URLS)
+
+    def test_admin_discipline_name(self):
+        self.url_get_test(
+            ADMIN_DISCIPLINE_NAME_URL_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_DISCIPLINE_NAME_URLS)
+
+    def test_admin_document(self):
+        self.url_get_test(ADMIN_DOCUMENT_URL_302, status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_DOCUMENT_URLS)
+
+    def test_admin_nosology(self):
+        self.url_get_test(ADMIN_NOSOLOGY_URL_302, status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_NOSOLOGY_URLS)
+
+    def test_admin_player(self):
+        self.url_get_test(ADMIN_PLAYER_URL_302, status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_PLAYER_URLS)
+
+    def test_admin_staff_member(self):
+        self.url_get_test(
+            ADMIN_STAFF_MEMBER_URL_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_STAFF_MEMBER_URLS)
+
+    def test_admin_staff_team_member(self):
+        self.url_get_test(
+            ADMIN_STAFF_TEAM_MEMBER_URL_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_STAFF_TEAM_MEMBER_URLS)
+
+    def test_admin_team(self):
+        self.url_get_test(ADMIN_TEAM_URL_302, status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_TEAM_URLS)
+
+    def test_admin_password(self):
+        self.url_get_test(ADMIN_PASSWORD_URLS)
+
+    def test_admin_proxy_group(self):
+        self.url_get_test(
+            ADMIN_PROXY_GROUP_URL_302, status_code=HTTPStatus.FOUND
+        )
+        self.url_get_test(ADMIN_PROXY_GROUP_URLS)
+
+    def test_admin_user(self):
+        self.url_get_test(ADMIN_USER_URL_302, status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_USER_URLS)
+
+    def test_log_in_out_access(self):
+        self.url_get_test(LOG_OUT_URL, "post", HTTPStatus.FOUND)
+        self.url_get_test(LOG_IN_URL)
+
+    def test_password_simple_access(self):
+        self.url_get_test(PASSWORD_URLS)
+
+    def test_auth_reset_urls(self):
+        self.url_get_test(AUTH_RESET_URLS)
