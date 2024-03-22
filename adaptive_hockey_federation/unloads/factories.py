@@ -17,10 +17,10 @@ class UnloadFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Unload
 
-    name = factory.Sequence(lambda n: f"Выгрузка{n}")
+    unload_name = factory.Sequence(lambda n: f"Выгрузка{n}")
     date = factory.Faker("date_object")
     user = factory.SubFactory(UserFactory)
-    file_slug = factory.LazyAttribute(lambda o: "")
+    unload_file_slug = factory.LazyAttribute(lambda o: "")
 
     @factory.post_generation
     def create_excel_file(obj, create, extracted, **kwargs):
@@ -32,10 +32,10 @@ class UnloadFactory(factory.django.DjangoModelFactory):
         if queryset_with_titles:
             title = queryset_with_titles[1]
             queryset = queryset_with_titles[0]
-            filename = f"{title}_{obj.name}.xlsx"
+            filename = f"{title}_{obj.unload_name}.xlsx"
             export_excel(queryset, filename, title)
             file_path = os.path.join("data", filename)
-            obj.file_slug = file_path
+            obj.unload_file_slug = file_path
             obj.save()
 
 

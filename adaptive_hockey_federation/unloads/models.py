@@ -7,10 +7,10 @@ from users.models import User
 class Unload(models.Model):
     """Выгрузка."""
 
-    name = models.CharField(
+    unload_name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
         verbose_name=_("Имя выгрузки"),
-        help_text=_("Напишите имя файла"),
+        default="Выгрузка",
     )
     date = models.DateField(
         auto_now_add=True,
@@ -21,7 +21,7 @@ class Unload(models.Model):
         verbose_name="Пользователь",
         on_delete=models.CASCADE,
     )
-    file_slug = models.FileField(
+    unload_file_slug = models.FileField(
         verbose_name=_("Ссылка на файл"), upload_to="data/"
     )
 
@@ -31,4 +31,4 @@ class Unload(models.Model):
         ordering = ("date",)
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return f"{self.unload_name}"

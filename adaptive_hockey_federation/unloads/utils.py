@@ -30,4 +30,5 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
     media_data_path = os.path.join(settings.MEDIA_ROOT, "data")
     os.makedirs(media_data_path, exist_ok=True)
     file_path = os.path.join(media_data_path, filename)
-    wb.save(file_path)
+    with open(file_path, "wb") as file:
+        wb.save(file)

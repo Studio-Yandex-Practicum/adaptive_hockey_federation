@@ -5,7 +5,7 @@ from unloads.models import Unload
 class UnloadAdmin(admin.ModelAdmin):
     """Админка для модели Выгрузки."""
 
-    list_display = ("name", "date", "user", "file_slug")
+    list_display = ("unload_name", "date", "user", "unload_file_slug")
     search_fields = ("name",)
     ordering = ["date"]
 
