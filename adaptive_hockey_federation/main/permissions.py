@@ -1,19 +1,9 @@
 from django.contrib.auth.mixins import (
-    AccessMixin,
     PermissionRequiredMixin,
     UserPassesTestMixin,
 )
 from django.shortcuts import get_object_or_404
 from main.models import Team
-
-
-class AdminRequiredMixin(AccessMixin):
-    """Миксин наделяющий правом доступа только администратора."""
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.is_moderator or request.user.is_agent:
-                return self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)
 
 
 class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):

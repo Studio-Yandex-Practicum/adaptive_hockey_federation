@@ -1,3 +1,4 @@
+from core.permissions import AdminRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db import transaction
 from django.db.models import Q
@@ -8,7 +9,6 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import StaffMemberForm, StaffTeamMemberForm
 from main.models import StaffMember, StaffTeamMember
-from main.permissions import AdminRequiredMixin
 
 
 class StaffMemberListView(AdminRequiredMixin, ListView):
