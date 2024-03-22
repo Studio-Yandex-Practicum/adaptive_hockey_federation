@@ -5,7 +5,8 @@ def set_team_curator(user, choice_team):
     from main.models import Team
 
     Team.objects.filter(curator=user).update(curator=None)
-    if choice_team is not None:
-        team = Team.objects.get(id=choice_team.id)
-        team.curator = user
-        team.save()
+    if choice_team:
+        team_objects = list(choice_team)
+        for team in team_objects:
+            team.curator = user
+        Team.objects.bulk_update(team_objects, ["curator"])

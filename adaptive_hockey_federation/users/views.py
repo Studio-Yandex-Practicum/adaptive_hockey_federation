@@ -89,11 +89,7 @@ class UsersListView(
         return context
 
 
-class UpdateUserView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    UpdateView
-):
+class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
     Вьюха редактирования пользователя
     """
@@ -108,17 +104,15 @@ class UpdateUserView(
     success_url = "/users"
 
     def get_initial(self):
-        team = None
-        if queryset := self.object.team.all():
-            team = queryset[0]
+        team = self.object.team.all()
         initial = {
-            'first_name': self.object.first_name,
-            'last_name': self.object.last_name,
-            'patronymic': self.object.patronymic,
-            'email': self.object.email,
-            'phone': self.object.phone,
-            'role': self.object.role,
-            'team': team
+            "first_name": self.object.first_name,
+            "last_name": self.object.last_name,
+            "patronymic": self.object.patronymic,
+            "email": self.object.email,
+            "phone": self.object.phone,
+            "role": self.object.role,
+            "team": team,
         }
         return initial
 
