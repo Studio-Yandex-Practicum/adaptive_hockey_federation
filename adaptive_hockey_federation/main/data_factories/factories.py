@@ -260,6 +260,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
 class DocumentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Document
+        skip_postgeneration_save = True
 
     name = factory.LazyAttribute(
         lambda obj: f"{obj.player.surname}-{random.randint(1000, 9999)}"

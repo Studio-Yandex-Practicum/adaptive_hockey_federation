@@ -31,6 +31,7 @@ URL_MSG = (
     "{status_code}. Тестировался запрос по адресу: {url}"
 )
 
+INDEX_PAGE = "/"
 ADMIN_MAIN_URL = "/admin/"
 ADMIN_APP_LABELS_URLS = (
     "/admin/competitions/",
@@ -334,7 +335,7 @@ class TestUrlsSmoke(TestCase):
           "/competitions/1/teams/2/add/").
           Если подстановок больше, чем элементов в кортеже "subs", то для
           оставшихся подстановок возьмется последний элемент. Если в примере
-          выше передать строку "1" или кортеж "1", то урл преобразуется в
+          выше передать строку "1" или кортеж ("1",), то урл преобразуется в
           "/competitions/1/teams/1/add/".
         """
         if isinstance(urls, str):
@@ -356,6 +357,9 @@ class TestUrlsSmoke(TestCase):
                         url=url,
                     ),
                 )
+
+    def test_main_page(self):
+        self.url_get_test(INDEX_PAGE)
 
     def test_competitions_simple_access(self):
         """Тест доступности страниц с соревнованиями."""
