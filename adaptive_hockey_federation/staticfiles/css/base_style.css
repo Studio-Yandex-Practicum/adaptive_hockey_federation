@@ -1101,7 +1101,7 @@ td {
   flex-direction: column;
 }
 
-.selectors-teams .help-icon {
+.full-container .help-icon {
   background: url(../img/icon-unknown.svg) 0 0 no-repeat;
   display: inline-block;
   vertical-align: middle;

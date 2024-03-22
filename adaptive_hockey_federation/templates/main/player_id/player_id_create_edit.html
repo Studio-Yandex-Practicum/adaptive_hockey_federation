@@ -17,7 +17,11 @@
                   {% for field in form.visible_fields %}
                     {% if field.name in 'surname name patronymic birthday identity_document'%}
                       <tr>
-                        <th>{{ field.label_tag }}</th>
+                        <th>{{ field.label_tag }}
+                          {% if field.name in 'birthday identity_document' %}
+                            <span class="help-icon" title="{{ field.help_text }}"></span>
+                          {% endif %}
+                        </th>
                           <td>
                             {% if field.errors %}
                               {{ field |addclass:'base-input-errors'}}
@@ -71,7 +75,7 @@
                             <div class="selectors-teams">
                               <div class="selector-left">
                                 <h2> Доступные команды 
-                                  <span class="help-icon" title="Список доступных команд, действующие команды обозначены серым цветом, чтобы выбрать\удалить зажмите ctrl"></span>
+                                  <span class="help-icon" title="{{ field.help_text }}"></span>
                                 </h2>
                                 {{ field |addclass:"base-select-teams"}}
                               </div>

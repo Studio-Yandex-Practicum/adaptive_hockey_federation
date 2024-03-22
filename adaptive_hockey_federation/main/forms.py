@@ -2,7 +2,12 @@ import re
 from datetime import datetime
 from typing import Any
 
-from core.constants import ROLE_AGENT, MAX_AGE_PlAYER, MIN_AGE_PlAYER
+from core.constants import (
+    ROLE_AGENT,
+    MAX_AGE_PlAYER,
+    MIN_AGE_PlAYER,
+    help_texts,
+)
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
@@ -23,18 +28,6 @@ class PlayerForm(forms.ModelForm):
     month_day = format(now.strftime("%m-%d"))
     min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
     max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
-
-    identity_document = forms.CharField(
-        widget=forms.TextInput,
-        label="Удостоверение личности",
-        help_text="Удостоверение личности",
-    )
-
-    level_revision = forms.CharField(
-        widget=forms.TextInput,
-        label="Уровень ревизии",
-        help_text="Уровень ревизии",
-    )
 
     def __init__(self, *args, **kwargs):
         super(PlayerForm, self).__init__(*args, **kwargs)
@@ -79,11 +72,20 @@ class PlayerForm(forms.ModelForm):
                 attrs={
                     'placeholder': 'Введите номер игрока'}
             ),
+            "level_revision": forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите уровень ревизии'}
+            ),
             "birthday": forms.TextInput(
                 attrs={
                     'placeholder': 'Введите дату рождения',
                     "type": "date"}
             ),
+        }
+        help_texts = {
+            "identity_document": help_texts["identity_document"],
+            "birthday": help_texts["birthday"],
+            "team": help_texts["team"]
         }
 
     def save_m2m(self):
