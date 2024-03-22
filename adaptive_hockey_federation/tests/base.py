@@ -72,6 +72,8 @@ class BaseTestClass(TestCase):
 
 
 class UrlTestMixin:
+    """Миксин предоставляет унифицированный метод для тестирования
+    урл-адресов, с генерацией информативного сообщения."""
 
     @staticmethod
     def _render_url(url: str, subs: tuple | str):
@@ -87,14 +89,9 @@ class UrlTestMixin:
         return url
 
     def get_default_client(self) -> Client:
-        if hasattr(self, "client"):
-            return getattr(self, "client")
-        raise Exception(
-            f"Не предоставлена клиентская сессия для тестирования. "
-            f"Переопределите метод {__name__} либо определите поле "
-            f"client в классе {self.__class__.__name__}, либо укажите "
-            f"клиента явно при вызове соответствующего метода."
-        )
+        """Переопределите этот метод для тестирования по умолчанию клиентом,
+        отличным от простого неавторизованного."""
+        return getattr(self, "client")
 
     def url_get_test(
         self,
@@ -103,6 +100,7 @@ class UrlTestMixin:
         status_code: int = HTTPStatus.OK,
         subs: tuple[str, ...] | str = "1",
         client: Client | None = None,
+        message: str | None = None,
     ):
         """Унифицированный метод для урл-тестов.
         - urls: урл-адрес либо список или кортеж урл-адресов, подлежащих
@@ -110,8 +108,8 @@ class UrlTestMixin:
         - method: метод запроса (обычно "get" или "post", по умолчанию -
           "get");
         - status_code: ожидаемый ответ, по умолчанию - 200.
-        - subs: строка или кортеж строк подстановки для идентификаторов
-          объектов типа <int:pk> в урл-путях.
+        - subs: строка или кортеж строк подстановки вместо
+          динамических идентификаторов объектов типа <int:pk> в урл-путях.
           Например, для обработки пути:
           "/competitions/<int:competition_id>/teams/<int:pk>/add/"
           если передать кортеж ("1", "2"), то он преобразует путь в
@@ -119,7 +117,16 @@ class UrlTestMixin:
           Если подстановок больше, чем элементов в кортеже "subs", то для
           оставшихся подстановок возьмется последний элемент. Если в примере
           выше передать строку "1" или кортеж ("1",), то урл преобразуется в
-          "/competitions/1/teams/1/add/".
+          "/competitions/1/teams/1/add/". Если в урл нет динамических
+          идентификаторов, данный параметр не имеет значения.
+        - client: клиент для тестирования.
+          Если не определить этот параметр, то клиент будет получен из
+          метода get_default_client(). Если метод get_default_client() не
+          переопределен в классе, то тестирование будет проводиться с
+          простым неавторизованным клиентом.
+        - message: кастомное сообщение в случае непрохождения теста,
+          если генерируемое методом сообщение по каким-то причинам не
+          устраивает.
         """
         client = client or self.get_default_client()
         if isinstance(urls, str):
@@ -127,15 +134,16 @@ class UrlTestMixin:
         for url in urls:
             url_for_message = url
             url = self._render_url(url, subs)
+            msg = message or URL_MSG.format(
+                method=method.upper(),
+                msg_url=url_for_message,
+                status_code=status_code,
+                url=url,
+            )
             with self.__getattribute__("subTest")(url=url):
                 response = client.__getattribute__(method.lower())(url)
                 self.__getattribute__("assertEqual")(
                     response.status_code,
                     status_code,
-                    msg=URL_MSG.format(
-                        method=method.upper(),
-                        msg_url=url_for_message,
-                        status_code=status_code,
-                        url=url,
-                    ),
+                    msg=msg,
                 )

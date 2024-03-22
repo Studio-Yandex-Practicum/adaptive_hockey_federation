@@ -3,11 +3,6 @@ from http import HTTPStatus
 from django.test import Client
 from tests.base import BaseTestClass, UrlTestMixin
 
-URL_MSG = (
-    "{method} запрос по адресу: {msg_url} должен вернуть ответ со статусом "
-    "{status_code}. Тестировался запрос по адресу: {url}"
-)
-
 INDEX_PAGE = "/"
 ADMIN_MAIN_URL = "/admin/"
 ADMIN_APP_LABELS_URLS = (
@@ -231,10 +226,10 @@ USER_POST_URL = "/users/<int:pk>/delete/"
 UNLOAD_URLS = ("/unloads/",)
 
 
-class TestUrlsSmoke(BaseTestClass, UrlTestMixin):
+class TestSiteUrlsSmoke(BaseTestClass, UrlTestMixin):
+    """Тесты урл-путей клиентской части сайта."""
 
     def setUp(self) -> None:
-        self.client = Client()
         self.super_client = Client()
         self.super_client.force_login(self.superuser)
 
@@ -272,6 +267,30 @@ class TestUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_unload_simple_access(self):
         """Тест доступности страниц с выгрузками."""
         self.url_get_test(UNLOAD_URLS)
+
+    def test_log_in_out_access(self):
+        """Тест доступности страниц входа-выхода на/с сайта."""
+        self.url_get_test(LOG_OUT_URL, "post", HTTPStatus.FOUND)
+        self.url_get_test(LOG_IN_URL)
+
+    def test_password_simple_access(self):
+        """Тест доступности страниц с манипуляциями с паролем."""
+        self.url_get_test(PASSWORD_URLS)
+
+    def test_auth_reset_urls(self):
+        """Тест доступности страниц со сбросом пароля."""
+        self.url_get_test(AUTH_RESET_URLS)
+
+
+class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
+    """Тесты урл-путей административной части сайта."""
+
+    def setUp(self) -> None:
+        self.super_client = Client()
+        self.super_client.force_login(self.superuser)
+
+    def get_default_client(self):
+        return self.super_client
 
     def test_admin_base(self):
         """Тест главной страницы админки."""
@@ -381,16 +400,3 @@ class TestUrlsSmoke(BaseTestClass, UrlTestMixin):
         """Тесты страниц с пользователями в админке."""
         self.url_get_test(ADMIN_USER_URL_302, status_code=HTTPStatus.FOUND)
         self.url_get_test(ADMIN_USER_URLS)
-
-    def test_log_in_out_access(self):
-        """Тест доступности страниц входа-выхода на/с сайта."""
-        self.url_get_test(LOG_OUT_URL, "post", HTTPStatus.FOUND)
-        self.url_get_test(LOG_IN_URL)
-
-    def test_password_simple_access(self):
-        """Тест доступности страниц с манипуляциями с паролем."""
-        self.url_get_test(PASSWORD_URLS)
-
-    def test_auth_reset_urls(self):
-        """Тест доступности страниц со сбросом пароля."""
-        self.url_get_test(AUTH_RESET_URLS)
