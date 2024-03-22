@@ -1103,6 +1103,16 @@ td {
   justify-content: center;
 }
 
+.table-table a {
+  text-decoration: none;
+  color: #269FBD;
+}
+
+.table-table a:hover {
+  text-decoration: none;
+  color: #340061;
+}
+
 .selector-left {
   min-width: 95%;
   text-align: center;
