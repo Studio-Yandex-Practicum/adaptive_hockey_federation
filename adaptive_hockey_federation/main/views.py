@@ -1,6 +1,7 @@
 import os
 
 from competitions.models import Competition
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
 from django.shortcuts import render
@@ -24,7 +25,7 @@ def unloads(request):
     filename = "data.xlsx"
     title = "Данные соревнований"
     export_excel(queryset, filename, title)
-    file_path = os.path.join("data", filename)
+    file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
     file = open(file_path, "rb")
     response = FileResponse(file)
     response["Content-Disposition"] = 'attachment; filename="{}"'.format(
