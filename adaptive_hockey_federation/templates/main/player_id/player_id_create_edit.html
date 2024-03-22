@@ -63,12 +63,11 @@
                   {% elif  field.name in "team" %}
                   <tr>
                     <th>{{ field.label_tag }}</th>
-                        <td>
+                        <td class="team-container">
                           {% if field.errors %}
                             {{ field |addclass:"base-select-errors"}}
                             {{ field.errors|striptags}}
                           {% else %}
-                          <div class="container">
                             <div class="selectors-teams">
                               <div class="selector-left">
                                 <h2> Доступные команды 
@@ -77,7 +76,6 @@
                                 {{ field |addclass:"base-select-teams"}}
                               </div>
                             </div>
-                          </div>
                           {% endif %}
                         </td>
                   </tr>
