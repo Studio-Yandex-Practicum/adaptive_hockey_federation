@@ -142,6 +142,7 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки сотрудника команды."
     )
+    team_id = None
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -156,10 +157,26 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            context["staff_form"] = StaffTeamMemberForm(self.request.POST)
+            form = StaffTeamMemberForm(self.request.POST)
         else:
-            context["staff_form"] = StaffTeamMemberForm()
+            form = StaffTeamMemberForm(initial={'team': self.team_id})
+        context['staff_form'] = form
+        context["team_id"] = self.team_id
         return context
+
+    def get(self, request, *args, **kwargs):
+        self.team_id = request.GET.get("team", None)
+        return super().get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        if self.team_id is None:
+            return reverse("main:staffs")
+        else:
+            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
+
+    def post(self, request, *args, **kwargs):
+        self.team_id = request.POST.get("team_id", None)
+        return super().post(request, *args, **kwargs)
 
 
 class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):

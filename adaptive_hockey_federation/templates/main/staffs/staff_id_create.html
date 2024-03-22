@@ -31,17 +31,20 @@
           <table class="table-table">
             <tbody>
               {% for field in staff_form.visible_fields %}
-                  <tr>
-                      <th>{{ field.label_tag }}</th>
-                      <td>{{ field }}</td>
-                      <td>{{ field.errors }}</td>
-                  </tr>
+                <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
+                  <th>{{ field.label_tag }}</th>
+                  <td>{{ field }}</td>
+                  <td>{{ field.errors }}</td>
+                </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
 
-    <!-- Save Button -->
+      {% if team_id %}
+        <input type="hidden" value="{{ team_id }}" name="team_id" >
+      {% endif %}
+      <!-- Save Button -->
     <div class="container">
       <div class="row">
         <div class="col text-center text-white flex justify-start">
