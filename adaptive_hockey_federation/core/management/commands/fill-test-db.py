@@ -18,14 +18,12 @@ from main.data_factories.factories import (
 )
 from main.data_factories.utils import updates_for_players
 from main.models import Player
-from unloads.factories import UnloadFactory
 from users.factories import UserFactory
 
 AMOUNT_ADMIN = 3
 AMOUNT_MODERATOR = 2
 AMOUNT_AGENT = 15
 AMOUNT_COACH = 15
-AMOUNT_UNLOADS = 4
 AMOUNT_OTHERS = 10
 USERS = {
     ROLE_ADMIN: AMOUNT_ADMIN,
@@ -43,9 +41,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "-u",
-            "--users",
-            action="store_true",
+            "-u", "--users", action="store_true",
             help="Фикстуры для таблицы Users",
         )
         parser.add_argument(
@@ -67,34 +63,20 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы Discipline",
         )
         parser.add_argument(
-            "-t",
-            "--team",
-            action="store_true",
+            "-t", "--team", action="store_true",
             help="Фикстуры для таблицы Team",
         )
         parser.add_argument(
-            "-p",
-            "--player",
-            action="store_true",
+            "-p", "--player", action="store_true",
             help="Фикстуры для таблицы Player",
         )
         parser.add_argument(
-            "-doc",
-            "--document",
-            action="store_true",
+            "-doc", "--document", action="store_true",
             help="Фикстуры для таблицы Document",
         )
         parser.add_argument(
-            "-e",
-            "--competition",
-            action="store_true",
+            "-e", "--competition", action="store_true",
             help="Фикстуры для таблицы Competition",
-        )
-        parser.add_argument(
-            "-un",
-            "--unload",
-            action="store_true",
-            help="Фикстуры для таблицы Unloads",
         )
         parser.add_argument(
             "-a",
@@ -112,8 +94,7 @@ class Command(BaseCommand):
         team = options.get("team", False)
         player = options.get("player", False)
         document = options.get("document", False)
-        competition = options.get("competition", False)
-        unload = options.get("unload", False)
+        competition = options.get('competition', False)
         amount = options.get("amount")
         if test_users:
             users_amount = sum(USERS.values())
@@ -173,19 +154,11 @@ class Command(BaseCommand):
             return self.stdout.write(
                 self.style.SUCCESS(
                     f"{num_docs} фикстур для таблицы Document созданы!"
-                )
-            )
+                ))
         if competition:
             CompetitionFactory.create_batch(amount)
             return self.stdout.write(
                 self.style.SUCCESS(
                     f"{amount} фикстур для таблицы Competition созданы!"
-                )
-            )
-        if unload:
-            UnloadFactory.create_batch(AMOUNT_UNLOADS)
-            return self.stdout.write(
-                self.style.SUCCESS(
-                    f"{AMOUNT_UNLOADS} фикстуры для Unloads созданы."
                 )
             )
