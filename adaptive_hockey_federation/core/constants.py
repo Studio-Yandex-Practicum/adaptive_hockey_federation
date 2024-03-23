@@ -61,12 +61,12 @@ TIME_FORMAT = "%H-%M-%S"
 MIN_AGE_PlAYER: int = 6
 MAX_AGE_PlAYER: int = 18
 
-help_texts = {
-    'identity_document':
-    "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или "
+PLAYER_FORM_HELP_TEXTS = {
+    "identity_document": "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или "
     "'Свидетельство о рождении X-XX XXXXXX'",
-    "birthday":
-    f'Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет',
+    "birthday": (
+        f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет"
+    ),
     "team": "Список доступных команд, действующие команды обозначены голубым "
-    "цветом, чтобы выбрать или удалить зажмите ctrl"
+    "цветом, чтобы выбрать или удалить зажмите ctrl",
 }

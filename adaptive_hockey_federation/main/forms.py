@@ -3,10 +3,10 @@ from datetime import datetime
 from typing import Any
 
 from core.constants import (
+    PLAYER_FORM_HELP_TEXTS,
     ROLE_AGENT,
     MAX_AGE_PlAYER,
     MIN_AGE_PlAYER,
-    help_texts,
 )
 from django import forms
 from django.core.exceptions import ValidationError
@@ -31,7 +31,7 @@ class PlayerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PlayerForm, self).__init__(*args, **kwargs)
-        self.fields['team'].required = False
+        self.fields["team"].required = False
 
     class Meta:
         model = Player
@@ -53,39 +53,29 @@ class PlayerForm(forms.ModelForm):
         ]
         widgets = {
             "surname": forms.TextInput(
-                attrs={
-                    'placeholder': 'Введите фамилию'}
+                attrs={"placeholder": "Введите фамилию"}
             ),
-            "name": forms.TextInput(
-                attrs={
-                    'placeholder': 'Введите Имя'}
-            ),
+            "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
             "patronymic": forms.TextInput(
-                attrs={
-                    'placeholder': 'Введите отчество'}
+                attrs={"placeholder": "Введите отчество"}
             ),
             "identity_document": forms.TextInput(
-                attrs={
-                    'placeholder': 'Введите название документа'}
+                attrs={"placeholder": "Введите название документа"}
             ),
             "number": forms.TextInput(
-                attrs={
-                    'placeholder': 'Введите номер игрока'}
+                attrs={"placeholder": "Введите номер игрока"}
             ),
             "level_revision": forms.TextInput(
-                attrs={
-                    'placeholder': 'Введите уровень ревизии'}
+                attrs={"placeholder": "Введите уровень ревизии"}
             ),
             "birthday": forms.TextInput(
-                attrs={
-                    'placeholder': 'Введите дату рождения',
-                    "type": "date"}
+                attrs={"placeholder": "Введите дату рождения", "type": "date"}
             ),
         }
         help_texts = {
-            "identity_document": help_texts["identity_document"],
-            "birthday": help_texts["birthday"],
-            "team": help_texts["team"]
+            "identity_document": PLAYER_FORM_HELP_TEXTS["identity_document"],
+            "birthday": PLAYER_FORM_HELP_TEXTS["birthday"],
+            "team": PLAYER_FORM_HELP_TEXTS["team"],
         }
 
     def save_m2m(self):
@@ -103,17 +93,13 @@ class PlayerForm(forms.ModelForm):
         name = self.cleaned_data["name"]
         if name.replace(" ", "").isalpha():
             return name
-        raise ValidationError(
-            "Введите корректное имя например: <Иван>"
-        )
+        raise ValidationError("Введите корректное имя например: <Иван>")
 
     def clean_surname(self):
         name = self.cleaned_data["surname"]
         if name.replace(" ", "").isalpha():
             return name
-        raise ValidationError(
-            "Введите корректную фамилию например: <Иванов>"
-        )
+        raise ValidationError("Введите корректную фамилию например: <Иванов>")
 
     def clean_patronymic(self):
         if name := self.cleaned_data["patronymic"]:
@@ -126,11 +112,8 @@ class PlayerForm(forms.ModelForm):
 
     def clean_identity_document(self):
         document = self.cleaned_data["identity_document"]
-        if (re.fullmatch(
-            r'Паспорт \d{4}\s\d{6}', document
-        )
-                or re.fullmatch(
-                    r'Свидетельство о рождении \D{4}\s\d{6}', document)
+        if re.fullmatch(r"Паспорт \d{4}\s\d{6}", document) or re.fullmatch(
+            r"Свидетельство о рождении \D{4}\s\d{6}", document
         ):
             return document
         raise ValidationError(
