@@ -269,7 +269,6 @@ class PlayerIDEditView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         player_documents = self.get_object().player_documemts.all()
-
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
         context["file_resolution"] = ", ".join(
