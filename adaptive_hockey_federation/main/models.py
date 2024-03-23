@@ -12,7 +12,10 @@ from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
+from phonenumber_field.validators import validate_international_phonenumber
 from users.models import User
+from users.validators import zone_code_without_seven_hundred
 
 
 class BaseUniqueName(models.Model):
@@ -192,12 +195,14 @@ class StaffMember(BasePerson):
     Модель сотрудник.
     """
 
-    phone = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+    phone = PhoneNumberField(
         blank=True,
-        default=EMPTY_VALUE_DISPLAY,
-        verbose_name=_("Номер телефона"),
-        help_text=_("Номер телефона"),
+        validators=[
+            validate_international_phonenumber,
+            zone_code_without_seven_hundred
+        ],
+        verbose_name=_("Актуальный номер телефона"),
+        help_text=_("Номер телефона, допустимый формат - +7 ХХХ ХХХ ХХ ХХ"),
     )
 
     class Meta:

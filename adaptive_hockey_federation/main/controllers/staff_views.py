@@ -136,7 +136,7 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
 
     model = StaffMember
     form_class = StaffMemberForm
-    template_name = "main/staffs/staff_id_create.html"
+    template_name = "main/staffs/staff_id_create_edit.html"
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.add_staff"
     permission_denied_message = (
@@ -160,6 +160,7 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
             form = StaffTeamMemberForm(self.request.POST)
         else:
             form = StaffTeamMemberForm(initial={'team': self.team_id})
+        context["page_title"] = "Создание профиля нового сотрудника"
         context['staff_form'] = form
         context["team_id"] = self.team_id
         return context
@@ -184,16 +185,28 @@ class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
 
     model = StaffMember
     form_class = StaffMemberForm
-    template_name = "main/staffs/staff_id_edit.html"
+    template_name = "main/staffs/staff_id_create_edit.html"
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.change_staff"
     permission_denied_message = (
         "У Вас нет разрешения на редактирование карточки сотрудника команды."
     )
 
+    def get_success_url(self):
+        return reverse(
+            "main:staff_id",
+            kwargs={
+                "pk": self.object.pk,
+            },
+        )
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(StaffMember, id=self.kwargs["pk"])
+
     def form_valid(self, form):
         context = self.get_context_data()
         staff_form = context["staff_form"]
+        context["page_title"] = "Редактирование профиля сотрудника"
         with transaction.atomic():
             form.save()
             if staff_form.is_valid():

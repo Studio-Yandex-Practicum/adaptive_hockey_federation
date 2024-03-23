@@ -1,0 +1,16 @@
+{% load user_filters %}
+<tr>
+  <th>{{ field.label_tag }}
+    {% if field.name in 'birthday identity_document phone' %}
+      <span class="help-icon" title="{{ field.help_text }}"></span>
+    {% endif %}
+  </th>
+    <td>
+      {% if field.errors %}
+        {{ field |addclass:'base-input-errors'}}
+        {{ field.errors }}
+      {% else %}
+        {{ field |addclass:'base-input'}}
+      {% endif %}
+    </td>
+<tr>

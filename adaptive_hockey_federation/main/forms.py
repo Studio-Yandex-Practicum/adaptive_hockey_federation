@@ -55,7 +55,9 @@ class PlayerForm(forms.ModelForm):
             "surname": forms.TextInput(
                 attrs={"placeholder": "Введите фамилию"}
             ),
-            "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
+            "name": forms.TextInput(
+                attrs={"placeholder": "Введите Имя"}
+            ),
             "patronymic": forms.TextInput(
                 attrs={"placeholder": "Введите отчество"}
             ),
@@ -88,27 +90,6 @@ class PlayerForm(forms.ModelForm):
         instance = super().save()
         self.save_m2m()
         return instance
-
-    def clean_name(self):
-        name = self.cleaned_data["name"]
-        if name.replace(" ", "").isalpha():
-            return name
-        raise ValidationError("Введите корректное имя например: <Иван>")
-
-    def clean_surname(self):
-        name = self.cleaned_data["surname"]
-        if name.replace(" ", "").isalpha():
-            return name
-        raise ValidationError("Введите корректную фамилию например: <Иванов>")
-
-    def clean_patronymic(self):
-        if name := self.cleaned_data["patronymic"]:
-            if name.replace(" ", "").isalpha():
-                return name
-            raise ValidationError(
-                "Введите корректное отчество например: <Иванович>"
-            )
-        return self.cleaned_data["patronymic"]
 
     def clean_identity_document(self):
         document = self.cleaned_data["identity_document"]
@@ -259,9 +240,22 @@ class StaffMemberForm(forms.ModelForm):
     class Meta:
         model = StaffMember
         fields = (
-            "id",
             "surname",
             "name",
             "patronymic",
             "phone",
         )
+        widgets = {
+            "surname": forms.TextInput(
+                attrs={"placeholder": "Введите фамилию"}
+            ),
+            "name": forms.TextInput(
+                attrs={"placeholder": "Введите Имя"}
+            ),
+            "patronymic": forms.TextInput(
+                attrs={"placeholder": "Введите отчество"}
+            ),
+            "phone": forms.TextInput(
+                attrs={"placeholder": "Введите номер телефон"}
+            ),
+        }

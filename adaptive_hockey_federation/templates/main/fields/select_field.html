@@ -1,0 +1,12 @@
+{% load user_filters %}
+<tr>
+  <th>{{ field.label_tag }}</th>
+    <td class="base-wrapper">
+      {% if field.errors %}
+        {{ field |addclass:'base-select-errors'}}
+        {{ field.errors|striptags}}
+      {% else %}
+        {{ field |addclass:'base-select'}}
+      {% endif %}
+    </td>
+</tr>
