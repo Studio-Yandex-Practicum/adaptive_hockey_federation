@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Any
 
 from core.constants import (
-    PLAYER_FORM_HELP_TEXTS,
+    FORM_HELP_TEXTS,
     ROLE_AGENT,
     MAX_AGE_PlAYER,
     MIN_AGE_PlAYER,
@@ -75,9 +75,9 @@ class PlayerForm(forms.ModelForm):
             ),
         }
         help_texts = {
-            "identity_document": PLAYER_FORM_HELP_TEXTS["identity_document"],
-            "birthday": PLAYER_FORM_HELP_TEXTS["birthday"],
-            "team": PLAYER_FORM_HELP_TEXTS["team"],
+            "identity_document": FORM_HELP_TEXTS["identity_document"],
+            "birthday": FORM_HELP_TEXTS["birthday"],
+            "team": FORM_HELP_TEXTS["team"],
         }
 
     def save_m2m(self):
@@ -234,6 +234,9 @@ class StaffTeamMemberForm(forms.ModelForm):
             "qualification",
             "notes",
         )
+        help_texts = {
+            "team": FORM_HELP_TEXTS["team"],
+        }
 
 
 class StaffMemberForm(forms.ModelForm):

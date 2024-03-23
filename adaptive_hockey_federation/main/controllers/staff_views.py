@@ -186,7 +186,6 @@ class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
     model = StaffMember
     form_class = StaffMemberForm
     template_name = "main/staffs/staff_id_create_edit.html"
-    success_url = reverse_lazy("main:staffs")
     permission_required = "main.change_staff"
     permission_denied_message = (
         "У Вас нет разрешения на редактирование карточки сотрудника команды."
