@@ -316,6 +316,9 @@ class StaffTeamMember(models.Model):
                 ],
             ),
         ]
+        permissions = [
+            ("list_view_staff", "Can view list of Персонала команды"),
+        ]
 
     def __str__(self):
         return " ".join(
