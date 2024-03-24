@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from analytics.forms import AnalyticsFilterForm
-from analytics.permissions import AdminRequiredMixin
 from core.constants import GENDER_CHOICES
+from core.permissions import AdminRequiredMixin
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from main.controllers.player_views import PlayersListView

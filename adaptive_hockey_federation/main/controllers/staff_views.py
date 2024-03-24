@@ -1,4 +1,7 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -10,11 +13,19 @@ from main.forms import StaffMemberForm, StaffTeamMemberForm
 from main.models import StaffMember, StaffTeamMember
 
 
-class StaffMemberListView(ListView):
-    """Представление для работы со списком сотрудников команд."""
+class StaffMemberListView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    ListView
+):
+    """Представление для работы со списком сотрудников."""
 
     model = StaffMember
     template_name = "main/staffs/staffs.html"
+    permission_required = "main.list_view_staff"
+    permission_denied_message = (
+        "Отсутствует разрешение на просмотр сотрудников."
+    )
     context_object_name = "staffs"
     paginate_by = 10
     fields = (
@@ -76,7 +87,11 @@ class StaffMemberListView(ListView):
         return context
 
 
-class StaffMemberIdView(PermissionRequiredMixin, DetailView):
+class StaffMemberIdView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DetailView
+):
     model = StaffMember
     template_name = "main/staffs/staff_id.html"
     context_object_name = "staff"
@@ -87,9 +102,9 @@ class StaffMemberIdView(PermissionRequiredMixin, DetailView):
         "patronymic",
         "phone",
     )
-    permission_required = "main.view_staff"
+    permission_required = "main.view_staffmember"
     permission_denied_message = (
-        "У Вас нет разрешения на просмотр данных персонала комаив."
+        "У Вас нет разрешения на просмотр данных сотрудника."
     )
 
     def get_object(self, queryset=None):
@@ -128,19 +143,24 @@ class StaffMemberIdView(PermissionRequiredMixin, DetailView):
             )
         context["staff_fields"] = staff_fields
         context["team_fields"] = team_fields
+
         return context
 
 
-class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
-    """Представление создания сотрудника команды."""
+class StaffMemberIdCreateView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView
+):
+    """Представление создания сотрудника."""
 
     model = StaffMember
     form_class = StaffMemberForm
     template_name = "main/staffs/staff_id_create_edit.html"
     success_url = reverse_lazy("main:staffs")
-    permission_required = "main.add_staff"
+    permission_required = "main.add_staffmember"
     permission_denied_message = (
-        "У Вас нет разрешения на создание карточки сотрудника команды."
+        "У Вас нет разрешения на создание сотрудника."
     )
     team_id = None
 
@@ -180,15 +200,19 @@ class StaffMemberIdCreateView(PermissionRequiredMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 
-class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
-    """Представление редактирования сотрудника команды."""
+class StaffMemberIdEditView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView
+):
+    """Представление редактирования сотрудника."""
 
     model = StaffMember
     form_class = StaffMemberForm
     template_name = "main/staffs/staff_id_create_edit.html"
-    permission_required = "main.change_staff"
+    permission_required = "main.change_staffmember"
     permission_denied_message = (
-        "У Вас нет разрешения на редактирование карточки сотрудника команды."
+        "У Вас нет разрешения на редактирование сотрудника."
     )
 
     def get_success_url(self):
@@ -224,16 +248,62 @@ class StaffMemberIdEditView(PermissionRequiredMixin, UpdateView):
         return context
 
 
-class StaffMemberIdDeleteView(PermissionRequiredMixin, DeleteView):
-    """Представление для удаления сотрудника команды."""
+class StaffMemberIdDeleteView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView
+):
+    """Представление для удаления сотрудника."""
 
     model = StaffMember
     object = StaffMember
     success_url = reverse_lazy("main:staffs")
-    permission_required = "main.delete_staff"
+    permission_required = "main.delete_staffmember"
     permission_denied_message = (
-        "У Вас нет разрешения на удаление персонала команд."
+        "У Вас нет разрешения на удаление сотрудника."
     )
 
     def get_object(self, queryset=None):
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
+
+
+class StaffTeamMemberCreateView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView
+):
+    """Представление для создания нового сотрудника команды."""
+
+    model = StaffTeamMember
+    form_class = StaffTeamMemberForm
+    template_name = "main/staffs/staff_member_create.html"
+    permission_required = "main.add_staffteammember"
+    permission_denied_message = (
+        "У Вас нет разрешения на создание сотрудника команды."
+    )
+    team_id = None
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        self.team_id = request.GET.get("team", None)
+        if self.team_id is not None:
+            self.initial = {"team": self.team_id}
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["team_id"] = self.team_id
+        return context
+
+    def get_success_url(self):
+        if "None" in self.team_id or self.team_id is None:
+            return reverse("main:players")
+        else:
+            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
+
+    def post(self, request, *args, **kwargs):
+        self.team_id = request.POST.get("team_id")
+        return super().post(request, *args, **kwargs)
