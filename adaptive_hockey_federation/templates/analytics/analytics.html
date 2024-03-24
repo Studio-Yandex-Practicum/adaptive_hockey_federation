@@ -3,12 +3,12 @@
   Аналитика
 {% endblock %}
 {% block content_navigation %}
-  <div class="container container text-center p-4">
+  <div class="container container text-center">
     {% include 'analytics/filters.html' with form=form %}
   </div>
 {% endblock %}
 {% block content %}
-  <div class="container container text-center p-4">
+  <div class="container container">
     {% include 'analytics/dashboard.html' with dashboard=dashboard %}
   </div>
   <div class="container">

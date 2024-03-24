@@ -25,6 +25,7 @@ from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
 from users.managers import CustomUserManager
+from users.validators import zone_code_without_seven_hundred
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -72,7 +73,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     phone = PhoneNumberField(
         blank=True,
-        validators=[validate_international_phonenumber],
+        validators=[
+            validate_international_phonenumber,
+            zone_code_without_seven_hundred,
+        ],
         verbose_name=_("Актуальный номер телефона"),
         help_text=_("Номер телефона, допустимый формат - +7 ХХХ ХХХ ХХ ХХ"),
     )
@@ -99,6 +103,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = _("Пользователь")
         verbose_name_plural = _("Пользователи")
         ordering = ("last_name",)
+        permissions = [
+            ("list_view_user", "Can view list of Пользователь"),
+        ]
 
     def clean(self):
         super().clean()

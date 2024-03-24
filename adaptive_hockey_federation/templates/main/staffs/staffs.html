@@ -1,0 +1,7 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Персонал команд
+{% endblock %}
+{% block content %}
+  {% include 'main/staffs/table.html' with table_head=table_head table_data=table_data %}
+{% endblock %}

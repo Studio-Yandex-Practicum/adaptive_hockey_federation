@@ -1,12 +1,11 @@
 {% load static %}
 <td class="border rounded-md btsss">
-  <div class="input-group justify-content-md-center">
-    <form action="{% url 'users:user_update' table_string.id %}" method="post">
-      {% csrf_token %}
-      <button class=" btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>
+  <div class="cell-table">
+    <div style="display: flex; justify-content: center;">
+      <a href="{% url 'users:user_update' table_string.id %}" class="btns-edit-del">
         {% include 'base/edit_icon.html' %}
-      </button>
-    </form>
+      </a>
+    </div>
     <form action="{% url 'users:user_delete' table_string.id %}" method="post" >
       {% csrf_token %}
       <button class="btns-edit-del" type="submit" {% if perms.users.delete_user %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>

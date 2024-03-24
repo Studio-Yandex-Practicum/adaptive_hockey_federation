@@ -1,9 +1,8 @@
 {% load static %}
 <td class="border rounded-md">
   <div class="items__group">
-    <form action="{% url action_url table_string.pk %}" method="post">
-      {% csrf_token %}
-      {% if perms.events.competition_update %}
+    <form action="{% url action_url table_string.pk %}" method="get">
+      {% if perms.competitions.competition_update %}
         <button class="btns-edit-del" type="submit">
           {% include 'base/edit_icon.html' %}
         </button>
@@ -11,7 +10,7 @@
     </form>
     <form action="{% url delete_url table_string.pk %}" method="post">
       {% csrf_token %}
-      {% if perms.events.competition_delete %}
+      {% if perms.competitions.competition_delete %}
         <button
                 class="btns-edit-del"
                 type="submit"

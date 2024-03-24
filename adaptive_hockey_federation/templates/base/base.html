@@ -27,7 +27,9 @@
       {% include 'base/drawer.html' %}
       <div class="page">
         <header class="header">
+          {% block header %}
           {% include 'base/header.html' %}
+          {% endblock %}
         </header>
         <main class="main">
           <div class="table-container">
@@ -38,12 +40,13 @@
             {% endblock %}
           </div>
         </main>
-        {% include 'base/footer.html' %}
+        {% block footer %}{% include 'base/footer.html' %}{% endblock %}
       </div>
     </div>
     <!-- JS block -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/tailwindvss-3.4.1.js' %}"></script>
+    <script src="{% static 'js/selector.js' %}"></script>
     <script>
       tailwind.config = {
         prefix: "tw-",

@@ -33,8 +33,9 @@ LOCAL_APPS = [
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
-    'events.apps.EventsConfig',
+    'competitions.apps.CompetitionsConfig',
     'analytics.apps.AnalyticsConfig',
+    'unloads.apps.UnloadsConfig'
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + DEFAULT_APPS + LOCAL_APPS
@@ -124,3 +125,6 @@ PHONENUMBER_DEFAULT_FORMAT = 'INTERNATIONAL'
 LOGIN_REDIRECT_URL = '/players/'
 
 LOGOUT_REDIRECT_URL = 'login'
+
+FILE_RESOLUTION = ('png', 'jpeg', 'jpg', 'pdf')
+MAX_UPLOAD_SIZE = 10485760

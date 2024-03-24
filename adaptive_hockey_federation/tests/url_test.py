@@ -2,13 +2,14 @@ from http import HTTPStatus
 from typing import Any
 
 import pytest
+from competitions.models import Competition
 from core import constants
+from core.constants import ROLE_AGENT
 from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
-from events.models import Event
 from main.data_factories.factories import (
+    CompetitionFactory,
     DiagnosisFactory,
-    EventFactory,
     PlayerFactory,
 )
 from main.models import City, Diagnosis, DisciplineName, Player, Team
@@ -50,11 +51,13 @@ class TestAuthUrls:
 
 class TestUrls(TestCase):
     user: User | Any = None
+    user_agent: User | Any = None
     team: Team | Any = None
-    competition: Event | Any = None
+    team_2: Team | Any = None
+    competition: Competition | Any = None
     diagnosis: Diagnosis | Any = None
     player: Player | Any = None
-    player_test: Player | Any = None
+    player_2: Player | Any = None
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -74,6 +77,14 @@ class TestUrls(TestCase):
             email="cls_" + test_email,
         )
 
+        cls.user_agent = User.objects.create_user(
+            password=test_password,
+            first_name="Иван",
+            last_name="Агент",
+            role=ROLE_AGENT,
+            email="agent_" + test_email,
+        )
+
         cls.team = Team.objects.create(
             name="cls_Test Team",
             city=City.objects.create(name="cls_Test City"),
@@ -82,9 +93,23 @@ class TestUrls(TestCase):
             ),
             curator=cls.user,
         )
-        cls.competition = EventFactory.create()
+
+        cls.team_2 = Team.objects.create(
+            name="Team 2",
+            city=City.objects.create(name="cls_Test City_2"),
+            discipline_name=DisciplineName.objects.create(
+                name="cls_Test DisciplineName_2"
+            ),
+            curator=cls.user_agent,
+        )
+
+        cls.competition = CompetitionFactory.create()
         cls.diagnosis = DiagnosisFactory.create()
         cls.player = PlayerFactory.create()
+        cls.player_2 = PlayerFactory.create()
+        cls.player.team.clear()
+        cls.player_2.team.clear()
+        cls.player_2.team.add(cls.team_2)
 
     def setUp(self):
         self.client = Client()
@@ -155,30 +180,32 @@ class TestUrls(TestCase):
             ),
             UrlToTest("/auth/password_change/"),
             UrlToTest("/auth/password_reset/", authorized_only=False),
-            UrlToTest("/analytics/"),
-            UrlToTest("/competitions/"),
+            UrlToTest("/analytics/", permission_required="list_view_player"),
+            UrlToTest(
+                "/competitions/", permission_required="list_view_competition"
+            ),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  соревнованиями.
-            # UrlToTest('/competitions/1/'),
+            UrlToTest(
+                "/competitions/1/", permission_required="list_team_competition"
+            ),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  игроками.
-            # UrlToTest('/player_create/'),
-            UrlToTest("/players/"),
+            UrlToTest("/players/create/", permission_required="add_player"),
+            UrlToTest("/players/", permission_required="list_view_player"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  игроками.
-            # UrlToTest('/players/1/'),
-            # UrlToTest('/players/1/edit/'),
-            UrlToTest("/teams/"),
+            UrlToTest("/players/1/", permission_required="view_player"),
+            UrlToTest("/players/1/edit/", permission_required="change_player"),
+            UrlToTest("/teams/", permission_required="list_view_team"),
             UrlToTest("/teams/1/", permission_required="view_team"),
             UrlToTest("/teams/1/edit/", permission_required="change_team"),
             UrlToTest("/teams/create/", permission_required="add_team"),
             UrlToTest("/unloads/"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  пользователями.
-            # UrlToTest('/user_create/',
-            #           permission_required='add_user'),
-            # UrlToTest('/users/',
-            #           permission_required='view_user')
+            UrlToTest("/users/create/", permission_required="add_user"),
+            UrlToTest("/users/", permission_required="list_view_user"),
             UrlToTest("/users/1/edit/", permission_required="change_user"),
         ]
         urls_responses_results = []
@@ -192,3 +219,86 @@ class TestUrls(TestCase):
                     self.assertEqual(fact, estimated, message)
                 elif isinstance(estimated, (list, tuple)):
                     self.assertIn(fact, estimated, message)
+
+    def test_agent_has_access(self):
+        """Доступ представителя к своей команде, ее игрокам и т.д."""
+        # TODO: Добавить урлы тренеров и пушер-тьюторов по аналогии,
+        #  когда функционал ограничения доступа к этим сущностям будет
+        #  разработан.
+        urls_agent_has_access_to = {
+            f"/teams/{self.team_2.id}/edit/": (
+                "страница /teams/<team_id>/edit/ редактирования общих "
+                "сведений этой команды (ожидается ответ со статусом 200)"
+            ),
+            f"/players/{self.player_2.id}/": (
+                "страница просмотра подробных сведений об игроке из этой "
+                "команды (страница /players/<player_id>/ должна вернуть "
+                "ответ со статусом 200)"
+            ),
+            f"/players/{self.player_2.id}/edit/": (
+                "страница редактирования игрока из этой команды (страница "
+                "/players/<player_id>/edit/ должна вернуть ответ со статусом "
+                "200)"
+            ),
+            f"/players/create/?team={self.team_2.id}": (
+                "страница создания игрока из этой команды (страница "
+                "/players/create/?team=<team_id> должна вернуть ответ со "
+                "статусом 200)"
+            ),
+        }
+        self.client.force_login(self.user_agent)
+        for url, message in urls_agent_has_access_to.items():
+            with self.subTest(msg=message, url=url):
+                response = self.client.get(url)
+                self.assertEqual(
+                    response.status_code,
+                    HTTPStatus.OK,
+                    msg=(
+                        "Представителю команды должна "
+                        "быть доступна " + message
+                    ),
+                )
+
+    def test_agent_has_no_access(self):
+        """Запрет доступа представителя к чужой команде, игрокам и т.д."""
+        # TODO: Добавить урлы тренеров и пушер-тьюторов по аналогии,
+        #  когда функционал ограничения доступа к этим сущностям будет
+        #  разработан.
+        urls_agent_has_no_access_to = {
+            f"/teams/{self.team.id}/edit/": (
+                "страница /teams/<team_id>/edit/ редактирования общих "
+                "сведений ЧУЖОЙ команды (ожидается ответ со статусом 403)"
+            ),
+            f"/players/{self.player.id}/": (
+                "страница просмотра подробных сведений об игроке ЧУЖОЙ "
+                "команды (страница /players/<player_id>/ должна вернуть "
+                "ответ со статусом 403)"
+            ),
+            f"/players/{self.player.id}/edit/": (
+                "страница редактирования игрока ЧУЖОЙ команды (страница "
+                "/players/<player_id>/edit должна вернуть ответ со статусом "
+                "403)"
+            ),
+            f"/players/create/?team={self.team.id}": (
+                "страница создания игрока с привязкой к ЧУЖОЙ команде "
+                "(страница /players/create/?team=<team_id> должна вернуть "
+                "ответ со статусом 403)"
+            ),
+            "/players/create/": (
+                "страница создания игрока без привязки к какой-либо команде "
+                "(страница /players/create/ должна вернуть ответ со "
+                "статусом 403)"
+            ),
+        }
+        self.client.force_login(self.user_agent)
+        for url, message in urls_agent_has_no_access_to.items():
+            with self.subTest(msg=message, url=url):
+                response = self.client.get(url)
+                self.assertEqual(
+                    response.status_code,
+                    HTTPStatus.FORBIDDEN,
+                    msg=(
+                        "Представителю команды НЕ должна "
+                        "быть доступна " + message
+                    ),
+                )

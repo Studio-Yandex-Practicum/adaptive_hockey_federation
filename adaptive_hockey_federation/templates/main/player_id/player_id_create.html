@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block title %}
-  Создание профиля нового игрока
+  Новый игрок
 {% endblock %}
 
 {% block content %}
-  <h2 class="text-center mb-4">Создание профиля нового игрока</h2>
+  <h2 class="text-center mb-4">Новый игрок</h2>
 
   <form method="post" action="{% url 'main:player_create' %}" enctype="multipart/form-data">
     {% csrf_token %}
@@ -34,10 +34,10 @@
             <tbody>
               {% for field in form.visible_fields %}
                 {% if field.name in 'team level_revision is_captain is_assistent position number' %}
-                  <tr>
-                    <th>{{ field.label_tag }}</th>
-                    <td>{{ field }}</td>
-                    <td>{{ field.errors }}</td>
+                  <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
+                      <th>{{ field.label_tag }}</th>
+                      <td>{{ field }}</td>
+                      <td>{{ field.errors }}</td>
                   </tr>
                 {% endif %}
               {% endfor %}
@@ -55,7 +55,9 @@
             </form>
           </table>
         </div>
-
+    {% if team_id %}
+      <input type="hidden" value="{{ team_id }}" name="team_id" >
+    {% endif %}
     <!-- Save Button -->
     <div class="container">
       <div class="row">
