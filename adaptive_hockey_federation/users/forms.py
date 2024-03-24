@@ -1,17 +1,14 @@
 import unicodedata
 
-from core.constants import FORM_HELP_TEXTS, ROLES_CHOICES
+from core.constants import FORM_HELP_TEXTS
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.forms import Select
 from django.utils.crypto import get_random_string
 from main.models import Team
-from users.utilits.reset_password import send_password_reset_email
-from users.utils import set_team_curator
 
 User = get_user_model()
 
@@ -107,79 +104,6 @@ class UserAdminCreationForm(UserCreationForm):
                 "unique": "Электронная почта должна быть уникальной!",
             },
         }
-
-
-class UsersCreationForm(forms.ModelForm):
-    """Форма создания пользователя на странице users"""
-
-    role = forms.ChoiceField(
-        choices=ROLES_CHOICES[:-1],
-        required=True,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        label="Роль пользователя",
-        error_messages={"required": "Пожалуйста, выберите роль из списка."},
-    )
-    team = forms.ModelChoiceField(
-        queryset=Team.objects.all(),
-        required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        label="Команда представителя",
-    )
-
-    class Meta:
-        model = User
-        fields = (
-            "first_name",
-            "last_name",
-            "patronymic",
-            "email",
-            "phone",
-            "role",
-            "team",
-        )
-        error_messages = {
-            "email": {
-                "unique": "Электронная почта должна быть уникальной!",
-            },
-        }
-        widgets = {
-            "role": Select(),
-            "team": Select(),
-        }
-
-    def save(self, commit=True):
-        user = self.object
-        set_team_curator(user, self.cleaned_data["team"])
-        send_password_reset_email(user)
-        user.save()
-        return user
-
-
-class UpdateUserForm(UsersCreationForm):
-    """Форма редактирования пользователя"""
-
-    def clean_team(self):
-        """
-        Проверка команды при редактировании пользователя
-        """
-        if choice_team := self.cleaned_data["team"]:
-            choice_team = Team.objects.get(id=choice_team.id)
-            current_team = self.instance.team.all()
-            if current_team and current_team[0] == choice_team:
-                return choice_team
-            if choice_team.curator is not None:
-                raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
-                )
-        return choice_team
-
-    def save(self, commit=True):
-        user = super(UsersCreationForm, self).save(commit=False)
-        set_team_curator(user, self.cleaned_data["team"])
-        if commit:
-            user.save()
-        return user
 
 
 class CustomUserForm(forms.ModelForm):
