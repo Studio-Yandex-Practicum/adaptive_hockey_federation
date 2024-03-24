@@ -1,3 +1,4 @@
+import re
 from http import HTTPStatus
 from typing import Any
 
@@ -76,6 +77,7 @@ class UrlToTest:
         unauthorized_code_estimated: int | list | tuple = HTTPStatus.FOUND,
         admin_only: bool = False,
         use_post: bool = False,
+        path_render_subs: str | tuple[str, ...] | list[str] = "1",
     ):
         self.path = path
         self.authorized_only = authorized_only
@@ -91,6 +93,8 @@ class UrlToTest:
         else:
             self.unauthorized_code = HTTPStatus.OK
         self.use_post = use_post
+        self.path_for_message = path
+        self.path = render_url(path, path_render_subs)
 
     def _get_response(self, client: Client):
         if self.use_post:
@@ -119,8 +123,8 @@ class UrlToTest:
         client.logout()
         response = self._get_response(client)
         message = (
-            f"Для неавторизованного пользователя страница {self.path} "
-            f"должна вернуть ответ со статусом "
+            f"Для неавторизованного пользователя страница "
+            f"{self.path_for_message} должна вернуть ответ со статусом "
             f"{self.unauthorized_code}."
         )
         return response.status_code, self.unauthorized_code, message
@@ -137,7 +141,7 @@ class UrlToTest:
         response = self._get_auth_response(client, user, False)
         message = (
             f"Для пользователя, обладающего разрешением "
-            f"{self.permission.codename}, страница {self.path} "
+            f"{self.permission.codename}, страница {self.path_for_message} "
             f"должна вернуть ответ со статусом "
             f"{self.code_estimated}."
         )
@@ -149,7 +153,7 @@ class UrlToTest:
         response = self._get_auth_response(client, user)
         message = (
             f"Для любого авторизованного пользователя, "
-            f"страница {self.path} должна вернуть ответ со "
+            f"страница {self.path_for_message} должна вернуть ответ со "
             f"статусом {self.code_estimated}."
         )
         return response.status_code, self.code_estimated, message
@@ -168,7 +172,7 @@ class UrlToTest:
             codename = ""
         message = (
             f"Для пользователя, не обладающего разрешением "
-            f"{codename}, страница {self.path} "
+            f"{codename}, страница {self.path_for_message} "
             f"должна вернуть ответ со статусом "
             f"{HTTPStatus.FORBIDDEN}."
         )
@@ -184,8 +188,8 @@ class UrlToTest:
         response = self._get_auth_response(client, user, clear_admin=False)
         message = (
             f"Для пользователя, являющегося администратором (is_staff=True) "
-            f"страница {self.path} должна вернуть ответ со статусом "
-            f"{self.code_estimated}."
+            f"страница {self.path_for_message} должна вернуть ответ со "
+            f"статусом {self.code_estimated}."
         )
         return response.status_code, self.code_estimated, message
 
@@ -197,8 +201,8 @@ class UrlToTest:
         response = self._get_auth_response(client, user)
         message = (
             f"Для пользователя, НЕ являющегося администратором ("
-            f"is_staff=False) страница {self.path} должна вернуть ответ с "
-            f"одним из статусов "
+            f"is_staff=False) страница {self.path_for_message} должна вернуть "
+            f"ответ с одним из статусов "
             f"{HTTPStatus.FOUND, HTTPStatus.MOVED_PERMANENTLY}."
         )
         return (
@@ -223,3 +227,16 @@ class UrlToTest:
             res.append(self.non_admin_test(client, user))
 
         return res
+
+
+def render_url(url: str, subs: tuple | str | list):
+    pattern = re.compile(r"<[^/]+>")
+    if not re.search(pattern, url):
+        return url
+    if isinstance(subs, str):
+        subs = (subs,)
+    for sub in subs:
+        url = re.sub(pattern, sub, url, 1)
+    if re.search(pattern, url):
+        url = re.sub(pattern, subs[-1], url)
+    return url
