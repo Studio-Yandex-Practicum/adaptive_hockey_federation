@@ -41,16 +41,16 @@
           {% endif %}
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}
-            {% if view_name == 'main:staffs' %}
-              {% include "main/staffs/edit_delete_button_staffs.html" %}
-            {% else %}
-              <td>
-                <div class="cell__buttons">
-                  {% include 'base/active_edit_icon.html' %}
-                  {% include 'base/active_delete_icon.html' %}
-                </div>
-              </td>
-            {% endif %}
+        {% if view_name == 'main:staffs' %}
+        {% include "main/staffs/staffs_edit_delete_buttons.html" %}
+        {% else %}
+        <td>
+          <div class="cell__buttons">
+            {% include 'base/active_edit_icon.html' %}
+            {% include 'base/active_delete_icon.html' %}
+          </div>
+        </td>
+        {% endif %}
         {% endwith %}
       </tr>
       {% endfor %}
