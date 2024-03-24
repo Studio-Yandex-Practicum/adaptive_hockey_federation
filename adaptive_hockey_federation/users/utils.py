@@ -6,6 +6,5 @@ def set_team_curator(user, choice_team):
 
     Team.objects.filter(curator=user).update(curator=None)
     if choice_team is not None:
-        team = Team.objects.get(id=choice_team.id)
-        team.curator = user
-        team.save()
+        choice_team.curator = user
+        choice_team.save()

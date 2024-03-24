@@ -1,11 +1,11 @@
 {% load user_filters %}
 <tr>
   <th>{{ field.label_tag }}
-    {% if field.name in 'birthday identity_document phone' %}
+    {% if field.name in 'birthday identity_document phone email' %}
       <span class="help-icon" title="{{ field.help_text }}"></span>
     {% endif %}
   </th>
-    <td>
+    <td class="base-wrapper">
       {% if field.errors %}
         {{ field |addclass:'base-input-errors'}}
         {{ field.errors }}

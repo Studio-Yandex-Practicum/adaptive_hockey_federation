@@ -5,10 +5,13 @@ from django.contrib.auth.mixins import (
 )
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.db.models import Q
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from users.forms import UpdateUserForm, UsersCreationForm
+from users.forms import CustomUserForm
+from users.utilits.reset_password import send_password_reset_email
+from users.utils import set_team_curator
 
 User = get_user_model()
 
@@ -99,33 +102,29 @@ class UpdateUserView(
     """
 
     model = User
-    template_name = "main/users/user_update.html"
+    form_class = CustomUserForm
+    template_name = "main/users/user_create_edit.html"
     permission_required = "users.change_user"
     permission_denied_message = (
         "Отсутствует разрешение на изменение пользователя."
     )
-    form_class = UpdateUserForm
-    success_url = "/users"
 
-    def get_initial(self):
-        team = None
-        if queryset := self.object.team.all():
-            team = queryset[0]
-        initial = {
-            'first_name': self.object.first_name,
-            'last_name': self.object.last_name,
-            'patronymic': self.object.patronymic,
-            'email': self.object.email,
-            'phone': self.object.phone,
-            'role': self.object.role,
-            'team': team
-        }
-        return initial
+    def get_success_url(self):
+        return reverse("users:users")
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(User, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"].initial = self.get_initial()
+        context["page_title"] = "Редактирование профиля пользователя"
         return context
+
+    def form_valid(self, form):
+        if form.is_valid():
+            user = form.save()
+            set_team_curator(user, form.cleaned_data["team"])
+        return super().form_valid(form)
 
 
 class DeleteUserView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
@@ -148,13 +147,20 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """
 
     model = User
-    form_class = UsersCreationForm
-    template_name = "main/users/user_create.html"
+    form_class = CustomUserForm
+    template_name = "main/users/user_create_edit.html"
     success_url = "/users"
     permission_required = "users.add_user"
     permission_denied_message = (
         "Отсутствует разрешение на создание пользователей."
     )
+
+    def form_valid(self, form):
+        if form.is_valid():
+            user = form.save()
+            send_password_reset_email(user)
+            set_team_curator(user, form.cleaned_data["team"])
+        return super().form_valid(form)
 
 
 class PasswordSetView(PasswordResetConfirmView):

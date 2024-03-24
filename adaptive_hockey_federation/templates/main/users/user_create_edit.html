@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load user_filters %}
+{% block title %}
+    Создать пользователя
+{% endblock %}
+{% block content %}
+<h2 class="text-center mb-4">{{ page_title }}</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container text-center">
+    <div class="full-container">
+      <h4 class="text-center mb-4">Личная информация</h4>
+      <table class="table-table">
+        <tbody>
+          {% for field in form.visible_fields %}
+            {% if field.name in 'first_name last_name patronymic email phone'%} {% include "main/fields/text_input_field.html" %} {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="full-container">
+      <h4 class="text-center mb-4">Дополнительная информация</h4>
+      <table class="table-table">
+        <tbody>
+          {% for field in form.visible_fields %}
+            {% if field.name in "role team"%}{% include "main/fields/select_field.html" %} 
+            {% elif field.name in 'is_staff' %} {% include "main/fields/check_box_field.html" %}{% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="container">
+      <div class="row">
+          <div class="col text-center text-white flex justify-start">
+              <button
+              type="submit"
+              class="btn btn-secondary text-white"
+              style="background-color: #64C2D1; border: 1px solid #fff;"
+              >
+                  Сохранить
+              </button>
+          </div>
+      </div>
+  </div>
+  </div>
+</form>
+{% endblock %}

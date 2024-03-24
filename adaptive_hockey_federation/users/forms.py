@@ -1,6 +1,6 @@
 import unicodedata
 
-from core.constants import ROLES_CHOICES
+from core.constants import FORM_HELP_TEXTS, ROLES_CHOICES
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
@@ -147,23 +147,11 @@ class UsersCreationForm(forms.ModelForm):
             "team": Select(),
         }
 
-    def clean_team(self):
-        """
-        Проверка команды при создании пользователя
-        """
-        if choice_team := self.cleaned_data["team"]:
-            choice_team = Team.objects.get(id=choice_team.id)
-            if choice_team.curator is not None:
-                raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
-                )
-        return choice_team
-
     def save(self, commit=True):
-        user = super(UsersCreationForm, self).save()
+        user = self.object
         set_team_curator(user, self.cleaned_data["team"])
         send_password_reset_email(user)
+        user.save()
         return user
 
 
@@ -192,3 +180,63 @@ class UpdateUserForm(UsersCreationForm):
         if commit:
             user.save()
         return user
+
+
+class CustomUserForm(forms.ModelForm):
+
+    team = forms.ModelChoiceField(
+        queryset=Team.objects.all(),
+        required=False,
+        label="Команда представителя",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserForm, self).__init__(*args, **kwargs)
+        if team := self.instance.team.all():
+            self.fields["team"].initial = team[0]
+
+    class Meta:
+        model = User
+        fields = (
+            "first_name",
+            "last_name",
+            "patronymic",
+            "email",
+            "phone",
+            "role",
+            "team",
+            "is_staff",
+        )
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"placeholder": "Введите фамилию"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"placeholder": "Введите Имя"}
+            ),
+            "patronymic": forms.TextInput(
+                attrs={"placeholder": "Введите отчество"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"placeholder": "Введите email"}
+            ),
+            "phone": forms.TextInput(
+                attrs={"placeholder": "Введите номер игрока"}
+            ),
+        }
+        help_texts = {
+            "email": FORM_HELP_TEXTS["email"],
+            "role": FORM_HELP_TEXTS["role"],
+        }
+
+    def clean_team(self):
+        """
+        Проверка команды при редактировании пользователя
+        """
+        if choice_team := self.cleaned_data["team"]:
+            if choice_team.curator is not None:
+                raise ValidationError(
+                    "У команды есть куратор!"
+                    f"{choice_team.curator.get_full_name()}"
+                )
+        return choice_team
