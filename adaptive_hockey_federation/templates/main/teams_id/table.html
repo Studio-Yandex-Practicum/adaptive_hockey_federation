@@ -39,15 +39,11 @@
           {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
             <td class="rounded-md">{{ cell_value }}</td>
           {% endif %}
-
         {% endfor %}
-        {% with request.resolver_match.view_name as view_name %}
-        {% if view_name == 'users:users' %}
-          {% include "teams_id/create_delete_buttons.html" %}
-        {% elif view_name == 'main:players' %}
-          {% include "main/players/create_delete_button_players.html" %}
-        {% elif view_name == 'main:teams' %}
-          {% include "main/players/team_edit_delete_buttons.html" %}
+        {% if table_name == 'players' %}
+          {% include "main/teams_id/edit_delete_button_players.html" %}
+        {% elif table_name == 'staff' %}
+        {% include "main/teams_id/edit_delete_button_staffs.html" %}
         {% else %}
         <td>
           <div class="cell__buttons">
@@ -56,7 +52,6 @@
           </div>
         </td>
         {% endif %}
-        {% endwith %}
       </tr>
       {% endfor %}
     </tbody>
