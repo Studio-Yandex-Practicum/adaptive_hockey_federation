@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from users.forms import CustomUserForm
+from users.forms import CustomUserCreateForm, CustomUserUpdateForm
 from users.utilits.reset_password import send_password_reset_email
 from users.utils import set_team_curator
 
@@ -102,7 +102,7 @@ class UpdateUserView(
     """
 
     model = User
-    form_class = CustomUserForm
+    form_class = CustomUserUpdateForm
     template_name = "main/users/user_create_edit.html"
     permission_required = "users.change_user"
     permission_denied_message = (
@@ -147,7 +147,7 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """
 
     model = User
-    form_class = CustomUserForm
+    form_class = CustomUserCreateForm
     template_name = "main/users/user_create_edit.html"
     success_url = "/users"
     permission_required = "users.add_user"

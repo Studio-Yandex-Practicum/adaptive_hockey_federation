@@ -24,9 +24,19 @@
       <table class="table-table">
         <tbody>
           {% for field in form.visible_fields %}
-            {% if field.name in "role team"%}{% include "main/fields/select_field.html" %} 
-            {% elif field.name in 'is_staff' %} {% include "main/fields/check_box_field.html" %}{% endif %}
+            {% if field.name in "role"%}{% include "main/fields/select_field.html" %} {% endif %}
           {% endfor %}
+            <tr id="selection-team">
+              <th>{{ form.team.label_tag }}</th>
+                <td class="base-wrapper">
+                  {% if form.team.errors %}
+                    {{ form.team |addclass:'base-select-errors'}}
+                    {{ form.team.errors }}
+                  {% else %}
+                    {{ form.team |addclass:'base-select'}}
+                  {% endif %}
+                </td>
+            </tr>
         </tbody>
       </table>
     </div>
@@ -46,3 +56,29 @@
   </div>
 </form>
 {% endblock %}
+
+{% block JavaScript %}
+<script>
+  let role_selection = document.getElementById("id_role");
+  let team_selection = document.getElementById("id_team");
+  let team_selection_index = team_selection.selectedIndex
+  let team_field = document.getElementById("selection-team");
+  role_selection.addEventListener("change", stateHidefield);
+  function initialField() {
+    if (role_selection.value != "Представитель команды") {
+      team_field.hidden = true;
+    }
+  }
+  initialField()
+  function stateHidefield() {
+    var opts = team_selection;
+    if (role_selection.value === "Представитель команды") {
+      team_field.hidden = false;
+      opts.selectedIndex = team_selection_index;
+    } else {
+      team_field.hidden = true;
+      opts.selectedIndex = 0;
+    }
+  }
+</script>
+{% endblock%}

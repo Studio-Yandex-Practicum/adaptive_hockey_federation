@@ -106,18 +106,13 @@ class UserAdminCreationForm(UserCreationForm):
         }
 
 
-class CustomUserForm(forms.ModelForm):
+class CustomUserCreateForm(forms.ModelForm):
 
     team = forms.ModelChoiceField(
         queryset=Team.objects.all(),
         required=False,
         label="Команда представителя",
     )
-
-    def __init__(self, *args, **kwargs):
-        super(CustomUserForm, self).__init__(*args, **kwargs)
-        if team := self.instance.team.all():
-            self.fields["team"].initial = team[0]
 
     class Meta:
         model = User
@@ -129,20 +124,19 @@ class CustomUserForm(forms.ModelForm):
             "phone",
             "role",
             "team",
-            "is_staff",
         )
         widgets = {
             "first_name": forms.TextInput(
-                attrs={"placeholder": "Введите фамилию"}
+                attrs={"placeholder": "Введите фамилию (обязательно)"}
             ),
             "last_name": forms.TextInput(
-                attrs={"placeholder": "Введите Имя"}
+                attrs={"placeholder": "Введите Имя (обязательно)"}
             ),
             "patronymic": forms.TextInput(
                 attrs={"placeholder": "Введите отчество"}
             ),
             "email": forms.EmailInput(
-                attrs={"placeholder": "Введите email"}
+                attrs={"placeholder": "Введите email (обязательно)"}
             ),
             "phone": forms.TextInput(
                 attrs={"placeholder": "Введите номер игрока"}
@@ -155,9 +149,33 @@ class CustomUserForm(forms.ModelForm):
 
     def clean_team(self):
         """
+        Проверка команды при создании пользователя
+        """
+        if choice_team := self.cleaned_data["team"]:
+            if choice_team.curator is not None:
+                raise ValidationError(
+                    "У команды есть куратор!"
+                    f"{choice_team.curator.get_full_name()}"
+                )
+        return choice_team
+
+
+class CustomUserUpdateForm(CustomUserCreateForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserUpdateForm, self).__init__(*args, **kwargs)
+        if team := self.instance.team.all():
+            self.fields["team"].initial = team[0]
+
+    def clean_team(self):
+        """
         Проверка команды при редактировании пользователя
         """
         if choice_team := self.cleaned_data["team"]:
+            choice_team = Team.objects.get(id=choice_team.id)
+            current_team = self.instance.team.all()
+            if current_team and current_team[0] == choice_team:
+                return choice_team
             if choice_team.curator is not None:
                 raise ValidationError(
                     "У команды есть куратор!"
