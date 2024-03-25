@@ -1,18 +1,21 @@
-from core.constants import ROLE_ADMIN
 from tests.base import BaseTestClass
+from tests.fixture_user import test_role_user
 from tests.url_schema import ADMIN_SITE_ADMIN_OK
 from tests.utils import UrlToTest
+from users.factories import UserFactory
+from users.models import User
 
 
 class TestPermissions(BaseTestClass):
     """Тесты урл-путей на возможность доступа к ним определенных категорий
     пользователей."""
 
-    # @classmethod
-    # def setUpClass(cls) -> None:
-    #     super().setUpClass()
-    #     ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
-    #     constants.GROUPS_BY_ROLE[test_role_user] = TEST_GROUP_NAME
+    staff_user: User
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.staff_user = UserFactory.create(role=test_role_user, is_staff=True)
 
     def url_tests(self, url_to_test: UrlToTest):
         """Прогоняет тесты урл-адреса на доступ различных пользователей.
@@ -20,7 +23,7 @@ class TestPermissions(BaseTestClass):
         docstring к классу UrlToTest)."""
         responses = url_to_test.execute_tests(self.client, self.user)
         for fact, estimated, message in responses:
-            with self.subTest(msg=message, fact=fact, estimated=estimated):
+            with self.subTest(fact=fact, estimated=estimated, msg=message):
                 if isinstance(estimated, (str, int)):
                     self.assertEqual(fact, estimated, message)
                 elif isinstance(estimated, (list, tuple)):
@@ -34,14 +37,20 @@ class TestPermissions(BaseTestClass):
 
     def test_admin_site_available_for_admins_only(self):
         """Страницы админки доступны только администраторам."""
-        self.user.role = ROLE_ADMIN
-        self.user.save()
+        # self.user.role = ROLE_ADMIN
+        # self.user.save()
+        # count = 0
         for admin_url in ADMIN_SITE_ADMIN_OK:
-            url_to_test = UrlToTest(
-                admin_url,
-                admin_only=True,
-            )
-            self.url_tests(url_to_test)
+            with self.subTest(admin_url=admin_url):
+                # print(count := count + 1)
+                url_to_test = UrlToTest(
+                    admin_url,
+                    admin_only=True,
+                )
+                self.url_tests(url_to_test)
+
+        # self.user.role = test_role_user
+        # self.user.save()
 
     # UrlToTest("/auth/login/", authorized_only=False),
     # UrlToTest(

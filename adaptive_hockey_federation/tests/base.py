@@ -3,6 +3,7 @@ from http import HTTPStatus
 from typing import Iterable
 
 from competitions.models import Competition
+from core import constants
 from core.constants import ROLE_SUPERUSER
 from django.test import Client, TestCase
 from main.data_factories.factories import (
@@ -22,6 +23,7 @@ from main.models import (
     StaffTeamMember,
     Team,
 )
+from tests.fixture_user import test_role_user
 from tests.url_test import TEST_GROUP_NAME
 from users.factories import UserFactory
 from users.models import ProxyGroup, User
@@ -51,6 +53,8 @@ class BaseTestClass(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
+        ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
+        constants.GROUPS_BY_ROLE[test_role_user] = TEST_GROUP_NAME
         cls.superuser = User.objects.create_user(
             password="super1234",
             first_name="Супер",
@@ -67,7 +71,7 @@ class BaseTestClass(TestCase):
         cls.diagnosis = DiagnosisFactory.create()
         cls.player = PlayerFactory.create()
         cls.staff = StaffTeamMemberFactory.create()
-        ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
+        # ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
         cls.document = DocumentFactory.create(player=cls.player)
 
 
