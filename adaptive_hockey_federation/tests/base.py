@@ -43,7 +43,7 @@ class BaseTestClass(TestCase):
     superuser: User
     user: User
     discipline_name: DisciplineName
-    teams: Team
+    team: Team
     diagnosis: Diagnosis
     player: Player
     staff: StaffTeamMember
@@ -66,7 +66,7 @@ class BaseTestClass(TestCase):
         )
         cls.user = UserFactory.create(role=test_role_user)
         cls.discipline_name = DisciplineNameFactory.create()
-        cls.teams = TeamFactory.create()
+        cls.team = TeamFactory.create()
         cls.competition = CompetitionFactory.create()
         cls.diagnosis = DiagnosisFactory.create()
         cls.player = PlayerFactory.create()
