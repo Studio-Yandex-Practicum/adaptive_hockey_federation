@@ -56,7 +56,7 @@
           <tbody>
             {% for doc in player_documents %}
               <tr>
-                <th scope="row">{{ doc.name }}</th>
+                <th scope="row">{{ doc.file.name }}</th>
                 <td>
                   <a href="{{ doc.file.url }}" target="_blank">Просмотреть</a>
                 </td>

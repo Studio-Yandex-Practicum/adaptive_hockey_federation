@@ -70,3 +70,6 @@ PLAYER_FORM_HELP_TEXTS = {
     "team": "Список доступных команд, действующие команды обозначены голубым "
     "цветом, чтобы выбрать или удалить зажмите ctrl",
 }
+
+FILE_RESOLUTION = ("png", "jpeg", "jpg", "pdf")
+MAX_UPLOAD_SIZE = 10485760

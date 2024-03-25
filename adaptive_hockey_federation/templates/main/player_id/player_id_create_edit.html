@@ -120,7 +120,7 @@
             {% if player_documents %}
                 {% for doc in player_documents %}
                     <tr>
-                        <td>{{ doc.name }}</td>
+                        <td>{{ doc.file.name }}</td>
                         <td><a href="{{ doc.file.url }}" target="_blank">Просмотреть</a></td>
                         <td><button id="deleteFileButton" type="button" class="btn btn-danger">-</button></td>
                     </tr>
