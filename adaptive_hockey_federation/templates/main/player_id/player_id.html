@@ -54,11 +54,11 @@
         <h4 class="text-center mb-4">Документы</h4>
         <table class="table-table">
           <tbody>
-            {% for field_name, field_value in player_fields_doc %}
+            {% for doc in player_documents %}
               <tr>
-                <th scope="row">{{ field_name }}:</th>
+                <th scope="row">{{ doc.name }}</th>
                 <td>
-                  {{ field_value }}
+                  <a href="{{ doc.file.url }}" target="_blank">Просмотреть</a>
                 </td>
               </tr>
             {% endfor %}

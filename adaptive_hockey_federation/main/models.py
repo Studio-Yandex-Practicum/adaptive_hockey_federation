@@ -10,6 +10,8 @@ from core.constants import (
 from core.validators import fio_validator, validate_date_birth
 from django.db import models
 from django.db.models import QuerySet
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from users.models import User
@@ -314,6 +316,9 @@ class StaffTeamMember(models.Model):
                 ],
             ),
         ]
+        permissions = [
+            ("list_view_staff", "Can view list of Персонала команды"),
+        ]
 
     def __str__(self):
         return " ".join(
@@ -474,3 +479,9 @@ class Document(BaseUniqueName):
 
     def __str__(self):
         return f"Документ игрока: {self.player}"
+
+
+@receiver(post_delete, sender=Document)
+def document_file_delete(sender, instance, **kwargs):
+    if instance.file:
+        instance.file.delete(False)

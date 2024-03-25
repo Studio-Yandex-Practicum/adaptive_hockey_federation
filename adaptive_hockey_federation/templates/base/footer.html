@@ -4,11 +4,11 @@
     {% include "base/pagination.html" %}
     <ul class="nav nav-pills">
       {% with request.resolver_match.view_name as view_name %}
-        {% if view_name == 'users:users' and perms.add_user %}{% include "base/user_button_create!.html" with name="+ Пользователь"%}{% endif %}
+        {% if view_name == 'users:users' and perms.users.add_user %}{% include "base/user_button_create!.html" with name="+ Пользователь"%}{% endif %}
         {% if view_name  == 'main:teams' %}{% include "base/team_button_create.html" with name="+ Команда" %}{% endif %}
-        {% if view_name  == 'competitions:competitions' %}{% include "base/competition_button_create.html" %}{% endif %}
+        {% if view_name  == 'competitions:competitions' and perms.competitions.add_competition %}{% include "base/competition_button_create.html" %}{% endif %}
         {% if view_name  == 'main:players' %}{% include "main/players/player_button_create.html"%}{% endif %}
-        {% if view_name  == 'main:staffs' %}{% include "main/staffs/staff_button_create.html"%}{% endif %}
+        {% if view_name  == 'main:staffs' and perms.main.add_staffmember %}{% include "main/staffs/staff_button_create.html"%}{% endif %}
         {% if view_name  != 'main:unloads' %}{% include "base/button.html" with name="Выгрузить" %}{% endif %}
         {% if view_name  == 'main:teams_id' %}{% include "main/teams_id/button_create_team_member.html" with name="+ Добавить" %}{% endif %}
       {% endwith %}

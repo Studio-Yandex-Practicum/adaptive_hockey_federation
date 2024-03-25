@@ -1,7 +1,13 @@
+import re
 from datetime import datetime
 from typing import Any
 
-from core.constants import ROLE_AGENT, MAX_AGE_PlAYER, MIN_AGE_PlAYER
+from core.constants import (
+    PLAYER_FORM_HELP_TEXTS,
+    ROLE_AGENT,
+    MAX_AGE_PlAYER,
+    MIN_AGE_PlAYER,
+)
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
@@ -23,30 +29,9 @@ class PlayerForm(forms.ModelForm):
     min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
     max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
 
-    birthday = forms.DateField(
-        widget=forms.DateInput(
-            attrs={
-                "type": "date",
-                "placeholder": "yyyy-mm-dd (DOB)",
-                "class": "form-control",
-                "min": min_date,
-                "max": max_date,
-            }
-        ),
-        label="Дата рождения",
-        help_text="Дата рождения",
-    )
-
-    identity_document = forms.CharField(
-        widget=forms.TextInput,
-        label="Удостоверение личности",
-        help_text="Удостоверение личности",
-    )
-    level_revision = forms.CharField(
-        widget=forms.TextInput,
-        label="Уровень ревизии",
-        help_text="Уровень ревизии",
-    )
+    def __init__(self, *args, **kwargs):
+        super(PlayerForm, self).__init__(*args, **kwargs)
+        self.fields["team"].required = False
 
     class Meta:
         model = Player
@@ -66,6 +51,75 @@ class PlayerForm(forms.ModelForm):
             "number",
             "identity_document",
         ]
+        widgets = {
+            "surname": forms.TextInput(
+                attrs={"placeholder": "Введите фамилию"}
+            ),
+            "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
+            "patronymic": forms.TextInput(
+                attrs={"placeholder": "Введите отчество"}
+            ),
+            "identity_document": forms.TextInput(
+                attrs={"placeholder": "Введите название документа"}
+            ),
+            "number": forms.TextInput(
+                attrs={"placeholder": "Введите номер игрока"}
+            ),
+            "level_revision": forms.TextInput(
+                attrs={"placeholder": "Введите уровень ревизии"}
+            ),
+            "birthday": forms.TextInput(
+                attrs={"placeholder": "Введите дату рождения", "type": "date"}
+            ),
+        }
+        help_texts = {
+            "identity_document": PLAYER_FORM_HELP_TEXTS["identity_document"],
+            "birthday": PLAYER_FORM_HELP_TEXTS["birthday"],
+            "team": PLAYER_FORM_HELP_TEXTS["team"],
+        }
+
+    def save_m2m(self):
+        self.instance.team.through.objects.filter(
+            team__in=self.cleaned_data["team"]
+        ).delete()
+        self.instance.team.set(self.cleaned_data["team"])
+
+    def save(self, *args, **kwargs):
+        instance = super().save()
+        self.save_m2m()
+        return instance
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if name.replace(" ", "").isalpha():
+            return name
+        raise ValidationError("Введите корректное имя например: <Иван>")
+
+    def clean_surname(self):
+        name = self.cleaned_data["surname"]
+        if name.replace(" ", "").isalpha():
+            return name
+        raise ValidationError("Введите корректную фамилию например: <Иванов>")
+
+    def clean_patronymic(self):
+        if name := self.cleaned_data["patronymic"]:
+            if name.replace(" ", "").isalpha():
+                return name
+            raise ValidationError(
+                "Введите корректное отчество например: <Иванович>"
+            )
+        return self.cleaned_data["patronymic"]
+
+    def clean_identity_document(self):
+        document = self.cleaned_data["identity_document"]
+        if re.fullmatch(r"Паспорт \d{4}\s\d{6}", document) or re.fullmatch(
+            r"Свидетельство о рождении \D{4}\s\d{6}", document
+        ):
+            return document
+        raise ValidationError(
+            "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или"
+            "'Свидетельство о рождении X-XX XXXXXX'"
+        )
 
 
 class CityChoiceField(ModelChoiceField):
