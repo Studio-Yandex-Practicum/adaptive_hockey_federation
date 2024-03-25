@@ -198,26 +198,42 @@ PLAYER_POST_URLS = (
     # "/players/deleted/",
 )
 STAFF_GET_URLS = (
-    {URL: "/staffs/"},
-    {URL: "/staffs/<int:pk>/"},
-    {URL: "/staffs/<int:pk>/edit/"},
-    {URL: "/staffs/create/"},
+    {URL: "/staffs/", PERMISSION_REQUIRED: "list_view_staffteammember"},
+    {URL: "/staffs/<int:pk>/", PERMISSION_REQUIRED: "view_staffteammember"},
+    {
+        URL: "/staffs/<int:pk>/edit/",
+        PERMISSION_REQUIRED: "change_staffteammember",
+    },
+    {URL: "/staffs/create/", PERMISSION_REQUIRED: "add_staffteammember"},
 )
-STAFF_POST_URL = ("/staffs/<int:pk>/delete/",)
+STAFF_POST_URLS = (
+    {
+        URL: "/staffs/<int:pk>/delete/",
+        PERMISSION_REQUIRED: "delete_staffteammember",
+    },
+)
 TEAM_GET_URLS = (
-    "/teams/",
-    "/teams/<int:team_id>/",
-    "/teams/<int:team_id>/edit/",
-    "/teams/create/",
+    {URL: "/teams/", PERMISSION_REQUIRED: "list_view_team"},
+    {URL: "/teams/<int:team_id>/", PERMISSION_REQUIRED: "view_team"},
+    {URL: "/teams/<int:team_id>/edit/", PERMISSION_REQUIRED: "change_team"},
+    {URL: "/teams/create/", PERMISSION_REQUIRED: "add_team"},
 )
-TEAM_POST_URL = "/teams/<int:team_id>/delete/"
+TEAM_POST_URLS = (
+    {URL: "/teams/<int:team_id>/delete/", PERMISSION_REQUIRED: "delete_team"},
+)
 USER_GET_URLS = (
-    "/users/",
-    "/users/<int:pk>/edit/",
-    "/users/create/",
-    "/users/set_password/<uidb64>/<token>/",
+    {URL: "/users/", PERMISSION_REQUIRED: "list_view_user"},
+    {URL: "/users/<int:pk>/edit/", PERMISSION_REQUIRED: "change_user"},
+    {URL: "/users/create/", PERMISSION_REQUIRED: "add_user"},
+    {
+        URL: "/users/set_password/<uidb64>/<token>/",
+        PERMISSION_REQUIRED: None,
+        "authorized_only": False,
+    },
 )
-USER_POST_URL = "/users/<int:pk>/delete/"
+USER_POST_URLS = (
+    {URL: "/users/<int:pk>/delete/", PERMISSION_REQUIRED: "delete_user"},
+)
 UNLOAD_URLS = ("/unloads/",)
 
 # Страницы админки, которые должны возвращать 200(ОК) для пользователя,

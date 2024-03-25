@@ -8,6 +8,13 @@ from tests.url_schema import (
     COMPETITION_POST_URLS,
     PLAYER_GET_URLS,
     PLAYER_POST_URLS,
+    STAFF_GET_URLS,
+    STAFF_POST_URLS,
+    TEAM_GET_URLS,
+    TEAM_POST_URLS,
+    UNLOAD_URLS,
+    USER_GET_URLS,
+    USER_POST_URLS,
 )
 from tests.utils import UrlToTest
 from users.factories import UserFactory
@@ -93,10 +100,12 @@ class TestPermissions(BaseTestClass):
         self.url_tests(url_to_test)
 
     def test_competition_get_urls(self):
+        """Тесты get-страниц соревнования на соответствующие разрешения."""
         urls_to_test = tuple(UrlToTest(**url) for url in COMPETITION_GET_URLS)
         self.batch_url_test(urls_to_test)
 
     def test_competition_post_urls(self):
+        """Тесты post-страниц соревнования на соответствующие разрешения."""
         urls_to_test = tuple(
             UrlToTest(**url, use_post=True, code_estimated=HTTPStatus.FOUND)
             for url in COMPETITION_POST_URLS
@@ -104,22 +113,60 @@ class TestPermissions(BaseTestClass):
         self.batch_url_test(urls_to_test)
 
     def test_player_get_urls(self):
+        """Тесты get-страниц игрока на соответствующие разрешения."""
         urls_to_test = tuple(UrlToTest(**url) for url in PLAYER_GET_URLS)
         self.batch_url_test(urls_to_test)
 
     def test_player_post_urls(self):
+        """Тесты post-страниц игрока на соответствующие разрешения."""
         urls_to_test = tuple(
             UrlToTest(**url, code_estimated=HTTPStatus.FOUND, use_post=True)
             for url in PLAYER_POST_URLS
         )
         self.batch_url_test(urls_to_test)
 
-    # UrlToTest("/teams/1/", permission_required="view_team"),
-    # UrlToTest("/teams/1/edit/", permission_required="change_team"),
-    # UrlToTest("/teams/create/", permission_required="add_team"),
-    # UrlToTest("/unloads/"),
-    # # TODO Раскомментировать при доработке пермишенов для страниц с
-    # #  пользователями.
-    # UrlToTest("/users/create/", permission_required="add_user"),
-    # UrlToTest("/users/", permission_required="list_view_user"),
-    # UrlToTest("/users/1/edit/", permission_required="change_user")
+    def test_staff_get_urls(self):
+        """Тесты get-страниц сотрудника команды на соответствующие
+        разрешения."""
+        urls_to_test = tuple(UrlToTest(**url) for url in STAFF_GET_URLS)
+        self.batch_url_test(urls_to_test)
+
+    def test_staff_post_urls(self):
+        """Тесты post-страниц сотрудника команды на соответствующие
+        разрешения."""
+        urls_to_test = tuple(
+            UrlToTest(**url, code_estimated=HTTPStatus.FOUND, use_post=True)
+            for url in STAFF_POST_URLS
+        )
+        self.batch_url_test(urls_to_test)
+
+    def test_team_get_urls(self):
+        """Тесты get-страниц команд на соответствующие разрешения."""
+        urls_to_test = tuple(UrlToTest(**url) for url in TEAM_GET_URLS)
+        self.batch_url_test(urls_to_test)
+
+    def test_team_post_urls(self):
+        """Тесты post-страниц команд на соответствующие разрешения."""
+        urls_to_test = tuple(
+            UrlToTest(**url, code_estimated=HTTPStatus.FOUND, use_post=True)
+            for url in TEAM_POST_URLS
+        )
+        self.batch_url_test(urls_to_test)
+
+    def test_user_get_urls(self):
+        """Тесты get-страниц пользователя на соответствующие разрешения."""
+        urls_to_test = tuple(UrlToTest(**url) for url in USER_GET_URLS)
+        self.batch_url_test(urls_to_test)
+
+    def test_user_post_urls(self):
+        """Тесты post-страниц пользователя на соответствующие разрешения."""
+        urls_to_test = tuple(
+            UrlToTest(**url, code_estimated=HTTPStatus.FOUND, use_post=True)
+            for url in USER_POST_URLS
+        )
+        self.batch_url_test(urls_to_test)
+
+    def test_unload_urls(self):
+        """Тесты get-страниц выгрузки на соответствующие разрешения."""
+        urls_to_test = tuple(UrlToTest(**url) for url in UNLOAD_URLS)
+        self.batch_url_test(urls_to_test)

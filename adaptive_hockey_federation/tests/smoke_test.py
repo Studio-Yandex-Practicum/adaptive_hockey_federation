@@ -48,12 +48,12 @@ from tests.url_schema import (
     PLAYER_GET_URLS,
     PLAYER_POST_URLS,
     STAFF_GET_URLS,
-    STAFF_POST_URL,
+    STAFF_POST_URLS,
     TEAM_GET_URLS,
-    TEAM_POST_URL,
+    TEAM_POST_URLS,
     UNLOAD_URLS,
     USER_GET_URLS,
-    USER_POST_URL,
+    USER_POST_URLS,
 )
 
 
@@ -83,17 +83,17 @@ class TestSiteUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_staff_simple_access(self):
         """Тест доступности страниц с сотрудниками команд."""
         self.url_get_test(STAFF_GET_URLS)
-        self.url_get_test(STAFF_POST_URL, "post", HTTPStatus.FOUND)
+        self.url_get_test(STAFF_POST_URLS, "post", HTTPStatus.FOUND)
 
     def test_team_simple_access(self):
         """Тест доступности страниц со спортивными командами."""
         self.url_get_test(TEAM_GET_URLS)
-        self.url_get_test(TEAM_POST_URL, "post", HTTPStatus.FOUND)
+        self.url_get_test(TEAM_POST_URLS, "post", HTTPStatus.FOUND)
 
     def test_user_simple_access(self):
         """Тест доступности страниц с пользователями."""
         self.url_get_test(USER_GET_URLS)
-        self.url_get_test(USER_POST_URL, "post", HTTPStatus.FOUND)
+        self.url_get_test(USER_POST_URLS, "post", HTTPStatus.FOUND)
 
     def test_unload_simple_access(self):
         """Тест доступности страниц с выгрузками."""
