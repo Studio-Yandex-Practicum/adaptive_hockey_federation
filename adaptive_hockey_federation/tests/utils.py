@@ -69,7 +69,7 @@ class UrlToTest:
 
     def __init__(
         self,
-        path: str,
+        url: str,
         *,
         code_estimated: int | list | tuple = HTTPStatus.OK,
         permission_required: str | None = None,
@@ -79,7 +79,7 @@ class UrlToTest:
         use_post: bool = False,
         path_render_subs: str | tuple[str, ...] | list[str] = "1",
     ):
-        self.path = path
+        self.path = url
         self.authorized_only = authorized_only
         self.code_estimated = code_estimated
         self.permission = None
@@ -93,8 +93,8 @@ class UrlToTest:
         else:
             self.unauthorized_code = HTTPStatus.OK
         self.use_post = use_post
-        self.path_for_message = path
-        self.path = render_url(path, path_render_subs)
+        self.path_for_message = url
+        self.path = render_url(url, path_render_subs)
 
     def _get_response(self, client: Client):
         if self.use_post:

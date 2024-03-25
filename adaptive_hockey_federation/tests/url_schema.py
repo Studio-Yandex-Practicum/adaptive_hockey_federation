@@ -1,3 +1,6 @@
+PERMISSION_REQUIRED = "permission_required"
+URL = "url"
+
 INDEX_PAGE = "/"
 ADMIN_MAIN_URL = "/admin/"
 ADMIN_APP_LABELS_URLS = (
@@ -154,34 +157,51 @@ AUTH_RESET_URLS = (
     "/auth/reset/done/",
 )
 COMPETITION_GET_URLS = (
-    "/competitions/",
-    "/competitions/create/",
-    "/competitions/<int:pk>/",
-    "/competitions/<int:pk>/edit/",
+    {URL: "/competitions/", PERMISSION_REQUIRED: "list_view_competition"},
+    {URL: "/competitions/create/", PERMISSION_REQUIRED: "add_competition"},
+    {
+        URL: "/competitions/<int:pk>/",
+        PERMISSION_REQUIRED: "list_team_competition",
+    },
+    {
+        URL: "/competitions/<int:pk>/edit/",
+        PERMISSION_REQUIRED: "change_competition",
+    },
 )
+
 COMPETITION_POST_URLS = (
-    "/competitions/<int:competition_id>/teams/<int:pk>/add/",
-    "/competitions/<int:competition_id>/teams/<int:pk>/delete/",
-    "/competitions/<int:pk>/delete/",
+    {
+        URL: "/competitions/<int:competition_id>/teams/<int:pk>/add/",
+        PERMISSION_REQUIRED: "change_competition",
+    },
+    {
+        URL: "/competitions/<int:competition_id>/teams/<int:pk>/delete/",
+        PERMISSION_REQUIRED: "delete_team_competition",
+    },
+    {
+        URL: "/competitions/<int:pk>/delete/",
+        PERMISSION_REQUIRED: "delete_competition",
+    },
 )
+
 PLAYER_GET_URLS = (
-    "/players/",
-    "/players/<int:pk>/",
-    "/players/<int:pk>/edit/",
-    "/players/create/",
+    {URL: "/players/", PERMISSION_REQUIRED: "list_view_player"},
+    {URL: "/players/<int:pk>/", PERMISSION_REQUIRED: "view_player"},
+    {URL: "/players/<int:pk>/edit/", PERMISSION_REQUIRED: "change_player"},
+    {URL: "/players/create/", PERMISSION_REQUIRED: "add_player"},
 )
 PLAYER_POST_URLS = (
-    "/players/1/delete/",
+    {URL: "/players/1/delete/", PERMISSION_REQUIRED: "delete_player"},
     # TODO: Тест на данный урл выдает TemplateDoesNotExist. Необходимо
     #  раскомментировать, когда будет починен player_id_deleted() в
     #  main.views или вообще удалить, если эта страница не нужна.
     # "/players/deleted/",
 )
 STAFF_GET_URLS = (
-    "/staffs/",
-    "/staffs/<int:pk>/",
-    "/staffs/<int:pk>/edit/",
-    "/staffs/create/",
+    {URL: "/staffs/"},
+    {URL: "/staffs/<int:pk>/"},
+    {URL: "/staffs/<int:pk>/edit/"},
+    {URL: "/staffs/create/"},
 )
 STAFF_POST_URL = ("/staffs/<int:pk>/delete/",)
 TEAM_GET_URLS = (
@@ -200,6 +220,8 @@ USER_GET_URLS = (
 USER_POST_URL = "/users/<int:pk>/delete/"
 UNLOAD_URLS = ("/unloads/",)
 
+# Страницы админки, которые должны возвращать 200(ОК) для пользователя,
+# обладающего правами администратора:
 ADMIN_SITE_ADMIN_OK = (
     (ADMIN_MAIN_URL,)
     + ADMIN_APP_LABELS_URLS

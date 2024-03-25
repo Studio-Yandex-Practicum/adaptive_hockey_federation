@@ -1,6 +1,14 @@
+from http import HTTPStatus
+from typing import Iterable
+
 from tests.base import BaseTestClass
 from tests.fixture_user import test_role_user
-from tests.url_schema import ADMIN_SITE_ADMIN_OK
+from tests.url_schema import (
+    COMPETITION_GET_URLS,
+    COMPETITION_POST_URLS,
+    PLAYER_GET_URLS,
+    PLAYER_POST_URLS,
+)
 from tests.utils import UrlToTest
 from users.factories import UserFactory
 from users.models import User
@@ -23,11 +31,16 @@ class TestPermissions(BaseTestClass):
         docstring к классу UrlToTest)."""
         responses = url_to_test.execute_tests(self.client, self.user)
         for fact, estimated, message in responses:
-            with self.subTest(fact=fact, estimated=estimated, msg=message):
-                if isinstance(estimated, (str, int)):
-                    self.assertEqual(fact, estimated, message)
-                elif isinstance(estimated, (list, tuple)):
-                    self.assertIn(fact, estimated, message)
+            if isinstance(estimated, (str, int)):
+                self.assertEqual(fact, estimated, message)
+            elif isinstance(estimated, (list, tuple)):
+                self.assertIn(fact, estimated, message)
+
+    def batch_url_test(self, urls_to_test: Iterable[UrlToTest]):
+        """Проводит sub-тесты для нескольких урл."""
+        for url_to_test in urls_to_test:
+            with self.subTest(url_to_test=url_to_test):
+                self.url_tests(url_to_test)
 
     def test_main_page(self):
         """Главная страница доступна только авторизованному пользователю.
@@ -35,47 +48,72 @@ class TestPermissions(BaseTestClass):
         url_to_test = UrlToTest("/")
         self.url_tests(url_to_test)
 
-    def test_admin_site_available_for_admins_only(self):
-        """Страницы админки доступны только администраторам."""
-        # self.user.role = ROLE_ADMIN
-        # self.user.save()
-        # count = 0
-        for admin_url in ADMIN_SITE_ADMIN_OK:
-            with self.subTest(admin_url=admin_url):
-                # print(count := count + 1)
-                url_to_test = UrlToTest(
-                    admin_url,
-                    admin_only=True,
-                )
-                self.url_tests(url_to_test)
+    # def test_admin_site_available_for_admins_only(self):
+    #     """Страницы админки доступны пользователям, у которых поле
+    #     is_staff == True, и недоступны при is_staff == False.
+    #     администраторам."""
+    #     for admin_url in ADMIN_SITE_ADMIN_OK:
+    #         with self.subTest(admin_url=admin_url):
+    #             url_to_test = UrlToTest(
+    #                 admin_url,
+    #                 admin_only=True,
+    #             )
+    #             self.url_tests(url_to_test)
 
-        # self.user.role = test_role_user
-        # self.user.save()
+    def test_auth_login(self):
+        """Неавторизованному пользователю должна быть доступна страница
+        входа на сайт."""
+        url_to_test = UrlToTest("/auth/login/", authorized_only=False)
+        self.url_tests(url_to_test)
 
-    # UrlToTest("/auth/login/", authorized_only=False),
-    # UrlToTest(
-    #     "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True
-    # ),
-    # UrlToTest("/auth/password_change/"),
-    # UrlToTest("/auth/password_reset/", authorized_only=False),
-    # UrlToTest("/analytics/", permission_required="list_view_player"),
-    # UrlToTest(
-    #     "/competitions/", permission_required="list_view_competition"
-    # ),
-    # # TODO Раскомментировать при доработке пермишенов для страниц с
-    # #  соревнованиями.
-    # UrlToTest(
-    #     "/competitions/1/", permission_required="list_team_competition"
-    # ),
-    # # TODO Раскомментировать при доработке пермишенов для страниц с
-    # #  игроками.
-    # UrlToTest("/players/create/", permission_required="add_player"),
-    # UrlToTest("/players/", permission_required="list_view_player"),
-    # # TODO Раскомментировать при доработке пермишенов для страниц с
-    # #  игроками.
-    # UrlToTest("/players/1/", permission_required="view_player"),
-    # UrlToTest("/players/1/edit/", permission_required="change_player"),
-    # UrlToTest("/teams/", permission_required="list_view_team"),
+    def test_auth_logout(self):
+        """POST-запрос авторизованного пользователя на страницы лог-аута
+        должен вернуть ответ с кодом 302."""
+        url_to_test = UrlToTest(
+            "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True
+        )
+        self.url_tests(url_to_test)
+
+    def test_auth_password_change_url(self):
+        """Страница смены пароля должна быть доступна только авторизованному
+        пользователю."""
+        url_to_test = UrlToTest("/auth/password_change/")
+        self.url_tests(url_to_test)
+
+    def test_auth_password_reset_url(self):
+        """Страница сброса пароля должна быть доступна неавторизованному
+        пользователю."""
+        url_to_test = UrlToTest("/auth/password_reset/", authorized_only=False)
+        self.url_tests(url_to_test)
+
+    def test_analytics_url(self):
+        """Страница аналитики доступна пользователям, у которых поле
+        is_staff == True, и недоступны при is_staff == False."""
+        url_to_test = UrlToTest("/analytics/", admin_only=True)
+        self.url_tests(url_to_test)
+
+    def test_competition_get_urls(self):
+        urls_to_test = tuple(UrlToTest(**url) for url in COMPETITION_GET_URLS)
+        self.batch_url_test(urls_to_test)
+
+    def test_competition_post_urls(self):
+        urls_to_test = tuple(
+            UrlToTest(**url, use_post=True, code_estimated=HTTPStatus.FOUND)
+            for url in COMPETITION_POST_URLS
+        )
+        self.batch_url_test(urls_to_test)
+
+    def test_player_get_urls(self):
+        urls_to_test = tuple(UrlToTest(**url) for url in PLAYER_GET_URLS)
+        self.batch_url_test(urls_to_test)
+
+    def test_player_post_urls(self):
+        urls_to_test = tuple(
+            UrlToTest(**url, code_estimated=HTTPStatus.FOUND, use_post=True)
+            for url in PLAYER_POST_URLS
+        )
+        self.batch_url_test(urls_to_test)
+
     # UrlToTest("/teams/1/", permission_required="view_team"),
     # UrlToTest("/teams/1/edit/", permission_required="change_team"),
     # UrlToTest("/teams/create/", permission_required="add_team"),

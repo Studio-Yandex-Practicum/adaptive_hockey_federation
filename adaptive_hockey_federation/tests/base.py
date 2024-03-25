@@ -64,7 +64,7 @@ class BaseTestClass(TestCase):
             is_staff=True,
             is_superuser=True,
         )
-        cls.user = UserFactory.create()
+        cls.user = UserFactory.create(role=test_role_user)
         cls.discipline_name = DisciplineNameFactory.create()
         cls.teams = TeamFactory.create()
         cls.competition = CompetitionFactory.create()
@@ -133,9 +133,11 @@ class UrlTestMixin:
           устраивает.
         """
         client = client or self.get_default_client()
-        if isinstance(urls, str):
+        if isinstance(urls, str) or isinstance(urls, dict):
             urls = (urls,)
         for url in urls:
+            if isinstance(url, dict):
+                url = url["url"]
             url_for_message = url
             url = self._render_url(url, subs)
             msg = message or URL_MSG.format(
