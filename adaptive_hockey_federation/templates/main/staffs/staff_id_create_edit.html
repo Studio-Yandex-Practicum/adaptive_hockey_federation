@@ -1,12 +1,13 @@
 {% extends 'base/base.html' %}
 {% load static %}
+{% load user_filters %}
 {% block title %}
   Редактирование сотрудника команды
 {% endblock %}
 {% block content %}
-  <h2 class="text-center mb-4">Редактирование сотрудника команды</h2>
+<h2 class="text-center mb-4">{{ page_title }}</h2>
 
-  <form method="post" action="{% url 'main:staff_id_edit' staffmember.id %}" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container text-center">
         <div class="full-container">
@@ -14,14 +15,8 @@
           <table class="table-table">
             <tbody>
             {% for field in form.visible_fields %}
-                  {% if field.name in 'surname name patronymic phone' %}
-                  <tr>
-                    <th>{{ field.label_tag }}</th>
-                    <td>{{ field }}</td>
-                    <td>{{ field.errors }}</td>
-                  </tr>
-                {% endif %}
-              {% endfor %}
+              {% if field.name in 'surname name patronymic phone' %} {% include "main/fields/text_input_field.html" %} {% endif %}
+            {% endfor %}
             </tbody>
           </table>
         </div>
@@ -30,14 +25,11 @@
           <h4 class="text-center mb-4">Информация о состоянии в команде</h4>
           <table class="table-table">
             <tbody>
-                {{ staff_form.management_form }}
-                {{ staff_form.non_form_errors }}
                 {% for field in staff_form %}
-                  <tr {% if team_id and field.name == 'team' %} style="display:none;" {% endif %}>
-                      <th>{{ field.label_tag }}</th>
-                      <td>{{ field }}</td>
-                      <td>{{ field.errors }}</td>
-                  </tr>
+                  {% if field.name == 'staff_position'%} {% include "main/fields/select_field.html" %}
+                  {% elif field.name == 'team'%} {% include "main/fields/team_select_field.html" %}
+                  {% else %} {% include "main/fields/text_input_field.html" %}
+                  {% endif %}
               {% endfor %}
             </tbody>
           </table>

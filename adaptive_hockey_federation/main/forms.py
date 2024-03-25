@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Any
 
 from core.constants import (
-    PLAYER_FORM_HELP_TEXTS,
+    FORM_HELP_TEXTS,
     ROLE_AGENT,
     MAX_AGE_PlAYER,
     MIN_AGE_PlAYER,
@@ -55,7 +55,9 @@ class PlayerForm(forms.ModelForm):
             "surname": forms.TextInput(
                 attrs={"placeholder": "Введите фамилию"}
             ),
-            "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
+            "name": forms.TextInput(
+                attrs={"placeholder": "Введите Имя"}
+            ),
             "patronymic": forms.TextInput(
                 attrs={"placeholder": "Введите отчество"}
             ),
@@ -73,9 +75,9 @@ class PlayerForm(forms.ModelForm):
             ),
         }
         help_texts = {
-            "identity_document": PLAYER_FORM_HELP_TEXTS["identity_document"],
-            "birthday": PLAYER_FORM_HELP_TEXTS["birthday"],
-            "team": PLAYER_FORM_HELP_TEXTS["team"],
+            "identity_document": FORM_HELP_TEXTS["identity_document"],
+            "birthday": FORM_HELP_TEXTS["birthday"],
+            "team": FORM_HELP_TEXTS["team"],
         }
 
     def save_m2m(self):
@@ -88,27 +90,6 @@ class PlayerForm(forms.ModelForm):
         instance = super().save()
         self.save_m2m()
         return instance
-
-    def clean_name(self):
-        name = self.cleaned_data["name"]
-        if name.replace(" ", "").isalpha():
-            return name
-        raise ValidationError("Введите корректное имя например: <Иван>")
-
-    def clean_surname(self):
-        name = self.cleaned_data["surname"]
-        if name.replace(" ", "").isalpha():
-            return name
-        raise ValidationError("Введите корректную фамилию например: <Иванов>")
-
-    def clean_patronymic(self):
-        if name := self.cleaned_data["patronymic"]:
-            if name.replace(" ", "").isalpha():
-                return name
-            raise ValidationError(
-                "Введите корректное отчество например: <Иванович>"
-            )
-        return self.cleaned_data["patronymic"]
 
     def clean_identity_document(self):
         document = self.cleaned_data["identity_document"]
@@ -253,15 +234,31 @@ class StaffTeamMemberForm(forms.ModelForm):
             "qualification",
             "notes",
         )
+        help_texts = {
+            "team": FORM_HELP_TEXTS["team"],
+        }
 
 
 class StaffMemberForm(forms.ModelForm):
     class Meta:
         model = StaffMember
         fields = (
-            "id",
             "surname",
             "name",
             "patronymic",
             "phone",
         )
+        widgets = {
+            "surname": forms.TextInput(
+                attrs={"placeholder": "Введите фамилию"}
+            ),
+            "name": forms.TextInput(
+                attrs={"placeholder": "Введите Имя"}
+            ),
+            "patronymic": forms.TextInput(
+                attrs={"placeholder": "Введите отчество"}
+            ),
+            "phone": forms.TextInput(
+                attrs={"placeholder": "Введите номер телефон"}
+            ),
+        }

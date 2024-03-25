@@ -156,7 +156,7 @@ class StaffMemberIdCreateView(
 
     model = StaffMember
     form_class = StaffMemberForm
-    template_name = "main/staffs/staff_id_create.html"
+    template_name = "main/staffs/staff_id_create_edit.html"
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.add_staffmember"
     permission_denied_message = (
@@ -180,6 +180,7 @@ class StaffMemberIdCreateView(
             form = StaffTeamMemberForm(self.request.POST)
         else:
             form = StaffTeamMemberForm(initial={'team': self.team_id})
+        context["page_title"] = "Создание профиля нового сотрудника"
         context['staff_form'] = form
         context["team_id"] = self.team_id
         return context
@@ -208,16 +209,27 @@ class StaffMemberIdEditView(
 
     model = StaffMember
     form_class = StaffMemberForm
-    template_name = "main/staffs/staff_id_edit.html"
-    success_url = reverse_lazy("main:staffs")
+    template_name = "main/staffs/staff_id_create_edit.html"
     permission_required = "main.change_staffmember"
     permission_denied_message = (
         "У Вас нет разрешения на редактирование сотрудника."
     )
 
+    def get_success_url(self):
+        return reverse(
+            "main:staff_id",
+            kwargs={
+                "pk": self.object.pk,
+            },
+        )
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(StaffMember, id=self.kwargs["pk"])
+
     def form_valid(self, form):
         context = self.get_context_data()
         staff_form = context["staff_form"]
+        context["page_title"] = "Редактирование профиля сотрудника"
         with transaction.atomic():
             form.save()
             if staff_form.is_valid():
@@ -253,45 +265,3 @@ class StaffMemberIdDeleteView(
 
     def get_object(self, queryset=None):
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
-
-
-class StaffTeamMemberCreateView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    CreateView
-):
-    """Представление для создания нового сотрудника команды."""
-
-    model = StaffTeamMember
-    form_class = StaffTeamMemberForm
-    template_name = "main/staffs/staff_member_create.html"
-    permission_required = "main.add_staffteammember"
-    permission_denied_message = (
-        "У Вас нет разрешения на создание сотрудника команды."
-    )
-    team_id = None
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
-
-    def get(self, request, *args, **kwargs):
-        self.team_id = request.GET.get("team", None)
-        if self.team_id is not None:
-            self.initial = {"team": self.team_id}
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["team_id"] = self.team_id
-        return context
-
-    def get_success_url(self):
-        if "None" in self.team_id or self.team_id is None:
-            return reverse("main:players")
-        else:
-            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
-
-    def post(self, request, *args, **kwargs):
-        self.team_id = request.POST.get("team_id")
-        return super().post(request, *args, **kwargs)
