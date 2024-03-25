@@ -4,6 +4,7 @@ from typing import Iterable
 from tests.base import BaseTestClass
 from tests.fixture_user import test_role_user
 from tests.url_schema import (
+    ADMIN_SITE_ADMIN_OK,
     COMPETITION_GET_URLS,
     COMPETITION_POST_URLS,
     PLAYER_GET_URLS,
@@ -55,17 +56,14 @@ class TestPermissions(BaseTestClass):
         url_to_test = UrlToTest("/")
         self.url_tests(url_to_test)
 
-    # def test_admin_site_available_for_admins_only(self):
-    #     """Страницы админки доступны пользователям, у которых поле
-    #     is_staff == True, и недоступны при is_staff == False.
-    #     администраторам."""
-    #     for admin_url in ADMIN_SITE_ADMIN_OK:
-    #         with self.subTest(admin_url=admin_url):
-    #             url_to_test = UrlToTest(
-    #                 admin_url,
-    #                 admin_only=True,
-    #             )
-    #             self.url_tests(url_to_test)
+    def test_admin_site_available_for_admins_only(self):
+        """Страницы админки доступны пользователям, у которых поле
+        is_staff == True, и недоступны при is_staff == False.
+        администраторам."""
+        urls_to_test = tuple(
+            UrlToTest(url, admin_only=True) for url in ADMIN_SITE_ADMIN_OK
+        )
+        self.batch_url_test(urls_to_test)
 
     def test_auth_login(self):
         """Неавторизованному пользователю должна быть доступна страница
@@ -168,5 +166,5 @@ class TestPermissions(BaseTestClass):
 
     def test_unload_urls(self):
         """Тесты get-страниц выгрузки на соответствующие разрешения."""
-        urls_to_test = tuple(UrlToTest(**url) for url in UNLOAD_URLS)
+        urls_to_test = tuple(UrlToTest(url) for url in UNLOAD_URLS)
         self.batch_url_test(urls_to_test)

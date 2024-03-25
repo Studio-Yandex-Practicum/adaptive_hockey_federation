@@ -21,7 +21,6 @@ from tests.fixture_user import (
     test_role_admin,
     test_role_user,
 )
-from tests.utils import UrlToTest
 from users.models import ProxyGroup, User
 
 TEST_GROUP_NAME = "no_permission_group"
@@ -162,63 +161,6 @@ class TestUrls(TestCase):
         """Тест - удаление пользователя."""
         delete_result = self.delete_user(self.user.id)
         self.assertTrue(delete_result, "Ошибка при удалении пользователя")
-
-    def test_main_urls(self):
-        """Тесты основных урл.
-        Для тестирования нового урл - добавить соответствующий объект класса
-        UrlToTest в список urls (см. документацию к классу UrlToTest)."""
-        urls = [
-            UrlToTest("/"),
-            UrlToTest(
-                "/admin/",
-                admin_only=True,
-                unauthorized_code_estimated=HTTPStatus.FOUND,
-            ),
-            UrlToTest("/auth/login/", authorized_only=False),
-            UrlToTest(
-                "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True
-            ),
-            UrlToTest("/auth/password_change/"),
-            UrlToTest("/auth/password_reset/", authorized_only=False),
-            UrlToTest("/analytics/", permission_required="list_view_player"),
-            UrlToTest(
-                "/competitions/", permission_required="list_view_competition"
-            ),
-            # TODO Раскомментировать при доработке пермишенов для страниц с
-            #  соревнованиями.
-            UrlToTest(
-                "/competitions/1/", permission_required="list_team_competition"
-            ),
-            # TODO Раскомментировать при доработке пермишенов для страниц с
-            #  игроками.
-            UrlToTest("/players/create/", permission_required="add_player"),
-            UrlToTest("/players/", permission_required="list_view_player"),
-            # TODO Раскомментировать при доработке пермишенов для страниц с
-            #  игроками.
-            UrlToTest("/players/1/", permission_required="view_player"),
-            UrlToTest("/players/1/edit/", permission_required="change_player"),
-            UrlToTest("/teams/", permission_required="list_view_team"),
-            UrlToTest("/teams/1/", permission_required="view_team"),
-            UrlToTest("/teams/1/edit/", permission_required="change_team"),
-            UrlToTest("/teams/create/", permission_required="add_team"),
-            UrlToTest("/unloads/"),
-            # TODO Раскомментировать при доработке пермишенов для страниц с
-            #  пользователями.
-            UrlToTest("/users/create/", permission_required="add_user"),
-            UrlToTest("/users/", permission_required="list_view_user"),
-            UrlToTest("/users/1/edit/", permission_required="change_user"),
-        ]
-        urls_responses_results = []
-
-        for url in urls:
-            urls_responses_results += url.execute_tests(self.client, self.user)
-
-        for fact, estimated, message in urls_responses_results:
-            with self.subTest(msg=message, fact=fact, estimated=estimated):
-                if isinstance(estimated, (str, int)):
-                    self.assertEqual(fact, estimated, message)
-                elif isinstance(estimated, (list, tuple)):
-                    self.assertIn(fact, estimated, message)
 
     def test_agent_has_access(self):
         """Доступ представителя к своей команде, ее игрокам и т.д."""

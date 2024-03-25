@@ -1,4 +1,3 @@
-import re
 from http import HTTPStatus
 from typing import Iterable
 
@@ -25,6 +24,7 @@ from main.models import (
 )
 from tests.fixture_user import test_role_user
 from tests.url_test import TEST_GROUP_NAME
+from tests.utils import render_url
 from users.factories import UserFactory
 from users.models import ProxyGroup, User
 
@@ -71,26 +71,12 @@ class BaseTestClass(TestCase):
         cls.diagnosis = DiagnosisFactory.create()
         cls.player = PlayerFactory.create()
         cls.staff = StaffTeamMemberFactory.create()
-        # ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
         cls.document = DocumentFactory.create(player=cls.player)
 
 
 class UrlTestMixin:
     """Миксин предоставляет унифицированный метод для тестирования
     урл-адресов, с генерацией информативного сообщения."""
-
-    @staticmethod
-    def _render_url(url: str, subs: tuple | str):
-        pattern = re.compile(r"<[^/]+>")
-        if not re.search(pattern, url):
-            return url
-        if isinstance(subs, str):
-            subs = (subs,)
-        for sub in subs:
-            url = re.sub(pattern, sub, url, 1)
-        if re.search(pattern, url):
-            url = re.sub(pattern, subs[-1], url)
-        return url
 
     def get_default_client(self) -> Client:
         """Переопределите этот метод для тестирования по умолчанию клиентом,
@@ -139,7 +125,7 @@ class UrlTestMixin:
             if isinstance(url, dict):
                 url = url["url"]
             url_for_message = url
-            url = self._render_url(url, subs)
+            url = render_url(url, subs)
             msg = message or URL_MSG.format(
                 method=method.upper(),
                 msg_url=url_for_message,
