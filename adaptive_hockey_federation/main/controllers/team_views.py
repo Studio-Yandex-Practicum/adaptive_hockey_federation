@@ -57,6 +57,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                         "name": staff.staff_member.name,
                         "position": staff.qualification,
                         "note": staff.notes,
+                        "id": staff.id,
                     }
                     for i, staff in enumerate(
                         team.team_members.filter(
@@ -93,6 +94,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                         player.discipline if player.discipline else None
                     ),
                     "level_revision": player.level_revision,
+                    "id": player.pk,
                 }
                 for player in players
             ],
