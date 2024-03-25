@@ -172,7 +172,7 @@ COMPETITION_GET_URLS = (
 COMPETITION_POST_URLS = (
     {
         URL: "/competitions/<int:competition_id>/teams/<int:pk>/add/",
-        PERMISSION_REQUIRED: "change_competition",
+        PERMISSION_REQUIRED: "add_team_competition",
     },
     {
         URL: "/competitions/<int:competition_id>/teams/<int:pk>/delete/",
