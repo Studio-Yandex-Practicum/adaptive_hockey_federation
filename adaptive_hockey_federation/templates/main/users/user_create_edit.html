@@ -60,7 +60,6 @@
 {% block JavaScript %}
 <script>
   let role_selection = document.getElementById("id_role");
-  let team_selection = document.getElementById("id_team");
   let team_field = document.getElementById("selection-team");
   const selected = [];
   const options = document.getElementById('id_team').options;
@@ -76,7 +75,6 @@
   }
   initialField()
   function stateHidefield() {
-    var opts = team_selection;
     if (role_selection.value === "Представитель команды") {
       team_field.hidden = false;
       for (const option of document.querySelectorAll('#id_team option')) {
