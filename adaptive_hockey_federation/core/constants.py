@@ -79,5 +79,3 @@ FORM_HELP_TEXTS = {
 
 FILE_RESOLUTION = ('png', 'jpeg', 'jpg', 'pdf')
 MAX_UPLOAD_SIZE = 10485760
-
-A=1
