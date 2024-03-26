@@ -6,11 +6,17 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.db.models import QuerySet
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import RedirectView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import (
+    CreateView,
+    DeleteView,
+    DeletionMixin,
+    UpdateView,
+)
 from django.views.generic.list import ListView
 from main.controllers.team_views import CityListMixin
 from main.controllers.utils import get_team_href
@@ -159,12 +165,14 @@ class AddTeamToCompetition(
 class DeleteTeamFromCompetition(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-    DeleteView,
+    View,
+    DeletionMixin,
+    SingleObjectMixin,
 ):
     """Удаление команд из участия в соревновании."""
 
-    object = Team
-    model = Team
+    object = Competition.teams.through
+    model = Competition.teams.through
     permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на удаление команд с соревнования."
@@ -177,14 +185,6 @@ class DeleteTeamFromCompetition(
             team=self.kwargs["pk"],
         )
         return team_in_competition
-
-    def delete(self, request, *args, **kwargs):
-        team = self.get_object()
-        competition = get_object_or_404(
-            Competition, id=self.kwargs["competition_id"]
-        )
-        competition.teams.remove(team)
-        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse_lazy(

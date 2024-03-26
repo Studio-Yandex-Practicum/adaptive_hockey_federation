@@ -1,7 +1,9 @@
+import re
 from http import HTTPStatus
 from typing import Any
 
 from django.contrib.auth.models import Permission
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import Client
 from users.models import User
 
@@ -22,7 +24,7 @@ class UrlToTest:
 
 
     Параметры создания объекта:
-        path - соответствующий урл;
+        url - соответствующий урл;
         code_estimated - код статуса или список кодов статуса, который в норме
             должна возвращать страница. По умолчанию - HTTPStatus.OK (200);
         permission_required: - разрешение (permission), требующееся для
@@ -63,12 +65,24 @@ class UrlToTest:
             чей view наследуется от LogoutView, чтобы не отображался
             warning, связанный с устареванием метода "get" для выхода
             пользователя в Django 5.0, либо в иных случаях, когда необходимо
-            протестировать post-запросы к странице.
+            протестировать post-запросы к странице;
+        path_render_subs:
+            строка или кортеж строк подстановки вместо
+            динамических идентификаторов объектов типа <int:pk> в урл-путях.
+            Например, для обработки пути:
+            "/competitions/<int:competition_id>/teams/<int:pk>/add/"
+            если передать кортеж ("1", "2"), то он преобразует путь в
+            "/competitions/1/teams/2/add/").
+            Если подстановок больше, чем элементов в кортеже "subs", то для
+            оставшихся подстановок возьмется последний элемент. Если в примере
+            выше передать строку "1" или кортеж ("1",), то урл преобразуется в
+            "/competitions/1/teams/1/add/". Если в урл нет динамических
+            идентификаторов, данный параметр не имеет значения.
     """
 
     def __init__(
         self,
-        path: str,
+        url: str,
         *,
         code_estimated: int | list | tuple = HTTPStatus.OK,
         permission_required: str | None = None,
@@ -76,21 +90,33 @@ class UrlToTest:
         unauthorized_code_estimated: int | list | tuple = HTTPStatus.FOUND,
         admin_only: bool = False,
         use_post: bool = False,
+        path_render_subs: str | tuple[str, ...] | list[str] = "1",
     ):
-        self.path = path
+        self.path = url
         self.authorized_only = authorized_only
         self.code_estimated = code_estimated
         self.permission = None
         self.admin_only = admin_only
         if permission_required:
-            self.permission = Permission.objects.get(
-                codename=permission_required
-            )
+            try:
+                self.permission = Permission.objects.get(
+                    codename=permission_required
+                )
+            except ObjectDoesNotExist:
+                raise AssertionError(
+                    f"!!! Выполнить тесты для урл: {self.path} "
+                    f"невозможно. Проверьте, что в базе данных предусмотрено "
+                    f"разрешение '{permission_required}'.!!!"
+                )
+
         if self.authorized_only:
             self.unauthorized_code = unauthorized_code_estimated
         else:
             self.unauthorized_code = HTTPStatus.OK
         self.use_post = use_post
+        self.request_method = ("GET", "POST")[self.use_post]
+        self.path_for_message = f"{self.request_method}-запрос по адресу {url}"
+        self.path = render_url(url, path_render_subs)
 
     def _get_response(self, client: Client):
         if self.use_post:
@@ -119,8 +145,8 @@ class UrlToTest:
         client.logout()
         response = self._get_response(client)
         message = (
-            f"Для неавторизованного пользователя страница {self.path} "
-            f"должна вернуть ответ со статусом "
+            f"Для неавторизованного пользователя "
+            f"{self.path_for_message} должен вернуть ответ со статусом "
             f"{self.unauthorized_code}."
         )
         return response.status_code, self.unauthorized_code, message
@@ -137,8 +163,8 @@ class UrlToTest:
         response = self._get_auth_response(client, user, False)
         message = (
             f"Для пользователя, обладающего разрешением "
-            f"{self.permission.codename}, страница {self.path} "
-            f"должна вернуть ответ со статусом "
+            f"{self.permission.codename}, {self.path_for_message} "
+            f"должен вернуть ответ со статусом "
             f"{self.code_estimated}."
         )
         return response.status_code, self.code_estimated, message
@@ -149,7 +175,7 @@ class UrlToTest:
         response = self._get_auth_response(client, user)
         message = (
             f"Для любого авторизованного пользователя, "
-            f"страница {self.path} должна вернуть ответ со "
+            f"{self.path_for_message} должен вернуть ответ со "
             f"статусом {self.code_estimated}."
         )
         return response.status_code, self.code_estimated, message
@@ -168,8 +194,8 @@ class UrlToTest:
             codename = ""
         message = (
             f"Для пользователя, не обладающего разрешением "
-            f"{codename}, страница {self.path} "
-            f"должна вернуть ответ со статусом "
+            f"{codename}, {self.path_for_message} "
+            f"должен вернуть ответ со статусом "
             f"{HTTPStatus.FORBIDDEN}."
         )
         return response.status_code, HTTPStatus.FORBIDDEN, message
@@ -184,8 +210,8 @@ class UrlToTest:
         response = self._get_auth_response(client, user, clear_admin=False)
         message = (
             f"Для пользователя, являющегося администратором (is_staff=True) "
-            f"страница {self.path} должна вернуть ответ со статусом "
-            f"{self.code_estimated}."
+            f"{self.path_for_message} должен вернуть ответ со "
+            f"статусом {self.code_estimated}."
         )
         return response.status_code, self.code_estimated, message
 
@@ -197,8 +223,8 @@ class UrlToTest:
         response = self._get_auth_response(client, user)
         message = (
             f"Для пользователя, НЕ являющегося администратором ("
-            f"is_staff=False) страница {self.path} должна вернуть ответ с "
-            f"одним из статусов "
+            f"is_staff=False) {self.path_for_message} должен вернуть "
+            f"ответ с одним из статусов "
             f"{HTTPStatus.FOUND, HTTPStatus.MOVED_PERMANENTLY}."
         )
         return (
@@ -223,3 +249,16 @@ class UrlToTest:
             res.append(self.non_admin_test(client, user))
 
         return res
+
+
+def render_url(url: str, subs: tuple | str | list):
+    pattern = re.compile(r"<[^/]+>")
+    if not re.search(pattern, url):
+        return url
+    if isinstance(subs, str):
+        subs = (subs,)
+    for sub in subs:
+        url = re.sub(pattern, sub, url, 1)
+    if re.search(pattern, url):
+        url = re.sub(pattern, subs[-1], url)
+    return url
