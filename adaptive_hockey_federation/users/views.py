@@ -164,7 +164,6 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         if form.is_valid():
             user = form.save()
             choice_teams = form.cleaned_data["team"]
-            print(f"Выбранные команды итог:{choice_teams}")
             if choice_teams is not None:
                 for team in choice_teams:
                     team.curator = user
