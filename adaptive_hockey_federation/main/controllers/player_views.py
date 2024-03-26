@@ -1,4 +1,5 @@
-from core.constants import FILE_RESOLUTION, MAX_UPLOAD_SIZE_MB
+from core.constants import FILE_RESOLUTION
+from core.utils import is_uploaded_file_valid
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -9,12 +10,12 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+from main.controllers.utils import errormessage
 from main.forms import PlayerForm
 from main.mixins import FileUploadMixin
 from main.models import Player
 from main.permissions import PlayerIdPermissionsMixin
 
-from core.utils import is_uploaded_file_valid
 
 class PlayersListView(
     LoginRequiredMixin,
@@ -161,13 +162,15 @@ class PlayerIDCreateView(
             return reverse("main:teams_id", kwargs={"team_id": self.team_id})
 
     def post(self, request, *args, **kwargs):
-        new_files_paths=self.request.FILES.getlist("new_file_path[]")
+        new_files_paths = self.request.FILES.getlist("new_file_path[]")
         for file in new_files_paths:
             if not is_uploaded_file_valid(file):
                 details = PlayerForm(request.POST)
-                errormessage = "Максимальный размер файла " + MAX_UPLOAD_SIZE_MB
-                errormessage += ", допустимые разрешения " + ', '.join(FILE_RESOLUTION)
-                return render(request, self.template_name, {'form': details, 'errormessage': errormessage})
+                return render(
+                    request,
+                    self.template_name,
+                    {'form': details, 'errormessage': errormessage}
+                )
 
         self.team_id = request.POST.get("team_id", None)
         return super().post(request, *args, **kwargs)
@@ -264,7 +267,6 @@ class PlayerIDEditView(
         "У Вас нет разрешения на изменение персональных данных игрока."
     )
 
-
     def get_success_url(self):
         return reverse(
             "main:player_id",
@@ -305,13 +307,15 @@ class PlayerIDEditView(
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
-        new_files_paths=self.request.FILES.getlist("new_file_path[]")
+        new_files_paths = self.request.FILES.getlist("new_file_path[]")
         for file in new_files_paths:
             if not is_uploaded_file_valid(file):
                 details = PlayerForm(request.POST)
-                errormessage = "Максимальный размер файла " + MAX_UPLOAD_SIZE_MB
-                errormessage += ", допустимые разрешения " + ', '.join(FILE_RESOLUTION)
-                return render(request, self.template_name, {'form': details, 'errormessage': errormessage})
+                return render(
+                    request,
+                    self.template_name,
+                    {'form': details, 'errormessage': errormessage}
+                )
 
         self.team_id = request.POST.get("team_id", None)
         return super().post(request, *args, **kwargs)
