@@ -1,9 +1,14 @@
 import datetime
 
-from core.constants import MAX_AGE_PlAYER, MIN_AGE_PlAYER, FILE_RESOLUTION, MAX_UPLOAD_SIZE
+from core.constants import (
+    FILE_RESOLUTION,
+    MAX_UPLOAD_SIZE,
+    MAX_AGE_PlAYER,
+    MIN_AGE_PlAYER,
+)
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.validators import RegexValidator
 
 
 def fio_validator() -> RegexValidator:
@@ -42,8 +47,7 @@ def validate_file(file: InMemoryUploadedFile):
         raise ValidationError(
             ("Расширение файла '%(ext)s' не допускается. "
              "Пожалуйста, загрузите файл с одним из "
-             "следующих расширений: %(ext_list)s."
-            ),
+             "следующих расширений: %(ext_list)s."),
             params={
                 'ext': file_extension,
                 'ext_list': ', '.join(FILE_RESOLUTION)
