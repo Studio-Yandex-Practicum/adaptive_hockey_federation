@@ -1,4 +1,4 @@
-from core.config.base_settings import FILE_RESOLUTION
+from core.constants import FILE_RESOLUTION
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
