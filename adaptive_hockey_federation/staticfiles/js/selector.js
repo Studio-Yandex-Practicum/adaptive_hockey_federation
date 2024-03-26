@@ -36,7 +36,7 @@ class Selector {
       ) {
 
         const option = document.createElement('option')
-        option.classList.add('selector-item')
+        option.classList.add('selector-item-2field')
         option.textContent = item
         option.addEventListener('click', () => this.toggleSelection(item))
         this.availableList.appendChild(option)
@@ -54,7 +54,7 @@ class Selector {
           .includes(this.searchSelectInput.value.toLowerCase().trim())
       ) {
         const option = document.createElement('option')
-        option.classList.add('selector-item')
+        option.classList.add('selector-item-2field')
         option.textContent = item
         option.addEventListener('click', () => this.toggleSelection(item))
         this.selectedList.appendChild(option)

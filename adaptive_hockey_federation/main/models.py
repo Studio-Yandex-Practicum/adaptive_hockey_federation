@@ -16,7 +16,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
-from users.models import User
 from users.validators import zone_code_without_seven_hundred
 
 
@@ -241,14 +240,6 @@ class Team(BaseUniqueName):
         on_delete=models.CASCADE,
         verbose_name=_("Дисциплина команды"),
         help_text=_("Дисциплина команды"),
-    )
-    curator = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name=_("Куратор команды"),
-        help_text=_("Куратор команды"),
-        related_name="team",
     )
 
     class Meta:

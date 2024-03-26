@@ -248,7 +248,7 @@ class PlayerIDEditView(
     UpdateView,
 ):
     model = Player
-    template_name = "main/player_id/player_id_create_edit.html"
+    template_name = "main/player_id/player_id_create_edit_2fields.html"
     form_class = PlayerForm
     permission_required = "main.change_player"
     permission_denied_message = (

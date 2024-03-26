@@ -1,0 +1,20 @@
+{% load user_filters %}
+<tr>
+  <th>Выбор</th>
+  <td class="base-wrapper">
+    <div class="selector-wrapper-2field">
+      <div class="selector-2field">
+        <p class="selector-heading-2field">Доступные команды</p>
+        <input class="selector-input-2field" type="search" id="search-available-selector-2field" placeholder="Поиск">
+        <ul id="available-list-2field" class="selector-list-2field"></ul>
+        <button class="selector-button-2field add-all-button-2field" id="select-all-button-2field" type="button">Выбрать все</button>
+      </div>
+      <div class="selector-2field">
+        <p class="selector-heading-2field">Выбранные команды</p>
+        <input class="selector-input-2field" type="search" id="search-select-selector-2field" placeholder="Поиск">
+        <ul id="select-list-2field" class="selector-list-2field"></ul>
+        <button class="selector-button-2field remove-all-button-2field" id="delete-all-button-2field" type="button">Удалить все</button>
+      </div>
+    </div>
+  </td>
+</tr>

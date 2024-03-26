@@ -22,6 +22,7 @@ from django.db import models
 from django.http import Http404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from main.models import Team
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
 from users.managers import CustomUserManager
@@ -181,6 +182,17 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.groups.add(group)
         else:
             raise Http404(f"Не найдена группа {group_name}")
+
+
+class CuratorTeam(User):
+    """Модель куратора"""
+
+    team = models.ManyToManyField(
+        Team,
+        related_name="team_curators",
+        verbose_name=_("Команда"),
+        help_text=_("Команда"),
+    )
 
 
 class ProxyGroup(Group):
