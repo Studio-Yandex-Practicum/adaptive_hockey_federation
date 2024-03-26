@@ -30,10 +30,24 @@
               <th>{{ form.team.label_tag }}</th>
                 <td class="base-wrapper">
                   {% if form.team.errors %}
-                    {{ form.team |addclass:'base-select-errors'}}
-                    {{ form.team.errors }}
+                  <div class="selectors-teams">
+                    <div class="selector-left">
+                      <h2> Доступные команды 
+                        <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
+                      </h2>
+                      {{ form.team |addclass:"base-select-teams-errors"}}
+                      {{ form.team.errors}}
+                    </div>
+                  </div>
                   {% else %}
-                    {{ form.team |addclass:'base-select'}}
+                    <div class="selectors-teams">
+                      <div class="selector-left">
+                        <h2> Доступные команды 
+                          <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
+                        </h2>
+                        {{ form.team |addclass:"base-select-teams"}}
+                      </div>
+                    </div>
                   {% endif %}
                 </td>
             </tr>

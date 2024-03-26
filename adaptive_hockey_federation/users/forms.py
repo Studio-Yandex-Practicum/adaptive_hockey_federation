@@ -184,6 +184,6 @@ class CustomUserUpdateForm(CustomUserCreateForm):
                 busy_teams = list(set(busy_teams) - set(current_teams))
             if len(busy_teams) > 0:
                 raise ValidationError(
-                    [f"{team.name} уже есть куратор {team.curator}"
+                    [f"У команды {team.name} уже есть куратор {team.curator}"
                         for team in busy_teams])
         return choice_teams
