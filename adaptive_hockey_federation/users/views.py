@@ -160,6 +160,11 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         "Отсутствует разрешение на создание пользователей."
     )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Создание пользователя"
+        return context
+
     def form_valid(self, form):
         if form.is_valid():
             user = form.save()
