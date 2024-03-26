@@ -36,6 +36,9 @@
             </table>
         </div>
         <h4 class="text-center mb-4">Документы</h4>
+        {% if errormessage %}
+            <h6 class="text-center mb-6" style="color:red">{{ errormessage }}</h4>
+        {% endif %}
         <table class="table-table">
             <thead>
                 <tr>
