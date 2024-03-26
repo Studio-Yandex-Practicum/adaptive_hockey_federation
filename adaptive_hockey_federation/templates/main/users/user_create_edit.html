@@ -61,8 +61,13 @@
 <script>
   let role_selection = document.getElementById("id_role");
   let team_selection = document.getElementById("id_team");
-  let team_selection_index = team_selection.selectedIndex
   let team_field = document.getElementById("selection-team");
+  const selected = [];
+  const options = document.getElementById('id_team').options;
+  for (let opt of options) {
+    if (opt.selected) selected.push(opt.value);
+  }
+  const selected_index = selected.map(Number)
   role_selection.addEventListener("change", stateHidefield);
   function initialField() {
     if (role_selection.value != "Представитель команды") {
@@ -74,10 +79,17 @@
     var opts = team_selection;
     if (role_selection.value === "Представитель команды") {
       team_field.hidden = false;
-      opts.selectedIndex = team_selection_index;
+      for (const option of document.querySelectorAll('#id_team option')) {
+        const value = Number.parseInt(option.value);
+        if (selected_index.indexOf(value) !== -1) {
+          option.setAttribute('selected', 'selected');
+        }
+      }
     } else {
       team_field.hidden = true;
-      opts.selectedIndex = 0;
+      for (const option of document.querySelectorAll('#id_team option')) {
+        option.removeAttribute('selected');
+      }
     }
   }
 </script>

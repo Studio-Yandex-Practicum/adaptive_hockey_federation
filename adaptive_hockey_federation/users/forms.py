@@ -108,10 +108,10 @@ class UserAdminCreationForm(UserCreationForm):
 
 class CustomUserCreateForm(forms.ModelForm):
 
-    team = forms.ModelChoiceField(
+    team = forms.ModelMultipleChoiceField(
         queryset=Team.objects.all(),
         required=False,
-        label="Команда представителя",
+        label="Команды",
     )
 
     class Meta:
@@ -151,12 +151,15 @@ class CustomUserCreateForm(forms.ModelForm):
         """
         Проверка команды при создании пользователя
         """
+        busy_teams = None
+        choice_team = None
         if choice_team := self.cleaned_data["team"]:
-            if choice_team.curator is not None:
+            busy_teams = [
+                team for team in choice_team if team.curator is not None]
+            if len(busy_teams) > 0:
                 raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
-                )
+                    [f"У команды {team.name} уже есть куратор {team.curator}"
+                        for team in busy_teams])
         return choice_team
 
 
@@ -164,21 +167,23 @@ class CustomUserUpdateForm(CustomUserCreateForm):
 
     def __init__(self, *args, **kwargs):
         super(CustomUserUpdateForm, self).__init__(*args, **kwargs)
-        if team := self.instance.team.all():
-            self.fields["team"].initial = team[0]
+        if self.instance.team.all():
+            self.fields["team"].initial = self.instance.team.all()
 
     def clean_team(self):
         """
-        Проверка команды при редактировании пользователя
+        Проверка команды при создании пользователя
         """
-        if choice_team := self.cleaned_data["team"]:
-            choice_team = Team.objects.get(id=choice_team.id)
-            current_team = self.instance.team.all()
-            if current_team and current_team[0] == choice_team:
-                return choice_team
-            if choice_team.curator is not None:
+        busy_teams = None
+        choice_teams = None
+        current_teams = list(self.instance.team.all())
+        if choice_teams := self.cleaned_data["team"]:
+            busy_teams = [
+                team for team in choice_teams if team.curator is not None]
+            if len(current_teams) > 0:
+                busy_teams = list(set(busy_teams) - set(current_teams))
+            if len(busy_teams) > 0:
                 raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
-                )
-        return choice_team
+                    [f"{team.name} уже есть куратор {team.curator}"
+                        for team in busy_teams])
+        return choice_teams

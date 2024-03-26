@@ -9,9 +9,9 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+from main.models import Team
 from users.forms import CustomUserCreateForm, CustomUserUpdateForm
 from users.utilits.reset_password import send_password_reset_email
-from users.utils import set_team_curator
 
 User = get_user_model()
 
@@ -123,7 +123,12 @@ class UpdateUserView(
     def form_valid(self, form):
         if form.is_valid():
             user = form.save()
-            set_team_curator(user, form.cleaned_data["team"])
+            Team.objects.filter(curator=user).update(curator=None)
+            choice_teams = form.cleaned_data["team"]
+            if choice_teams is not None:
+                for team in choice_teams:
+                    team.curator = user
+                    team.save()
         return super().form_valid(form)
 
 
@@ -158,8 +163,13 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         if form.is_valid():
             user = form.save()
+            choice_teams = form.cleaned_data["team"]
+            print(f"Выбранные команды итог:{choice_teams}")
+            if choice_teams is not None:
+                for team in choice_teams:
+                    team.curator = user
+                    team.save()
             send_password_reset_email(user)
-            set_team_curator(user, form.cleaned_data["team"])
         return super().form_valid(form)
 
 
