@@ -11,7 +11,11 @@
 {% block content %}
 <div class="card update_card">
   <h4 class="card-header">
-    Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
+    {% if is_creation %}
+      Создание пользователя
+    {% else %}
+      Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
+    {% endif %}
   </h4>
   <div class="card-body">
     <form method="post"
@@ -57,7 +61,6 @@
           } else {
               teamSelectContainer.style.display = "block";
               teamContainer.style.display = "block";
-              teamSelectContainer = teamSelectContainerIndex;
           }
       }
       roleSelect.addEventListener("change", toggleTeamSelect);
