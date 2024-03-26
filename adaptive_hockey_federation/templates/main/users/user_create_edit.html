@@ -2,7 +2,11 @@
 {% load static %}
 {% load user_filters %}
 {% block title %}
-   Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
+  {% if is_creation %}
+    Создание пользователя
+  {% else %}
+    Редактирование пользователя {{ object.first_name }} {{ object.last_name }}
+  {% endif %}
 {% endblock %}
 {% block content %}
 <div class="card update_card">
@@ -36,11 +40,14 @@
     </form>
   </div>
 </div>
+{% endblock %}
+{% block JavaScript %}
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
       var roleSelect = document.getElementById("id_role");
       var teamSelectContainer = document.getElementById("id_team");
       var teamContainer = document.querySelector("label[for='id_team']");
+
       function toggleTeamSelect() {
           var role = roleSelect.value;
           if(role === "Модератор" || role === "Администратор") {
@@ -50,10 +57,11 @@
           } else {
               teamSelectContainer.style.display = "block";
               teamContainer.style.display = "block";
+              teamSelectContainer = teamSelectContainerIndex;
           }
       }
       roleSelect.addEventListener("change", toggleTeamSelect);
       toggleTeamSelect();
   });
   </script>
-{% endblock %}
+{% endblock%}

@@ -95,7 +95,7 @@ class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
 
     model = User
-    template_name = "main/users/user_update.html"
+    template_name = "main/users/user_create_edit.html"
     permission_required = "users.change_user"
     permission_denied_message = (
         "Отсутствует разрешение на изменение пользователя."
@@ -143,12 +143,17 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     model = User
     form_class = UsersCreationForm
-    template_name = "main/users/user_create.html"
+    template_name = "main/users/user_create_edit.html"
     success_url = "/users"
     permission_required = "users.add_user"
     permission_denied_message = (
         "Отсутствует разрешение на создание пользователей."
     )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_creation"] = True
+        return context
 
 
 class PasswordSetView(PasswordResetConfirmView):
