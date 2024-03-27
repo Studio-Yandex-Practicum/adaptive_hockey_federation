@@ -118,7 +118,7 @@ class PlayerIDCreateView(
     permission_denied_message = (
         "У Вас нет разрешения на создание карточки игрока."
     )
-    team_id = None
+    team_id: int | None = None
 
     def form_valid(self, form):
         player = form.save()
