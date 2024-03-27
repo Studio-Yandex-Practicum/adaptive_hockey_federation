@@ -1,8 +1,7 @@
 import os
 from datetime import datetime
 
-from core.config.base_settings import FILE_RESOLUTION, MAX_UPLOAD_SIZE
-from core.constants import TIME_FORMAT
+from core.constants import FILE_RESOLUTION, MAX_UPLOAD_SIZE, TIME_FORMAT
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 

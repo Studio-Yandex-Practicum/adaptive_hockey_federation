@@ -76,3 +76,7 @@ FORM_HELP_TEXTS = {
         "цветом, чтобы выбрать или удалить зажмите ctrl"
     ),
 }
+
+FILE_RESOLUTION = ('png', 'jpeg', 'jpg', 'pdf')
+MAX_UPLOAD_SIZE: int = 10485760
+MAX_UPLOAD_SIZE_MB: str = str(int(MAX_UPLOAD_SIZE / (1024 * 1024))) + " MB"
