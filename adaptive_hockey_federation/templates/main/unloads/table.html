@@ -1,0 +1,25 @@
+{% load static %}
+<table class="table-table">
+  <thead>
+    <tr>
+      {% for head_item in table_head.values %}
+      <th>{{ head_item }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for table_string in table_data %}
+    <tr>
+      {% for cell_name, cell_value in table_string.items %}
+        <td class="rounded-md">
+          {% if cell_name == '_ref_' %}
+            {% include 'base/cell_button.html' with url=cell_value.url name=cell_value.name %}
+          {% else %}
+            {{ cell_value }}
+          {% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
