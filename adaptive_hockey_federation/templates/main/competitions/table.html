@@ -5,12 +5,14 @@
       {% for head_item in table_head.values %}
       <th>{{ head_item }}</th>
       {% endfor %}
-      <th>
-        <div class="cell__buttons">
-          {% include 'base/active_edit_icon.html' %}
-          {% include 'base/active_delete_icon.html' %}
-        </div>
-      </th>
+      {% if not user.is_agent %}
+        <th>
+          <div class="cell__buttons">
+            {% include 'base/active_edit_icon.html' %}
+            {% include 'base/active_delete_icon.html' %}
+          </div>
+        </th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
@@ -46,15 +48,17 @@
         {% endif %}
       {% endfor %}
       {% with request.resolver_match.view_name as view_name %}
-        {% if view_name == 'competitions:competitions' %}
-          {% include "main/competitions/competition_edit_delete_buttons.html" %}
-        {% else %}
-          <td>
-            <div class="cell__buttons">
-              {% include 'base/active_edit_icon.html' %}
-              {% include 'base/active_delete_icon.html' %}
-            </div>
-          </td>
+        {% if not user.is_agent %}
+          {% if view_name == 'competitions:competitions' %}
+            {% include "main/competitions/competition_edit_delete_buttons.html" %}
+          {% else %}
+            <td>
+              <div class="cell__buttons">
+                {% include 'base/active_edit_icon.html' %}
+                {% include 'base/active_delete_icon.html' %}
+              </div>
+            </td>
+          {% endif %}
         {% endif %}
       {% endwith %}
     </tr>
