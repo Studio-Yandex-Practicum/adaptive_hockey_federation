@@ -3,10 +3,7 @@ from typing import Any
 
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse
 from django.utils.timezone import now
 from django.views import View
@@ -17,14 +14,13 @@ from unloads.utils import export_excel
 
 class UnloadListView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
     ListView,
 ):
     """Список выгрузок."""
 
+    # TODO: (Добавить пермишенны.)
     model = Unload
     template_name = "main/unloads/unloads.html"
-    permission_required = "unloads.list_view_unload"
     context_object_name = "unloads"
     paginate_by = 10
     ordering = ["date"]
