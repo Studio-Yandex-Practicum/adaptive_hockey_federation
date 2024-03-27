@@ -1,9 +1,6 @@
 import datetime
 
-from core.constants import (
-    MAX_AGE_PlAYER,
-    MIN_AGE_PlAYER,
-)
+from core.constants import MAX_AGE_PlAYER, MIN_AGE_PlAYER
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 
