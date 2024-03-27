@@ -89,17 +89,13 @@ class UsersListView(
         return context
 
 
-class UpdateUserView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    UpdateView
-):
+class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
     Вьюха редактирования пользователя
     """
 
     model = User
-    template_name = "main/users/user_update.html"
+    template_name = "main/users/user_create_edit.html"
     permission_required = "users.change_user"
     permission_denied_message = (
         "Отсутствует разрешение на изменение пользователя."
@@ -108,17 +104,15 @@ class UpdateUserView(
     success_url = "/users"
 
     def get_initial(self):
-        team = None
-        if queryset := self.object.team.all():
-            team = queryset[0]
+        team = self.object.team.all()
         initial = {
-            'first_name': self.object.first_name,
-            'last_name': self.object.last_name,
-            'patronymic': self.object.patronymic,
-            'email': self.object.email,
-            'phone': self.object.phone,
-            'role': self.object.role,
-            'team': team
+            "first_name": self.object.first_name,
+            "last_name": self.object.last_name,
+            "patronymic": self.object.patronymic,
+            "email": self.object.email,
+            "phone": self.object.phone,
+            "role": self.object.role,
+            "team": team,
         }
         return initial
 
@@ -149,12 +143,17 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     model = User
     form_class = UsersCreationForm
-    template_name = "main/users/user_create.html"
+    template_name = "main/users/user_create_edit.html"
     success_url = "/users"
     permission_required = "users.add_user"
     permission_denied_message = (
         "Отсутствует разрешение на создание пользователей."
     )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_creation"] = True
+        return context
 
 
 class PasswordSetView(PasswordResetConfirmView):

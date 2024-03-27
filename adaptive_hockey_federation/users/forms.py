@@ -119,10 +119,10 @@ class UsersCreationForm(forms.ModelForm):
         label="Роль пользователя",
         error_messages={"required": "Пожалуйста, выберите роль из списка."},
     )
-    team = forms.ModelChoiceField(
+    team = forms.ModelMultipleChoiceField(
         queryset=Team.objects.all(),
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
         label="Команда представителя",
     )
 
@@ -151,14 +151,26 @@ class UsersCreationForm(forms.ModelForm):
         """
         Проверка команды при создании пользователя
         """
-        if choice_team := self.cleaned_data["team"]:
-            choice_team = Team.objects.get(id=choice_team.id)
-            if choice_team.curator is not None:
-                raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
+        choice_teams = self.cleaned_data.get("team")
+        choice_curator = self.cleaned_data.get("email")
+        teams_with_curators = []
+
+        if choice_teams:
+            for team in choice_teams:
+                if team.curator is not None:
+                    if choice_curator == team.curator.email:
+                        break
+                    teams_with_curators.append(team)
+
+            if teams_with_curators:
+                teams_list = ", ".join(
+                    [team.name for team in teams_with_curators]
                 )
-        return choice_team
+                raise ValidationError(
+                    f"Следующие команды имеют кураторов:" f"{teams_list}"
+                )
+
+        return choice_teams
 
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save()
@@ -169,22 +181,6 @@ class UsersCreationForm(forms.ModelForm):
 
 class UpdateUserForm(UsersCreationForm):
     """Форма редактирования пользователя"""
-
-    def clean_team(self):
-        """
-        Проверка команды при редактировании пользователя
-        """
-        if choice_team := self.cleaned_data["team"]:
-            choice_team = Team.objects.get(id=choice_team.id)
-            current_team = self.instance.team.all()
-            if current_team and current_team[0] == choice_team:
-                return choice_team
-            if choice_team.curator is not None:
-                raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
-                )
-        return choice_team
 
     def save(self, commit=True):
         user = super(UsersCreationForm, self).save(commit=False)
