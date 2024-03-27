@@ -1,4 +1,4 @@
-{% if not user.is_moderator %}
+{% if not request.user.is_moderator %}
   <aside id="container__fluid" class="aside-navbar">
     <div class="navbar-container">
       <ul class="navigate">
@@ -12,7 +12,7 @@
             Мир хоккея<br>для особенных<br>детей
           </div>
         </div>
-        {% if not user.is_agent %}
+        {% if not request.user.is_agent %}
           <li class="nav-item py-2 list-group">
             {% url 'main:players' as url_name %}{% include "base/button.html" with name="Игроки" %}
           </li>
@@ -23,15 +23,13 @@
         <li class="nav-item py-2">
           {% url 'main:teams' as url_name %}{% include "base/button.html" with name="Команды" %}
         </li>
-        {% if not user.is_agent %}
+        {% if not request.user.is_agent %}
           <li class="nav-item py-2">
             {% url 'main:staffs' as url_name %}{% include "base/button.html" with name="Персонал команд" %}
           </li>
-        {% endif %}
         <li class="nav-item py-2">
           {% url 'competitions:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
         </li>
-        {% if not user.is_agent %}
           <li class="nav-item py-2">
             {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
           </li>

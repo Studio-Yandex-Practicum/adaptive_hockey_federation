@@ -259,6 +259,6 @@ class StaffMemberForm(forms.ModelForm):
                 attrs={"placeholder": "Введите отчество"}
             ),
             "phone": forms.TextInput(
-                attrs={"placeholder": "Введите номер телефон"}
+                attrs={"placeholder": "Введите номер телефона"}
             ),
         }
