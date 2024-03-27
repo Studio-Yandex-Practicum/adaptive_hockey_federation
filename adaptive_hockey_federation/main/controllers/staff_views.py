@@ -162,7 +162,7 @@ class StaffMemberIdCreateView(
     permission_denied_message = (
         "У Вас нет разрешения на создание сотрудника."
     )
-    team_id = None
+    team_id: int | None = None
 
     def form_valid(self, form):
         context = self.get_context_data()
