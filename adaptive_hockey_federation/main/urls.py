@@ -94,6 +94,8 @@ staffs_urlpatterns = [
     ),
 ]
 
+
+# TODO Перенести в модуль unloads
 unloads_urlpattern = [
     path("", views.UnloadListView.as_view(), name="unloads"),
     path(

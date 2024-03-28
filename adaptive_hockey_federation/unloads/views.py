@@ -22,6 +22,7 @@ class UnloadListView(
     """Список выгрузок."""
 
     # TODO: (Добавить пермишенны.)
+    # TODO: Реализовать удаление файлов с диска
     model = Unload
     template_name = "main/unloads/unloads.html"
     context_object_name = "unloads"
