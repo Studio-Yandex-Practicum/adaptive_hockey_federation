@@ -5,6 +5,11 @@
       {% for head_item in table_head.values %}
       <th>{{ head_item }}</th>
       {% endfor %}
+      <th>
+        <div class="cell__buttons">
+          {% include 'base/active_delete_icon.html' %}
+        </div>
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -19,6 +24,17 @@
           {% endif %}
         </td>
       {% endfor %}
+      {% with request.resolver_match.view_name as view_name %}
+        {% if view_name == 'main:unloads' %}
+          {% include "main/unloads/unloads_delete.html" %}
+        {% else %}
+          <td>
+            <div class="cell__buttons">
+              {% include 'base/active_delete_icon.html' %}
+            </div>
+          </td>
+        {% endif %}
+      {% endwith %}
     </tr>
     {% endfor %}
   </tbody>

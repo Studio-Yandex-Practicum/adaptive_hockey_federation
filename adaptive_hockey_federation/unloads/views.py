@@ -5,8 +5,11 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.views import View
+from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from unloads.models import Unload
 from unloads.utils import export_excel
@@ -54,6 +57,22 @@ class UnloadListView(
         }
         context["table_data"] = table_data
         return context
+
+
+class DeleteUnloadView(
+    LoginRequiredMixin,
+    DeleteView,
+):
+    """Удаление выгрузок."""
+
+    object = Unload
+    model = Unload
+    success_url = reverse_lazy("main:unloads")
+    permission_required = "main.delete_unload"
+    permission_denied_message = "Отсутствует разрешение на удаление выгрузки."
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Unload, id=self.kwargs["pk"])
 
 
 class DataExportView(LoginRequiredMixin, View):

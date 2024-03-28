@@ -99,6 +99,11 @@ unloads_urlpattern = [
     path(
         "<str:page_name>/", views.DataExportView.as_view(), name="data_unloads"
     ),
+    path(
+        "<int:pk>/delete",
+        views.DeleteUnloadView.as_view(),
+        name="delete_unload",
+    ),
 ]
 
 urlpatterns = [
