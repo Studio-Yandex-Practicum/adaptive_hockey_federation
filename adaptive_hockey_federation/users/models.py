@@ -10,6 +10,7 @@ from core.constants import (
     ROLE_MODERATOR,
     ROLES_CHOICES,
 )
+from core.validators import fio_validator
 from django.contrib.auth.models import (
     AbstractBaseUser,
     Group,
@@ -38,17 +39,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=NAME_MAX_LENGTH,
         verbose_name=_("Имя"),
         help_text=_("Имя"),
+        validators=[fio_validator()],
     )
     last_name = models.CharField(
         max_length=NAME_MAX_LENGTH,
         verbose_name=_("Фамилия"),
         help_text=_("Фамилия"),
+        validators=[fio_validator()],
     )
     patronymic = models.CharField(
         blank=True,
         max_length=NAME_MAX_LENGTH,
         verbose_name=_("Отчество"),
         help_text=_("Отчество"),
+        validators=[fio_validator()],
     )
     role = models.CharField(
         choices=ROLES_CHOICES,

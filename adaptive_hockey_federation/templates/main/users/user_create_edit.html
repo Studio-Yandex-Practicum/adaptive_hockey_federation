@@ -1,0 +1,108 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load user_filters %}
+{% block title %}
+    {{ page_title }}
+{% endblock %}
+{% block content %}
+<h2 class="text-center mb-4">{{ page_title }}</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container text-center">
+    <div class="full-container">
+      <h4 class="text-center mb-4">Личная информация</h4>
+      <table class="table-table">
+        <tbody>
+          {% for field in form.visible_fields %}
+            {% if field.name in 'first_name last_name patronymic email phone'%} {% include "main/fields/text_input_field.html" %} {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="full-container">
+      <h4 class="text-center mb-4">Дополнительная информация</h4>
+      <table class="table-table">
+        <tbody>
+          {% for field in form.visible_fields %}
+            {% if field.name in "role"%}{% include "main/fields/select_field.html" %} {% endif %}
+          {% endfor %}
+            <tr id="selection-team">
+              <th>{{ form.team.label_tag }}</th>
+                <td class="base-wrapper">
+                  {% if form.team.errors %}
+                  <div class="selectors-teams">
+                    <div class="selector-left">
+                      <h2> Доступные команды 
+                        <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
+                      </h2>
+                      {{ form.team |addclass:"base-select-teams-errors"}}
+                      {{ form.team.errors}}
+                    </div>
+                  </div>
+                  {% else %}
+                    <div class="selectors-teams">
+                      <div class="selector-left">
+                        <h2> Доступные команды 
+                          <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
+                        </h2>
+                        {{ form.team |addclass:"base-select-teams"}}
+                      </div>
+                    </div>
+                  {% endif %}
+                </td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="container">
+      <div class="row">
+          <div class="col text-center text-white flex justify-start">
+              <button
+              type="submit"
+              class="btn btn-secondary text-white"
+              style="background-color: #64C2D1; border: 1px solid #fff;"
+              >
+                  Сохранить
+              </button>
+          </div>
+      </div>
+  </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block JavaScript %}
+<script>
+  let role_selection = document.getElementById("id_role");
+  let team_field = document.getElementById("selection-team");
+  const selected = [];
+  const options = document.getElementById('id_team').options;
+  for (let opt of options) {
+    if (opt.selected) selected.push(opt.value);
+  }
+  const selected_index = selected.map(Number)
+  role_selection.addEventListener("change", stateHidefield);
+  function initialField() {
+    if (role_selection.value != "Представитель команды") {
+      team_field.hidden = true;
+    }
+  }
+  initialField()
+  function stateHidefield() {
+    if (role_selection.value === "Представитель команды") {
+      team_field.hidden = false;
+      for (const option of document.querySelectorAll('#id_team option')) {
+        const value = Number.parseInt(option.value);
+        if (selected_index.indexOf(value) !== -1) {
+          option.setAttribute('selected', 'selected');
+        }
+      }
+    } else {
+      team_field.hidden = true;
+      for (const option of document.querySelectorAll('#id_team option')) {
+        option.removeAttribute('selected');
+      }
+    }
+  }
+</script>
+{% endblock%}

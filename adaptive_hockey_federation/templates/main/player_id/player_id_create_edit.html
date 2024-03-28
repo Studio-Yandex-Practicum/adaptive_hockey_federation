@@ -25,13 +25,14 @@
         <div class="full-container">
             <h4 class="text-center mb-4">Игровая информация</h4>
             <table class="table-table">
-              {% for field in form.visible_fields %}
-                {% if field.name in "level_revision number"%} {% include "main/fields/text_input_field.html" %}
-                  {% elif  field.name in "team" %} {% include "main/fields/team_select_field.html" %}
-                  {% elif  field.name in "is_captain is_assistent" %} {% include "main/fields/check_box_field.html" %}
-                  {% elif  field.name in "position" %} {% include "main/fields/select_field.html" %}
-                {% endif %}
-            {% endfor %}
+              <tbody>
+                {% for field in form.visible_fields %}
+                  {% if field.name in "level_revision number"%} {% include "main/fields/text_input_field.html" %}
+                    {% elif  field.name in "team" %} {% include "main/fields/team_select_field.html" %}
+                    {% elif  field.name in "is_captain is_assistent" %} {% include "main/fields/check_box_field.html" %}
+                    {% elif  field.name in "position" %} {% include "main/fields/select_field.html" %}
+                  {% endif %}
+                {% endfor %}
               </tbody>
             </table>
         </div>
