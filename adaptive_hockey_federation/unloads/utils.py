@@ -3,6 +3,7 @@ from typing import Any, List
 
 from django.conf import settings
 from django.db.models import QuerySet
+from django.utils.timezone import now
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -27,8 +28,11 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
                     value = value.__str__()
                 row.append(value)
             ws.append(row)
+    timestamp = now().strftime("%Y%m%d%H%M%S")
+    base_filename, file_extension = os.path.splitext(filename)
+    filename_with_timestamp = f"{base_filename}_{timestamp}{file_extension}"
+
     media_data_path = os.path.join(settings.MEDIA_ROOT, "data")
     os.makedirs(media_data_path, exist_ok=True)
-    file_path = os.path.join(media_data_path, filename)
-    with open(file_path, "wb") as file:
-        wb.save(file)
+    file_path = os.path.join(media_data_path, filename_with_timestamp)
+    wb.save(file_path)
