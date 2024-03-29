@@ -910,6 +910,14 @@ td {
   text-align: left;
 }
 
+.team-selected {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80%;
+}
+
 .base-input:focus {
   outline: none;
   background-color: #fff;
@@ -927,7 +935,7 @@ td {
 .base-select {
   margin: 0;
   padding: 2px;
-  min-width: 80%;
+  min-width: 60%;
   color: #340061;
   border: 2px solid #269FBD;
   border-radius: 8px;

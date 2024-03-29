@@ -222,7 +222,7 @@ class UpdateTeamView(
     def get_form_kwargs(self):
         kwargs = super(UpdateTeamView, self).get_form_kwargs()
         kwargs.update(
-            initial={"city": self.object.city.name},
+            initial={"city": self.object.city},
             user=self.request.user,
         )
         return kwargs
@@ -230,6 +230,7 @@ class UpdateTeamView(
     def get_context_data(self, **kwargs):
         context = super(UpdateTeamView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Редактирование данных команды"
         return context
 
 

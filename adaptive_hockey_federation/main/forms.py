@@ -153,7 +153,15 @@ class TeamForm(forms.ModelForm):
         if self.user:
             self.fields["curator"].disabled = self.user.is_agent
 
-    city = CityChoiceField(label="Выберите город, откуда команда.")
+    city = ModelChoiceField(
+        queryset=City.objects.all(),
+        required=True,
+        label="Город команды",
+        empty_label="Выберите город",
+        error_messages={
+            "required": "Пожалуйста, выберите город из списка."
+        },
+    )
 
     curator = ModelChoiceField(
         queryset=User.objects.filter(role=ROLE_AGENT),
