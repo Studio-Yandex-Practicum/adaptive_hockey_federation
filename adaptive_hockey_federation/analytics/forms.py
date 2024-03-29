@@ -11,6 +11,7 @@ class AnalyticsFilterForm(forms.Form):
             ExtractYear("birthday"), flat=True
         ),
         required=False,
+        label="Год рождения",
         widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
@@ -23,12 +24,14 @@ class AnalyticsFilterForm(forms.Form):
     city = forms.ModelChoiceField(
         queryset=City.objects.all(),
         required=False,
+        label="Город",
         widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
     discipline = forms.ModelChoiceField(
         queryset=DisciplineName.objects.all(),
         required=False,
+        label="Дисциплина",
         widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
