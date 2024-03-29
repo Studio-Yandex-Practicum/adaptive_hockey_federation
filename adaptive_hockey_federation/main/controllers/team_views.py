@@ -222,7 +222,7 @@ class UpdateTeamView(
     def get_form_kwargs(self):
         kwargs = super(UpdateTeamView, self).get_form_kwargs()
         kwargs.update(
-            initial={"city": self.object.city},
+            initial={"city": self.object.city.name},
             user=self.request.user,
         )
         return kwargs

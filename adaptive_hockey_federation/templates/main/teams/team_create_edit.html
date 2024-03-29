@@ -5,21 +5,19 @@
 {% endblock %}
 {% block content %}
 <h2 class="text-center mb-4">{{ page_title }}</h2>
-<form id="Team-edit-Form" method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="container text-center">
       <div class="full-container">
           <h4 class="text-center mb-4">{{ object.name }}</h4>
           <table class="table-table">
               <tbody>
-                <div class="team-selected">
                   {% for field in form.visible_fields %}
                     {% if field.name in 'name'%} {% include "main/fields/text_input_field.html" %}
                     {% elif field.name in 'city'%} {% include "main/fields/city_field.html" %}
                     {% elif field.name in 'discipline_name curator' %} {% include "main/fields/select_field.html" %}
                     {% endif %}
                   {% endfor %}
-                </div>
               </tbody>
             </table>
       </div>
@@ -43,14 +41,11 @@
 
 {% block JavaScript %}
 <script>
-  $(function(){
-    $("#id_city").select2();
-   });
    $(function(){
     $("#id_discipline_name").select2();
    }); 
    $(function(){
     $("#id_curator").select2();
-   }); 
+   });
 </script>
 {% endblock %}

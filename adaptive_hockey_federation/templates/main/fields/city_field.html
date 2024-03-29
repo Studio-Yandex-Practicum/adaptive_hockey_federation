@@ -3,10 +3,15 @@
   <th>{{ field.label_tag }}</th>
   <td class="base-wrapper">
     {% if field.errors %}
-      {{ field |addclass:'base-select-errors'}}
+      {{ field |addclass:'base-input-errors'}}
       {{ field.errors }}
     {% else %}
-      {{ field |addclass:'base-select'}}
+      {{ field |addclass:'base-input'}}
+      <datalist id="cities">
+        {% for city in cities %}
+          <option value="{{ city }}"></option>
+        {% endfor %}
+      </datalist>
     {% endif %}
   </td>
 </tr>

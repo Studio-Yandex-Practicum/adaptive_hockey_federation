@@ -875,6 +875,8 @@ td {
   display: flex;
   text-align: center;
   transition: border-bottom 0.5s ease;
+  color: #340061;
+  font-weight: 700;
 }
 
 .errorlist {
@@ -908,14 +910,6 @@ td {
   outline: none;
   background-color: #fff;
   text-align: left;
-}
-
-.team-selected {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  min-width: 80%;
 }
 
 .base-input:focus {
