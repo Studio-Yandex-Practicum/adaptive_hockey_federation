@@ -24,6 +24,9 @@ from users.models import User
 
 class PlayerForm(forms.ModelForm):
 
+    # TODO: (Форма работает криво.
+    # убрал конструкцию: self.fields["team"].required = False
+    # с ней вообще страница не открывалась)
     now = datetime.now()
     month_day = format(now.strftime("%m-%d"))
     min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
@@ -31,7 +34,6 @@ class PlayerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PlayerForm, self).__init__(*args, **kwargs)
-        self.fields["team"].required = False
 
     class Meta:
         model = Player
@@ -55,9 +57,7 @@ class PlayerForm(forms.ModelForm):
             "surname": forms.TextInput(
                 attrs={"placeholder": "Введите фамилию"}
             ),
-            "name": forms.TextInput(
-                attrs={"placeholder": "Введите Имя"}
-            ),
+            "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
             "patronymic": forms.TextInput(
                 attrs={"placeholder": "Введите отчество"}
             ),
@@ -109,7 +109,7 @@ class CityChoiceField(ModelChoiceField):
     def __init__(self, label: str | None = None):
         super().__init__(
             queryset=City.objects.all(),
-            widget=TextInput(
+            widget=Select(
                 attrs={
                     "class": "form-control",
                     "list": "cities",
@@ -131,16 +131,14 @@ class CityChoiceField(ModelChoiceField):
         соответствующий город (объект класса City) и возвращает его на
         дальнейшую стандартную валидацию формы."""
 
-        if not isinstance(value, str) or value in self.empty_values:
+        if not value:
             raise ValidationError(self.error_messages["required"])
 
-        value = value.strip()
-
-        if city := City.get_by_name(value):
-            return super().clean(city)
-
-        city = City.objects.create(name=value)
-        return super().clean(city)
+        if value.isdigit():
+            return super().clean(value)
+        else:
+            city, created = City.objects.get_or_create(name=value)
+            return city
 
 
 class TeamForm(forms.ModelForm):
@@ -252,9 +250,7 @@ class StaffMemberForm(forms.ModelForm):
             "surname": forms.TextInput(
                 attrs={"placeholder": "Введите фамилию"}
             ),
-            "name": forms.TextInput(
-                attrs={"placeholder": "Введите Имя"}
-            ),
+            "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
             "patronymic": forms.TextInput(
                 attrs={"placeholder": "Введите отчество"}
             ),
