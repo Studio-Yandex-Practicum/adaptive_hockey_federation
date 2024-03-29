@@ -267,4 +267,5 @@ class CreateTeamView(
     def get_context_data(self, **kwargs):
         context = super(CreateTeamView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Создание команды"
         return context

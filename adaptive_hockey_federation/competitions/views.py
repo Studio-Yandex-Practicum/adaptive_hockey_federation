@@ -88,7 +88,7 @@ class UpdateCompetitionView(
 
     model = Competition
     form_class = CompetitionForm
-    template_name = "main/competitions/competition_update.html"
+    template_name = "main/competitions/competition_create_edit.html"
     permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение карточки соревнований."
@@ -113,6 +113,7 @@ class UpdateCompetitionView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Редактирование соревнования"
         return context
 
 
@@ -200,7 +201,7 @@ class CreateCompetitionView(
 
     model = Competition
     form_class = CompetitionForm
-    template_name = "main/competitions/competition_create.html"
+    template_name = "main/competitions/competition_create_edit.html"
     permission_required = "competitions.add_competition"
 
     def get_success_url(self):
@@ -214,6 +215,7 @@ class CreateCompetitionView(
     def get_context_data(self, **kwargs):
         context = super(CreateCompetitionView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Создать соревнование"
         return context
 
 

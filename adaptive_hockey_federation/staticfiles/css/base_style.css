@@ -926,6 +926,18 @@ td {
   align-items: center;
 }
 
+.base-date {
+  color: #340061;
+  font-family: Arial;
+  font-weight: 700;
+}
+
+.base-date-errors {
+  color: red;
+  font-family: Arial;
+  font-weight: 700;
+}
+
 .base-select {
   margin: 0;
   padding: 2px;
