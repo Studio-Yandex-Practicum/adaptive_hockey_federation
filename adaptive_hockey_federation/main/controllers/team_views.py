@@ -210,7 +210,7 @@ class UpdateTeamView(
 
     model = Team
     form_class = TeamForm
-    template_name = "main/teams/team_update.html"
+    template_name = "main/teams/team_create_edit.html"
     success_url = "/teams/"
     permission_required = "main.change_team"
     permission_denied_message = "Отсутствует разрешение на изменение команд."
@@ -255,8 +255,8 @@ class CreateTeamView(
 
     model = Team
     form_class = TeamForm
-    template_name = "main/teams/team_create.html"
-    success_url = "/teams/?page=last"
+    template_name = "main/teams/team_create_edit.html"
+    success_url = "/teams/"
     permission_required = "main.add_team"
     permission_denied_message = "Отсутствует разрешение на создание команд."
 
