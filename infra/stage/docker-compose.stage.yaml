@@ -19,7 +19,7 @@ services:
     restart: always
     volumes:
       - static_value:/app/adaptive_hockey_federation/static/
-      - media_value:/app/adaptive_hockey_federation/media/
+      - media_value:/app/adaptive_hockey_federation/media/:/var/html/media/
     env_file:
       - ../../.env
     depends_on:
