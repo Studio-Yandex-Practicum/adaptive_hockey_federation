@@ -34,7 +34,7 @@ class UnloadFactory(factory.django.DjangoModelFactory):
             queryset = queryset_with_titles[0]
             filename = f"{title}_{obj.unload_name}.xlsx"
             export_excel(queryset, filename, title)
-            file_path = os.path.join("data", filename)
+            file_path = os.path.join("unloads_data", filename)
             obj.unload_file_slug = file_path
             obj.save()
 

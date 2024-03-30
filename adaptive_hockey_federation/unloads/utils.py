@@ -32,7 +32,7 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
     base_filename, file_extension = os.path.splitext(filename)
     filename_with_timestamp = f"{base_filename}_{timestamp}{file_extension}"
 
-    media_data_path = os.path.join(settings.MEDIA_ROOT, "data")
+    media_data_path = os.path.join(settings.MEDIA_ROOT, "unloads_data")
     os.makedirs(media_data_path, exist_ok=True)
     file_path = os.path.join(media_data_path, filename_with_timestamp)
     wb.save(file_path)
