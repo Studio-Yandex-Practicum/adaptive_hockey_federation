@@ -11,12 +11,11 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import StaffMemberForm, StaffTeamMemberForm
 from main.models import StaffMember, StaffTeamMember
+from main.schemas import staff_schema
 
 
 class StaffMemberListView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    ListView
+    LoginRequiredMixin, PermissionRequiredMixin, ListView
 ):
     """Представление для работы со списком сотрудников."""
 
@@ -63,34 +62,12 @@ class StaffMemberListView(
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        table_head = {}
-        for field in self.fields:
-            if field != "id":
-                table_head[field] = self.model._meta.get_field(
-                    field
-                ).verbose_name
-        context["table_head"] = table_head
-
-        table_data = [
-            {
-                "surname": staff.surname,
-                "name": staff.name,
-                "patronymic": staff.patronymic,
-                "phone": staff.phone,
-                "url": reverse("main:staff_id", args=[staff.id]),
-                "id": staff.pk,
-            }
-            for staff in context["staffs"]
-        ]
-
-        context["table_data"] = table_data
+        context = staff_schema.staff_list_table(self, context)
         return context
 
 
 class StaffMemberIdView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    DetailView
+    LoginRequiredMixin, PermissionRequiredMixin, DetailView
 ):
     model = StaffMember
     template_name = "main/staffs/staff_id.html"
@@ -112,45 +89,12 @@ class StaffMemberIdView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        staff = context["staff"]
-
-        staff_fields = [
-            ("Фамилия", staff.surname),
-            ("Имя", staff.name),
-            ("Отчество", staff.patronymic),
-            ("Номер телефона", staff.phone),
-        ]
-
-        queryset = StaffTeamMember.objects.filter(
-            staff_member=self.kwargs["pk"]
-        )
-        team_fields = []
-        for staff_team in queryset:
-            team_fields.append(
-                (
-                    "Команда",
-                    ", ".join([team.name for team in staff_team.team.all()]),
-                )
-            )
-            team_fields.append(
-                ("Статус сотрудника", staff_team.staff_position),
-            )
-            team_fields.append(
-                ("Квалификация", staff_team.qualification),
-            )
-            team_fields.append(
-                ("Описание", staff_team.notes),
-            )
-        context["staff_fields"] = staff_fields
-        context["team_fields"] = team_fields
-
+        context = staff_schema.staff_id_list(self, context)
         return context
 
 
 class StaffMemberIdCreateView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    CreateView
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView
 ):
     """Представление создания сотрудника."""
 
@@ -159,9 +103,7 @@ class StaffMemberIdCreateView(
     template_name = "main/staffs/staff_id_create_edit.html"
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.add_staffmember"
-    permission_denied_message = (
-        "У Вас нет разрешения на создание сотрудника."
-    )
+    permission_denied_message = "У Вас нет разрешения на создание сотрудника."
     team_id: int | None = None
 
     def form_valid(self, form):
@@ -179,9 +121,9 @@ class StaffMemberIdCreateView(
         if self.request.POST:
             form = StaffTeamMemberForm(self.request.POST)
         else:
-            form = StaffTeamMemberForm(initial={'team': self.team_id})
+            form = StaffTeamMemberForm(initial={"team": self.team_id})
         context["page_title"] = "Создание профиля нового сотрудника"
-        context['staff_form'] = form
+        context["staff_form"] = form
         context["team_id"] = self.team_id
         return context
 
@@ -201,9 +143,7 @@ class StaffMemberIdCreateView(
 
 
 class StaffMemberIdEditView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    UpdateView
+    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
 ):
     """Представление редактирования сотрудника."""
 
@@ -249,9 +189,7 @@ class StaffMemberIdEditView(
 
 
 class StaffMemberIdDeleteView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    DeleteView
+    LoginRequiredMixin, PermissionRequiredMixin, DeleteView
 ):
     """Представление для удаления сотрудника."""
 
@@ -259,9 +197,7 @@ class StaffMemberIdDeleteView(
     object = StaffMember
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.delete_staffmember"
-    permission_denied_message = (
-        "У Вас нет разрешения на удаление сотрудника."
-    )
+    permission_denied_message = "У Вас нет разрешения на удаление сотрудника."
 
     def get_object(self, queryset=None):
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
