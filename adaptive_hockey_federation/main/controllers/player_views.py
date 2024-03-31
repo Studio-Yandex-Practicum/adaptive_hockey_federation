@@ -169,7 +169,7 @@ class PlayerIDCreateView(
                 return render(
                     request,
                     self.template_name,
-                    {'form': details, 'errormessage': errormessage}
+                    {"form": details, "errormessage": errormessage},
                 )
 
         self.team_id = request.POST.get("team_id", None)
@@ -308,13 +308,18 @@ class PlayerIDEditView(
 
     def post(self, request, *args, **kwargs):
         new_files_paths = self.request.FILES.getlist("new_file_path[]")
+        player_documents = self.get_object().player_documemts.all()
         for file in new_files_paths:
             if not is_uploaded_file_valid(file):
                 details = PlayerForm(request.POST)
                 return render(
                     request,
                     self.template_name,
-                    {'form': details, 'errormessage': errormessage}
+                    {
+                        "form": details,
+                        "errormessage": errormessage,
+                        "player_documents": player_documents,
+                    },
                 )
 
         self.team_id = request.POST.get("team_id", None)
