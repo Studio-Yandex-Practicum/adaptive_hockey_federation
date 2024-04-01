@@ -10,7 +10,13 @@ from django.views.generic.list import ListView
 from main.forms import TeamForm
 from main.models import City, Player, Team
 from main.permissions import TeamEditPermissionsMixin
-from main.schemas import team_schema
+from main.schemas.team_schema import (
+    TEAM_SEARCH_FIELDS,
+    TEAM_TABLE_HEAD,
+    get_players_table,
+    get_staff_table,
+    get_team_table_data,
+)
 
 
 class TeamIdView(PermissionRequiredMixin, DetailView):
@@ -38,7 +44,9 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
             .select_related("discipline")
             .all()
         )
-        context = team_schema.team_id_table(context, team, players)
+        context["players_table"] = get_players_table(players)
+        context["staff_table"] = get_staff_table(team)
+        context["team"] = team
         return context
 
 
@@ -83,11 +91,7 @@ class TeamListView(
                 or_lookup = team_structure_lookup
                 queryset = queryset.filter(or_lookup)
             else:
-                search_fields = {
-                    "discipline_name": "discipline_name_id__name",
-                    "name": "name",
-                    "city": "city__name",
-                }
+                search_fields = TEAM_SEARCH_FIELDS
                 lookup = {f"{search_fields[search_column]}__icontains": search}
                 queryset = queryset.filter(**lookup)
 
@@ -99,7 +103,9 @@ class TeamListView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = team_schema.team_list_table(context)
+        teams = context["teams"]
+        context["table_head"] = TEAM_TABLE_HEAD
+        context["table_data"] = get_team_table_data(teams)
         return context
 
 

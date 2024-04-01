@@ -2,8 +2,21 @@ from core.constants import STAFF_POSITION_CHOICES
 from django.urls import reverse
 from main.controllers.utils import get_player_href
 
+TEAM_SEARCH_FIELDS = {
+    "discipline_name": "discipline_name_id__name",
+    "name": "name",
+    "city": "city__name",
+}
 
-def team_id_table(context, team, players):
+TEAM_TABLE_HEAD = {
+    "name": "Название",
+    "discipline_name": "Дисциплина",
+    "city": "Город",
+    "team_structure": "Состав команды",
+}
+
+
+def get_staff_table(team):
     staff_table = [
         {
             "position": staff_position[1].title(),
@@ -30,6 +43,10 @@ def team_id_table(context, team, players):
         }
         for staff_position in STAFF_POSITION_CHOICES
     ]
+    return staff_table
+
+
+def get_players_table(players):
     players_table = {
         "name": "Игроки",
         "head": {
@@ -61,15 +78,10 @@ def team_id_table(context, team, players):
             for player in players
         ],
     }
-
-    context["players_table"] = players_table
-    context["staff_table"] = staff_table
-    context["team"] = team
-    return context
+    return players_table
 
 
-def team_list_table(context) -> dict:
-    teams = context["teams"]
+def get_team_table_data(teams):
     table_data = []
     for team in teams:
         team_data = {
@@ -85,11 +97,4 @@ def team_list_table(context) -> dict:
         }
         table_data.append(team_data)
 
-    context["table_head"] = {
-        "name": "Название",
-        "discipline_name": "Дисциплина",
-        "city": "Город",
-        "team_structure": "Состав команды",
-    }
-    context["table_data"] = table_data
-    return context
+    return table_data
