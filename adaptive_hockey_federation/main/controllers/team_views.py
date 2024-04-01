@@ -128,7 +128,7 @@ class UpdateTeamView(
 
     model = Team
     form_class = TeamForm
-    template_name = "main/teams/team_update.html"
+    template_name = "main/teams/team_create_edit.html"
     success_url = "/teams/"
     permission_required = "main.change_team"
     permission_denied_message = "Отсутствует разрешение на изменение команд."
@@ -148,6 +148,7 @@ class UpdateTeamView(
     def get_context_data(self, **kwargs):
         context = super(UpdateTeamView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Редактирование данных команды"
         return context
 
 
@@ -172,8 +173,8 @@ class CreateTeamView(
 
     model = Team
     form_class = TeamForm
-    template_name = "main/teams/team_create.html"
-    success_url = "/teams/?page=last"
+    template_name = "main/teams/team_create_edit.html"
+    success_url = "/teams/"
     permission_required = "main.add_team"
     permission_denied_message = "Отсутствует разрешение на создание команд."
 
@@ -184,4 +185,5 @@ class CreateTeamView(
     def get_context_data(self, **kwargs):
         context = super(CreateTeamView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Создание команды"
         return context

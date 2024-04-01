@@ -109,7 +109,6 @@ class CityChoiceField(ModelChoiceField):
             queryset=City.objects.all(),
             widget=Select(
                 attrs={
-                    "class": "form-control",
                     "list": "cities",
                     "placeholder": "Введите или выберите название города",
                 }
@@ -149,7 +148,7 @@ class TeamForm(forms.ModelForm):
         if self.user:
             self.fields["curator"].disabled = self.user.is_agent
 
-    city = CityChoiceField(label="Выберите город, откуда команда.")
+    city = CityChoiceField()
 
     curator = ModelChoiceField(
         queryset=User.objects.filter(role=ROLE_AGENT),
@@ -180,7 +179,6 @@ class TeamForm(forms.ModelForm):
                 attrs={"placeholder": "Введите название команды"}
             ),
             "staff_team_member": Select(),
-            "city": Select(),
             "discipline_name": Select(),
             "curator": Select(),
         }

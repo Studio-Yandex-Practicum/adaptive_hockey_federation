@@ -1,0 +1,11 @@
+<tr>
+  <th>{{ field.label_tag }}</th>
+    <td class="base-wrapper">
+      {% if field.errors %}
+        {{ field |addclass:'base-date-errors'}}
+        {{ field.errors }}
+      {% else %}
+        {{ field |addclass:'base-date'}}
+      {% endif %}
+    </td>
+</tr>
