@@ -165,6 +165,7 @@ class TeamListView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teams = context["teams"]
+        user = self.request.user
 
         table_data = []
         for team in teams:
@@ -178,6 +179,8 @@ class TeamListView(
                     "type": "button",
                     "url": reverse("main:teams_id", args=[team.id]),
                 },
+                "allow_edit": user.is_admin
+                or (user.is_agent and team.curator == user),
             }
             table_data.append(team_data)
 
