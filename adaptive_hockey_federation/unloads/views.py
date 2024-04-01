@@ -7,7 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.utils.timezone import now
 from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
@@ -103,11 +102,8 @@ class DataExportView(LoginRequiredMixin, View):
             model = apps.get_model(app_label, model_name)
             queryset = model.objects.all()
 
-            export_excel(queryset, filename, title)
-
-            timestamp = now().strftime("%Y%m%d%H%M%S")
-            base_filename, file_extension = os.path.splitext(filename)
-            file_slug = f"data/{base_filename}_{timestamp}{file_extension}"
+            filename = export_excel(queryset, filename, title)
+            file_slug = f"data/{filename}"
 
             unload_record = Unload(
                 unload_name=filename,
@@ -118,7 +114,8 @@ class DataExportView(LoginRequiredMixin, View):
 
             file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
             if os.path.exists(file_path):
-                response = FileResponse(file_path)
+                file_unload = open(file_path, 'rb')
+                response = FileResponse(file_unload)
                 response["Content-Disposition"] = (
                     f'attachment; filename="{filename}"'
                 )
