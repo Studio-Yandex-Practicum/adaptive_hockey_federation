@@ -15,7 +15,12 @@ from main.forms import PlayerForm
 from main.mixins import FileUploadMixin
 from main.models import Player
 from main.permissions import PlayerIdPermissionsMixin
-from main.schemas import player_schema
+from main.schemas.player_schema import (
+    SEARCH_FIELDS,
+    get_player_fields,
+    get_player_fields_personal,
+    get_player_table_data,
+)
 
 
 class PlayersListView(
@@ -59,15 +64,7 @@ class PlayersListView(
                 )
                 queryset = queryset.filter(or_lookup)
             else:
-                search_fields = {
-                    "surname": "surname",
-                    "name": "name",
-                    "birthday": "birthday",
-                    "gender": "gender",
-                    "number": "surname",
-                    "discipline": "discipline__discipline_name_id__name",
-                    "diagnosis": "diagnosis__name",
-                }
+                search_fields = SEARCH_FIELDS
                 lookup = {f"{search_fields[search_column]}__icontains": search}
                 queryset = queryset.filter(**lookup)
 
@@ -79,7 +76,12 @@ class PlayersListView(
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = player_schema.player_list_table(self, context)
+        table_head = {}
+        for field in self.fields:
+            if field != "id":
+                table_head[field] = Player._meta.get_field(field).verbose_name
+        context["table_head"] = table_head
+        context["table_data"] = get_player_table_data(context)
         return context
 
 
@@ -193,7 +195,11 @@ class PlayerIdView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = player_schema.player_id_table(self, context)
+        player = context["player"]
+        player_documents = self.get_object().player_documemts.all()
+        context["player_fields_personal"] = get_player_fields_personal(player)
+        context["player_fields"] = get_player_fields(player)
+        context["player_documents"] = player_documents
         return context
 
 

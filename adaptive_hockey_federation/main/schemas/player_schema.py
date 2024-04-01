@@ -1,13 +1,17 @@
 from django.urls import reverse
-from main.models import Player
+
+SEARCH_FIELDS = {
+    "surname": "surname",
+    "name": "name",
+    "birthday": "birthday",
+    "gender": "gender",
+    "number": "surname",
+    "discipline": "discipline__discipline_name_id__name",
+    "diagnosis": "diagnosis__name",
+}
 
 
-def player_list_table(self, context):
-    table_head = {}
-    for field in self.fields:
-        if field != "id":
-            table_head[field] = Player._meta.get_field(field).verbose_name
-    context["table_head"] = table_head
+def get_player_table_data(context):
     table_data = [
         {
             "surname": player.surname,
@@ -24,14 +28,12 @@ def player_list_table(self, context):
         }
         for player in context["players"]
     ]
-
-    context["table_data"] = table_data
-    return context
+    return table_data
 
 
-def player_id_table(self, context) -> dict:
-    player = context["player"]
-    player_fields_personal = [
+def get_player_fields_personal(player):
+
+    data = [
         ("Фамилия", player.surname),
         ("Имя", player.name),
         ("Отчество", player.patronymic),
@@ -41,7 +43,10 @@ def player_id_table(self, context) -> dict:
         ("Дисциплина", player.discipline),
         ("Диагноз", player.diagnosis),
     ]
+    return data
 
+
+def get_player_fields(player):
     player_teams = [
         {
             "name": team.name,
@@ -49,7 +54,6 @@ def player_id_table(self, context) -> dict:
         }
         for team in player.team.all()
     ]
-
     player_fields = [
         ("Команда", player_teams),
         ("Уровень ревизии", player.level_revision),
@@ -58,10 +62,4 @@ def player_id_table(self, context) -> dict:
         ("Игровая позиция", player.position),
         ("Номер игрока", player.number),
     ]
-
-    player_documents = self.get_object().player_documemts.all()
-
-    context["player_fields_personal"] = player_fields_personal
-    context["player_fields"] = player_fields
-    context["player_documents"] = player_documents
-    return context
+    return player_fields
