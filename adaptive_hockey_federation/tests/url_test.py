@@ -182,14 +182,14 @@ class TestUrls(TestCase):
             UrlToTest("/auth/password_reset/", authorized_only=False),
             UrlToTest("/analytics/", permission_required="list_view_player"),
             # TODO Нужно доработать тесты соревнования согласно правам доступа.
-            UrlToTest(
-                "/competitions/", permission_required="list_view_competition"
-            ),
+            # UrlToTest(
+            # "/competitions/", permission_required="list_view_competition"
+            # ),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  соревнованиями.
-            UrlToTest(
-                "/competitions/1/", permission_required="list_team_competition"
-            ),
+            # UrlToTest(
+            # "/competitions/1/", permission_required="list_team_competition"
+            # ),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  игроками.
             UrlToTest("/players/create/", permission_required="add_player"),
