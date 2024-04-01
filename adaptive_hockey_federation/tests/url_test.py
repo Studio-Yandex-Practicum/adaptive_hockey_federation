@@ -181,6 +181,7 @@ class TestUrls(TestCase):
             UrlToTest("/auth/password_change/"),
             UrlToTest("/auth/password_reset/", authorized_only=False),
             UrlToTest("/analytics/", permission_required="list_view_player"),
+            # TODO Нужно доработать тесты соревнования согласно правам доступа.
             UrlToTest(
                 "/competitions/", permission_required="list_view_competition"
             ),

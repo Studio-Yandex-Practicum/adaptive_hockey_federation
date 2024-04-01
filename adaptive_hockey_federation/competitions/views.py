@@ -1,10 +1,13 @@
 from competitions.forms import CompetitionForm, CompetitionTeamForm
 from competitions.models import Competition, Team
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
+    UserPassesTestMixin,
 )
+from django.contrib.auth.views import redirect_to_login
+from django.core.exceptions import PermissionDenied
 from django.db.models import QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -18,20 +21,38 @@ from main.controllers.utils import get_team_href
 
 class CompetitionListView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    UserPassesTestMixin,
     ListView,
 ):
     """Представление списка соревнований."""
 
     model = Competition
     template_name = "main/competitions/competitions.html"
-    permission_required = "competitions.list_view_competition"
-    permission_denied_message = (
-        "Отсутствует разрешение на просмотр списка соревнований."
-    )
     context_object_name = "competitions"
     paginate_by = 10
     ordering = ["id"]
+
+    def test_func(self):
+        """Проверка, что пользователь является представителем команды."""
+        user = self.request.user
+        return user.is_authenticated and (
+            user.is_agent or user.is_superuser or user.is_admin
+        )
+
+    def get_permission_denied_message(self):
+        """Сообщение об отказе в доступе."""
+        return "Отсутствует разрешение на просмотр списка соревнований."
+
+    def handle_no_permission(self):
+        """Обработка ситуации, когда у пользователя нет прав."""
+        if not self.request.user.is_authenticated:
+            return redirect_to_login(
+                self.request.get_full_path(),
+                self.get_login_url(),
+                self.get_redirect_field_name(),
+            )
+        else:
+            raise PermissionDenied(self.get_permission_denied_message())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -217,9 +238,17 @@ class CreateCompetitionView(
         return context
 
 
+def check_permissions(user):
+    """Проверка, что пользователь является представителем команды
+    или администратором."""
+    return user.is_authenticated and (
+        user.is_agent or user.is_superuser or user.is_admin
+    )
+
+
 @login_required()
-@permission_required(
-    "competitions.list_team_competition", raise_exception=True
+@user_passes_test(
+    check_permissions, login_url="login", redirect_field_name=None
 )
 def competition_team_manage_view(request, pk):
     """Представление для управления соревнованием.
