@@ -11,7 +11,11 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import StaffMemberForm, StaffTeamMemberForm
 from main.models import StaffMember, StaffTeamMember
-from main.schemas import staff_schema
+from main.schemas.staff_schema import (
+    STAFF_SEARCH_FIELDS,
+    get_staff_fields,
+    get_staff_table_data,
+)
 
 
 class StaffMemberListView(
@@ -49,12 +53,7 @@ class StaffMemberListView(
                 )
                 queryset = queryset.filter(or_lookup)
             else:
-                search_fields = {
-                    "surname": "surname",
-                    "name": "name",
-                    "patronymic": "patronymic",
-                    "phone": "phone",
-                }
+                search_fields = STAFF_SEARCH_FIELDS
                 lookup = {f"{search_fields[search_column]}__icontains": search}
                 queryset = queryset.filter(**lookup)
 
@@ -62,7 +61,14 @@ class StaffMemberListView(
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = staff_schema.staff_list_table(self, context)
+        table_head = {}
+        for field in self.fields:
+            if field != "id":
+                table_head[field] = self.model._meta.get_field(
+                    field
+                ).verbose_name
+        context["table_head"] = table_head
+        context["table_data"] = get_staff_table_data(context)
         return context
 
 
@@ -89,7 +95,29 @@ class StaffMemberIdView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = staff_schema.staff_id_list(self, context)
+        staff = context["staff"]
+        queryset = StaffTeamMember.objects.filter(
+            staff_member=self.kwargs["pk"]
+        )
+        team_fields = []
+        for staff_team in queryset:
+            team_fields.append(
+                (
+                    "Команда",
+                    ", ".join([team.name for team in staff_team.team.all()]),
+                )
+            )
+            team_fields.append(
+                ("Статус сотрудника", staff_team.staff_position),
+            )
+            team_fields.append(
+                ("Квалификация", staff_team.qualification),
+            )
+            team_fields.append(
+                ("Описание", staff_team.notes),
+            )
+        context["staff_fields"] = get_staff_fields(staff)
+        context["team_fields"] = team_fields
         return context
 
 
