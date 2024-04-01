@@ -1,6 +1,9 @@
-from competitions import schema
 from competitions.forms import CompetitionForm, CompetitionTeamForm
 from competitions.models import Competition, Team
+from competitions.schema import (
+    get_competitions_table_data,
+    get_competitions_table_head,
+)
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -42,7 +45,9 @@ class CompetitionListView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context = schema.competitions_table(context)
+        competitions = context["competitions"]
+        context["table_head"] = get_competitions_table_head
+        context["table_data"] = get_competitions_table_data(competitions)
         return context
 
 

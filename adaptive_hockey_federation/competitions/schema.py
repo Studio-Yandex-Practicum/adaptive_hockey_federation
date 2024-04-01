@@ -1,8 +1,7 @@
 from django.urls import reverse
 
 
-def competitions_table(context):
-    competitions = context["competitions"]
+def get_competitions_table_data(competitions):
     table_data = []
     for competition in competitions:
         table_data.append(
@@ -24,8 +23,11 @@ def competitions_table(context):
                 },
             }
         )
+    return table_data
 
-    context["table_head"] = {
+
+def get_competitions_table_head():
+    return {
         "pk": "Nr.",
         "data": "Начало соревнований",
         "data_end": "Конец соревнований",
@@ -35,5 +37,3 @@ def competitions_table(context):
         "is_active": "Активно",
         "teams": "Участники",
     }
-    context["table_data"] = table_data
-    return context
