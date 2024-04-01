@@ -1,13 +1,7 @@
 from django.urls import reverse
-from main.models import Player
 
 
-def search_table(self, context, search):
-    table_head = {}
-    for field in self.fields:
-        if field != "id":
-            table_head[field] = Player._meta.get_field(field).verbose_name
-    context["table_head"] = table_head
+def get_main_table_data(context):
     table_data = [
         {
             "surname": player.surname,
@@ -22,5 +16,4 @@ def search_table(self, context, search):
         }
         for player in context["main"]
     ]
-    context["table_data"] = table_data
-    return context
+    return table_data
