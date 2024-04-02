@@ -259,7 +259,6 @@ class PlayerIDEditView(
     def post(self, request, *args, **kwargs):
         new_files_paths = self.request.FILES.getlist("new_file_path[]")
         player_documents = self.get_object().player_documemts.all()
-        print(self.request.POST)
         for file in new_files_paths:
             if not is_uploaded_file_valid(file):
                 details = PlayerForm(request.POST)
@@ -272,7 +271,7 @@ class PlayerIDEditView(
                         "player_documents": player_documents,
                     },
                 )
-            self.team_id = request.POST.get("team_id", None)
+        self.team_id = request.POST.get("team_id", None)
         return super().post(request, *args, **kwargs)
 
 

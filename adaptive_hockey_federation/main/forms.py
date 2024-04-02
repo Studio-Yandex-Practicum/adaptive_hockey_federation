@@ -38,10 +38,7 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
         try:
             value = frozenset(value)
         except TypeError:
-            raise ValidationError(
-                self.error_messages["invalid_list"],
-                code="invalid_list",
-            )
+            raise ValidationError("Неверный список команд!")
         value = list(value)
         qs = Team.objects.filter(pk__in=value)
         return qs
