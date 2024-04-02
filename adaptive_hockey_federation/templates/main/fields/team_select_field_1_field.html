@@ -1,0 +1,26 @@
+{% load user_filters %}
+<tr id="selection-team">
+  <th>{{ field.label_tag }}</th>
+    <td class="base-wrapper">
+      {% if field.errors %}
+      <div class="selectors-teams">
+        <div class="selector-left">
+          <h2> Доступные команды 
+            <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
+          </h2>
+          {{ field|addclass:"base-select-teams-errors"}}
+          {{ field.errors}}
+        </div>
+      </div>
+      {% else %}
+        <div class="selectors-teams">
+          <div class="selector-left">
+            <h2> Доступные команды 
+              <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
+            </h2>
+            {{ field|addclass:"base-select-teams"}}
+          </div>
+        </div>
+      {% endif %}
+    </td>
+</tr>

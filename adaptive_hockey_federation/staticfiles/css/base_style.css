@@ -1257,6 +1257,10 @@ td {
   display: flex;
   flex-direction: column;
 }
+.selector-left option:checked {
+  color: white;
+  background-color: #269FBD;
+}
 
 .full-container .help-icon {
   background: url(../img/icon-unknown.svg) 0 0 no-repeat;

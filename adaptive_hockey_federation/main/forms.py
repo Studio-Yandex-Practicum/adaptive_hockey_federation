@@ -35,7 +35,6 @@ class CustomMultipleChoiceField(MultipleChoiceField):
 class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
 
     def _check_values(self, value):
-        key = self.to_field_name or "pk"
         try:
             value = frozenset(value)
         except TypeError:
@@ -43,15 +42,6 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
                 self.error_messages["invalid_list"],
                 code="invalid_list",
             )
-        for pk in value:
-            try:
-                self.queryset.filter(**{key: pk})
-            except (ValueError, TypeError):
-                raise ValidationError(
-                    self.error_messages["invalid_pk_value"],
-                    code="invalid_pk_value",
-                    params={"pk": pk},
-                )
         value = list(value)
         qs = Team.objects.filter(pk__in=value)
         return qs
@@ -285,6 +275,7 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
 
 class StaffTeamMemberForm(forms.ModelForm):
+
     class Meta:
         model = StaffTeamMember
         fields = (
