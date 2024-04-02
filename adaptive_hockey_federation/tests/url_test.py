@@ -21,9 +21,8 @@ from tests.fixture_user import (
     test_role_admin,
     test_role_user,
 )
+from tests.utils import UrlToTest
 from users.models import ProxyGroup, User
-
-from adaptive_hockey_federation.tests.utils import UrlToTest
 
 TEST_GROUP_NAME = "no_permission_group"
 
