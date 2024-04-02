@@ -25,20 +25,17 @@ class UserCrudTest(ModelTestBaseClass):
         self.correct_delete_tests()
 
     def test_user_create_via_http(self):
-        self.client.force_login(self.superuser)
-        count = User.objects.count()
-        self.client.post(
-            "/users/create/",
-            {
-                "first_name": "Виктор",
-                "last_name": "Ушакевич",
-                "patronymic": "Александрович",
-                "email": "victorixx@yandex.ru",
-                "phone": "+7 921 332-71-72",
-                "role": "Администратор",
-            },
-        )
-        self.assertEqual(User.objects.count(), count + 1, msg="Неправильно.")
+        self.correct_create_tests(url="/users/create/")
+
+    def test_user_update_via_http(self):
+        object_id_estimated = User.objects.count() + 1
+        url = f"/users/{object_id_estimated}/edit/"
+        self.correct_update_tests(url=url)
+
+    def test_user_delete_via_http(self):
+        object_id_estimated = User.objects.count() + 1
+        url = f"/users/{object_id_estimated}/delete/"
+        self.correct_delete_tests(url=url)
 
 
 class GroupCrudTest(ModelTestBaseClass):

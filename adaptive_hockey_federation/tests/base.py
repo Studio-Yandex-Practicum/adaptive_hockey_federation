@@ -203,6 +203,45 @@ class ModelTestBaseClass(BaseTestClass):
         obj.save()
         return obj
 
+    def _post(self, url, **kwargs):
+        self.client.force_login(self.superuser)
+        self.client.post(url, kwargs)
+
+    def try_to_create_via_url(self, url, **kwargs):
+        try:
+            self._post(url, **kwargs)
+        except Exception as e:
+            raise AssertionError(
+                f"При создании объекта модели"
+                f" {self.get_model().__name__} "
+                f"путем пост-запроса на адрес '{url}' c "
+                f"корректными данными возникает исключение '{e}'. "
+                f"Использовались следующие данные: {kwargs}"
+            )
+
+    def try_to_update_via_url(self, url, **kwargs):
+        try:
+            self._post(url, **kwargs)
+        except Exception as e:
+            raise AssertionError(
+                f"При изменении объекта модели"
+                f" {self.get_model().__name__} "
+                f"путем пост-запроса на адрес '{url}' c "
+                f"корректными данными возникает исключение '{e}'. "
+                f"Использовались следующие данные: {kwargs}"
+            )
+
+    def try_to_delete_via_url(self, url):
+        try:
+            self._post(url)
+        except Exception as e:
+            raise AssertionError(
+                f"При удалении объекта модели"
+                f" {self.get_model().__name__} "
+                f"путем пост-запроса на адрес '{url}' возникает исключение "
+                f"'{e}'."
+            )
+
     @transaction.atomic()
     def try_to_create(self, **kwargs):
         try:
@@ -258,14 +297,21 @@ class ModelTestBaseClass(BaseTestClass):
     def assert_object_exist(self, err_msg: str, **obj_kwargs):
         self.assertTrue(self.is_exists(**obj_kwargs), err_msg)
 
-    def correct_create_tests(self, model_correct_schema: dict | None = None):
+    def correct_create_tests(
+        self, model_correct_schema: dict | None = None, url: str | None = None
+    ):
         schema = model_correct_schema or self.get_correct_create_schema()
         initial_objects_count = self.get_model().objects.count()
-        self.try_to_create(**schema)
+        via_url = ""
+        if url:
+            self.try_to_create_via_url(url, **schema)
+            via_url = f" через POST-запрос по адресу: {url}"
+        else:
+            self.try_to_create(**schema)
 
         err_msg = (
             f"При создании объекта модели "
-            f"'{self.get_model().__name__}' новое количество "
+            f"'{self.get_model().__name__}'{via_url} новое количество "
             f"объектов в БД не соответствует ожидаемому. Ожидаемое "
             f"количество объектов в БД: {initial_objects_count + 1}."
         )
@@ -273,34 +319,44 @@ class ModelTestBaseClass(BaseTestClass):
 
         err_msg = (
             f"После создания объекта модели "
-            f"{self.get_model().__name__} объект с данными, "
+            f"'{self.get_model().__name__}'{via_url} объект с данными, "
             f"использованным для создания, не обнаруживается в БД. "
             f"Объект создавался со следующими данными: {schema}."
         )
         self.assert_object_exist(err_msg, **schema)
 
-    def correct_update_tests(self):
+    def correct_update_tests(self, url: str | None = None):
         cr_schema = self.get_correct_create_schema()
         upd_schema = self.get_correct_update_schema()
         obj = self.try_to_create(**cr_schema)
-        self.try_to_update(obj, **upd_schema)
+        via_url = ""
+        if url:
+            self.try_to_update_via_url(url, **upd_schema)
+            via_url = f" через POST-запрос по адресу: {url}"
+        else:
+            self.try_to_update(obj, **upd_schema)
         err_msg = (
             f"После обновления объекта модели "
-            f"{self.get_model().__name__} объект с корректными данными, "
-            f"использованным для обновления, не обнаруживается в БД. "
-            f"Объект создавался со следующими данными: {upd_schema}."
+            f"{self.get_model().__name__}{via_url}, объект с корректными "
+            f"данными, использованным для обновления, не обнаруживается в БД. "
+            f"Объект обновлялся со следующими данными: {upd_schema}."
         )
         self.assert_object_exist(err_msg, **upd_schema)
 
-    def correct_delete_tests(self):
+    def correct_delete_tests(self, url: str | None = None):
         cr_schema = self.get_correct_create_schema()
         obj = self.try_to_create(**cr_schema)
         initial_objects_count = self.get_model().objects.count()
         id = obj.id
-        self.try_to_delete(id)
+        via_url = ""
+        if url:
+            self.try_to_delete_via_url(url)
+            via_url = f" через POST-запрос по адресу: {url}"
+        else:
+            self.try_to_delete(id)
         err_msg = (
             f"После удаления объекта модели "
-            f"{self.get_model().__name__} количество объектов в БД "
+            f"{self.get_model().__name__}{via_url} количество объектов в БД "
             f"не соответствует ожидаемому."
         )
         self.objects_count_test(initial_objects_count - 1, err_msg=err_msg)
@@ -403,7 +459,7 @@ class ModelTestBaseClass(BaseTestClass):
             f"валидные данные, как {msg}. {tested_value_info}"
         ).strip()
 
-    def _incorrect_field_sub_test(self, test, obj, sub):
+    def _incorrect_field_sub_test(self, test, obj, sub, url=None):
         field = test["field"]
         msg = test["msg"]
         value = test["value"]
@@ -428,7 +484,6 @@ class ModelTestBaseClass(BaseTestClass):
         self.try_to_update(obj, **self.get_correct_create_schema())
 
     def incorrect_field_tests(self):
-
         schema = self.get_must_not_be_admitted_schema()
         correct_schema = self.get_correct_create_schema()
         obj = self.try_to_create(**correct_schema)
