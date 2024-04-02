@@ -75,7 +75,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         validators=[
             validate_international_phonenumber,
-            zone_code_without_seven_hundred
+            zone_code_without_seven_hundred,
         ],
         verbose_name=_("Актуальный номер телефона"),
         help_text=_("Номер телефона, допустимый формат - +7 ХХХ ХХХ ХХ ХХ"),
@@ -142,7 +142,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Переопределенный метод модели.
         При любом сохранении устанавливает группу пользователя в зависимости
         от его роли."""
-        super().save()
+        super().save(force_insert, force_update, using, update_fields)
         self.set_group()
 
     @property
