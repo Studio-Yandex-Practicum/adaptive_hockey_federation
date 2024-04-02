@@ -18,9 +18,8 @@ services:
     container_name: adaptive_hockey_federation
     restart: always
     volumes:
-      - ./media:/config/media/
       - static_value:/app/adaptive_hockey_federation/static/
-      - media_value:/app/adaptive_hockey_federation/media/
+      - ../../media:/app/adaptive_hockey_federation/media/
     env_file:
       - ../../.env
     depends_on:
@@ -42,7 +41,7 @@ services:
       - ../nginx/nginx_stage.conf:/config/nginx/site-confs/default.conf
       - swag_volume_stage:/config
       - static_value:/var/html/static/
-      - media_value:/var/html/media/
+      - ../../media:/var/html/media/
     ports:
       - 443:443
       - 80:${PORT}
@@ -54,6 +53,5 @@ services:
 
 volumes:
   static_value:
-  media_value:
   postgres_data:
   swag_volume_stage:
