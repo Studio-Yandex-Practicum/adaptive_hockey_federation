@@ -68,6 +68,7 @@ module = [
     "adaptive_hockey_federation.parser.user_card",
     "adaptive_hockey_federation.parser.*",
     "adaptive_hockey_federation.core.*",
+    "adaptive_hockey_federation.tests.*",
     "phonenumber_field.*",
     "factory",
     "environ",
