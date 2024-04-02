@@ -107,7 +107,7 @@ class CityChoiceField(ModelChoiceField):
     def __init__(self, label: str | None = None):
         super().__init__(
             queryset=City.objects.all(),
-            widget=Select(
+            widget=TextInput(
                 attrs={
                     "list": "cities",
                     "placeholder": "Введите или выберите название города",
