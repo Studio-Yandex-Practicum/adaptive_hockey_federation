@@ -104,8 +104,9 @@ class TeamListView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teams = context["teams"]
+        user = self.request.user
         context["table_head"] = TEAM_TABLE_HEAD
-        context["table_data"] = get_team_table_data(teams)
+        context["table_data"] = get_team_table_data(teams, user)
         return context
 
 

@@ -81,7 +81,7 @@ def get_players_table(players):
     return players_table
 
 
-def get_team_table_data(teams):
+def get_team_table_data(teams, user):
     table_data = []
     for team in teams:
         team_data = {
@@ -94,6 +94,8 @@ def get_team_table_data(teams):
                 "type": "button",
                 "url": reverse("main:teams_id", args=[team.id]),
             },
+            "allow_edit": user.is_admin
+            or (user.is_agent and team.curator == user),
         }
         table_data.append(team_data)
 
