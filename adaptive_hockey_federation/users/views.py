@@ -39,6 +39,7 @@ class UsersListView(
                 or_lookup = (
                     Q(first_name__icontains=search)
                     | Q(last_name__icontains=search)
+                    | Q(patronymic__icontains=search)
                     | Q(date_joined__icontains=search)
                     | Q(role__icontains=search)
                     | Q(email__icontains=search)
@@ -56,6 +57,7 @@ class UsersListView(
                     queryset = queryset.filter(
                         Q(first_name__icontains=search)
                         | Q(last_name__icontains=search)
+                        | Q(patronymic__icontains=search)
                     )
                 else:
                     queryset = queryset.filter(
@@ -92,11 +94,7 @@ class UsersListView(
         return context
 
 
-class UpdateUserView(
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    UpdateView
-):
+class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
     Вьюха редактирования пользователя
     """

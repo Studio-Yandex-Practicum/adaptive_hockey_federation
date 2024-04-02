@@ -875,6 +875,8 @@ td {
   display: flex;
   text-align: center;
   transition: border-bottom 0.5s ease;
+  color: #340061;
+  font-weight: 700;
 }
 
 .errorlist {
@@ -924,10 +926,22 @@ td {
   align-items: center;
 }
 
+.base-date {
+  color: #340061;
+  font-family: Arial;
+  font-weight: 700;
+}
+
+.base-date-errors {
+  color: red;
+  font-family: Arial;
+  font-weight: 700;
+}
+
 .base-select {
   margin: 0;
   padding: 2px;
-  min-width: 80%;
+  min-width: 60%;
   color: #340061;
   border: 2px solid #269FBD;
   border-radius: 8px;

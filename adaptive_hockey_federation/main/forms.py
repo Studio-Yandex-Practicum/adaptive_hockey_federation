@@ -1,13 +1,8 @@
 import re
-from datetime import datetime
 from typing import Any
 
-from core.constants import (
-    FORM_HELP_TEXTS,
-    ROLE_AGENT,
-    MAX_AGE_PlAYER,
-    MIN_AGE_PlAYER,
-)
+from core.constants import FORM_HELP_TEXTS, ROLE_AGENT
+from core.utils import max_date, min_date
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
@@ -27,10 +22,6 @@ class PlayerForm(forms.ModelForm):
     # TODO: (Форма работает криво.
     # убрал конструкцию: self.fields["team"].required = False
     # с ней вообще страница не открывалась)
-    now = datetime.now()
-    month_day = format(now.strftime("%m-%d"))
-    min_date = f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
-    max_date = f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
 
     def __init__(self, *args, **kwargs):
         super(PlayerForm, self).__init__(*args, **kwargs)
@@ -70,8 +61,15 @@ class PlayerForm(forms.ModelForm):
             "level_revision": forms.TextInput(
                 attrs={"placeholder": "Введите уровень ревизии"}
             ),
-            "birthday": forms.TextInput(
-                attrs={"placeholder": "Введите дату рождения", "type": "date"}
+            "birthday": forms.DateInput(
+                format=('%Y-%m-%d'),
+                attrs={
+                    "type": "date",
+                    "placeholder": "Введите дату рождения",
+                    "class": "form-control",
+                    "min": min_date,
+                    "max": max_date,
+                }
             ),
         }
         help_texts = {
@@ -109,9 +107,8 @@ class CityChoiceField(ModelChoiceField):
     def __init__(self, label: str | None = None):
         super().__init__(
             queryset=City.objects.all(),
-            widget=Select(
+            widget=TextInput(
                 attrs={
-                    "class": "form-control",
                     "list": "cities",
                     "placeholder": "Введите или выберите название города",
                 }
@@ -151,7 +148,7 @@ class TeamForm(forms.ModelForm):
         if self.user:
             self.fields["curator"].disabled = self.user.is_agent
 
-    city = CityChoiceField(label="Выберите город, откуда команда.")
+    city = CityChoiceField()
 
     curator = ModelChoiceField(
         queryset=User.objects.filter(role=ROLE_AGENT),
@@ -182,7 +179,6 @@ class TeamForm(forms.ModelForm):
                 attrs={"placeholder": "Введите название команды"}
             ),
             "staff_team_member": Select(),
-            "city": Select(),
             "discipline_name": Select(),
             "curator": Select(),
         }
