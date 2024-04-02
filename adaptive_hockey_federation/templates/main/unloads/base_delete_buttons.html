@@ -1,0 +1,12 @@
+{% load static %}
+<td class="border rounded-md">
+  <div class="items__group">
+    <form action="{% url delete_url table_string.pk %}" method="post">
+      {% csrf_token %}
+      <button class="btns-edit-del" type="submit" onclick="return confirm('{{ delete_message }}{{ table_string.name }} ?');"
+        {% if 'main.delete_unload' in perms %} activate {% else %} disabled {% endif %}>
+        {% include 'base/delete_icon.html' %}
+      </button>
+    </form>
+  </div>
+</td>

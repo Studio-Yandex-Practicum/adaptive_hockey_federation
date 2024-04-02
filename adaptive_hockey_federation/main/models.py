@@ -457,7 +457,7 @@ class Document(BaseUniqueName):
         help_text=_("Наименование"),
     )
     file = models.FileField(
-        upload_to="documents",
+        upload_to="players_documents",
         max_length=CHAR_FIELD_LENGTH,
         unique=True,
     )

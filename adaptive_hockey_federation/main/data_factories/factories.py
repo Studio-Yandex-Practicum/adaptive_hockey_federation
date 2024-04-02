@@ -62,6 +62,7 @@ class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = StaffTeamMember
+        skip_postgeneration_save = True
 
     staff_member = factory.SubFactory(StaffMemberFactory)
     qualification = factory.Faker(
@@ -136,6 +137,7 @@ class DisciplineNameFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DisciplineName
         django_get_or_create = ["name"]
+        skip_postgeneration_save = True
 
     name = factory.Faker("sentence", nb_words=2, locale="ru_RU")
     discipline = factory.RelatedFactoryList(
@@ -258,6 +260,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
 class DocumentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Document
+        skip_postgeneration_save = True
 
     name = factory.LazyAttribute(
         lambda obj: f"{obj.player.surname}-{random.randint(1000, 9999)}"

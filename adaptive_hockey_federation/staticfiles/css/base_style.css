@@ -540,12 +540,13 @@ li {
 }
 
 .main {
-  margin: 30px 0;
+  margin: 0;
   padding-bottom: 90px;
   display: flex;
   align-items: center;
   flex: 1;
   flex-direction: column;
+  overflow-y: hidden;
 }
 
 @media screen and (min-width: 320px) and (max-width: 768px) {
@@ -616,7 +617,7 @@ td {
 }
 
 .table-container {
-  margin: 0;
+  margin: 15px 0;
   padding: 0;
   max-width: 100vw;
   min-width: 50vw;
@@ -763,7 +764,6 @@ td {
 
 .full-container {
   display: flex;
-  align-items: center;
   flex-direction: column;
   width: 100%;
 }
@@ -864,12 +864,6 @@ td {
   }
 }
 
-.base-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .base-input {
   margin: 0;
   padding: 0;
@@ -881,15 +875,19 @@ td {
   display: flex;
   text-align: center;
   transition: border-bottom 0.5s ease;
+  color: #340061;
+  font-weight: 700;
 }
 
 .errorlist {
-  color: #E73259;
-  margin: 0;
-  padding: 0;
-  min-width: 80%;
-  min-height: 100%;
   transition: border-bottom 0.5s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.errorlist li {
+  color: #E73259;
 }
 
 .base-input-errors {
@@ -921,14 +919,34 @@ td {
   text-align: left;
 }
 
+.base-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.base-date {
+  color: #340061;
+  font-family: Arial;
+  font-weight: 700;
+}
+
+.base-date-errors {
+  color: red;
+  font-family: Arial;
+  font-weight: 700;
+}
+
 .base-select {
   margin: 0;
   padding: 2px;
-  min-width: 80%;
+  min-width: 60%;
   color: #340061;
   border: 2px solid #269FBD;
   border-radius: 8px;
   font-weight: 700;
+  display: flex;
 }
 
 .selector-list {
@@ -946,11 +964,10 @@ td {
   margin: 0;
   padding: 2px;
   min-width: 80%;
-  color: #340061;
-  border: 2px solid #269FBD;
   border-radius: 8px;
   font-weight: 700;
   border: 2px red solid;
+  display: flex;
   color: #E73259;
 }
 
@@ -1081,6 +1098,20 @@ td {
   text-align: center;
 }
 
+
+.base-select-teams-errors {
+  margin: 0px 10px 0 10px;
+  padding: 2px;
+  min-width: 80%;
+  min-height: 180px;
+  border: 2px solid #269FBD;
+  border-radius: 8px;
+  font-weight: 700;
+  text-align: center;
+  border: 2px red solid;
+  color: #E73259;
+}
+
 .base-select-teams option:checked {
   color: white;
   background-color: #269FBD;
@@ -1091,7 +1122,7 @@ td {
   background-color: #269FBD;
 }
 
-.base-select-teams option:hover{ 
+.base-select-teams option:hover{
   box-shadow: 0 0 10px 100px #269FBD inset;
   transition: all .2s ease-in-out;
 }

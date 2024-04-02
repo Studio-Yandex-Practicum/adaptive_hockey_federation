@@ -1,19 +1,26 @@
 {% load user_filters %}
 <tr>
   <th>{{ field.label_tag }}</th>
-      <td class="base-wrapper">
-        {% if field.errors %}
-          {{ field |addclass:"base-select-errors"}}
-          {{ field.errors|striptags}}
-        {% else %}
-          <div class="selectors-teams">
-            <div class="selector-left">
-              <h2> Доступные команды 
-                <span class="help-icon" title="{{ field.help_text }}"></span>
-              </h2>
-              {{ field |addclass:"base-select-teams"}}
-            </div>
+    <td class="base-wrapper">
+      {% if field.errors %}
+      <div class="selectors-teams">
+        <div class="selector-left">
+          <h2> Доступные команды 
+            <span class="help-icon" title="{{ field.help_text }}"></span>
+          </h2>
+          {{ field |addclass:"base-select-teams-errors"}}
+          {{ field.errors}}
+        </div>
+      </div>
+      {% else %}
+        <div class="selectors-teams">
+          <div class="selector-left">
+            <h2> Доступные команды 
+              <span class="help-icon" title="{{ field.help_text }}"></span>
+            </h2>
+            {{ field |addclass:"base-select-teams"}}
           </div>
-        {% endif %}
-      </td>
+        </div>
+      {% endif %}
+    </td>
 </tr>

@@ -1,17 +1,14 @@
 import unicodedata
 
-from core.constants import ROLES_CHOICES
+from core.constants import FORM_HELP_TEXTS
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.forms import Select
 from django.utils.crypto import get_random_string
 from main.models import Team
-from users.utilits.reset_password import send_password_reset_email
-from users.utils import set_team_curator
 
 User = get_user_model()
 
@@ -109,21 +106,12 @@ class UserAdminCreationForm(UserCreationForm):
         }
 
 
-class UsersCreationForm(forms.ModelForm):
-    """Форма создания пользователя на странице users"""
+class CustomUserCreateForm(forms.ModelForm):
 
-    role = forms.ChoiceField(
-        choices=ROLES_CHOICES[:-1],
-        required=True,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        label="Роль пользователя",
-        error_messages={"required": "Пожалуйста, выберите роль из списка."},
-    )
-    team = forms.ModelChoiceField(
+    team = forms.ModelMultipleChoiceField(
         queryset=Team.objects.all(),
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        label="Команда представителя",
+        label="Команды",
     )
 
     class Meta:
@@ -137,58 +125,65 @@ class UsersCreationForm(forms.ModelForm):
             "role",
             "team",
         )
-        error_messages = {
-            "email": {
-                "unique": "Электронная почта должна быть уникальной!",
-            },
-        }
         widgets = {
-            "role": Select(),
-            "team": Select(),
+            "first_name": forms.TextInput(
+                attrs={"placeholder": "Введите фамилию (обязательно)"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"placeholder": "Введите Имя (обязательно)"}
+            ),
+            "patronymic": forms.TextInput(
+                attrs={"placeholder": "Введите отчество"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"placeholder": "Введите email (обязательно)"}
+            ),
+            "phone": forms.TextInput(
+                attrs={"placeholder": "Введите номер игрока"}
+            ),
+        }
+        help_texts = {
+            "email": FORM_HELP_TEXTS["email"],
+            "role": FORM_HELP_TEXTS["role"],
         }
 
     def clean_team(self):
         """
         Проверка команды при создании пользователя
         """
+        busy_teams = None
+        choice_team = None
         if choice_team := self.cleaned_data["team"]:
-            choice_team = Team.objects.get(id=choice_team.id)
-            if choice_team.curator is not None:
+            busy_teams = [
+                team for team in choice_team if team.curator is not None]
+            if len(busy_teams) > 0:
                 raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
-                )
+                    [f"У команды {team.name} уже есть куратор {team.curator}"
+                        for team in busy_teams])
         return choice_team
 
-    def save(self, commit=True):
-        user = super(UsersCreationForm, self).save()
-        set_team_curator(user, self.cleaned_data["team"])
-        send_password_reset_email(user)
-        return user
 
+class CustomUserUpdateForm(CustomUserCreateForm):
 
-class UpdateUserForm(UsersCreationForm):
-    """Форма редактирования пользователя"""
+    def __init__(self, *args, **kwargs):
+        super(CustomUserUpdateForm, self).__init__(*args, **kwargs)
+        if self.instance.team.all():
+            self.fields["team"].initial = self.instance.team.all()
 
     def clean_team(self):
         """
-        Проверка команды при редактировании пользователя
+        Проверка команды при создании пользователя
         """
-        if choice_team := self.cleaned_data["team"]:
-            choice_team = Team.objects.get(id=choice_team.id)
-            current_team = self.instance.team.all()
-            if current_team and current_team[0] == choice_team:
-                return choice_team
-            if choice_team.curator is not None:
+        busy_teams = None
+        choice_teams = None
+        current_teams = list(self.instance.team.all())
+        if choice_teams := self.cleaned_data["team"]:
+            busy_teams = [
+                team for team in choice_teams if team.curator is not None]
+            if len(current_teams) > 0:
+                busy_teams = list(set(busy_teams) - set(current_teams))
+            if len(busy_teams) > 0:
                 raise ValidationError(
-                    "У команды есть куратор!"
-                    f"{choice_team.curator.get_full_name()}"
-                )
-        return choice_team
-
-    def save(self, commit=True):
-        user = super(UsersCreationForm, self).save(commit=False)
-        set_team_curator(user, self.cleaned_data["team"])
-        if commit:
-            user.save()
-        return user
+                    [f"У команды {team.name} уже есть куратор {team.curator}"
+                        for team in busy_teams])
+        return choice_teams

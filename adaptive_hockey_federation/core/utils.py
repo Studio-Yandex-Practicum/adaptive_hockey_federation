@@ -1,8 +1,13 @@
 import os
 from datetime import datetime
 
-from core.config.base_settings import FILE_RESOLUTION, MAX_UPLOAD_SIZE
-from core.constants import TIME_FORMAT
+from core.constants import (
+    FILE_RESOLUTION,
+    MAX_UPLOAD_SIZE,
+    TIME_FORMAT,
+    MAX_AGE_PlAYER,
+    MIN_AGE_PlAYER,
+)
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
@@ -22,3 +27,15 @@ def is_uploaded_file_valid(file: InMemoryUploadedFile) -> bool:
     ):
         return True
     return False
+
+
+def min_date():
+    now = datetime.now()
+    month_day = format(now.strftime("%m-%d"))
+    return f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
+
+
+def max_date():
+    now = datetime.now()
+    month_day = format(now.strftime("%m-%d"))
+    return f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"

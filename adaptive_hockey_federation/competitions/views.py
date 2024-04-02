@@ -1,5 +1,9 @@
 from competitions.forms import CompetitionForm, CompetitionTeamForm
 from competitions.models import Competition, Team
+from competitions.schema import (
+    get_competitions_table_data,
+    get_competitions_table_head,
+)
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -9,11 +13,17 @@ from django.contrib.auth.mixins import (
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.db.models import QuerySet
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import RedirectView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import (
+    CreateView,
+    DeleteView,
+    DeletionMixin,
+    UpdateView,
+)
 from django.views.generic.list import ListView
 from main.controllers.team_views import CityListMixin
 from main.controllers.utils import get_team_href
@@ -57,39 +67,8 @@ class CompetitionListView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         competitions = context["competitions"]
-        table_data = []
-        for competition in competitions:
-            table_data.append(
-                {
-                    "pk": competition.pk,
-                    "data": competition.date_start,
-                    "data_end": competition.date_end,
-                    "title": competition.title,
-                    "city": competition.city,
-                    "duration": competition.period_duration,
-                    "is_active": competition.is_in_process,
-                    "_ref_": {
-                        "name": "Участники",
-                        "type": "button",
-                        "url": reverse(
-                            "competitions:competitions_id",
-                            args=[competition.pk],
-                        ),
-                    },
-                }
-            )
-
-        context["table_head"] = {
-            "pk": "Nr.",
-            "data": "Начало соревнований",
-            "data_end": "Конец соревнований",
-            "title": "Наименование",
-            "city": "Город",
-            "duration": "Длительность",
-            "is_active": "Активно",
-            "teams": "Участники",
-        }
-        context["table_data"] = table_data
+        context["table_head"] = get_competitions_table_head
+        context["table_data"] = get_competitions_table_data(competitions)
         return context
 
 
@@ -103,7 +82,7 @@ class UpdateCompetitionView(
 
     model = Competition
     form_class = CompetitionForm
-    template_name = "main/competitions/competition_update.html"
+    template_name = "main/competitions/competition_create_edit.html"
     permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение карточки соревнований."
@@ -128,6 +107,7 @@ class UpdateCompetitionView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Редактирование соревнования"
         return context
 
 
@@ -180,12 +160,14 @@ class AddTeamToCompetition(
 class DeleteTeamFromCompetition(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-    DeleteView,
+    View,
+    DeletionMixin,
+    SingleObjectMixin,
 ):
     """Удаление команд из участия в соревновании."""
 
-    object = Team
-    model = Team
+    object = Competition.teams.through
+    model = Competition.teams.through
     permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на удаление команд с соревнования."
@@ -198,14 +180,6 @@ class DeleteTeamFromCompetition(
             team=self.kwargs["pk"],
         )
         return team_in_competition
-
-    def delete(self, request, *args, **kwargs):
-        team = self.get_object()
-        competition = get_object_or_404(
-            Competition, id=self.kwargs["competition_id"]
-        )
-        competition.teams.remove(team)
-        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse_lazy(
@@ -221,7 +195,7 @@ class CreateCompetitionView(
 
     model = Competition
     form_class = CompetitionForm
-    template_name = "main/competitions/competition_create.html"
+    template_name = "main/competitions/competition_create_edit.html"
     permission_required = "competitions.add_competition"
 
     def get_success_url(self):
@@ -235,6 +209,7 @@ class CreateCompetitionView(
     def get_context_data(self, **kwargs):
         context = super(CreateCompetitionView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Создать соревнование"
         return context
 
 
