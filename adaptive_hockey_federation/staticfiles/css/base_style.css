@@ -1113,7 +1113,7 @@ td {
 }
 
 .base-select-teams option:checked {
-  color: black;
+  color: #340061;
   background-color: white;
 }
 
