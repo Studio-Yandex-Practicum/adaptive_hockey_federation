@@ -56,6 +56,7 @@ class PlayerForm(forms.ModelForm):
     team = CustomMultipleChoiceField(
         required=True,
         help_text=FORM_HELP_TEXTS["teams"],
+        label="Команды"
     )
 
     class Meta:
