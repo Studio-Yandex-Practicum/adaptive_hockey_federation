@@ -1,7 +1,7 @@
 class SelectManipulation {
-  constructor(sourceId, targetId) {
-    this.sourceSelect = document.getElementById(sourceId);
-    this.targetSelect = document.getElementById(targetId);
+  constructor(id_select_available, id_select_current) {
+    this.select_available = document.getElementById(id_select_available);
+    this.select_current = document.getElementById(id_select_current);
     
     this.cache = null;
 
@@ -9,19 +9,19 @@ class SelectManipulation {
   }
 
   addEventListeners() {
-    this.sourceSelect.addEventListener('dblclick', () => {
-      this.moveOption(this.sourceSelect, this.targetSelect);
+    this.select_available.addEventListener('dblclick', () => {
+      this.moveOption(this.select_available, this.select_current);
     });
 
-    this.targetSelect.addEventListener('dblclick', () => {
-      this.moveOption(this.targetSelect, this.sourceSelect);
+    this.select_current.addEventListener('dblclick', () => {
+      this.moveOption(this.select_current, this.select_available);
     });
   }
 
-  moveOption(sourceSelect, targetSelect) {
-    const selectedOption = sourceSelect.options[sourceSelect.selectedIndex];
+  moveOption(select_available, select_current) {
+    const selectedOption = select_available.options[select_available.selectedIndex];
     if (selectedOption) {
-      targetSelect.appendChild(selectedOption);
+      select_current.appendChild(selectedOption);
     }
   }
 }
