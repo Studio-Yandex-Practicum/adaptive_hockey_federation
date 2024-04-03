@@ -71,18 +71,16 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
         players_table = {
             "name": "Игроки",
             "head": {
-                "number": "№",
                 "full_name": "Фамилия, Имя",
                 "birthday": "Д.Р.",
                 "gender": "Пол",
                 "position": "Квалификация",
                 "diagnosis": "Диагноз",
-                "discipline": "Дисциплина",
+                "number": "№",
                 "level_revision": "Уровень ревизии",
             },
             "data": [
                 {
-                    "number": player.number,
                     "full_name_link": get_player_href(player),
                     "birthday": player.birthday,
                     "gender": player.get_gender_display(),
@@ -90,9 +88,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                     "diagnosis": (
                         player.diagnosis.name if player.diagnosis else None
                     ),
-                    "discipline": (
-                        player.discipline if player.discipline else None
-                    ),
+                    "number": player.number,
                     "level_revision": player.level_revision,
                     "id": player.pk,
                 }
