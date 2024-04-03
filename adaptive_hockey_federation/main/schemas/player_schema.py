@@ -1,4 +1,5 @@
 from django.urls import reverse
+from main.schemas.utilis import get_split_discipline
 
 SEARCH_FIELDS = {
     "surname": "surname",
@@ -32,7 +33,7 @@ def get_player_table_data(context):
 
 
 def get_player_fields_personal(player):
-
+    split_discipline = get_split_discipline(player.discipline)
     data = [
         ("Фамилия", player.surname),
         ("Имя", player.name),
@@ -40,7 +41,8 @@ def get_player_fields_personal(player):
         ("Пол", player.gender),
         ("Дата рождения", player.birthday),
         ("Удостоверение личности", player.identity_document),
-        ("Дисциплина", player.discipline),
+        ("Дисциплина", split_discipline[0]),
+        ("Числовой статус", split_discipline[1]),
         ("Диагноз", player.diagnosis),
     ]
     return data
