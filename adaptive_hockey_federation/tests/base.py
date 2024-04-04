@@ -1,3 +1,4 @@
+import copy
 from http import HTTPStatus
 from typing import Iterable
 
@@ -185,12 +186,12 @@ class ModelTestBaseClass(BaseTestClass):
         )
 
     def get_correct_create_schema(self):
-        return self._get_schema_key_value("correct_create")
+        return copy.copy(self._get_schema_key_value("correct_create"))
 
     def get_correct_update_schema(self):
-        return self._get_schema_key_value("correct_update")
+        return copy.copy(self._get_schema_key_value("correct_update"))
 
-    def get_must_not_be_admitted_schema(self):
+    def get_must_not_be_admitted_schemas(self):
         return self._get_schema_key_value("must_not_be_admitted")
 
     def get_must_be_admitted_schema(self):
@@ -205,11 +206,11 @@ class ModelTestBaseClass(BaseTestClass):
 
     def _post(self, url, **kwargs):
         self.client.force_login(self.superuser)
-        self.client.post(url, kwargs)
+        return self.client.post(url, kwargs)
 
     def try_to_create_via_url(self, url, **kwargs):
         try:
-            self._post(url, **kwargs)
+            return self._post(url, **kwargs)
         except Exception as e:
             raise AssertionError(
                 f"При создании объекта модели"
@@ -221,19 +222,19 @@ class ModelTestBaseClass(BaseTestClass):
 
     def try_to_update_via_url(self, url, **kwargs):
         try:
-            self._post(url, **kwargs)
+            return self._post(url, **kwargs)
         except Exception as e:
             raise AssertionError(
                 f"При изменении объекта модели"
                 f" {self.get_model().__name__} "
-                f"путем пост-запроса на адрес '{url}' c "
-                f"корректными данными возникает исключение '{e}'. "
+                f"путем пост-запроса на адрес '{url}' "
+                f"возникает исключение '{e}'. "
                 f"Использовались следующие данные: {kwargs}"
             )
 
     def try_to_delete_via_url(self, url):
         try:
-            self._post(url)
+            return self._post(url)
         except Exception as e:
             raise AssertionError(
                 f"При удалении объекта модели"
@@ -296,6 +297,9 @@ class ModelTestBaseClass(BaseTestClass):
 
     def assert_object_exist(self, err_msg: str, **obj_kwargs):
         self.assertTrue(self.is_exists(**obj_kwargs), err_msg)
+
+    def assert_object_not_exist(self, err_msg: str, **obj_kwargs):
+        self.assertFalse(self.is_exists(**obj_kwargs), err_msg)
 
     def correct_create_tests(
         self, model_correct_schema: dict | None = None, url: str | None = None
@@ -361,8 +365,18 @@ class ModelTestBaseClass(BaseTestClass):
         )
         self.objects_count_test(initial_objects_count - 1, err_msg=err_msg)
 
-    def incorrect_field_test(self, obj: Model, msg, **kwargs):
-        self.update(obj, **kwargs)
+    def update_field(
+        self, obj: Model, msg, url: str | None = None, **field_kwargs
+    ):
+        if url:
+            # field = [field for field in kwargs.keys()][0]
+            schema = self.get_correct_update_schema()
+            schema.update(field_kwargs)
+            self.try_to_update_via_url(url, **schema)
+            # self.assert_object_exist("messsss", **schema)
+            # self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+        else:
+            self.update(obj, **field_kwargs)
         # successfully_saved = False
         # try:
         #     self.update(obj, **kwargs)
@@ -449,6 +463,19 @@ class ModelTestBaseClass(BaseTestClass):
             f"вызывается исключение ValidationError. {tested_value_info}"
         ).strip()
 
+    def _incorrect_field_via_url_msg_compile(
+        self, field, msg, url, value=None, force_value=True
+    ):
+        tested_value_info = self._alter_tested_value_info(value, force_value)
+        return (
+            f"Проверьте, POST-запрос по адресу {url}  "
+            f"содержащий невалидные данные для поля {field} модели"
+            f" {self.get_model().__name__} ({msg}), "
+            f"возвращает ответ со статус-кодом 200(OK) или 302(FOUND) и "
+            f"объект в БД не изменяется."
+            f" {tested_value_info}"
+        ).strip()
+
     def _correct_field_msg_compile(
         self, field, msg, value=None, force_value=True
     ):
@@ -458,6 +485,35 @@ class ModelTestBaseClass(BaseTestClass):
             f"допускается сохранение и не вызывает ошибки валидации такие "
             f"валидные данные, как {msg}. {tested_value_info}"
         ).strip()
+
+    def _incorrect_field_sub_test_via_url(self, url, test, sub: bool = True):
+        field, value, msg = test["field"], test["value"], test["msg"]
+        field_kwargs = {field: value}
+        schema = self.get_correct_update_schema()
+        schema.update(field_kwargs)
+        err_msg = (
+            f"Проверьте, что POST-запрос по адресу {url}  "
+            f"содержащий невалидные данные для поля {field} модели"
+            f" {self.get_model().__name__} ({msg}), "
+            f"возвращает ответ со статус-кодом 200(OK) или 302(FOUND)."
+            f" {self._alter_tested_value_info(value, True)}"
+        ).strip()
+        response = self.try_to_update_via_url(url, **schema)
+        self.assertIn(
+            response.status_code, [HTTPStatus.OK, HTTPStatus.FOUND], err_msg
+        )
+        err_msg = (
+            f"В результате POST-запроса по адресу {url}  "
+            f"содержащего невалидные данные для поля {field} модели "
+            f"{self.get_model().__name__} ({msg}), "
+            f"объект с указанными невалидными данными обнаруживается в "
+            f"БД. {self._alter_tested_value_info(value, True)}"
+        ).strip()
+        if sub:
+            with self.subTest(msg=err_msg):
+                self.assert_object_not_exist(msg, **schema)
+        else:
+            self.assert_object_not_exist(err_msg, **schema)
 
     def _incorrect_field_sub_test(self, test, obj, sub, url=None):
         field = test["field"]
@@ -470,9 +526,10 @@ class ModelTestBaseClass(BaseTestClass):
             with transaction.atomic():
                 self.assertRaises(
                     ValidationError,
-                    self.incorrect_field_test,
+                    self.update_field,
                     obj,
                     msg,
+                    url,
                     **kwargs,
                 )
 
@@ -480,20 +537,54 @@ class ModelTestBaseClass(BaseTestClass):
             with self.subTest(msg=msg):
                 _inner_assert()
         else:
-            self.incorrect_field_test(obj=obj, msg=msg, **kwargs)
+            self.update_field(obj=obj, msg=msg, url=url, **kwargs)
+        # Приводим объект в заведомо валидное состояние.
         self.try_to_update(obj, **self.get_correct_create_schema())
 
-    def incorrect_field_tests(self):
-        schema = self.get_must_not_be_admitted_schema()
-        correct_schema = self.get_correct_create_schema()
-        obj = self.try_to_create(**correct_schema)
+    def _get_field_tests_set(
+        self, schemas: Iterable, create_obj: bool = True
+    ) -> tuple | tuple[tuple, Model]:
         tests_set = []
-        for test_item in schema:
+        for test_item in schemas:
             tests_set += self._unpack_field_tests(test_item)
+        if create_obj:
+            obj = self.try_to_create(**self.get_correct_create_schema())
+            return tuple(tests_set), obj
+        return tuple(tests_set)
+
+    def incorrect_field_tests_via_url(self, url: str):
+        schemas = self.get_must_not_be_admitted_schemas()
+        tests_set, _ = self._get_field_tests_set(schemas, create_obj=True)
+        for batch_test in tests_set:
+            if isinstance(batch_test, dict):
+                self._incorrect_field_sub_test_via_url(url, batch_test)
+            else:
+                for test in batch_test:
+                    assertion_error = None
+                    try:
+                        self._incorrect_field_sub_test_via_url(
+                            url, test, sub=False
+                        )
+                    except AssertionError as e:
+                        err_msg = e.args[0]
+                        # err_msg = self._incorrect_field_via_url_msg_compile(
+                        #     test["field"], test["msg"], url, test["value"],
+                        #     force_value=True
+                        # )
+                        with self.subTest(msg=err_msg):
+                            assertion_error = e
+                            raise e
+                    finally:
+                        if assertion_error:
+                            break
+
+    def incorrect_field_tests(self, url: str | None = None):
+        schemas = self.get_must_not_be_admitted_schemas()
+        tests_set, obj = self._get_field_tests_set(schemas, create_obj=True)
         for batch_test in tests_set:
             if isinstance(batch_test, dict):
                 self._incorrect_field_sub_test(
-                    test=batch_test, obj=obj, sub=True
+                    test=batch_test, obj=obj, sub=True, url=url
                 )
             else:
                 # msg = self._incorrect_field_msg_compile(
@@ -510,7 +601,7 @@ class ModelTestBaseClass(BaseTestClass):
                     exception = None
                     try:
                         self._incorrect_field_sub_test(
-                            test=test, obj=obj, sub=False
+                            test=test, obj=obj, sub=False, url=url
                         )
                     except Exception as e:
                         exception = e

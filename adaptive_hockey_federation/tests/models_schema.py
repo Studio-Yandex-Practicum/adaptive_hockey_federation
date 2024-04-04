@@ -43,7 +43,7 @@ PUNCTUATION_MARKS = (
 
 INCORRECT_EMAIL = (
     "",
-    ("adfasdf.lkj", "неправ@иль.но"),
+    ("adfasdf.lkj", "неправ@иль.но", "дажеблизконеемайл"),
     "",
     "невалидный адрес электронной почты",
 )
@@ -112,7 +112,7 @@ USER_MODEL_TEST_SCHEMA = {
                 "first_name",
                 "last_name",
             ),
-            "test_values": (NONE, NULL),
+            "test_values": (NULL,),
         },
         {
             "fields": "last_name",

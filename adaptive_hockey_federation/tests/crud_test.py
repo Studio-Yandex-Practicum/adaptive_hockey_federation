@@ -37,6 +37,11 @@ class UserCrudTest(ModelTestBaseClass):
         url = f"/users/{object_id_estimated}/delete/"
         self.correct_delete_tests(url=url)
 
+    def test_user_fields_validation_via_http(self):
+        object_id_estimated = User.objects.count() + 1
+        url = f"/users/{object_id_estimated}/edit/"
+        self.incorrect_field_tests_via_url(url=url)
+
 
 class GroupCrudTest(ModelTestBaseClass):
     model = ProxyGroup
