@@ -159,9 +159,9 @@ class AddTeamToCompetition(
                     competition=competition,
                     curator_email=team.curator.email,
                 )
-            return super(AddTeamToCompetition, self).dispatch(
-                request, kwargs["competition_id"]
-            )
+        return super(AddTeamToCompetition, self).dispatch(
+            request, kwargs["competition_id"]
+        )
 
 
 class DeleteTeamFromCompetition(
