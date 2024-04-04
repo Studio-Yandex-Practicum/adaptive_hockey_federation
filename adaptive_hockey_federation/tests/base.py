@@ -369,46 +369,19 @@ class ModelTestBaseClass(BaseTestClass):
         self, obj: Model, msg, url: str | None = None, **field_kwargs
     ):
         if url:
-            # field = [field for field in kwargs.keys()][0]
             schema = self.get_correct_update_schema()
             schema.update(field_kwargs)
             self.try_to_update_via_url(url, **schema)
-            # self.assert_object_exist("messsss", **schema)
-            # self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
         else:
             self.update(obj, **field_kwargs)
-        # successfully_saved = False
-        # try:
-        #     self.update(obj, **kwargs)
-        #     successfully_saved = True
-        # except ValidationError as e:
-        #     return
-        # except Exception as e:
-        #     msg = (f"Проверьте, что при попытке сохранения объекта модели "
-        #            f"'{self.get_model().__name__}' c некорректными данными "
-        #            f"вызывается исключение ValidationError. Во время теста "
-        #            f"при попытке сохранения модели с данными: {kwargs} "
-        #            f"возникло исключение {e.__class__} {e}.")
-        #     with self.subTest(msg=msg):
-        #         raise self.assertTrue(False, msg=msg)
-        # if successfully_saved:
-        #     self.assertFalse(self.is_exists(**kwargs), msg=msg)
 
-    def correct_field_test(self, obj: Model, msg, **kwargs):
-        self.update(obj, **kwargs)
-
-    # def field_test(self, obj: Model, **test_kwargs):
-    #     field = test_kwargs["field"]
-    #     msg = test_kwargs["msg"]
-    #     value = test_kwargs["value"]
-    #     msg = (
-    #         f"Проверьте, что при попытке сохранения в БД модели"
-    #         f" {self.get_model().__name__} с полем {field}, "
-    #         f"содержащим невалидные данные ({msg}), "
-    #         f"вызывается исключение ValidationError. Тестировавшееся "
-    #         f"значение: '{value}'"
-    #     )
-    #     kwargs = {field: value}
+    def correct_field_test(
+        self, obj: Model, msg, url: str | None = None, **kwargs
+    ):
+        if url:
+            self.try_to_update_via_url(url, **kwargs)
+        else:
+            self.update(obj, **kwargs)
 
     @staticmethod
     def _unpack_test_values(field, value):
@@ -442,7 +415,6 @@ class ModelTestBaseClass(BaseTestClass):
         for field in fields:
             for value in value_set:
                 for unpacked_value in self._unpack_test_values(field, value):
-                    # unpacked_value["field"] = field
                     unpacked_tests.append(unpacked_value)
         return unpacked_tests
 
@@ -468,7 +440,7 @@ class ModelTestBaseClass(BaseTestClass):
     ):
         tested_value_info = self._alter_tested_value_info(value, force_value)
         return (
-            f"Проверьте, POST-запрос по адресу {url}  "
+            f"Проверьте, что POST-запрос по адресу {url}  "
             f"содержащий невалидные данные для поля {field} модели"
             f" {self.get_model().__name__} ({msg}), "
             f"возвращает ответ со статус-кодом 200(OK) или 302(FOUND) и "
@@ -477,13 +449,29 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _correct_field_msg_compile(
-        self, field, msg, value=None, force_value=True
+        self, field, msg, url, value=None, force_value=True
     ):
         tested_value_info = self._alter_tested_value_info(value, force_value)
+        if url:
+            return self._correct_field_via_url_msg_compile(
+                field, msg, url, value, force_value
+            )
         return (
             f"Проверьте, в поле {field} модели {self.get_model().__name__} "
             f"допускается сохранение и не вызывает ошибки валидации такие "
             f"валидные данные, как {msg}. {tested_value_info}"
+        ).strip()
+
+    def _correct_field_via_url_msg_compile(
+        self, field, msg, url, value=None, force_value=True
+    ):
+        tested_value_info = self._alter_tested_value_info(value, force_value)
+        return (
+            f"Проверьте, что POST-запрос по адресу '{url}'  "
+            f"содержащий такие валидные данные для поля '{field}' модели "
+            f"'{self.get_model().__name__}', как '{msg}', "
+            f"возвращает ответ со статус-кодом 200(OK) или 302(FOUND) и "
+            f"изменения сохраняются в БД. {tested_value_info}"
         ).strip()
 
     def _incorrect_field_sub_test_via_url(self, url, test, sub: bool = True):
@@ -567,10 +555,6 @@ class ModelTestBaseClass(BaseTestClass):
                         )
                     except AssertionError as e:
                         err_msg = e.args[0]
-                        # err_msg = self._incorrect_field_via_url_msg_compile(
-                        #     test["field"], test["msg"], url, test["value"],
-                        #     force_value=True
-                        # )
                         with self.subTest(msg=err_msg):
                             assertion_error = e
                             raise e
@@ -587,13 +571,6 @@ class ModelTestBaseClass(BaseTestClass):
                     test=batch_test, obj=obj, sub=True, url=url
                 )
             else:
-                # msg = self._incorrect_field_msg_compile(
-                #     batch_test[0]["field"],
-                #     batch_test[0]["msg"],
-                #     force_value=False
-                # )
-
-                # with self.subTest(msg=msg):
                 for test in batch_test:
                     msg = self._incorrect_field_msg_compile(
                         test["field"], test["msg"], test["value"]
@@ -613,7 +590,7 @@ class ModelTestBaseClass(BaseTestClass):
                             continue
                     break
 
-    def correct_field_tests(self):
+    def correct_field_tests(self, url: str | None = None):
         schema = self.get_must_be_admitted_schema()
         correct_schema = self.get_correct_create_schema()
         obj = self.try_to_create(**correct_schema)
@@ -625,9 +602,11 @@ class ModelTestBaseClass(BaseTestClass):
                 batch_test = (batch_test,)
             for test in batch_test:
                 kwargs = {test["field"]: test["value"]}
-                msg = self._correct_field_msg_compile(**test)
+                msg = self._correct_field_msg_compile(**test, url=url)
+                update_schema = copy.copy(correct_schema)
+                update_schema.update(kwargs)
                 with self.subTest(msg=msg):
-                    self.correct_field_test(obj, msg, **kwargs)
+                    self.correct_field_test(obj, msg, url, **update_schema)
                     self.assertTrue(
                         self.get_model().objects.filter(**kwargs).exists(),
                         msg=msg,

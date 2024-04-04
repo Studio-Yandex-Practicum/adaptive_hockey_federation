@@ -42,6 +42,11 @@ class UserCrudTest(ModelTestBaseClass):
         url = f"/users/{object_id_estimated}/edit/"
         self.incorrect_field_tests_via_url(url=url)
 
+    def test_user_fields_admit_values_via_http(self):
+        object_id_estimated = User.objects.count() + 1
+        url = f"/users/{object_id_estimated}/edit/"
+        self.correct_field_tests(url=url)
+
 
 class GroupCrudTest(ModelTestBaseClass):
     model = ProxyGroup
