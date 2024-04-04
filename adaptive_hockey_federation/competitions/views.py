@@ -153,7 +153,7 @@ class AddTeamToCompetition(
             )
             team = get_object_or_404(Team, id=kwargs["pk"])
             competition.teams.add(team)
-            if team.curator:
+            if team.curator and team.curator.email:
                 send_welcome_mail(
                     team=team,
                     competition=competition,
