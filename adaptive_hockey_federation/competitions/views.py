@@ -27,7 +27,7 @@ from django.views.generic.edit import (
 from django.views.generic.list import ListView
 from main.controllers.team_views import CityListMixin
 from main.controllers.utils import get_team_href
-from users.utilits.send_mails import send_email
+from users.utilits.send_mails import send_welcome_mail
 
 
 class CompetitionListView(
@@ -153,10 +153,9 @@ class AddTeamToCompetition(
             )
             team = get_object_or_404(Team, id=kwargs["pk"])
             competition.teams.add(team)
-            send_email(
-                instance=team,
+            send_welcome_mail(
+                team=team,
                 competition=competition,
-                type=True,
             )
         return super(AddTeamToCompetition, self).dispatch(
             request, kwargs["competition_id"]
