@@ -157,11 +157,11 @@ class AddTeamToCompetition(
                 send_welcome_mail(
                     team=team,
                     competition=competition,
-                    email=team.curator.email,
+                    curator_email=team.curator.email,
                 )
-        return super(AddTeamToCompetition, self).dispatch(
-            request, kwargs["competition_id"]
-        )
+            return super(AddTeamToCompetition, self).dispatch(
+                request, kwargs["competition_id"]
+            )
 
 
 class DeleteTeamFromCompetition(
