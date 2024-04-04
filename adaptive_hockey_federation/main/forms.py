@@ -5,7 +5,13 @@ from core.constants import FORM_HELP_TEXTS, ROLE_AGENT
 from core.utils import max_date, min_date
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import ModelChoiceField, Select, TextInput
+from django.forms import (
+    ModelChoiceField,
+    ModelMultipleChoiceField,
+    MultipleChoiceField,
+    Select,
+    TextInput,
+)
 from main.models import (
     City,
     DisciplineName,
@@ -17,14 +23,41 @@ from main.models import (
 from users.models import User
 
 
+class CustomMultipleChoiceField(MultipleChoiceField):
+
+    def validate(self, value):
+        if self.required and not value:
+            raise ValidationError(
+                self.error_messages["required"], code="required"
+            )
+
+
+class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
+
+    def _check_values(self, value):
+        try:
+            value = frozenset(value)
+        except TypeError:
+            raise ValidationError("Неверный список команд!")
+        value = list(value)
+        qs = Team.objects.filter(pk__in=value)
+        return qs
+
+
 class PlayerForm(forms.ModelForm):
 
-    # TODO: (Форма работает криво.
-    # убрал конструкцию: self.fields["team"].required = False
-    # с ней вообще страница не открывалась)
+    available_teams = ModelMultipleChoiceField(
+        queryset=Team.objects.all().order_by('name'),
+        required=False,
+        help_text=FORM_HELP_TEXTS["available_teams"],
+        label="Команды",
+    )
 
-    def __init__(self, *args, **kwargs):
-        super(PlayerForm, self).__init__(*args, **kwargs)
+    team = CustomMultipleChoiceField(
+        required=True,
+        help_text=FORM_HELP_TEXTS["teams"],
+        label="Команды"
+    )
 
     class Meta:
         model = Player
@@ -38,6 +71,7 @@ class PlayerForm(forms.ModelForm):
             "diagnosis",
             "level_revision",
             "team",
+            'available_teams',
             "is_captain",
             "is_assistent",
             "position",
@@ -75,7 +109,6 @@ class PlayerForm(forms.ModelForm):
         help_texts = {
             "identity_document": FORM_HELP_TEXTS["identity_document"],
             "birthday": FORM_HELP_TEXTS["birthday"],
-            "team": FORM_HELP_TEXTS["team"],
         }
 
     def save_m2m(self):
@@ -98,6 +131,26 @@ class PlayerForm(forms.ModelForm):
         raise ValidationError(
             "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или"
             "'Свидетельство о рождении X-XX XXXXXX'"
+        )
+
+
+class PlayerUpdateForm(PlayerForm):
+
+    def __init__(self, *args, **kwargs):
+        super(PlayerForm, self).__init__(*args, **kwargs)
+        if queryset := self.instance.team.all():
+            self.fields["team"] = CustomModelMultipleChoiceField(
+                queryset=queryset,
+                required=True,
+                help_text=FORM_HELP_TEXTS["teams"],
+                label="Команды",
+            )
+        queryset_available = Team.objects.all().difference(queryset)
+        self.fields["available_teams"] = CustomModelMultipleChoiceField(
+            queryset=queryset_available,
+            required=False,
+            help_text=FORM_HELP_TEXTS["available_teams"],
+            label="Команды",
         )
 
 
@@ -220,6 +273,7 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
 
 class StaffTeamMemberForm(forms.ModelForm):
+
     class Meta:
         model = StaffTeamMember
         fields = (
@@ -229,7 +283,7 @@ class StaffTeamMemberForm(forms.ModelForm):
             "notes",
         )
         help_texts = {
-            "team": FORM_HELP_TEXTS["team"],
+            "team": FORM_HELP_TEXTS["teams"],
         }
 
 
