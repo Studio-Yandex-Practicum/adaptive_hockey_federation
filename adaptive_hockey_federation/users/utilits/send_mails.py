@@ -1,18 +1,19 @@
 import os
 
+from competitions.models import Competition
 from core.config import dev_settings
 from django.contrib.auth.tokens import default_token_generator
-from django.db.models import Model
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from main.models import Team
 from users.models import User
 from users.utilits.render import render_email_message
 
 
 def send_email(
-    instance: Model,
-    competition: Model | None = None,
+    instance: User | Team,
+    competition: Competition | None = None,
     type: bool = False,
     message: str | None = None,
     template: str | None = None,
