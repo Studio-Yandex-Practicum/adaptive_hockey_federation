@@ -54,6 +54,7 @@ def get_password_reset_link(instance: User) -> str:
 def send_welcome_mail(
         team: Team,
         competition: Competition,
+        email: str,
 ) -> None:
     """
     Отправка пригласительного письма
@@ -73,7 +74,7 @@ def send_welcome_mail(
                 f"{os.environ.get('PORT', '8000')}{link}"},
         from_email=dev_settings.EMAIL_HOST_USER,
         to=[
-            team.curator.email,
+            email,
         ],
         template=template,
     )
