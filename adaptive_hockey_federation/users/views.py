@@ -11,7 +11,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.models import Team
 from users.forms import CustomUserCreateForm, CustomUserUpdateForm
-from users.utilits.reset_password import send_password_reset_email
+from users.utilits.send_mails import send_email
 
 User = get_user_model()
 
@@ -171,7 +171,7 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
                 for team in choice_teams:
                     team.curator = user
                     team.save()
-            send_password_reset_email(user)
+            send_email(user)
         return super().form_valid(form)
 
 

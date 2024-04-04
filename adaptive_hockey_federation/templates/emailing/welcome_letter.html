@@ -1,0 +1,26 @@
+{% extends "emailing/email.html" %}
+{% load static %}
+{% block content %}
+<div class="welcome_container">
+  <header class="welcome_header">
+    <img class="welcome-logo" src="https://i.postimg.cc/9f8k4hxH/logo.png" alt="Логотип">
+    <h1 class='welcome-header-text'>Мир хоккея<br>для особенных<br>детей</h1>
+    <div class="welcome-rect-container">
+      <div class="welcome-ellipse"></div>
+      <img class="welcome-rect-container" src="https://i.postimg.cc/QxJ09DtY/rect.png" alt="Следж-хоккей, хоккей для незрячих, Специальный хоккей">
+    </div>
+  </header>
+  <ul class="welcome_body">
+    <li class="welcome_body_list">Дата начала соревнования: {{ competition.date_start }}</li>
+    <li class="welcome_body_list">Место проведения: город: {{ competition.city }}</li>
+    <li class="welcome_body_list">Адрес: {{ competition.location }}</li>
+    <li class="welcome_body_list">Надеемся на ваше активное участие и желаем удачи!</li>
+    <li class="welcome_body_list">С уважением, организатор соревнований: {{ competition.title }}</li>
+  </ul>
+  <div class="welcome_footer">
+    <p>Дополнительную информацию можете узнать по ссылке: 
+      <a href="{{ link_to_info }}">Подробнee</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
