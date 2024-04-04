@@ -27,7 +27,7 @@
             <tbody>
                 {% for field in staff_form %}
                   {% if field.name == 'staff_position'%} {% include "main/fields/select_field.html" %}
-                  {% elif field.name == 'team'%} {% include "main/fields/team_select_field.html" %}
+                  {% elif field.name == 'team'%} {% include "main/fields/team_select_field_1_field.html" %}
                   {% else %} {% include "main/fields/text_input_field.html" %}
                   {% endif %}
               {% endfor %}

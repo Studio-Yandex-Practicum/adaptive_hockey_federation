@@ -22,7 +22,7 @@ class Unload(models.Model):
         on_delete=models.CASCADE,
     )
     unload_file_slug = models.FileField(
-        verbose_name=_("Ссылка на файл"), upload_to="data/"
+        verbose_name=_("Ссылка на файл"), upload_to="unloads_data/"
     )
 
     class Meta:

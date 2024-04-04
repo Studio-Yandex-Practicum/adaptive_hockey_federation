@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+{% load user_filters %}
+{% block title %}
+
+{% endblock %}
+{% block content %}
+<h2 class="text-center mb-4">{{ page_title }}</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container text-center">
+      <div class="full-container">
+          <h4 class="text-center mb-4">{{ object.name }}</h4>
+          <table class="table-table">
+              <tbody>
+                  {% for field in form.visible_fields %}
+                    {% if field.name in 'title location'%} {% include "main/fields/text_input_field.html" %}
+                    {% elif field.name in 'city'%} {% include "main/fields/city_field.html" %}
+                    {% elif field.name in 'date_start date_end'%} {% include "main/fields/text_input_field.html" %}
+                    {% endif %}
+                  {% endfor %}
+              </tbody>
+            </table>
+      </div>
+      <!-- Save Button -->
+      <div class="container">
+          <div class="row">
+              <div class="col text-center text-white flex justify-start">
+                  <button
+                  type="submit"
+                  class="btn btn-secondary text-white"
+                  style="background-color: #64C2D1; border: 1px solid #fff;"
+                  >
+                      Сохранить
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</form>
+{% endblock %}

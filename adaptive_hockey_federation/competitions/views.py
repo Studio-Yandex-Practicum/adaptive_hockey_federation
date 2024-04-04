@@ -1,10 +1,17 @@
 from competitions.forms import CompetitionForm, CompetitionTeamForm
 from competitions.models import Competition, Team
-from django.contrib.auth.decorators import login_required, permission_required
+from competitions.schema import (
+    get_competitions_table_data,
+    get_competitions_table_head,
+)
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
+    UserPassesTestMixin,
 )
+from django.contrib.auth.views import redirect_to_login
+from django.core.exceptions import PermissionDenied
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -24,57 +31,44 @@ from main.controllers.utils import get_team_href
 
 class CompetitionListView(
     LoginRequiredMixin,
-    PermissionRequiredMixin,
+    UserPassesTestMixin,
     ListView,
 ):
     """Представление списка соревнований."""
 
     model = Competition
     template_name = "main/competitions/competitions.html"
-    permission_required = "competitions.list_view_competition"
-    permission_denied_message = (
-        "Отсутствует разрешение на просмотр списка соревнований."
-    )
     context_object_name = "competitions"
     paginate_by = 10
     ordering = ["id"]
 
+    def test_func(self):
+        """Проверка, что пользователь является представителем команды."""
+        user = self.request.user
+        return user.is_authenticated and (
+            user.is_agent or user.is_superuser or user.is_admin
+        )
+
+    def get_permission_denied_message(self):
+        """Сообщение об отказе в доступе."""
+        return "Отсутствует разрешение на просмотр списка соревнований."
+
+    def handle_no_permission(self):
+        """Обработка ситуации, когда у пользователя нет прав."""
+        if not self.request.user.is_authenticated:
+            return redirect_to_login(
+                self.request.get_full_path(),
+                self.get_login_url(),
+                self.get_redirect_field_name(),
+            )
+        else:
+            raise PermissionDenied(self.get_permission_denied_message())
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         competitions = context["competitions"]
-        table_data = []
-        for competition in competitions:
-            table_data.append(
-                {
-                    "pk": competition.pk,
-                    "data": competition.date_start,
-                    "data_end": competition.date_end,
-                    "title": competition.title,
-                    "city": competition.city,
-                    "duration": competition.period_duration,
-                    "is_active": competition.is_in_process,
-                    "_ref_": {
-                        "name": "Участники",
-                        "type": "button",
-                        "url": reverse(
-                            "competitions:competitions_id",
-                            args=[competition.pk],
-                        ),
-                    },
-                }
-            )
-
-        context["table_head"] = {
-            "pk": "Nr.",
-            "data": "Начало соревнований",
-            "data_end": "Конец соревнований",
-            "title": "Наименование",
-            "city": "Город",
-            "duration": "Длительность",
-            "is_active": "Активно",
-            "teams": "Участники",
-        }
-        context["table_data"] = table_data
+        context["table_head"] = get_competitions_table_head
+        context["table_data"] = get_competitions_table_data(competitions)
         return context
 
 
@@ -88,7 +82,7 @@ class UpdateCompetitionView(
 
     model = Competition
     form_class = CompetitionForm
-    template_name = "main/competitions/competition_update.html"
+    template_name = "main/competitions/competition_create_edit.html"
     permission_required = "competitions.change_competition"
     permission_denied_message = (
         "Отсутствует разрешение на изменение карточки соревнований."
@@ -113,6 +107,7 @@ class UpdateCompetitionView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Редактирование соревнования"
         return context
 
 
@@ -200,7 +195,7 @@ class CreateCompetitionView(
 
     model = Competition
     form_class = CompetitionForm
-    template_name = "main/competitions/competition_create.html"
+    template_name = "main/competitions/competition_create_edit.html"
     permission_required = "competitions.add_competition"
 
     def get_success_url(self):
@@ -214,12 +209,21 @@ class CreateCompetitionView(
     def get_context_data(self, **kwargs):
         context = super(CreateCompetitionView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
+        context["page_title"] = "Создать соревнование"
         return context
 
 
+def check_permissions(user):
+    """Проверка, что пользователь является представителем команды
+    или администратором."""
+    return user.is_authenticated and (
+        user.is_agent or user.is_superuser or user.is_admin
+    )
+
+
 @login_required()
-@permission_required(
-    "competitions.list_team_competition", raise_exception=True
+@user_passes_test(
+    check_permissions, login_url="login", redirect_field_name=None
 )
 def competition_team_manage_view(request, pk):
     """Представление для управления соревнованием.
