@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import (
 )
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -63,6 +63,36 @@ class CompetitionListView(
             )
         else:
             raise PermissionDenied(self.get_permission_denied_message())
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get("search")
+        if search:
+            search_column = self.request.GET.get("search_column")
+            if not search_column or search_column.lower() in ["все", "all"]:
+                or_lookup = (
+                    Q(title__icontains=search)
+                    | Q(city__name__icontains=search)
+                    | Q(date_start__icontains=search)
+                    | Q(date_end__icontains=search)
+                )
+                queryset = queryset.filter(or_lookup)
+            else:
+                search_fields = {"data": "date_start", "data_end": "date_end"}
+                if search_column == "title":
+                    queryset = queryset.filter(title__icontains=search)
+                if search_column == "city":
+                    queryset = queryset.filter(city__name__icontains=search)
+                if search_column in search_fields.keys():
+                    queryset = queryset.filter(
+                        **{
+                            (
+                                f"{search_fields[search_column]}"
+                                f"__icontains"
+                            ): search
+                        }
+                    )
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
