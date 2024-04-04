@@ -76,7 +76,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
                 "gender": "Пол",
                 "position": "Квалификация",
                 "diagnosis": "Диагноз",
-                "number": "№",
+                "number": "Номер игрока",
                 "level_revision": "Уровень ревизии",
             },
             "data": [
