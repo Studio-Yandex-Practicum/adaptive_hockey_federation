@@ -6,11 +6,13 @@
         {% include 'base/edit_icon.html' %}
       </button>
     </a>
-    <form action="{% url 'main:player_id_delete' pk=table_string.id %}" method="post" >
-      {% csrf_token %}
-      <button class="btns-edit-del" type="submit" {% if 'main.delete_player' in perms %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>
-        {% include 'base/delete_icon.html' %}
-      </button>
-    </form>
+    {% if user.is_staff %}
+      <form action="{% url 'main:player_id_delete' pk=table_string.id %}" method="post" >
+        {% csrf_token %}
+          <button class="btns-edit-del" type="submit" {% if 'main.delete_player' in perms %} activate {% else %} disabled {% endif %} onclick="return confirm('Вы точно хотите удалить пользователя {{ table_string.name }}?');"></a>
+            {% include 'base/delete_icon.html' %}
+          </button>
+      </form>
+    {% endif %}
   </div>
 </td>
