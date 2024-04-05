@@ -623,11 +623,25 @@ td {
   max-width: 100vw;
   min-width: 50vw;
   max-height: 95vh;
-  overflow-x: auto;
-  overflow-y: auto;
+  overflow: auto;
   text-align: center;
   display: flex;
   flex-direction: column;
+}
+
+.table-container::-webkit-scrollbar {
+  background-color: transparent;
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #269FBD;
+  border-radius: 8px;
 }
 
 .table-table {
@@ -1101,7 +1115,7 @@ td {
 
 .base-select-teams::-webkit-scrollbar {
   background-color: transparent;
-  width: 10px;
+  width: 8px;
 }
 
 .base-select-teams::-webkit-scrollbar-thumb {
@@ -1282,12 +1296,27 @@ td {
 }
 
 .table-table .selectors-teams h2 {
-    margin: 0 15px 5px 15px;
-    padding: 8px;
-    font-weight: 400;
-    font-size: 0.8125rem;
-    text-align: center;
-    background:#269FBD;
-    color: #fff;
-    border-radius: 10px;
+  margin: 0 15px 5px 15px;
+  padding: 8px;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  text-align: center;
+  background:#269FBD;
+  color: #fff;
+  border-radius: 10px;
+}
+
+.scroll-class::-webkit-scrollbar {
+  background-color: transparent;
+  width: 8px;
+  height: 8px;
+}
+
+.scroll-class::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scroll-class::-webkit-scrollbar-thumb {
+  background-color: #269FBD;
+  border-radius: 8px;
 }
