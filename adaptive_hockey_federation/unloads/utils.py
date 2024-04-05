@@ -3,7 +3,6 @@ from typing import Any, List
 
 from django.conf import settings
 from django.db.models import QuerySet
-from django.utils.timezone import now
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -20,7 +19,7 @@ def column_width(workbook: Worksheet) -> None:
         workbook.column_dimensions[column].width = adjusted_width
 
 
-def export_excel(queryset: QuerySet, filename: str, title: str) -> str:
+def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
     """Выгрузка данных в excel. После создания файла возвращает его имя"""
     wb = Workbook()
     del wb["Sheet"]
@@ -47,13 +46,7 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> str:
 
         column_width(ws)
 
-    timestamp = now().strftime("%Y%m%d%H%M%S")
-    base_filename, file_extension = os.path.splitext(filename)
-    filename_with_timestamp = f"{base_filename}_{timestamp}{file_extension}"
-
     media_data_path = os.path.join(settings.MEDIA_ROOT, "data")
     os.makedirs(media_data_path, exist_ok=True)
-    file_path = os.path.join(media_data_path, filename_with_timestamp)
+    file_path = os.path.join(media_data_path, filename)
     wb.save(file_path)
-
-    return filename_with_timestamp

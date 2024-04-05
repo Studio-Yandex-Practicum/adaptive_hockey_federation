@@ -1,9 +1,11 @@
 import os
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -100,9 +102,50 @@ class DataExportView(LoginRequiredMixin, View):
                 page_name
             ]
             model = apps.get_model(app_label, model_name)
-            queryset = model.objects.all()
+            last_url = request.META.get('HTTP_REFERER')
+            parsed = urlparse(last_url)
+            params = parse_qs(parsed.query)
+            if 'search' in params:
+                search_column = ""
+                # было search, сделал s т.к. 123 строка больше 80
+                # как перенести не понял :-)
+                s = parse_qs(parsed.query)['search'][0]
+                if 'search_column' in params:
+                    search_column = parse_qs(parsed.query)['search_column'][0]
 
-            filename = export_excel(queryset, filename, title)
+                if (search_column == ""
+                        or search_column.lower() in ["все", "all"]):
+                    or_lookup = (
+                        Q(surname__icontains=s)
+                        | Q(name__icontains=s)
+                        | Q(birthday__icontains=s)
+                        | Q(gender__icontains=s)
+                        | Q(number__icontains=s)
+                        | Q(discipline__discipline_name_id__name__icontains=s)
+                        | Q(diagnosis__name__icontains=s)
+                    )
+                    queryset = model.objects.filter(or_lookup)
+                else:
+                    search_fields = {
+                        "surname": "surname",
+                        "name": "name",
+                        "birthday": "birthday",
+                        "gender": "gender",
+                        "number": "surname",
+                        "discipline": "discipline__discipline_name_id__name",
+                        "diagnosis": "diagnosis__name",
+                    }
+                    lookup = {
+                        f"{search_fields[search_column]}__icontains": s
+                    }
+                    queryset = model.objects.filter(**lookup)
+
+                filename = "players_search.xlsx"
+            else:
+                queryset = model.objects.all()
+                filename = "players_all.xlsx"
+
+            export_excel(queryset, filename, title)
             file_slug = f"data/{filename}"
 
             unload_record = Unload(
