@@ -167,6 +167,10 @@ class ModelTestBaseClass(BaseTestClass):
             f"классе {__class__}."
         )
 
+    @property
+    def future_obj_id(self):
+        return self.get_model().objects.count() + 1
+
     def get_model_schema(self):
         if self.model_schema:
             return self.model_schema
@@ -186,10 +190,14 @@ class ModelTestBaseClass(BaseTestClass):
         )
 
     def get_correct_create_schema(self):
-        return copy.copy(self._get_schema_key_value("correct_create"))
+        schema = copy.copy(self._get_schema_key_value("correct_create"))
+        self.fill_foreign_keys(schema)
+        return schema
 
     def get_correct_update_schema(self):
-        return copy.copy(self._get_schema_key_value("correct_update"))
+        schema = copy.copy(self._get_schema_key_value("correct_update"))
+        self.fill_foreign_keys(schema)
+        return schema
 
     def get_must_not_be_admitted_schemas(self):
         return self._get_schema_key_value("must_not_be_admitted")
@@ -209,6 +217,7 @@ class ModelTestBaseClass(BaseTestClass):
         return self.client.post(url, kwargs)
 
     def try_to_create_via_url(self, url, **kwargs):
+        self.replace_foreign_keys(kwargs)
         try:
             return self._post(url, **kwargs)
         except Exception as e:
@@ -220,7 +229,22 @@ class ModelTestBaseClass(BaseTestClass):
                 f"Использовались следующие данные: {kwargs}"
             )
 
+    @staticmethod
+    def replace_foreign_keys(fields_kwargs: dict):
+        for key, value in fields_kwargs.items():
+            if isinstance(value, Model):
+                fields_kwargs[key] = getattr(value, "id")
+
+    @staticmethod
+    def fill_foreign_keys(fields_kwargs: dict):
+        for key, value in fields_kwargs.items():
+            # if isinstance(value, type(Model)):
+            if type(value) is type(Model):
+                fk_obj = value.objects.first()  # noqa
+                fields_kwargs[key] = fk_obj
+
     def try_to_update_via_url(self, url, **kwargs):
+        self.replace_foreign_keys(kwargs)
         try:
             return self._post(url, **kwargs)
         except Exception as e:
@@ -232,9 +256,9 @@ class ModelTestBaseClass(BaseTestClass):
                 f"Использовались следующие данные: {kwargs}"
             )
 
-    def try_to_delete_via_url(self, url):
+    def try_to_delete_via_url(self, url, **kwargs):
         try:
-            return self._post(url)
+            return self._post(url, **kwargs)
         except Exception as e:
             raise AssertionError(
                 f"При удалении объекта модели"
@@ -296,9 +320,13 @@ class ModelTestBaseClass(BaseTestClass):
         return self.get_model().objects.filter(**obj_kwargs).exists()
 
     def assert_object_exist(self, err_msg: str, **obj_kwargs):
+        if obj_kwargs.get("password", None):
+            obj_kwargs.pop("password")
         self.assertTrue(self.is_exists(**obj_kwargs), err_msg)
 
     def assert_object_not_exist(self, err_msg: str, **obj_kwargs):
+        if obj_kwargs.get("password", None):
+            obj_kwargs.pop("password")
         self.assertFalse(self.is_exists(**obj_kwargs), err_msg)
 
     def correct_create_tests(
@@ -329,13 +357,13 @@ class ModelTestBaseClass(BaseTestClass):
         )
         self.assert_object_exist(err_msg, **schema)
 
-    def correct_update_tests(self, url: str | None = None):
+    def correct_update_tests(self, url: str | None = None, **kwargs):
         cr_schema = self.get_correct_create_schema()
         upd_schema = self.get_correct_update_schema()
         obj = self.try_to_create(**cr_schema)
         via_url = ""
         if url:
-            self.try_to_update_via_url(url, **upd_schema)
+            self.try_to_update_via_url(url, **upd_schema, **kwargs)
             via_url = f" через POST-запрос по адресу: {url}"
         else:
             self.try_to_update(obj, **upd_schema)
@@ -347,14 +375,14 @@ class ModelTestBaseClass(BaseTestClass):
         )
         self.assert_object_exist(err_msg, **upd_schema)
 
-    def correct_delete_tests(self, url: str | None = None):
+    def correct_delete_tests(self, url: str | None = None, **kwargs):
         cr_schema = self.get_correct_create_schema()
         obj = self.try_to_create(**cr_schema)
         initial_objects_count = self.get_model().objects.count()
         id = obj.id
         via_url = ""
         if url:
-            self.try_to_delete_via_url(url)
+            self.try_to_delete_via_url(url, **kwargs)
             via_url = f" через POST-запрос по адресу: {url}"
         else:
             self.try_to_delete(id)
@@ -474,7 +502,9 @@ class ModelTestBaseClass(BaseTestClass):
             f"изменения сохраняются в БД. {tested_value_info}"
         ).strip()
 
-    def _incorrect_field_sub_test_via_url(self, url, test, sub: bool = True):
+    def _incorrect_field_sub_test_via_url(
+        self, url, test, sub: bool = True, **kwargs
+    ):
         field, value, msg = test["field"], test["value"], test["msg"]
         field_kwargs = {field: value}
         schema = self.get_correct_update_schema()
@@ -486,7 +516,7 @@ class ModelTestBaseClass(BaseTestClass):
             f"возвращает ответ со статус-кодом 200(OK) или 302(FOUND)."
             f" {self._alter_tested_value_info(value, True)}"
         ).strip()
-        response = self.try_to_update_via_url(url, **schema)
+        response = self.try_to_update_via_url(url, **schema, **kwargs)
         self.assertIn(
             response.status_code, [HTTPStatus.OK, HTTPStatus.FOUND], err_msg
         )
@@ -540,18 +570,20 @@ class ModelTestBaseClass(BaseTestClass):
             return tuple(tests_set), obj
         return tuple(tests_set)
 
-    def incorrect_field_tests_via_url(self, url: str):
+    def incorrect_field_tests_via_url(self, url: str, **kwargs):
         schemas = self.get_must_not_be_admitted_schemas()
         tests_set, _ = self._get_field_tests_set(schemas, create_obj=True)
         for batch_test in tests_set:
             if isinstance(batch_test, dict):
-                self._incorrect_field_sub_test_via_url(url, batch_test)
+                self._incorrect_field_sub_test_via_url(
+                    url, batch_test, **kwargs
+                )
             else:
                 for test in batch_test:
                     assertion_error = None
                     try:
                         self._incorrect_field_sub_test_via_url(
-                            url, test, sub=False
+                            url, test, sub=False, **kwargs
                         )
                     except AssertionError as e:
                         err_msg = e.args[0]
@@ -590,10 +622,11 @@ class ModelTestBaseClass(BaseTestClass):
                             continue
                     break
 
-    def correct_field_tests(self, url: str | None = None):
+    def correct_field_tests(self, url: str | None = None, **kwargs):
         schema = self.get_must_be_admitted_schema()
         correct_schema = self.get_correct_create_schema()
         obj = self.try_to_create(**correct_schema)
+        correct_schema.update(kwargs)
         tests_set = []
         for test_item in schema:
             tests_set += self._unpack_field_tests(test_item)

@@ -1,4 +1,5 @@
 from core.constants import ROLE_AGENT, ROLE_SUPERUSER
+from main.models import Nosology, StaffMember
 
 CORRECT_CREATE = "correct_create"
 CORRECT_UPDATE = "correct_update"
@@ -7,6 +8,7 @@ CORRECT_UPDATE = "correct_update"
 
 # Используйте кортеж для тестирования строковых полей на каждый элемент
 # последовательности поочередно.
+VERY_LONG_TEXT = "Lorem ipsum dolor sit amet... Съешь еще этих мягких " * 1000
 ALL_LOWER = ("василий", "начало со строчной буквы")
 ALL_CAPS = ("ВАСИЛИЙ", "строка полностью из прописных букв")
 SPACES = ("Салтыков Щедрин", "наличие хотя бы одного пробела")
@@ -16,7 +18,7 @@ LOWER_SECOND_LAST_NAME = ("Петров-водкин", "вторая фамил�
 DOUBLE_PATRONYMIC = ("Алимамбек оглы", "двойное отчество через пробел")
 MIDDLE_CAP = ("ВаСилий", "прописная буква не в начале слова")
 NOT_CYR = ("Gennadiy", "некириллические символы")
-FIGURES = ("Пётр1", "цифры наряду с буквами")
+FIGURES_AND_LETTERS = ("Пётр1", "цифры наряду с буквами")
 LONGER_THEN_256 = (("а" * 257).capitalize(), "строка длиннее 256 символов")
 LONGER_THEN_150 = (("а" * 151).capitalize(), "строка длиннее 150 символов")
 LONG_256 = (("а" * 256).capitalize(), "строка длиной до 256 символов")
@@ -39,6 +41,23 @@ PUNCTUATION_MARKS = (
     tuple("-~@#$%^&*()`.,\\{}\"[]<>/*+:;|!№?='"),
     "лий",
     "наличие символов пунктуации",
+)
+PUNCTUATION_MARKS_ONLY = (
+    '!"№;%:?()_',
+    "строка, состоящая только из знаков препинания",
+)
+SPACES_ONLY = ("    ", "строка, состоящая из одних пробелов")
+
+THE_ONLY_LETTER = (tuple("ФFгg"), "строка, состоящая из единственной буквы")
+
+THE_ONLY_CYR_LETTER = (
+    tuple("АБЯЁ"),
+    "строка, состоящая из одной русской буквы",
+)
+
+THE_ONLY_LATIN_LETTER = (
+    tuple("ABYZ"),
+    "строка, состоящая из одной латинской буквы",
 )
 
 INCORRECT_EMAIL = (
@@ -74,6 +93,15 @@ CORRECT_PHONE = (
     ),
     "правильный номер телефона",
 )
+CORRECT_CITY_NAMES = (
+    (
+        "г. Город-через-Дефис",
+        "пгт. Поселок Городского Типа",
+        "пос. им. В.И. Ленина",
+        "Арзамас-16",
+    ),
+    "сложные топонимы в названии города",
+)
 
 USER_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {
@@ -84,6 +112,7 @@ USER_MODEL_TEST_SCHEMA = {
         "email": "fake@fake.com",
         "phone": "+7 990 060-45-71",
         "is_staff": False,
+        "password": "pAss9742!word",
     },
     CORRECT_UPDATE: {
         "first_name": "Бурямглоюнебокроетвихриснежныекрутятокакзверьоназавоет",
@@ -93,6 +122,7 @@ USER_MODEL_TEST_SCHEMA = {
         "email": "fake@fake.com",
         "phone": "+7 990 060-45-72",
         "is_staff": False,
+        "password": "NewPAss9742!word",
     },
     "must_not_be_admitted": (
         {
@@ -102,7 +132,7 @@ USER_MODEL_TEST_SCHEMA = {
                 ALL_CAPS,
                 MIDDLE_CAP,
                 NOT_CYR,
-                FIGURES,
+                FIGURES_AND_LETTERS,
                 LONGER_THEN_256,
                 PUNCTUATION_MARKS_EXCEPT_HYPHEN,
             ),
@@ -124,6 +154,10 @@ USER_MODEL_TEST_SCHEMA = {
         {"fields": "phone", "test_values": (INCORRECT_PHONE,)},
     ),
     "must_be_admitted": (
+        {
+            "fields": ("last_name", "first_name", "patronymic"),
+            "test_values": (THE_ONLY_CYR_LETTER,),
+        },
         {"fields": "last_name", "test_values": (DOUBLE_LAST_NAME,)},
         {"fields": "patronymic", "test_values": (DOUBLE_PATRONYMIC,)},
         {"fields": "phone", "test_values": (CORRECT_PHONE,)},
@@ -148,4 +182,145 @@ GROUP_MODEL_TEST_SCHEMA = {
         },
     ),
     "must_be_admitted": ({"fields": "name", "test_values": (LONG_150,)},),
+}
+
+CITY_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "name": "Городкоторогонет",
+    },
+    CORRECT_UPDATE: {
+        "name": "Новыйгородкоторогонет",
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                LONGER_THEN_256,
+                NULL,
+                NOT_CYR,
+                FIGURES_ONLY,
+            ),
+        },
+    ),
+    "must_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (LONG_256, FIGURES_AND_LETTERS, CORRECT_CITY_NAMES),
+        },
+    ),
+}
+
+DIAGNOSIS_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "name": "Диагнозкоторогонет",
+        "nosology": Nosology,
+    },
+    CORRECT_UPDATE: {
+        "name": "Новыйдиагнозкоторогонет",
+        "nosology": Nosology,
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                LONGER_THEN_256,
+                NULL,
+                FIGURES_ONLY,
+                PUNCTUATION_MARKS_ONLY,
+                THE_ONLY_LETTER,
+            ),
+        },
+    ),
+    "must_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                LONG_256,
+                FIGURES_AND_LETTERS,
+            ),
+        },
+    ),
+}
+
+STAFF_MEMBER_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "name": "Василий",
+        "surname": "Иванович",
+        "patronymic": "Петров",
+        "phone": "+7 990 060-45-71",
+    },
+    CORRECT_UPDATE: {
+        "name": "Бурямглоюнебокроетвихриснежныекрутятокакзверьоназавоет",
+        "surname": "Съешьещеэтихмягкихфранцузскихбулочекдавыпейчаюев",
+        "patronymic": "Кракозябробормоглототроглодитобрандашмыгович",
+        "phone": "+7 990 060-45-72",
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": ("name", "surname", "patronymic"),
+            "test_values": (
+                ALL_LOWER,
+                ALL_CAPS,
+                MIDDLE_CAP,
+                NOT_CYR,
+                FIGURES_AND_LETTERS,
+                LONGER_THEN_256,
+                PUNCTUATION_MARKS_EXCEPT_HYPHEN,
+            ),
+        },
+        {
+            "fields": (
+                "name",
+                "surname",
+            ),
+            "test_values": (NULL,),
+        },
+        {
+            "fields": "surname",
+            "test_values": (LOWER_SECOND_LAST_NAME, SPACES),
+        },
+        {"fields": "patronymic", "test_values": (TWO_OR_MORE_SPACES,)},
+        {"fields": "phone", "test_values": (INCORRECT_PHONE,)},
+    ),
+    "must_be_admitted": (
+        {
+            "fields": ("surname", "name", "patronymic"),
+            "test_values": (THE_ONLY_CYR_LETTER,),
+        },
+        {"fields": "surname", "test_values": (DOUBLE_LAST_NAME,)},
+        {"fields": "patronymic", "test_values": (DOUBLE_PATRONYMIC,)},
+        {"fields": "phone", "test_values": (CORRECT_PHONE,)},
+    ),
+}
+
+
+STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "staff_member": StaffMember,
+        "staff_position": "тренер",
+        "qualification": "Какаятотамквалификация",
+        "notes": "Наш величайший тренер родился еще в те времена, когда...",
+    },
+    CORRECT_UPDATE: {
+        "staff_member": StaffMember,
+        "staff_position": "пушер-тьютор",
+        "qualification": "Какаятотамещеквалификация",
+        "notes": "Этот пушер-тьютор толкает игроков на лед с такой силой...",
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": "staff_position",
+            "test_values": (
+                ("повелительмух", "непредусмотренная позиция сотрудника"),
+                NULL,
+            ),
+        },
+        {
+            "fields": "qualification",
+            "test_values": (LONGER_THEN_256,),
+        },
+    ),
+    "must_be_admitted": (
+        {"fields": "qualification", "test_values": (THE_ONLY_LETTER,)},
+    ),
 }
