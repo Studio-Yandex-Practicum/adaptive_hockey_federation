@@ -21,7 +21,7 @@ def column_width(workbook: Worksheet) -> None:
 
 
 def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
-    """Выгрузка данных в excel. После создания файла возвращает его имя"""
+    """Выгрузка данных в excel. После создания файла возвращает его имя."""
     wb = Workbook()
     del wb["Sheet"]
     ws: Worksheet = wb.create_sheet("Лист1")
