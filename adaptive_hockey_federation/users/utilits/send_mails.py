@@ -1,4 +1,6 @@
+import logging
 import os
+import sys
 
 from competitions.models import Competition
 from core.config import dev_settings
@@ -51,10 +53,24 @@ def get_password_reset_link(instance: User) -> str:
     )
 
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+console_handler.setFormatter(formatter)
+
+logger.addHandler(console_handler)
+
+
 def send_welcome_mail(
-        team: Team,
-        competition: Competition,
-        curator_email: str,
+    team: Team,
+    competition: Competition,
+    curator_email: str,
 ) -> None:
     """
     Отправка пригласительного письма
@@ -64,16 +80,24 @@ def send_welcome_mail(
         "competitions:competitions_id",
         kwargs={"pk": competition.pk}
     )
-    email = render_email_message(
-        subject="Пригласительное письмо",
-        context={
-            "instance": team,
-            "competition": competition,
-            "link_to_info":
-                f"http://{os.environ.get('HOST', '127.0.0.1')}:"
-                f"{os.environ.get('PORT', '8000')}{link}"},
-        from_email=dev_settings.EMAIL_HOST_USER,
-        to=[curator_email,],
-        template=template,
-    )
-    email.send(fail_silently=False)
+    try:
+        email = render_email_message(
+            subject="Пригласительное письмо",
+            context={
+                "instance": team,
+                "competition": competition,
+                "link_to_info":
+                    f"http://{os.environ.get('HOST', '127.0.0.1')}:"
+                    f"{os.environ.get('PORT', '8000')}{link}"},
+            from_email=dev_settings.EMAIL_HOST_USER,
+            to=[curator_email,],
+            template=template,
+        )
+        email.send(fail_silently=False)
+        logger.info(
+            f'Электронное письмо успешно отправлено на адрес {curator_email}'
+        )
+    except Exception as e:
+        logger.error(
+            "Произошла ошибка при отправке электронного письма"
+            f" на {curator_email}: {e}")
