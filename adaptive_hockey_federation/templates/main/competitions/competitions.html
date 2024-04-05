@@ -7,3 +7,20 @@
     {% include 'main/competitions/table.html' with table_head=table_head table_data=table_data %}
   </div>
 {% endblock %}
+{% block JavaScript%}
+  <script>
+    let selectElement = document.querySelector(".form-select.select-form");
+    let searchFieldElement = document.getElementById("form1");
+    let defaultPlaceholder = searchFieldElement.placeholder
+
+    selectElement.addEventListener("change", function(event) {
+      let selectedOption = event.target;
+      dateSelectOptions = ["data", "data_end"];
+      (
+        dateSelectOptions.includes(selectedOption.value) ?
+        searchFieldElement.placeholder = "Дата: гггг-мм-дд" :
+        searchFieldElement.placeholder = defaultPlaceholder
+      )
+    });
+  </script>
+{% endblock %}
