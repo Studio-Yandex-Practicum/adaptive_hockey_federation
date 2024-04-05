@@ -481,6 +481,7 @@ li {
 .footer {
   padding: 0;
   margin: 0;
+  min-height: 81px;
   width: 100%;
   position: fixed;
   bottom: 0;
@@ -1098,6 +1099,15 @@ td {
   text-align: center;
 }
 
+.base-select-teams::-webkit-scrollbar {
+  background-color: transparent;
+  width: 10px;
+}
+
+.base-select-teams::-webkit-scrollbar-thumb {
+  background-color: #269FBD;
+  border-radius: 8px;
+}
 
 .base-select-teams-errors {
   margin: 0px 10px 0 10px;
