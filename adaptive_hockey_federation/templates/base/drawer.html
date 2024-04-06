@@ -27,9 +27,11 @@
           <li class="nav-item py-2">
             {% url 'main:staffs' as url_name %}{% include "base/button.html" with name="Персонал команд" %}
           </li>
+        {% endif %}
         <li class="nav-item py-2">
           {% url 'competitions:competitions' as url_name %}{% include "base/button.html" with name="Соревнования" %}
         </li>
+        {% if not request.user.is_agent %}
           <li class="nav-item py-2">
             {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
           </li>

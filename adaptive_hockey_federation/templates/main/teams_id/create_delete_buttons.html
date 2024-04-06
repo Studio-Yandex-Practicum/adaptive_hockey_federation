@@ -1,4 +1,5 @@
 {% load static %}
+{%if user.is_staff %}
 <td class="border rounded-md">
   <div class="cell-table">
     <form action="{% url 'users:user_update' table_string.id %}" method="post">
@@ -15,3 +16,4 @@
     </form>
   </div>
 </td>
+{% endif %}

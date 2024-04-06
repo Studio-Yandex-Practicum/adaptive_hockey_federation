@@ -29,7 +29,7 @@
               <tbody>
                 {% for field in form.visible_fields %}
                   {% if field.name in "level_revision number"%} {% include "main/fields/text_input_field.html" %}
-                    {% elif  field.name in "team" %} {% include "main/fields/team_select_field.html" %}
+                    {% elif  field.name in "team" %} {% include "main/fields/team_select_field_2_fields.html" %}
                     {% elif  field.name in "is_captain is_assistent" %} {% include "main/fields/check_box_field.html" %}
                     {% elif  field.name in "position" %} {% include "main/fields/select_field.html" %}
                   {% endif %}
@@ -127,5 +127,10 @@ document.getElementById('addFileButton').addEventListener('click', function() {
 });
 
 addNewFileField()
+    const mover = new SelectManipulation('id_available_teams', 'id_team');
+    const selectAllSelected = new SelectAllSelected('id_team');
+    const search_available_teams = new SearchValue('id_available_teams', 'selector-filter-available');
+    const search_current_teams = new SearchValue('id_team', 'selector-filter-current');
+
 </script>
 {% endblock %}

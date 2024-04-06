@@ -50,7 +50,6 @@ def get_players_table(players):
     players_table = {
         "name": "Игроки",
         "head": {
-            "number": "№",
             "full_name": "Фамилия, Имя",
             "birthday": "Д.Р.",
             "gender": "Пол",
@@ -58,11 +57,11 @@ def get_players_table(players):
             "diagnosis": "Диагноз",
             "discipline_name": "Дисциплина",
             "discipline_level": "Числовой статус",
+            "number": "Номер игрока",
             "level_revision": "Уровень ревизии",
         },
         "data": [
             {
-                "number": player.number,
                 "full_name_link": get_player_href(player),
                 "birthday": player.birthday,
                 "gender": player.get_gender_display(),
@@ -78,6 +77,7 @@ def get_players_table(players):
                     if player.discipline_level
                     else None
                 ),
+                "number": player.number,
                 "level_revision": player.level_revision,
                 "id": player.pk,
             }

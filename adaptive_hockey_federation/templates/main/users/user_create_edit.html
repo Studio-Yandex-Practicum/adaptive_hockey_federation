@@ -25,32 +25,8 @@
         <tbody>
           {% for field in form.visible_fields %}
             {% if field.name in "role"%}{% include "main/fields/select_field.html" %} {% endif %}
+            {% if field.name in "team"%}{% include "main/fields/team_select_field_1_field.html" %} {% endif %}
           {% endfor %}
-            <tr id="selection-team">
-              <th>{{ form.team.label_tag }}</th>
-                <td class="base-wrapper">
-                  {% if form.team.errors %}
-                  <div class="selectors-teams">
-                    <div class="selector-left">
-                      <h2> Доступные команды 
-                        <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
-                      </h2>
-                      {{ form.team |addclass:"base-select-teams-errors"}}
-                      {{ form.team.errors}}
-                    </div>
-                  </div>
-                  {% else %}
-                    <div class="selectors-teams">
-                      <div class="selector-left">
-                        <h2> Доступные команды 
-                          <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
-                        </h2>
-                        {{ form.team |addclass:"base-select-teams"}}
-                      </div>
-                    </div>
-                  {% endif %}
-                </td>
-            </tr>
         </tbody>
       </table>
     </div>

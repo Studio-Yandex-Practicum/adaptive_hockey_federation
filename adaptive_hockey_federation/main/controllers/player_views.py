@@ -11,7 +11,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.controllers.utils import errormessage
-from main.forms import PlayerForm
+from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
 from main.models import Player
 from main.permissions import PlayerIdPermissionsMixin
@@ -212,7 +212,7 @@ class PlayerIDEditView(
 ):
     model = Player
     template_name = "main/player_id/player_id_create_edit.html"
-    form_class = PlayerForm
+    form_class = PlayerUpdateForm
     permission_required = "main.change_player"
     permission_denied_message = (
         "У Вас нет разрешения на изменение персональных данных игрока."
@@ -272,7 +272,6 @@ class PlayerIDEditView(
                         "player_documents": player_documents,
                     },
                 )
-
         self.team_id = request.POST.get("team_id", None)
         return super().post(request, *args, **kwargs)
 
