@@ -1,7 +1,7 @@
 {% load static %}
 {%if user.is_staff %}
 <td class="border rounded-md">
-  <div class="cell-table">
+  <div class="items__group">
     <form action="{% url 'users:user_update' table_string.id %}" method="post">
       {% csrf_token %}
       <button class="btns-edit-del" type="submit" {% if perms.users.change_user %} activate {% else %} disabled {% endif %}>

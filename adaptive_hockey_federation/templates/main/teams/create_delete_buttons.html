@@ -1,6 +1,6 @@
 {% load static %}
 <td class="border rounded-md">
-  <div class="cell-table">
+  <div class="items__group">
     <form action="{% if view_name == 'users:users' %}
     {% url 'users:user_update' table_string.id %}
     {% elif view_name == 'main:teams' %}{% url 'main:team_update' table_string.id %}
