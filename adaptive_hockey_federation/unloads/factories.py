@@ -13,9 +13,6 @@ from users.factories import UserFactory
 
 class UnloadFactory(factory.django.DjangoModelFactory):
     """Фабрика для создания тестовых Выгрузок."""
-    # TODO: При первом использовании фабрики,
-    # проверить использование filename
-    # после получения от функции export_excel
 
     class Meta:
         model = Unload
@@ -36,9 +33,8 @@ class UnloadFactory(factory.django.DjangoModelFactory):
             title = queryset_with_titles[1]
             queryset = queryset_with_titles[0]
             filename = f"{title}_{obj.unload_name}.xlsx"
-
-            filename = export_excel(queryset, filename, title)
-            file_path = os.path.join("data", filename)
+            export_excel(queryset, filename, title)
+            file_path = os.path.join("unloads_data", filename)
             obj.unload_file_slug = file_path
             obj.save()
 

@@ -1,0 +1,38 @@
+{% load user_filters %}
+<tr>
+  <th>{{ field.label_tag }}</th>
+    <td class="base-wrapper">
+        <div class="selectors-teams" id="selector-available-teams">
+          <div class="selector-available">
+            <h2> Доступные команды 
+              <span class="help-icon" title="{{ form.available_teams.help_text }}"></span>
+            </h2>
+            <p id="id_teams_filter" class="selector-filter">
+              <label for="selector-filter-available"><span class="help-tooltip search-label-icon" title="Введите в это поле, чтобы отфильтровать список доступных команд"></span></label>
+              <input type="text" id="selector-filter-available" placeholder="Поиск...">
+            </p>
+            {% if form.available_teams.errors %}
+              {{ form.available_teams |addclass:"base-select-teams-errors"}}
+              {{ form.available_teams.errors}}
+            {% else %}
+              {{ form.available_teams |addclass:"base-select-teams"}}
+            {% endif %}
+          </div>
+          <div class="selector-chosen" id="selector-chosen-teams">
+            <h2> Команды игрока
+              <span class="help-icon" title="{{ field.help_text }}"></span>
+            </h2>
+            <p id="id_teams_filter" class="selector-filter">
+              <label for="selector-filter-current"><span class="help-tooltip search-label-icon" title="Введите в это поле, чтобы отфильтровать список текущих команд"></span></label>
+              <input type="text" id="selector-filter-current" placeholder="Поиск...">
+            </p>
+            {% if field.errors %}
+              {{ field |addclass:"base-select-teams-errors"}}
+              {{ field.errors}}
+            {% else %}
+              {{ field |addclass:"base-select-teams"}}
+            {% endif %}
+          </div>
+        </div>
+  </td>
+</tr>

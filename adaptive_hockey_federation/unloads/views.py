@@ -102,27 +102,29 @@ class DataExportView(LoginRequiredMixin, View):
                 page_name
             ]
             model = apps.get_model(app_label, model_name)
-            last_url = request.META.get('HTTP_REFERER')
+            last_url = request.META.get("HTTP_REFERER")
             parsed = urlparse(last_url)
             params = parse_qs(parsed.query)
-            if 'search' in params:
+            if "search" in params:
                 search_column = ""
-                # было search, сделал s т.к. 123 строка больше 80
-                # как перенести не понял :-)
-                s = parse_qs(parsed.query)['search'][0]
-                if 'search_column' in params:
-                    search_column = parse_qs(parsed.query)['search_column'][0]
+                search = parse_qs(parsed.query)["search"][0]
+                if "search_column" in params:
+                    search_column = parse_qs(parsed.query)["search_column"][0]
 
-                if (search_column == ""
-                        or search_column.lower() in ["все", "all"]):
+                if search_column == "" or search_column.lower() in [
+                    "все",
+                    "all",
+                ]:
                     or_lookup = (
-                        Q(surname__icontains=s)
-                        | Q(name__icontains=s)
-                        | Q(birthday__icontains=s)
-                        | Q(gender__icontains=s)
-                        | Q(number__icontains=s)
-                        | Q(discipline__discipline_name_id__name__icontains=s)
-                        | Q(diagnosis__name__icontains=s)
+                        Q(surname__icontains=search)
+                        | Q(name__icontains=search)
+                        | Q(birthday__icontains=search)
+                        | Q(gender__icontains=search)
+                        | Q(number__icontains=search)
+                        | Q(
+                            discipline__discipline_name_id__name__icontains=search  # Noqa
+                        )
+                        | Q(diagnosis__name__icontains=search)
                     )
                     queryset = model.objects.filter(or_lookup)
                 else:
@@ -136,7 +138,7 @@ class DataExportView(LoginRequiredMixin, View):
                         "diagnosis": "diagnosis__name",
                     }
                     lookup = {
-                        f"{search_fields[search_column]}__icontains": s
+                        f"{search_fields[search_column]}__icontains": search
                     }
                     queryset = model.objects.filter(**lookup)
 
@@ -146,7 +148,7 @@ class DataExportView(LoginRequiredMixin, View):
                 filename = "players_all.xlsx"
 
             export_excel(queryset, filename, title)
-            file_slug = f"data/{filename}"
+            file_slug = f"unloads_data/{filename}"
 
             unload_record = Unload(
                 unload_name=filename,
@@ -157,7 +159,7 @@ class DataExportView(LoginRequiredMixin, View):
 
             file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
             if os.path.exists(file_path):
-                file_unload = open(file_path, 'rb')
+                file_unload = open(file_path, "rb")
                 response = FileResponse(file_unload)
                 response["Content-Disposition"] = (
                     f'attachment; filename="{filename}"'

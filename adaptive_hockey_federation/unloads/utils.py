@@ -48,53 +48,53 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
         column_width(ws)
 
         font_title = Font(
-            name='Calibri',
+            name="Calibri",
             size=14,
             bold=True,
             italic=False,
             vertAlign=None,
-            underline='none',
+            underline="none",
             strike=False,
-            color='ffffff'
+            color="ffffff",
         )
-        fill_title = PatternFill(patternType='solid', fgColor='729fcf')
-        ws.merge_cells('A1:O1')
-        ws['A1'].font = font_title
-        ws['A1'].fill = fill_title
+        fill_title = PatternFill(patternType="solid", fgColor="729fcf")
+        ws.merge_cells("A1:O1")
+        ws["A1"].font = font_title
+        ws["A1"].fill = fill_title
 
         font_headers = Font(
-            name='Calibri',
+            name="Calibri",
             size=12,
             bold=True,
             italic=True,
             vertAlign=None,
-            underline='none',
+            underline="none",
             strike=False,
-            color='729fcf'
+            color="729fcf",
         )
-        fill_headers = PatternFill(patternType='solid', fgColor='ffffff')
+        fill_headers = PatternFill(patternType="solid", fgColor="ffffff")
 
         style_headers = Side(border_style="thin", color="000000")
         border_headers = Border(
             top=style_headers,
             bottom=style_headers,
             left=style_headers,
-            right=style_headers
+            right=style_headers,
         )
 
         list_letter = list(letter_range("A", "P"))
         for letter in list_letter:
-            ws[letter + '2'].font = font_headers
-            ws[letter + '2'].fill = fill_headers
-            ws[letter + '2'].border = border_headers
+            ws[letter + "2"].font = font_headers
+            ws[letter + "2"].fill = fill_headers
+            ws[letter + "2"].border = border_headers
 
-        fill_rows = PatternFill(patternType='solid', fgColor='dee6ef')
+        fill_rows = PatternFill(patternType="solid", fgColor="dee6ef")
         number_rows = int(ws.dimensions.split(":")[1][1:])
         for i in range(3, number_rows, 2):
             for letter in list_letter:
                 ws[letter + str(i)].fill = fill_rows
 
-    media_data_path = os.path.join(settings.MEDIA_ROOT, "data")
+    media_data_path = os.path.join(settings.MEDIA_ROOT, "unloads_data")
     os.makedirs(media_data_path, exist_ok=True)
     file_path = os.path.join(media_data_path, filename)
     wb.save(file_path)
