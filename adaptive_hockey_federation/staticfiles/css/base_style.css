@@ -290,12 +290,13 @@ li {
 }
 
 .btns-edit-del {
+  margin: 0;
+  padding: 0;
   background-color: #fff;
   border: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 15px;
 }
 
 .btns-edit-del:disabled {
@@ -575,12 +576,6 @@ li {
   align-items: center;
 }
 
-.cell-table {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .row-table {
   display: flex;
 }
@@ -701,7 +696,8 @@ td {
 
 .items__group {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 20px;
 }
 
 .navbar-header {
@@ -740,10 +736,9 @@ td {
 
 .cell__buttons {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   justify-content: center;
   align-items: center;
-  padding-left: 15px;
 }
 
 .container-divs {
@@ -1327,4 +1322,10 @@ td {
 .scroll-class::-webkit-scrollbar-thumb {
   background-color: #269FBD;
   border-radius: 8px;
+}
+
+.search-form-control {
+  margin: 0;
+  padding: 0;
+  max-width: 80%;
 }
