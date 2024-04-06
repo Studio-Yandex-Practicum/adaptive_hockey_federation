@@ -1,13 +1,14 @@
 import os
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.utils.timezone import now
 from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
@@ -101,13 +102,53 @@ class DataExportView(LoginRequiredMixin, View):
                 page_name
             ]
             model = apps.get_model(app_label, model_name)
-            queryset = model.objects.all()
+            last_url = request.META.get("HTTP_REFERER")
+            parsed = urlparse(last_url)
+            params = parse_qs(parsed.query)
+            if "search" in params:
+                search_column = ""
+                search = parse_qs(parsed.query)["search"][0]
+                if "search_column" in params:
+                    search_column = parse_qs(parsed.query)["search_column"][0]
+
+                if search_column == "" or search_column.lower() in [
+                    "все",
+                    "all",
+                ]:
+                    or_lookup = (
+                        Q(surname__icontains=search)
+                        | Q(name__icontains=search)
+                        | Q(birthday__icontains=search)
+                        | Q(gender__icontains=search)
+                        | Q(number__icontains=search)
+                        | Q(
+                            discipline__discipline_name_id__name__icontains=search  # Noqa
+                        )
+                        | Q(diagnosis__name__icontains=search)
+                    )
+                    queryset = model.objects.filter(or_lookup)
+                else:
+                    search_fields = {
+                        "surname": "surname",
+                        "name": "name",
+                        "birthday": "birthday",
+                        "gender": "gender",
+                        "number": "surname",
+                        "discipline": "discipline__discipline_name_id__name",
+                        "diagnosis": "diagnosis__name",
+                    }
+                    lookup = {
+                        f"{search_fields[search_column]}__icontains": search
+                    }
+                    queryset = model.objects.filter(**lookup)
+
+                filename = "players_search.xlsx"
+            else:
+                queryset = model.objects.all()
+                filename = "players_all.xlsx"
 
             export_excel(queryset, filename, title)
-
-            timestamp = now().strftime("%Y%m%d%H%M%S")
-            base_filename, file_extension = os.path.splitext(filename)
-            file_slug = f"data/{base_filename}_{timestamp}{file_extension}"
+            file_slug = f"unloads_data/{filename}"
 
             unload_record = Unload(
                 unload_name=filename,
@@ -118,7 +159,8 @@ class DataExportView(LoginRequiredMixin, View):
 
             file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
             if os.path.exists(file_path):
-                response = FileResponse(file_path)
+                file_unload = open(file_path, "rb")
+                response = FileResponse(file_unload)
                 response["Content-Disposition"] = (
                     f'attachment; filename="{filename}"'
                 )
