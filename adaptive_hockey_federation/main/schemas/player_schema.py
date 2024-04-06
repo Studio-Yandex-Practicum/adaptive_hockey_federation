@@ -1,5 +1,4 @@
 from django.urls import reverse
-from main.schemas.utilis import get_split_discipline
 
 SEARCH_FIELDS = {
     "surname": "surname",
@@ -7,7 +6,8 @@ SEARCH_FIELDS = {
     "birthday": "birthday",
     "gender": "gender",
     "number": "surname",
-    "discipline": "discipline__discipline_name_id__name",
+    "discipline_name": "discipline_name__name",
+    "discipline_level": "discipline_level__name",
     "diagnosis": "diagnosis__name",
 }
 
@@ -20,7 +20,12 @@ def get_player_table_data(context):
             "birthday": player.birthday,
             "gender": player.get_gender_display(),
             "number": player.number,
-            "discipline": player.discipline if player.discipline else None,
+            "discipline_name": (
+                player.discipline_name if player.discipline_name else None
+            ),
+            "discipline_level": (
+                player.discipline_level if player.discipline_level else None
+            ),
             "diagnosis": (
                 player.diagnosis.name if player.diagnosis else None
             ),  # Noqa
@@ -33,7 +38,6 @@ def get_player_table_data(context):
 
 
 def get_player_fields_personal(player):
-    split_discipline = get_split_discipline(player.discipline)
     data = [
         ("Фамилия", player.surname),
         ("Имя", player.name),
@@ -41,8 +45,8 @@ def get_player_fields_personal(player):
         ("Пол", player.gender),
         ("Дата рождения", player.birthday),
         ("Удостоверение личности", player.identity_document),
-        ("Дисциплина", split_discipline[0]),
-        ("Числовой статус", split_discipline[1]),
+        ("Дисциплина", player.discipline_name),
+        ("Числовой статус", player.discipline_level),
         ("Диагноз", player.diagnosis),
     ]
     return data

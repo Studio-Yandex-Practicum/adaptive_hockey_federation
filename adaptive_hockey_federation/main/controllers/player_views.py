@@ -43,7 +43,8 @@ class PlayersListView(
         "birthday",
         "gender",
         "number",
-        "discipline",
+        "discipline_name",
+        "discipline_level",
         "diagnosis",
     ]
 
@@ -59,7 +60,6 @@ class PlayersListView(
                     | Q(birthday__icontains=search)
                     | Q(gender__icontains=search)
                     | Q(number__icontains=search)
-                    | Q(discipline__discipline_name_id__name__icontains=search)
                     | Q(diagnosis__name__icontains=search)
                 )
                 queryset = queryset.filter(or_lookup)
@@ -70,7 +70,7 @@ class PlayersListView(
 
         return (
             queryset.select_related("diagnosis")
-            .select_related("discipline")
+            .select_related("discipline_name")
             .order_by("surname")
         )
 
@@ -174,7 +174,8 @@ class PlayerIdView(
         "patronymic",
         "gender",
         "birthday",
-        "discipline",
+        "discipline_name",
+        "discipline_level",
         "diagnosis",
         "level_revision",
         "identity_document",

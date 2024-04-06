@@ -201,7 +201,7 @@ class StaffMember(BasePerson):
         blank=True,
         validators=[
             validate_international_phonenumber,
-            zone_code_without_seven_hundred
+            zone_code_without_seven_hundred,
         ],
         verbose_name=_("Актуальный номер телефона"),
         help_text=_("Номер телефона, допустимый формат - +7 ХХХ ХХХ ХХ ХХ"),
@@ -352,13 +352,21 @@ class Player(BasePerson):
         verbose_name=_("Диагноз"),
         help_text=_("Диагноз"),
     )
-    discipline = models.ForeignKey(
-        Discipline,
+    discipline_name = models.ForeignKey(
+        DisciplineName,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="player_disciplines",
+        related_name="player_disciplines_names",
         verbose_name=_("Дисциплина"),
         help_text=_("Дисциплина"),
+    )
+    discipline_level = models.ForeignKey(
+        DisciplineLevel,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="player_disciplines_levels",
+        verbose_name=_("Числовой статус"),
+        help_text=_("Числовой статус"),
     )
     team = models.ManyToManyField(
         Team,

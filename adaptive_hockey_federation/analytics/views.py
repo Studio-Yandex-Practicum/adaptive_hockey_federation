@@ -20,9 +20,7 @@ class AnalyticsListView(
         or_lookup = {
             "addition_date__gte": self.request.GET.get("timespan"),
             "birthday__year": self.request.GET.get("birthday"),
-            "discipline__discipline_name_id": self.request.GET.get(
-                "discipline"
-            ),
+            "discipline_name_id": self.request.GET.get("discipline"),
             "team__city": self.request.GET.get("city"),
         }
         or_lookup = {key: value for key, value in or_lookup.items() if value}

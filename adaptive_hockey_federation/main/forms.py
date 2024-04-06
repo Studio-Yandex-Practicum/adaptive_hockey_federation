@@ -8,7 +8,6 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelChoiceField, Select, TextInput
 from main.models import (
     City,
-    DisciplineLevel,
     DisciplineName,
     Player,
     StaffMember,
@@ -23,16 +22,6 @@ class PlayerForm(forms.ModelForm):
     # TODO: (Форма работает криво.
     # убрал конструкцию: self.fields["team"].required = False
     # с ней вообще страница не открывалась)
-    discipline_name = forms.ModelChoiceField(
-        queryset=DisciplineName.objects.all(),
-        label="Название дисциплины",
-        required=True,
-    )
-    discipline_level = forms.ModelChoiceField(
-        queryset=DisciplineLevel.objects.all(),
-        label="Числовой статус",
-        required=True,
-    )
 
     def __init__(self, *args, **kwargs):
         super(PlayerForm, self).__init__(*args, **kwargs)
@@ -111,24 +100,6 @@ class PlayerForm(forms.ModelForm):
             "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или"
             "'Свидетельство о рождении X-XX XXXXXX'"
         )
-
-    def clean_discipline(self):
-        cleaned_data = super().clean()
-        discipline_name = cleaned_data.get("discipline_name")
-        discipline_level = cleaned_data.get("discipline_level")
-
-        if not discipline_name:
-            self.add_error(
-                "discipline_name", "Поле discipline_name не может быть пустым."
-            )
-
-        if not discipline_level:
-            self.add_error(
-                "discipline_level",
-                "Поле discipline_level не может быть пустым.",
-            )
-
-        return cleaned_data
 
 
 class CityChoiceField(ModelChoiceField):
