@@ -13,6 +13,16 @@
     const searchColumnSelect = document.getElementById("search_column")
     const searchColumnOptions = document.querySelectorAll("#search_column option")
 
+    const submitButton = document.getElementById("search_button")
+
+    const datePickerInput = document.getElementById("date-picker-input")
+
+    const datePicker = new DatePicker(
+      document.getElementById('date-picker-year'),
+      document.getElementById('date-picker-month'),
+      document.getElementById('date-picker-day')
+    )
+
     function toggleInputDisplay() {
       const selectedOption = searchColumnOptions[searchColumnSelect.selectedIndex]
       const searchKey = selectedOption.id
@@ -29,10 +39,18 @@
     searchColumnSelect.addEventListener("change", toggleInputDisplay)
     toggleInputDisplay()
 
-    const datePicker = new DatePicker(
-      document.getElementById('date-picker-year'),
-      document.getElementById('date-picker-month'),
-      document.getElementById('date-picker-day')
-    )
+    function onSubmit() {
+      const selectedYearIndex = datePicker.yearSelect.selectedIndex
+      const yearOptions = datePicker.yearSelect.options
+      const selectedYear = yearOptions[selectedYearIndex].innerText
+
+      const selectedMonthIndex = datePicker.monthSelect.selectedIndex
+      const monthOptions = datePicker.monthSelect.options
+      const selectedMonth = monthOptions[selectedMonthIndex].innerText
+
+      datePickerInput.value = selectedYear + "-" + selectedMonth
+    }
+
+    submitButton.addEventListener("click", onSubmit)
   </script>
 {% endblock %}
