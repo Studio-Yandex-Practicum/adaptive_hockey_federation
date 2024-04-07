@@ -1333,6 +1333,7 @@ td {
 .date-picker {
   display: flex;
   justify-content: space-around;
+  gap: 2px;
 }
 
 .date-picker__select {
