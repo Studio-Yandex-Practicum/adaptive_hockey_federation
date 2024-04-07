@@ -1,13 +1,28 @@
 from core.constants import ROLE_AGENT, ROLE_SUPERUSER
-from main.models import Nosology, StaffMember
+from main.models import City, DisciplineName, Nosology, StaffMember
 
 CORRECT_CREATE = "correct_create"
 CORRECT_UPDATE = "correct_update"
+
+
+def get_range_string(start_symbol: str, end_symbol: str) -> str:
+    return "".join(
+        [chr(i) for i in range(ord(start_symbol), ord(end_symbol) + 1)]
+    )
+
 
 # Типичные валидации
 
 # Используйте кортеж для тестирования строковых полей на каждый элемент
 # последовательности поочередно.
+RUS_STRINGS = get_range_string("а", "я") + "ё"
+RUS_CAPS = RUS_STRINGS.upper()
+LATIN_STRINGS = get_range_string("a", "z")
+LATIN_CAPS = LATIN_STRINGS.upper()
+ALL_LETTERS = (
+    (RUS_STRINGS, RUS_CAPS, LATIN_STRINGS, LATIN_CAPS),
+    "любые буквы русского и (или) латинского алфавита",
+)
 VERY_LONG_TEXT = "Lorem ipsum dolor sit amet... Съешь еще этих мягких " * 1000
 ALL_LOWER = ("василий", "начало со строчной буквы")
 ALL_CAPS = ("ВАСИЛИЙ", "строка полностью из прописных букв")
@@ -293,7 +308,6 @@ STAFF_MEMBER_MODEL_TEST_SCHEMA = {
     ),
 }
 
-
 STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {
         "staff_member": StaffMember,
@@ -323,4 +337,29 @@ STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA = {
     "must_be_admitted": (
         {"fields": "qualification", "test_values": (THE_ONLY_LETTER,)},
     ),
+}
+
+TEAM_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "name": "Команда молодости нашей",
+        "city": City,
+        "discipline_name": DisciplineName,
+    },
+    CORRECT_UPDATE: {
+        "name": "Команда мечты",
+        "city": City,
+        "discipline_name": DisciplineName,
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                NULL,
+                PUNCTUATION_MARKS_ONLY,
+                FIGURES_ONLY,
+                THE_ONLY_LETTER,
+            ),
+        },
+    ),
+    "must_be_admitted": ({"fields": "name", "test_values": (ALL_LETTERS,)},),
 }
