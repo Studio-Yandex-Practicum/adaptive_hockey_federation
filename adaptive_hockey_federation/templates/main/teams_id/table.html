@@ -1,17 +1,19 @@
 {% load static %}
-<div class="table-responsive">
+<div class="table-responsive scroll-class">
   <table class="table-table">
     <thead>
       <tr>
         {% for head_item in table_head.values %}
         <th class="col">{{ head_item }}</th>
         {% endfor %}
-        <th>
-          <div class="cell__buttons">
-            {% include 'base/active_edit_icon.html' %}
-            {% include 'base/active_delete_icon.html' %}
-          </div>
-        </th>
+        {% if table_name == "players" and request.user == team.curator or request.user.is_admin %}
+          <th>
+            <div class="cell__buttons">
+              {% include 'base/active_edit_icon.html' %}
+              {% include 'base/active_delete_icon.html' %}
+            </div>
+          </th>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
@@ -34,23 +36,29 @@
             {% endif %}
           {% elif cell_name == 'full_name_link' %}
             <td class="rounded-md">
-              <a href="{{ cell_value.url }}">{{ cell_value.name }}</a>
+              {% if request.user.is_admin or request.user == team.curator %}
+                <a href="{{ cell_value.url }}">{{ cell_value.name }}</a>
+              {% else %}
+                {{ cell_value.name }}
+              {% endif %}
             </td>
           {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
             <td class="rounded-md">{{ cell_value }}</td>
           {% endif %}
         {% endfor %}
         {% if table_name == 'players' %}
-          {% include "main/teams_id/edit_delete_button_players.html" %}
+          {% if request.user.is_admin or request.user == team.curator %}
+            {% include "main/teams_id/edit_delete_button_players.html" %}
+          {% endif %}
         {% elif table_name == 'staff' %}
-        {% include "main/teams_id/edit_delete_button_staffs.html" %}
+          {% include "main/teams_id/edit_delete_button_staffs.html" %}
         {% else %}
-        <td>
-          <div class="cell__buttons">
-            {% include 'base/active_edit_icon.html' %}
-            {% include 'base/active_delete_icon.html' %}
-          </div>
-        </td>
+          <td>
+            <div class="cell__buttons">
+              {% include 'base/active_edit_icon.html' %}
+              {% include 'base/active_delete_icon.html' %}
+            </div>
+          </td>
         {% endif %}
       </tr>
       {% endfor %}

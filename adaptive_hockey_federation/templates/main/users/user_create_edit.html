@@ -2,7 +2,7 @@
 {% load static %}
 {% load user_filters %}
 {% block title %}
-    {{ page_title }}
+  {{ page_title }}
 {% endblock %}
 {% block content %}
 <h2 class="text-center mb-4">{{ page_title }}</h2>
@@ -25,48 +25,24 @@
         <tbody>
           {% for field in form.visible_fields %}
             {% if field.name in "role"%}{% include "main/fields/select_field.html" %} {% endif %}
+            {% if field.name in "team"%}{% include "main/fields/team_select_field_1_field.html" %} {% endif %}
           {% endfor %}
-            <tr id="selection-team">
-              <th>{{ form.team.label_tag }}</th>
-                <td class="base-wrapper">
-                  {% if form.team.errors %}
-                  <div class="selectors-teams">
-                    <div class="selector-left">
-                      <h2> Доступные команды 
-                        <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
-                      </h2>
-                      {{ form.team |addclass:"base-select-teams-errors"}}
-                      {{ form.team.errors}}
-                    </div>
-                  </div>
-                  {% else %}
-                    <div class="selectors-teams">
-                      <div class="selector-left">
-                        <h2> Доступные команды 
-                          <span class="help-icon" title="Список доступных команд, действующие команды обозначены голубым цветом, чтобы выбрать или удалить зажмите ctrl"></span>
-                        </h2>
-                        {{ form.team |addclass:"base-select-teams"}}
-                      </div>
-                    </div>
-                  {% endif %}
-                </td>
-            </tr>
         </tbody>
       </table>
     </div>
     <div class="container">
       <div class="row">
-          <div class="col text-center text-white flex justify-start">
-              <button
-              type="submit"
-              class="btn btn-secondary text-white"
-              style="background-color: #64C2D1; border: 1px solid #fff;"
-              >
-                  Сохранить
-              </button>
-          </div>
+        <div class="col text-center text-white flex justify-start">
+          <button
+          type="submit"
+          class="btn btn-secondary text-white"
+          style="background-color: #64C2D1; border: 1px solid #fff;"
+          >
+            Сохранить
+          </button>
+        </div>
       </div>
-  </div>
+    </div>
   </div>
 </form>
 {% endblock %}
