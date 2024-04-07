@@ -3,24 +3,36 @@
   Список соревнований
 {% endblock %}
 {% block content %}
-  <div class="container">
-    {% include 'main/competitions/table.html' with table_head=table_head table_data=table_data %}
-  </div>
+  {% include 'main/competitions/table.html' with table_head=table_head table_data=table_data %}
 {% endblock %}
-{% block JavaScript%}
+{% block JavaScript %}
   <script>
-    let selectElement = document.querySelector(".form-select.select-form");
-    let searchFieldElement = document.getElementById("form1");
-    let defaultPlaceholder = searchFieldElement.placeholder
+    const searchFieldElement = document.getElementById("search_form_input")
+    const datePickerContainer = document.getElementById("date-picker")
 
-    selectElement.addEventListener("change", function(event) {
-      let selectedOption = event.target;
-      dateSelectOptions = ["data", "data_end"];
-      (
-        dateSelectOptions.includes(selectedOption.value) ?
-        searchFieldElement.placeholder = "Дата: гггг-мм-дд" :
-        searchFieldElement.placeholder = defaultPlaceholder
-      )
-    });
+    const searchColumnSelect = document.getElementById("search_column")
+    const searchColumnOptions = document.querySelectorAll("#search_column option")
+
+    function toggleInputDisplay() {
+      const selectedOption = searchColumnOptions[searchColumnSelect.selectedIndex]
+      const searchKey = selectedOption.id
+
+      if (searchKey === "search_data" || searchKey === "search_data_end") {
+        searchFieldElement.style.display = "none"
+        datePickerContainer.style.display = "flex"
+      } else {
+        searchFieldElement.style.display = "flex"
+        datePickerContainer.style.display = "none"
+      }
+    }
+
+    searchColumnSelect.addEventListener("change", toggleInputDisplay)
+    toggleInputDisplay()
+
+    const datePicker = new DatePicker(
+      document.getElementById('date-picker-year'),
+      document.getElementById('date-picker-month'),
+      document.getElementById('date-picker-day')
+    )
   </script>
 {% endblock %}
