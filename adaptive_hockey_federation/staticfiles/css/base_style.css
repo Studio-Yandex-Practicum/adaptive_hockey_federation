@@ -4,9 +4,20 @@ html, body {
   padding: 0;
 }
 
-/* * {
-  outline: 1px solid red;
-} */
+*::-webkit-scrollbar {
+  background-color: transparent;
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #269FBD;
+  border-radius: 8px;
+}
 
 section {
   padding: 100px;
@@ -623,21 +634,6 @@ td {
   flex-direction: column;
 }
 
-.table-container::-webkit-scrollbar {
-  background-color: transparent;
-  width: 8px;
-  height: 8px;
-}
-
-.table-container::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  background-color: #269FBD;
-  border-radius: 8px;
-}
-
 .table-table {
   padding: 10px 5px;
   border-collapse: separate;
@@ -1110,16 +1106,6 @@ td {
   text-align: center;
 }
 
-.base-select-teams::-webkit-scrollbar {
-  background-color: transparent;
-  width: 8px;
-}
-
-.base-select-teams::-webkit-scrollbar-thumb {
-  background-color: #269FBD;
-  border-radius: 8px;
-}
-
 .base-select-teams-errors {
   margin: 0px 10px 0 10px;
   padding: 2px;
@@ -1309,23 +1295,13 @@ td {
   border-radius: 10px;
 }
 
-.scroll-class::-webkit-scrollbar {
-  background-color: transparent;
-  width: 8px;
-  height: 8px;
-}
-
-.scroll-class::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-.scroll-class::-webkit-scrollbar-thumb {
-  background-color: #269FBD;
-  border-radius: 8px;
-}
-
 .search-form-control {
   margin: 0;
   padding: 0;
   max-width: 80%;
+}
+
+.date-picker {
+  display: flex;
+  justify-content: space-around;
 }
