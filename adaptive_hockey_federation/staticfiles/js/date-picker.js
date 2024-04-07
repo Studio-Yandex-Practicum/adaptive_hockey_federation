@@ -3,39 +3,50 @@ class DatePicker {
     this.yearSelect = yearSelect
     this.monthSelect = monthSelect
     this.daySelect = daySelect
-    this.init()
+    this._init()
   }
 
-  init() {
-    this.populateSelect(this.yearSelect, this.getYears(), 'гггг')
-    this.populateSelect(this.monthSelect, this.getMonths(), 'мм')
-    this.updateDays()
+  _init() {
+    this._populateSelect(this.yearSelect, this._getYears(), 'гггг')
+    this._populateSelect(this.monthSelect, this._getMonths(), 'мм')
+    this._updateDays()
 
-    this.yearSelect.addEventListener('change', () => this.updateDays())
-    this.monthSelect.addEventListener('change', () => this.updateDays())
+    this.yearSelect.addEventListener('change', () => this._updateDays())
+    this.monthSelect.addEventListener('change', () => this._updateDays())
   }
 
-  getYears() {
+  _getYears() {
     const currentYear = new Date().getFullYear()
-    return Array.from({length: currentYear - 1999}, (_, i) => currentYear - i)
+    return Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i)
   }
 
-  getMonths() {
-    return Array.from({length: 12}, (_, i) => (i + 1).toString().padStart(2, '0'))
+  _getMonths() {
+    return Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'))
   }
 
-  populateSelect(selectElement, optionsArray, defaultValue) {
-    selectElement.innerHTML = `<option value="" disabled selected>${defaultValue}</option>` + optionsArray.map(
-      option => `<option value="${option}">${option}</option>`
-    ).join('')
+  _populateSelect(selectElement, optionsArray, defaultValue) {
+    selectElement.innerHTML = ''
+    const defaultOption = document.createElement('option')
+    defaultOption.value = ''
+    defaultOption.disabled = true
+    defaultOption.selected = true
+    defaultOption.textContent = defaultValue
+    selectElement.appendChild(defaultOption)
+
+    optionsArray.forEach(option => {
+      const optionElement = document.createElement('option')
+      optionElement.value = option
+      optionElement.textContent = option
+      selectElement.appendChild(optionElement)
+    })
   }
 
-  updateDays() {
+  _updateDays() {
     const year = parseInt(this.yearSelect.value)
     const month = parseInt(this.monthSelect.value)
     const daysInMonth = new Date(year, month, 0).getDate()
-    const daysArray = Array.from({length: daysInMonth}, (_, i) => (i + 1).toString().padStart(2, '0'))
+    const daysArray = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString().padStart(2, '0'))
 
-    this.populateSelect(this.daySelect, daysArray, 'дд')
+    this._populateSelect(this.daySelect, daysArray, 'дд')
   }
 }
