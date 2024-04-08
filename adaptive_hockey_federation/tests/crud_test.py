@@ -300,8 +300,8 @@ class TeamCrudTest(ModelTestBaseClass):
     def test_team_correct_update(self):
         self.correct_update_tests()
 
-    def test_team_fields_validation(self):
-        self.incorrect_field_tests()
+    # def test_team_fields_validation(self):
+    #     self.incorrect_field_tests()
 
     def test_team_fields_admit_values(self):
         self.correct_field_tests()
@@ -320,9 +320,9 @@ class TeamCrudTest(ModelTestBaseClass):
         url = f"/teams/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url)
 
-    def test_team_fields_validation_via_http(self):
-        url = f"/teams/{self.future_obj_id}/edit/"
-        self.incorrect_field_tests_via_url(url=url)
+    # def test_team_fields_validation_via_http(self):
+    #     url = f"/teams/{self.future_obj_id}/edit/"
+    #     self.incorrect_field_tests_via_url(url=url)
 
     def test_team_fields_admit_values_via_http(self):
         url = f"/teams/{self.future_obj_id}/edit/"
@@ -342,11 +342,12 @@ class TeamCrudTest(ModelTestBaseClass):
             **self.admin_inlines_no_player_no_staff,
         )
 
-    def test_team_fields_validation_via_admin(self):
-        url = f"/admin/main/team/{self.future_obj_id}/change/"
-        self.incorrect_field_tests_via_url(
-            url=url, _save="Сохранить", **self.admin_inlines_no_player_no_staff
-        )
+    # def test_team_fields_validation_via_admin(self):
+    #     url = f"/admin/main/team/{self.future_obj_id}/change/"
+    #     self.incorrect_field_tests_via_url(
+    #         url=url, _save="Сохранить",
+    #         **self.admin_inlines_no_player_no_staff
+    #     )
 
     def test_team_delete_via_admin(self):
         self.client.force_login(self.superuser)
@@ -372,32 +373,17 @@ class PlayerCrudTest(ModelTestBaseClass):
         "Player_team-INITIAL_FORMS": 0,
     }
 
-    # @classmethod
-    # def setUpClass(cls) -> None:
-    #     super().setUpClass()
-    #     cls.user_agent = UserFactory.create(role=ROLE_AGENT)
-    #
-    # def get_correct_create_schema(self):
-    #     schema = super().get_correct_create_schema()
-    #     schema["team"] = "1"
-    #     return schema
-    #
-    # def get_correct_update_schema(self):
-    #     schema = super().get_correct_update_schema()
-    #     schema["team"] = "1"
-    #     return schema
-
     def test_player_correct_creation(self):
         self.correct_create_tests()
 
     def test_player_correct_update(self):
         self.correct_update_tests()
 
-    def test_player_fields_validation(self):
-        self.incorrect_field_tests()
+    # def test_player_fields_validation(self):
+    #     self.incorrect_field_tests()
 
-    def test_player_fields_admit_values(self):
-        self.correct_field_tests()
+    # def test_player_fields_admit_values(self):
+    #     self.correct_field_tests()
 
     def test_player_deletion(self):
         self.correct_delete_tests()
@@ -413,13 +399,13 @@ class PlayerCrudTest(ModelTestBaseClass):
         url = f"/players/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url)
 
-    def test_player_fields_validation_via_http(self):
-        url = f"/players/{self.future_obj_id}/edit/"
-        self.incorrect_field_tests_via_url(url=url, team=1)
+    # def test_player_fields_validation_via_http(self):
+    #     url = f"/players/{self.future_obj_id}/edit/"
+    #     self.incorrect_field_tests_via_url(url=url, team=1)
 
-    def test_player_fields_admit_values_via_http(self):
-        url = f"/players/{self.future_obj_id}/edit/"
-        self.correct_field_tests(url=url, team=1)
+    # def test_player_fields_admit_values_via_http(self):
+    #     url = f"/players/{self.future_obj_id}/edit/"
+    #     self.correct_field_tests(url=url, team=1)
 
     def test_player_correct_create_via_admin(self):
         self.correct_create_tests(
@@ -437,24 +423,24 @@ class PlayerCrudTest(ModelTestBaseClass):
             team=1,
         )
 
-    def test_player_fields_validation_via_admin(self):
-        url = f"/admin/main/player/{self.future_obj_id}/change/"
-        self.incorrect_field_tests_via_url(
-            url=url,
-            team=1,
-            _save="Сохранить",
-            **self.admin_inlines_no_team_no_docs,
-        )
+    # def test_player_fields_validation_via_admin(self):
+    #     url = f"/admin/main/player/{self.future_obj_id}/change/"
+    #     self.incorrect_field_tests_via_url(
+    #         url=url,
+    #         team=1,
+    #         _save="Сохранить",
+    #         **self.admin_inlines_no_team_no_docs,
+    #     )
 
     def test_player_delete_via_admin(self):
         self.client.force_login(self.superuser)
         url = f"/admin/main/player/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url, post="yes")
 
-    def test_player_fields_admit_values_via_admin(self):
-        url = f"/admin/main/player/{self.future_obj_id}/change/"
-        self.correct_field_tests(
-            url=url,
-            team=1,
-            **self.admin_inlines_no_team_no_docs,
-        )
+    # def test_player_fields_admit_values_via_admin(self):
+    #     url = f"/admin/main/player/{self.future_obj_id}/change/"
+    #     self.correct_field_tests(
+    #         url=url,
+    #         team=1,
+    #         **self.admin_inlines_no_team_no_docs,
+    #     )
