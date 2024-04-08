@@ -1,12 +1,20 @@
 from typing import Any
 
 from core.constants import ROLE_AGENT
-from main.models import City, Diagnosis, StaffMember, StaffTeamMember, Team
+from main.models import (
+    City,
+    Diagnosis,
+    Player,
+    StaffMember,
+    StaffTeamMember,
+    Team,
+)
 from tests.base import ModelTestBaseClass
 from tests.models_schema import (
     CITY_MODEL_TEST_SCHEMA,
     DIAGNOSIS_MODEL_TEST_SCHEMA,
     GROUP_MODEL_TEST_SCHEMA,
+    PLAYER_MODEL_TEST_SCHEMA,
     STAFF_MEMBER_MODEL_TEST_SCHEMA,
     STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA,
     TEAM_MODEL_TEST_SCHEMA,
@@ -349,4 +357,104 @@ class TeamCrudTest(ModelTestBaseClass):
         url = f"/admin/main/team/{self.future_obj_id}/change/"
         self.correct_field_tests(
             url=url, **self.admin_inlines_no_player_no_staff
+        )
+
+
+class PlayerCrudTest(ModelTestBaseClass):
+    model = Player
+    model_schema = PLAYER_MODEL_TEST_SCHEMA
+    user_agent: User | Any = None
+
+    admin_inlines_no_team_no_docs = {
+        "player_documemts-TOTAL_FORMS": 0,
+        "player_documemts-INITIAL_FORMS": 0,
+        "Player_team-TOTAL_FORMS": 0,
+        "Player_team-INITIAL_FORMS": 0,
+    }
+
+    # @classmethod
+    # def setUpClass(cls) -> None:
+    #     super().setUpClass()
+    #     cls.user_agent = UserFactory.create(role=ROLE_AGENT)
+    #
+    # def get_correct_create_schema(self):
+    #     schema = super().get_correct_create_schema()
+    #     schema["team"] = "1"
+    #     return schema
+    #
+    # def get_correct_update_schema(self):
+    #     schema = super().get_correct_update_schema()
+    #     schema["team"] = "1"
+    #     return schema
+
+    def test_player_correct_creation(self):
+        self.correct_create_tests()
+
+    def test_player_correct_update(self):
+        self.correct_update_tests()
+
+    def test_player_fields_validation(self):
+        self.incorrect_field_tests()
+
+    def test_player_fields_admit_values(self):
+        self.correct_field_tests()
+
+    def test_player_deletion(self):
+        self.correct_delete_tests()
+
+    def test_player_create_via_http(self):
+        self.correct_create_tests(url="/players/create/", team=1)
+
+    def test_player_update_via_http(self):
+        url = f"/players/{self.future_obj_id}/edit/"
+        self.correct_update_tests(url=url, team=1)
+
+    def test_player_delete_via_http(self):
+        url = f"/players/{self.future_obj_id}/delete/"
+        self.correct_delete_tests(url=url)
+
+    def test_player_fields_validation_via_http(self):
+        url = f"/players/{self.future_obj_id}/edit/"
+        self.incorrect_field_tests_via_url(url=url, team=1)
+
+    def test_player_fields_admit_values_via_http(self):
+        url = f"/players/{self.future_obj_id}/edit/"
+        self.correct_field_tests(url=url, team=1)
+
+    def test_player_correct_create_via_admin(self):
+        self.correct_create_tests(
+            url="/admin/main/player/add/",
+            **self.admin_inlines_no_team_no_docs,
+            team=1,
+        )
+
+    def test_player_correct_update_via_admin(self):
+        url = f"/admin/main/player/{self.future_obj_id}/change/"
+        self.correct_update_tests(
+            url=url,
+            _save="Сохранить",
+            **self.admin_inlines_no_team_no_docs,
+            team=1,
+        )
+
+    def test_player_fields_validation_via_admin(self):
+        url = f"/admin/main/player/{self.future_obj_id}/change/"
+        self.incorrect_field_tests_via_url(
+            url=url,
+            team=1,
+            _save="Сохранить",
+            **self.admin_inlines_no_team_no_docs,
+        )
+
+    def test_player_delete_via_admin(self):
+        self.client.force_login(self.superuser)
+        url = f"/admin/main/player/{self.future_obj_id}/delete/"
+        self.correct_delete_tests(url=url, post="yes")
+
+    def test_player_fields_admit_values_via_admin(self):
+        url = f"/admin/main/player/{self.future_obj_id}/change/"
+        self.correct_field_tests(
+            url=url,
+            team=1,
+            **self.admin_inlines_no_team_no_docs,
         )

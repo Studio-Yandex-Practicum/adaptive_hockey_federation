@@ -149,15 +149,89 @@ class UrlTestMixin:
 
 
 class ModelTestBaseClass(BaseTestClass):
+    """Класс для CRUD-тестирования.
+    1. Определите в классе - наследнике поля model и model_schema.
+
+    Поле model - ссылка на класс соответствующей модели.
+
+    Поле model_schema - схема тестирования. Оно должно представлять собой
+    словарь с ключами:
+
+        - "correct_create": словарь с парами "поле": "значение поля",
+        которые будут использоваться как заведомо правильные значения полей
+        для создания тестовых объектов. Для полей типа "ForeignKey",
+        если они являются обязательными, надо указать ссылку на сам
+        класс соответствующей модели, например "city": City. По умолчанию
+        тест будет создавать объект с внешним ключом, в который запишет
+        объект указанной модели, взятый методом first() (в приведенном
+        примере - City.objects.first(). Необходимо позаботиться, чтобы хотя
+        бы один такой объект существовал. Изменить это поведение можно,
+        переопределив метод fill_foreign_keys();
+
+        - "correct_update": аналогично ключу "correct_create" - будет
+        использоваться для изменения тестовых объектов;
+
+        - "must_not_be_admitted": кортеж со словарями для тестирования
+        валидиации отдельных полей на предмет недопуска в БД невалидных
+        значений.
+            Словарь для тестирования валидации отдельных полей должен
+            содержать два ключа:
+                - "fields", значением которого может быть строка с названием
+                тестируемого поля или кортеж из названий нескольких полей;
+                - "test_values", значением которого является кортеж из
+                одного или нескольких кортежей вида
+                (
+                    "тестовое НЕВАЛИДНОЕ значение",
+                    "описание тестового значения"
+                ).
+
+            Пример формирования ключа "must_not_be_admitted": (
+                    {"fields": ("name", "surname"),
+                        "test_values": (
+                            ("1234567890", "значение из цифр"),
+                            ("Пётр1", "цифры, наряду с буквами"),
+                        ),
+                    {"fields": "patronymic", "test_values" ...какие-нибудь
+                    тесты для поля patronymic...
+                )
+            Обнаружив такой ключ, метод incorrect_field_tests
+            поочередно для каждого поля проведет тесты на валидацию
+            с указанными значениями, и вызовет AssertionError в том случае,
+            если поле с таким значением не вызывает ошибки валидации.
+
+            Для элемента test_values можно вместо одного значения указать
+            также кортеж значений, тогда для каждого из указанных полей
+            будут протестированы каждый иэ элементов возможных некорректных
+            значений. Например, если в вышеуказанном примере вместо
+            ("123456790", "значение из цифр") указать
+            (tuple("1234567890"), "значение из цифр"), тест
+            поочередно попытается присвоить полю значения "1", "2", "3" и т.д.,
+            и при первом непройденном тесте остановит его и перейдет к
+            тестированию значения "Пётр1".
+
+        - "must_be_admitted": то же самое, что и "must_not_be_admitted",
+        но наоборот - здесь необходимо в качестве test_values
+        указывать те значения, которые ДОЛЖНЫ являться валидными и
+        сохраняться в БД штатно. Тест попытается изменить объект и выдаст
+        ошибку, если объект с валидным значением не будет обнаружен.
+
+    2. В классе предусмотрены следующие методы для
+    тестирования:
+        - correct_create_tests() - тест на создание объекта;
+        - correct_update_tests() - тест на изменение объекта;
+        - correct_delete_tests() - тест на удаление объекта;
+        - incorrect_field_tests() - тест на защиту от невалидных данных
+        отдельных полей;
+        - incorrect_field_tests_via_url() - то же самое, но через url
+        - correct_field_tests() - тест на допуск валидных значений в
+        отдельные поля;
+
+    3. Для тестирования
+    """
+
     model: type[Model] | None = None
     model_schema: dict | None = None
     model_factory: DjangoModelFactory | None = None
-
-    assertEqual = TestCase.assertEqual
-    assertTrue = TestCase.assertTrue
-    assertFalse = TestCase.assertFalse
-    assertRaises = TestCase.assertRaises
-    subTest = TestCase.subTest
 
     def get_model(self):
         if self.model:
@@ -217,7 +291,7 @@ class ModelTestBaseClass(BaseTestClass):
         return self.client.post(url, kwargs)
 
     def try_to_create_via_url(self, url, **kwargs):
-        self.replace_foreign_keys(kwargs)
+        self.replace_foreign_keys_and_bools(kwargs)
         try:
             return self._post(url, **kwargs)
         except Exception as e:
@@ -230,21 +304,24 @@ class ModelTestBaseClass(BaseTestClass):
             )
 
     @staticmethod
-    def replace_foreign_keys(fields_kwargs: dict):
+    def replace_foreign_keys_and_bools(
+        fields_kwargs: dict, replace_bools: bool = True
+    ):
         for key, value in fields_kwargs.items():
             if isinstance(value, Model):
                 fields_kwargs[key] = getattr(value, "id")
+            elif replace_bools and isinstance(value, bool):
+                fields_kwargs[key] = ("", "on")[value]
 
     @staticmethod
     def fill_foreign_keys(fields_kwargs: dict):
         for key, value in fields_kwargs.items():
-            # if isinstance(value, type(Model)):
             if type(value) is type(Model):
                 fk_obj = value.objects.first()  # noqa
                 fields_kwargs[key] = fk_obj
 
     def try_to_update_via_url(self, url, **kwargs):
-        self.replace_foreign_keys(kwargs)
+        self.replace_foreign_keys_and_bools(kwargs)
         try:
             return self._post(url, **kwargs)
         except Exception as e:
@@ -269,6 +346,7 @@ class ModelTestBaseClass(BaseTestClass):
 
     @transaction.atomic()
     def try_to_create(self, **kwargs):
+        str_kwargs = f"{kwargs}"
         try:
             obj = self.create(**kwargs)
             obj.full_clean()
@@ -277,7 +355,7 @@ class ModelTestBaseClass(BaseTestClass):
             raise AssertionError(
                 f"При создании объекта модели {self.get_model().__name__} с "
                 f"корректными данными возникает исключение '{e}'. "
-                f"Использовались следующие данные: {kwargs}"
+                f"Использовались следующие данные: {str_kwargs}"
             )
 
     @transaction.atomic()
@@ -302,14 +380,15 @@ class ModelTestBaseClass(BaseTestClass):
         obj.save()
 
     def try_to_update(self, obj: Model, **kwargs):
+        str_kwargs = f"{kwargs}"
         try:
             self.update(obj, **kwargs)
         except Exception as e:
             raise AssertionError(
                 f"При обновлении объекта модели "
-                f"{self.get_model().__name__} с "
+                f"'{self.get_model().__name__}' с "
                 f"корректными данными возникает исключение '{e}'."
-                f"Использовались следующие данные: {kwargs}"
+                f"Использовались следующие данные: {str_kwargs}"
             )
 
     def objects_count_test(self, estimated_count: int, err_msg: str):
@@ -546,7 +625,7 @@ class ModelTestBaseClass(BaseTestClass):
         def _inner_assert():
             with transaction.atomic():
                 self.assertRaises(
-                    ValidationError,
+                    (ValidationError, ValueError),
                     self.update_field,
                     obj,
                     msg,

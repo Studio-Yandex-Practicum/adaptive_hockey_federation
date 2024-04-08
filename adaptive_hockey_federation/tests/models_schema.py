@@ -1,5 +1,12 @@
 from core.constants import ROLE_AGENT, ROLE_SUPERUSER
-from main.models import City, Diagnosis, DisciplineName, Nosology, StaffMember
+from main.models import (
+    City,
+    Diagnosis,
+    Discipline,
+    DisciplineName,
+    Nosology,
+    StaffMember,
+)
 
 CORRECT_CREATE = "correct_create"
 CORRECT_UPDATE = "correct_update"
@@ -22,6 +29,10 @@ LATIN_CAPS = LATIN_STRINGS.upper()
 ALL_LETTERS = (
     (RUS_STRINGS, RUS_CAPS, LATIN_STRINGS, LATIN_CAPS),
     "любые буквы русского и (или) латинского алфавита",
+)
+ALL_RUS_LETTERS_IN_FIO = (
+    RUS_STRINGS.capitalize(),
+    "любые буквы русского алфавита",
 )
 VERY_LONG_TEXT = "Lorem ipsum dolor sit amet... Съешь еще этих мягких " * 1000
 ALL_LOWER = ("василий", "начало со строчной буквы")
@@ -117,6 +128,30 @@ CORRECT_CITY_NAMES = (
     ),
     "сложные топонимы в названии города",
 )
+
+INCORRECT_DOC_ID = (
+    (
+        "Паспорт 30 01 023456",
+        "Паспорт АБРА КАДАБР",
+        "ПаспАрт 9898 989898",
+        "СвидетельствА о рождении I-ML 656565",
+        "Абракадабрааб р акадабра I-ML 656565",
+        "Свидетельство о брожении I-ML 656565",
+    ),
+    "неверный формат документа, удостоверяющего личность",
+)
+
+CORRECT_DOC_ID = (
+    (
+        "Паспорт 3001 023456",
+        "Свидетельство о рождении I-ML 656565",
+        "Свидетельство о рождении II-ML 656565",
+    ),
+    "документ, удостоверяющий личность, в корректном формате",
+)
+
+INCORRECT_GENDER_CHOICE = ("Оно", "некорректный пол")
+INCORRECT_PLAYER_POSITION = ("Зритель", "некорректная позиция игрока")
 
 USER_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {
@@ -375,36 +410,30 @@ PLAYER_MODEL_TEST_SCHEMA = {
         "surname": "Иванович",
         "patronymic": "Петров",
         "diagnosis": Diagnosis,
-        "discipline": DisciplineName,
-        "birthday": "02.03.2010",
+        "discipline": Discipline,
+        "birthday": "2010-03-25",
         "gender": "Мужской",
         "level_revision": "Тестовый уровень ревизии.",
         "position": "Поплавок",
         "number": 45,
         "is_captain": False,
         "is_assistent": False,
-        "identity_document": (
-            "Паспорт 30 30 303030, выданный несуществующим "
-            "ПО ПВС УВД несуществующего города 02.03.2024"
-        ),
+        "identity_document": "Паспорт 3030 303030",
     },
     CORRECT_UPDATE: {
         "name": "Бурямглоюнебокроетвихриснежныекрутятокакзверьоназавоет",
         "surname": "Съешьещеэтихмягкихфранцузскихбулочекдавыпейчаюев",
         "patronymic": "Кракозябробормоглототроглодитобрандашмыгович",
         "diagnosis": Diagnosis,
-        "discipline": DisciplineName,
-        "birthday": "02.03.2009",
+        "discipline": Discipline,
+        "birthday": "2009-03-25",
         "gender": "Женский",
         "level_revision": "Какой-то другой тестовый уровень ревизии.",
         "position": "Нападающий",
         "number": 41,
         "is_captain": True,
         "is_assistent": True,
-        "identity_document": (
-            "Паспорт 40 40 404040, выданный существующим "
-            "ПО ПВС УВД существующего города 02.03.2023"
-        ),
+        "identity_document": "Паспорт 4040 404040",
     },
     "must_not_be_admitted": (
         {
@@ -431,13 +460,18 @@ PLAYER_MODEL_TEST_SCHEMA = {
             "test_values": (LOWER_SECOND_LAST_NAME, SPACES),
         },
         {"fields": "patronymic", "test_values": (TWO_OR_MORE_SPACES,)},
+        {"fields": "identity_document", "test_values": (INCORRECT_DOC_ID,)},
+        {"fields": "gender", "test_values": (INCORRECT_GENDER_CHOICE,)},
+        {"fields": "position", "test_values": (INCORRECT_PLAYER_POSITION,)},
+        {"fields": "number", "test_values": (NEGATIVE,)},
     ),
     "must_be_admitted": (
         {
             "fields": ("surname", "name", "patronymic"),
-            "test_values": (THE_ONLY_CYR_LETTER,),
+            "test_values": (THE_ONLY_CYR_LETTER, ALL_RUS_LETTERS_IN_FIO),
         },
         {"fields": "surname", "test_values": (DOUBLE_LAST_NAME,)},
         {"fields": "patronymic", "test_values": (DOUBLE_PATRONYMIC,)},
+        {"fields": "identity_document", "test_values": (CORRECT_DOC_ID,)},
     ),
 }
