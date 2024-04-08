@@ -1,3 +1,6 @@
+from typing import Any
+
+from core.constants import ROLE_AGENT
 from main.models import City, Diagnosis, StaffMember, StaffTeamMember, Team
 from tests.base import ModelTestBaseClass
 from tests.models_schema import (
@@ -260,6 +263,22 @@ class StaffTeamMemberCrudTest(ModelTestBaseClass):
 class TeamCrudTest(ModelTestBaseClass):
     model = Team
     model_schema = TEAM_MODEL_TEST_SCHEMA
+    user_agent: User | Any = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.user_agent = UserFactory.create(role=ROLE_AGENT)
+
+    def get_correct_create_schema(self):
+        schema = super(TeamCrudTest, self).get_correct_create_schema()
+        schema["curator"] = self.user_agent
+        return schema
+
+    def get_correct_update_schema(self):
+        schema = super().get_correct_update_schema()
+        schema["curator"] = self.user_agent
+        return schema
 
     def test_team_correct_creation(self):
         self.correct_create_tests()
@@ -271,40 +290,50 @@ class TeamCrudTest(ModelTestBaseClass):
         self.incorrect_field_tests()
 
     def test_team_fields_admit_values(self):
-        self.correct_field_tests()
+        self.correct_field_tests(
+            **{
+                "StaffTeamMember_team-0-staffteammember": 1,
+                "Player_team - 0 - player": 1,
+            }
+        )
 
     def test_team_deletion(self):
         self.correct_delete_tests()
 
     def test_team_create_via_http(self):
-        self.correct_create_tests(url="/users/create/")
+        self.correct_create_tests(url="/teams/create/")
 
     def test_team_update_via_http(self):
-        object_id_estimated = User.objects.count() + 1
-        url = f"/users/{object_id_estimated}/edit/"
+        url = f"/teams/{self.future_obj_id}/edit/"
         self.correct_update_tests(url=url)
 
     def test_team_delete_via_http(self):
-        object_id_estimated = User.objects.count() + 1
-        url = f"/users/{object_id_estimated}/delete/"
+        url = f"/teams/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url)
 
     def test_team_fields_validation_via_http(self):
-        object_id_estimated = User.objects.count() + 1
-        url = f"/users/{object_id_estimated}/edit/"
+        url = f"/teams/{self.future_obj_id}/edit/"
         self.incorrect_field_tests_via_url(url=url)
 
     def test_team_fields_admit_values_via_http(self):
-        object_id_estimated = User.objects.count() + 1
-        url = f"/users/{object_id_estimated}/edit/"
+        url = f"/teams/{self.future_obj_id}/edit/"
         self.correct_field_tests(url=url)
 
     def test_team_correct_create_via_admin(self):
-        self.correct_create_tests(url="/admin/main/team/add/")
+        self.correct_create_tests(
+            url="/admin/main/team/add/",
+        )
 
     def test_team_correct_update_via_admin(self):
         url = f"/admin/main/team/{self.future_obj_id}/change/"
-        self.correct_update_tests(url=url, _save="Сохранить")
+        self.correct_update_tests(
+            url=url,
+            _save="Сохранить",
+            **{
+                "StaffTeamMember_team-0-staffteammember": 1,
+                "Player_team-0-player": 1,
+            },
+        )
 
     def test_team_fields_validation_via_admin(self):
         url = f"/admin/main/team/{self.future_obj_id}/change/"
