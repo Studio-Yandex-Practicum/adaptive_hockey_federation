@@ -68,31 +68,37 @@ class CompetitionListView(
     def get_queryset(self):
         queryset = super().get_queryset()
         search = self.request.GET.get("search")
+        search_date = {
+            "year": self.request.GET.get("year"),
+            "month": self.request.GET.get("month").lstrip("0"),
+            "day": self.request.GET.get("day").lstrip("0"),
+        }
         if search:
             search_column = self.request.GET.get("search_column")
             if not search_column or search_column.lower() in ["все", "all"]:
-                or_lookup = (
+                queryset = queryset.filter(
                     Q(title__icontains=search)
                     | Q(city__name__icontains=search)
-                    | Q(date_start__icontains=search)
-                    | Q(date_end__icontains=search)
                 )
-                queryset = queryset.filter(or_lookup)
             else:
-                search_fields = {"data": "date_start", "data_end": "date_end"}
                 if search_column == "title":
                     queryset = queryset.filter(title__icontains=search)
                 if search_column == "city":
                     queryset = queryset.filter(city__name__icontains=search)
-                if search_column in search_fields.keys():
-                    queryset = queryset.filter(
-                        **{
-                            (
-                                f"{search_fields[search_column]}"
-                                f"__icontains"
-                            ): search
-                        }
-                    )
+        if search_date.values():
+            search_column = self.request.GET.get("search_column")
+            if search_column == "data":
+                queryset = queryset.filter(
+                    Q(date_start__year__icontains=search_date["year"])
+                    & Q(date_start__month__icontains=search_date["month"])
+                    & Q(date_start__day__icontains=search_date["day"])
+                )
+            if search_column == "data_end":
+                queryset = queryset.filter(
+                    Q(date_end__year__icontains=search_date["year"])
+                    & Q(date_end__month__icontains=search_date["month"])
+                    & Q(date_end__day__icontains=search_date["day"])
+                )
         return queryset
 
     def get_context_data(self, **kwargs):
