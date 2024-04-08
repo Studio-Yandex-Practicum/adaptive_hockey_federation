@@ -330,13 +330,16 @@ class ModelTestBaseClass(BaseTestClass):
         self.assertFalse(self.is_exists(**obj_kwargs), err_msg)
 
     def correct_create_tests(
-        self, model_correct_schema: dict | None = None, url: str | None = None
+        self,
+        model_correct_schema: dict | None = None,
+        url: str | None = None,
+        **additional_url_kwargs,
     ):
         schema = model_correct_schema or self.get_correct_create_schema()
         initial_objects_count = self.get_model().objects.count()
         via_url = ""
         if url:
-            self.try_to_create_via_url(url, **schema)
+            self.try_to_create_via_url(url, **schema, **additional_url_kwargs)
             via_url = f" через POST-запрос по адресу: {url}"
         else:
             self.try_to_create(**schema)

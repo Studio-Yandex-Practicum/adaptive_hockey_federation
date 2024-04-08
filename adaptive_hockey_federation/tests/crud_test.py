@@ -264,6 +264,12 @@ class TeamCrudTest(ModelTestBaseClass):
     model = Team
     model_schema = TEAM_MODEL_TEST_SCHEMA
     user_agent: User | Any = None
+    admin_inlines_no_player_no_staff = {
+        "StaffTeamMember_team-TOTAL_FORMS": 0,
+        "StaffTeamMember_team-INITIAL_FORMS": 0,
+        "Player_team-TOTAL_FORMS": 0,
+        "Player_team-INITIAL_FORMS": 0,
+    }
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -290,12 +296,7 @@ class TeamCrudTest(ModelTestBaseClass):
         self.incorrect_field_tests()
 
     def test_team_fields_admit_values(self):
-        self.correct_field_tests(
-            **{
-                "StaffTeamMember_team-0-staffteammember": 1,
-                "Player_team - 0 - player": 1,
-            }
-        )
+        self.correct_field_tests()
 
     def test_team_deletion(self):
         self.correct_delete_tests()
@@ -322,6 +323,7 @@ class TeamCrudTest(ModelTestBaseClass):
     def test_team_correct_create_via_admin(self):
         self.correct_create_tests(
             url="/admin/main/team/add/",
+            **self.admin_inlines_no_player_no_staff,
         )
 
     def test_team_correct_update_via_admin(self):
@@ -329,15 +331,14 @@ class TeamCrudTest(ModelTestBaseClass):
         self.correct_update_tests(
             url=url,
             _save="Сохранить",
-            **{
-                "StaffTeamMember_team-0-staffteammember": 1,
-                "Player_team-0-player": 1,
-            },
+            **self.admin_inlines_no_player_no_staff,
         )
 
     def test_team_fields_validation_via_admin(self):
         url = f"/admin/main/team/{self.future_obj_id}/change/"
-        self.incorrect_field_tests_via_url(url=url, _save="Сохранить")
+        self.incorrect_field_tests_via_url(
+            url=url, _save="Сохранить", **self.admin_inlines_no_player_no_staff
+        )
 
     def test_team_delete_via_admin(self):
         self.client.force_login(self.superuser)
@@ -346,4 +347,6 @@ class TeamCrudTest(ModelTestBaseClass):
 
     def test_team_fields_admit_values_via_admin(self):
         url = f"/admin/main/team/{self.future_obj_id}/change/"
-        self.correct_field_tests(url=url)
+        self.correct_field_tests(
+            url=url, **self.admin_inlines_no_player_no_staff
+        )

@@ -1,5 +1,5 @@
 from core.constants import ROLE_AGENT, ROLE_SUPERUSER
-from main.models import City, DisciplineName, Nosology, StaffMember
+from main.models import City, Diagnosis, DisciplineName, Nosology, StaffMember
 
 CORRECT_CREATE = "correct_create"
 CORRECT_UPDATE = "correct_update"
@@ -361,5 +361,83 @@ TEAM_MODEL_TEST_SCHEMA = {
             ),
         },
     ),
-    "must_be_admitted": ({"fields": "name", "test_values": (ALL_LETTERS,)},),
+    "must_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (ALL_LETTERS, FIGURES_AND_LETTERS, SPACES),
+        },
+    ),
+}
+
+PLAYER_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "name": "Василий",
+        "surname": "Иванович",
+        "patronymic": "Петров",
+        "diagnosis": Diagnosis,
+        "discipline": DisciplineName,
+        "birthday": "02.03.2010",
+        "gender": "Мужской",
+        "level_revision": "Тестовый уровень ревизии.",
+        "position": "Поплавок",
+        "number": 45,
+        "is_captain": False,
+        "is_assistent": False,
+        "identity_document": (
+            "Паспорт 30 30 303030, выданный несуществующим "
+            "ПО ПВС УВД несуществующего города 02.03.2024"
+        ),
+    },
+    CORRECT_UPDATE: {
+        "name": "Бурямглоюнебокроетвихриснежныекрутятокакзверьоназавоет",
+        "surname": "Съешьещеэтихмягкихфранцузскихбулочекдавыпейчаюев",
+        "patronymic": "Кракозябробормоглототроглодитобрандашмыгович",
+        "diagnosis": Diagnosis,
+        "discipline": DisciplineName,
+        "birthday": "02.03.2009",
+        "gender": "Женский",
+        "level_revision": "Какой-то другой тестовый уровень ревизии.",
+        "position": "Нападающий",
+        "number": 41,
+        "is_captain": True,
+        "is_assistent": True,
+        "identity_document": (
+            "Паспорт 40 40 404040, выданный существующим "
+            "ПО ПВС УВД существующего города 02.03.2023"
+        ),
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": ("name", "surname", "patronymic"),
+            "test_values": (
+                ALL_LOWER,
+                ALL_CAPS,
+                MIDDLE_CAP,
+                NOT_CYR,
+                FIGURES_AND_LETTERS,
+                LONGER_THEN_256,
+                PUNCTUATION_MARKS_EXCEPT_HYPHEN,
+            ),
+        },
+        {
+            "fields": (
+                "name",
+                "surname",
+            ),
+            "test_values": (NULL,),
+        },
+        {
+            "fields": "surname",
+            "test_values": (LOWER_SECOND_LAST_NAME, SPACES),
+        },
+        {"fields": "patronymic", "test_values": (TWO_OR_MORE_SPACES,)},
+    ),
+    "must_be_admitted": (
+        {
+            "fields": ("surname", "name", "patronymic"),
+            "test_values": (THE_ONLY_CYR_LETTER,),
+        },
+        {"fields": "surname", "test_values": (DOUBLE_LAST_NAME,)},
+        {"fields": "patronymic", "test_values": (DOUBLE_PATRONYMIC,)},
+    ),
 }
