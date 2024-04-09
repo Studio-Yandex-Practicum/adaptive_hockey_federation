@@ -1,11 +1,19 @@
 import os
+from datetime import datetime
 from typing import Any, List
 
+from core.constants import TIME_FORMAT
 from django.conf import settings
 from django.db.models import QuerySet
 from openpyxl import Workbook
 from openpyxl.styles import Border, Font, PatternFill, Side
 from openpyxl.worksheet.worksheet import Worksheet
+
+
+def unload_file_name(user: str, prefix: str) -> str:
+    return (
+        f"{prefix}_{user.id}_{datetime.now().strftime(TIME_FORMAT)}.xlsx"
+    )
 
 
 def column_width(workbook: Worksheet) -> None:

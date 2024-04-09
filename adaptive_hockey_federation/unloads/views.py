@@ -13,7 +13,7 @@ from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from unloads.models import Unload
-from unloads.utils import export_excel
+from unloads.utils import export_excel, unload_file_name
 
 
 class UnloadListView(
@@ -28,7 +28,7 @@ class UnloadListView(
     template_name = "main/unloads/unloads.html"
     context_object_name = "unloads"
     paginate_by = 10
-    ordering = ["date"]
+    ordering = ["-date"]
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -84,12 +84,12 @@ class DataExportView(LoginRequiredMixin, View):
     # нужно добавить их в словарь(model_mapping)
     # и дополнить шаблон base/footer.html.)
     model_mapping = {
-        "players": ("main", "Player", "players_data.xlsx", "Данные игроков"),
-        "teams": ("main", "Team", "teams_data.xlsx", "Данные команд"),
+        "players": ("main", "Player", "players", "Данные игроков"),
+        "teams": ("main", "Team", "teams", "Данные команд"),
         "competitions": (
             "competitions",
             "Competition",
-            "competitions_data.xlsx",
+            "competitions",
             "Данные соревнований",
         ),
     }
@@ -142,10 +142,10 @@ class DataExportView(LoginRequiredMixin, View):
                     }
                     queryset = model.objects.filter(**lookup)
 
-                filename = "players_search.xlsx"
+                filename = unload_file_name(request.user, f"{filename}_search")
             else:
                 queryset = model.objects.all()
-                filename = "players_all.xlsx"
+                filename = unload_file_name(request.user, f"{filename}_all")
 
             export_excel(queryset, filename, title)
             file_slug = f"unloads_data/{filename}"
@@ -157,7 +157,7 @@ class DataExportView(LoginRequiredMixin, View):
             )
             unload_record.save()
 
-            file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
+            file_path = unload_record.unload_file_slug.path
             if os.path.exists(file_path):
                 file_unload = open(file_path, "rb")
                 response = FileResponse(file_unload)
