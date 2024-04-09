@@ -70,8 +70,8 @@ class CompetitionListView(
         search = self.request.GET.get("search")
         search_date = {
             "year": self.request.GET.get("year"),
-            "month": self.request.GET.get("month").lstrip("0"),
-            "day": self.request.GET.get("day").lstrip("0"),
+            "month": self.request.GET.get("month"),
+            "day": self.request.GET.get("day"),
         }
         if search:
             search_column = self.request.GET.get("search_column")
@@ -90,8 +90,16 @@ class CompetitionListView(
             if search_column == "data":
                 queryset = queryset.filter(
                     Q(date_start__year__icontains=search_date["year"])
-                    & Q(date_start__month__icontains=search_date["month"])
-                    & Q(date_start__day__icontains=search_date["day"])
+                    & Q(
+                        date_start__month__icontains=search_date[
+                            "month"
+                        ].lstrip("0")
+                    )
+                    & Q(
+                        date_start__day__icontains=search_date["day"].lstrip(
+                            "0"
+                        )
+                    )
                 )
             if search_column == "data_end":
                 queryset = queryset.filter(
