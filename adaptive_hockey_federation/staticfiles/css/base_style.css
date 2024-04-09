@@ -303,6 +303,8 @@ li {
 .btns-edit-del {
   margin: 0;
   padding: 0;
+  margin: 0;
+  padding: 0;
   background-color: #fff;
   border: none;
   display: flex;
@@ -494,6 +496,7 @@ li {
   padding: 0;
   margin: 0;
   min-height: 81px;
+  min-height: 81px;
   width: 100%;
   position: fixed;
   bottom: 0;
@@ -627,11 +630,28 @@ td {
   margin: 15px 0;
   padding: 0;
   width: 100vw;
+  width: 100vw;
   max-height: 95vh;
+  overflow: auto;
   overflow: auto;
   text-align: center;
   display: flex;
   flex-direction: column;
+}
+
+.table-container::-webkit-scrollbar {
+  background-color: transparent;
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #269FBD;
+  border-radius: 8px;
 }
 
 .table-table {
@@ -692,6 +712,8 @@ td {
 
 .items__group {
   display: flex;
+  justify-content: center;
+  gap: 20px;
   justify-content: center;
   gap: 20px;
 }
@@ -762,6 +784,7 @@ td {
 .cell__buttons {
   display: flex;
   gap: 20px;
+  gap: 20px;
   justify-content: center;
   align-items: center;
 }
@@ -823,6 +846,8 @@ td {
   flex-direction: column;
   align-items: center;
   white-space: nowrap;
+  align-items: center;
+  white-space: nowrap;
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
@@ -836,11 +861,15 @@ td {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
   .filter-item__wrapper {
     width: 100%;
+    grid-template-columns: repeat(2, 1fr);
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -1176,6 +1205,12 @@ td {
   }
 }
 
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .selectors-teams {
+    flex-direction: column;
+  }
+}
+
 .selectors-teams .help-icon {
   background: url(../img/icon-unknown.svg) 0 0 no-repeat;
   display: inline-block;
@@ -1314,6 +1349,14 @@ td {
 }
 
 .table-table .selectors-teams h2 {
+  margin: 0 15px 5px 15px;
+  padding: 8px;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  text-align: center;
+  background:#269FBD;
+  color: #fff;
+  border-radius: 10px;
   margin: 0 15px 5px 15px;
   padding: 8px;
   font-weight: 400;
