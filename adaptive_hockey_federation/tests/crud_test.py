@@ -15,20 +15,24 @@ from main.models import (
     Team,
 )
 from tests.base import ModelTestBaseClass
-from tests.models_schema import (
-    CITY_MODEL_TEST_SCHEMA,
-    DIAGNOSIS_MODEL_TEST_SCHEMA,
+from tests.model_schemas.city import CITY_MODEL_TEST_SCHEMA
+from tests.model_schemas.diagnosis import DIAGNOSIS_MODEL_TEST_SCHEMA
+from tests.model_schemas.discipline import DISCIPLINE_MODEL_TEST_SCHEMA
+from tests.model_schemas.discipline_level import (
     DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA,
-    DISCIPLINE_MODEL_TEST_SCHEMA,
-    DISCIPLINE_NAME_MODEL_TEST_SCHEMA,
-    GROUP_MODEL_TEST_SCHEMA,
-    NOSOLOGY_MODEL_TEST_SCHEMA,
-    PLAYER_MODEL_TEST_SCHEMA,
-    STAFF_MEMBER_MODEL_TEST_SCHEMA,
-    STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA,
-    TEAM_MODEL_TEST_SCHEMA,
-    USER_MODEL_TEST_SCHEMA,
 )
+from tests.model_schemas.discipline_name import (
+    DISCIPLINE_NAME_MODEL_TEST_SCHEMA,
+)
+from tests.model_schemas.group import GROUP_MODEL_TEST_SCHEMA
+from tests.model_schemas.nosology import NOSOLOGY_MODEL_TEST_SCHEMA
+from tests.model_schemas.player import PLAYER_MODEL_TEST_SCHEMA
+from tests.model_schemas.staff_member import STAFF_MEMBER_MODEL_TEST_SCHEMA
+from tests.model_schemas.staff_team_member import (
+    STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA,
+)
+from tests.model_schemas.team import TEAM_MODEL_TEST_SCHEMA
+from tests.model_schemas.user import USER_MODEL_TEST_SCHEMA
 from users.factories import UserFactory
 from users.models import ProxyGroup, User
 
