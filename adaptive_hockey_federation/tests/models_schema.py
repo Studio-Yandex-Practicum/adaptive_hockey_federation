@@ -3,6 +3,7 @@ from main.models import (
     City,
     Diagnosis,
     Discipline,
+    DisciplineLevel,
     DisciplineName,
     Nosology,
     StaffMember,
@@ -226,7 +227,6 @@ GROUP_MODEL_TEST_SCHEMA = {
             "fields": "name",
             "test_values": (
                 LONGER_THEN_150,
-                NONE,
                 NULL,
             ),
         },
@@ -290,6 +290,82 @@ DIAGNOSIS_MODEL_TEST_SCHEMA = {
             ),
         },
     ),
+}
+
+SIMPLE_UNIQUE_NAME_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "name": "Какоетоимя",
+    },
+    CORRECT_UPDATE: {
+        "name": "Какоетоновоеимя",
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                LONGER_THEN_256,
+                NULL,
+                FIGURES_ONLY,
+                PUNCTUATION_MARKS_ONLY,
+                THE_ONLY_LETTER,
+            ),
+        },
+    ),
+    "must_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                LONG_256,
+                FIGURES_AND_LETTERS,
+                ALL_LETTERS,
+            ),
+        },
+    ),
+}
+
+
+NOSOLOGY_MODEL_TEST_SCHEMA = SIMPLE_UNIQUE_NAME_MODEL_TEST_SCHEMA
+
+DISCIPLINE_NAME_MODEL_TEST_SCHEMA = SIMPLE_UNIQUE_NAME_MODEL_TEST_SCHEMA
+
+DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "name": "Наименование дисциплины или статуса дисциплины",
+    },
+    CORRECT_UPDATE: {
+        "name": "Новое наименование дисциплины или статуса дисциплины",
+    },
+    "must_not_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                LONGER_THEN_256,
+                NULL,
+                PUNCTUATION_MARKS_ONLY,
+            ),
+        },
+    ),
+    "must_be_admitted": (
+        {
+            "fields": "name",
+            "test_values": (
+                LONG_256,
+                FIGURES_AND_LETTERS,
+                ALL_LETTERS,
+            ),
+        },
+    ),
+}
+
+DISCIPLINE_MODEL_TEST_SCHEMA = {
+    CORRECT_CREATE: {
+        "discipline_name": DisciplineName,
+        "discipline_level": DisciplineLevel,
+    },
+    CORRECT_UPDATE: {
+        "discipline_name": DisciplineName,
+        "discipline_level": DisciplineLevel,
+    },
 }
 
 STAFF_MEMBER_MODEL_TEST_SCHEMA = {
