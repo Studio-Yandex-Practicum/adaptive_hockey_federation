@@ -10,7 +10,7 @@ from django.db import transaction
 from django.db.models import Model
 from django.shortcuts import get_object_or_404
 from django.test import Client, TestCase
-from factory.django import DjangoModelFactory
+from factory.django import DjangoModelFactory  # type: ignore
 from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,
