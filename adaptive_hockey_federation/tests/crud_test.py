@@ -478,6 +478,7 @@ class DisciplineCrudTest(ModelTestBaseClass):
 
     model = Discipline
     model_schema = DISCIPLINE_MODEL_TEST_SCHEMA
+    discipline_name_1: DisciplineName
 
     @classmethod
     def setUpClass(cls) -> None:
