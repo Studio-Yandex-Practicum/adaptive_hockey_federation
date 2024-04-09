@@ -48,6 +48,9 @@ class UserCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_user_fields_validation(self):
     # """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -74,6 +77,9 @@ class UserCrudTest(ModelTestBaseClass):
         url = f"/users/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url)
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_user_fields_validation_via_http(self):
     # """Тест на валидацию некорректных значений при изменении через сайт."""
     #     url = f"/users/{self.future_obj_id}/edit/"
@@ -93,6 +99,9 @@ class UserCrudTest(ModelTestBaseClass):
         url = f"/admin/users/user/{self.future_obj_id}/change/"
         self.correct_update_tests(url=url, _save="Сохранить")
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_user_fields_validation_via_admin(self):
     # """Тест на валидацию некорректных значений при изменении через
     # административную часть."""
@@ -104,6 +113,9 @@ class UserCrudTest(ModelTestBaseClass):
         self.client.force_login(self.superuser)
         url = f"/admin/users/user/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url, post="yes")
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_user_fields_admit_values_via_admin(self):
     # """Тест на допуск корректных значений через административную часть."""
@@ -177,6 +189,9 @@ class CityCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_city_fields_validation(self):
     # """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -197,6 +212,9 @@ class CityCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение через административную часть."""
         url = f"/admin/main/city/{self.future_obj_id}/change/"
         self.correct_update_tests(url=url, _save="Сохранить")
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_city_fields_validation_via_admin(self):
     # """Тест на валидацию некорректных значений через административную
@@ -229,6 +247,9 @@ class DiagnosisCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_diagnosis_fields_validation(self):
     # """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -249,6 +270,9 @@ class DiagnosisCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение через административную часть."""
         url = f"/admin/main/diagnosis/{self.future_obj_id}/change/"
         self.correct_update_tests(url=url, _save="Сохранить")
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_diagnosis_fields_validation_via_admin(self):
     #     """Тест на валидацию некорректных значений полей через
@@ -282,6 +306,9 @@ class NosologyCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_nosology_fields_validation(self):
     #     """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -302,6 +329,9 @@ class NosologyCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение через административную часть."""
         url = f"/admin/main/nosology/{self.future_obj_id}/change/"
         self.correct_update_tests(url=url, _save="Сохранить")
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_nosology_fields_validation_via_admin(self):
     #     """Тест на валидацию некорректных значений полей через
@@ -335,6 +365,9 @@ class DisciplineNameCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_discipline_name_fields_validation(self):
     #     """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -355,6 +388,9 @@ class DisciplineNameCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение через административную часть."""
         url = f"/admin/main/disciplinename/{self.future_obj_id}/change/"
         self.correct_update_tests(url=url, _save="Сохранить")
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_discipline_name_fields_validation_via_admin(self):
     #     """Тест на валидацию некорректных значений полей через
@@ -388,6 +424,9 @@ class DisciplineLevelCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_discipline_level_fields_validation(self):
     #     """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -408,6 +447,9 @@ class DisciplineLevelCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение через административную часть."""
         url = f"/admin/main/disciplinelevel/{self.future_obj_id}/change/"
         self.correct_update_tests(url=url, _save="Сохранить")
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_discipline_level_fields_validation_via_admin(self):
     #     """Тест на валидацию некорректных значений полей через
@@ -479,6 +521,9 @@ class StaffMemberCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_staff_member_fields_validation(self):
     # """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -500,6 +545,9 @@ class StaffMemberCrudTest(ModelTestBaseClass):
         url = f"/admin/main/staffmember/{self.future_obj_id}/change/"
         self.correct_update_tests(url=url, _save="Сохранить")
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_staff_member_fields_validation_via_admin(self):
     #     """Тест на валидацию некорректных значений полей через
     #     административную часть."""
@@ -510,6 +558,9 @@ class StaffMemberCrudTest(ModelTestBaseClass):
         """Тест на корректное удаление через административную часть."""
         url = f"/admin/main/staffmember/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url, post="yes")
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_staff_member_fields_admit_values_via_admin(self):
     #     """Тест на допуск корректных значений полей через административную
@@ -574,6 +625,45 @@ class StaffTeamMemberCrudTest(ModelTestBaseClass):
         url = f"/admin/main/staffteammember/{self.future_obj_id}/change/"
         self.correct_field_tests(url=url, team=1)
 
+    #  TODO: Раскомментировать и доработать все тесты на стаффтиммембера
+    #   через сайт, поскольку вьюха работает некорректно в принципе: она
+    #   запитана на модель StaffMember, в то время как должна быть
+    #   задействована модель StaffTeamMember. Соответственно, если у нас
+    #   один человек занимает две должности в команде, то:
+    #   1. Не отображаются обе записи
+    #   2. При удалении одной удаляются две, поскольку происходит касакадное
+    #   удаление.
+
+    # def test_staff_team_member_correct_create_via_http(self):
+    #     """Тест на корректное создание через сайт."""
+    #     schema = self.get_correct_create_schema()
+    #     schema["team"] = "1"
+    #     self.correct_create_tests(
+    #         schema, url="/staffs/create/"
+    #     )
+    #
+    # def test_staff_team_member_correct_update_via_http(self):
+    #     """Тест на корректное изменение через сайт."""
+    #     url = f"/staffs/{self.future_obj_id}/edit/"
+    #     self.correct_update_tests(url=url, _save="Сохранить", team="1")
+    #
+    # def test_staff_team_member_fields_validation_via_http(self):
+    #     """Тест на валидацию некорректных значений полей через сайт."""
+    #     url = f"/staffs/{self.future_obj_id}/edit/"
+    #     self.incorrect_field_tests_via_url(
+    #       url=url, _save="Сохранить", team=1
+    #      )
+    #
+    # def test_staff_team_member_delete_via_http(self):
+    #     """Тест на корректное удаление через сайт."""
+    #     url = f"/staffs/{self.future_obj_id}/delete/"
+    #     self.correct_delete_tests(url=url)
+    #
+    # def test_staff_team_member_fields_admit_values_via_http(self):
+    #     """Тест на допуск корректных значений полей через сайт."""
+    #     url = f"/staffs/{self.future_obj_id}/edit/"
+    #     self.correct_field_tests(url=url, team=1)
+
 
 class TeamCrudTest(ModelTestBaseClass):
     """CRUD-тесты команды."""
@@ -611,6 +701,9 @@ class TeamCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_team_fields_validation(self):
     # """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -637,6 +730,9 @@ class TeamCrudTest(ModelTestBaseClass):
         url = f"/teams/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url)
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_team_fields_validation_via_http(self):
     #     """Тест на валидацию некорректных значений полей через сайт."""
     #     url = f"/teams/{self.future_obj_id}/edit/"
@@ -662,6 +758,9 @@ class TeamCrudTest(ModelTestBaseClass):
             _save="Сохранить",
             **self.admin_inlines_no_player_no_staff,
         )
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_team_fields_validation_via_admin(self):
     #     """Тест на валидацию некорректных значений полей через
@@ -709,6 +808,9 @@ class PlayerCrudTest(ModelTestBaseClass):
         """Тест на корректное изменение напрямую через БД."""
         self.correct_update_tests()
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_player_fields_validation(self):
     # """Тест на валидацию некорректных значений напрямую через БД."""
     #     self.incorrect_field_tests()
@@ -734,6 +836,9 @@ class PlayerCrudTest(ModelTestBaseClass):
         """Тест на корректное удаление через сайт."""
         url = f"/players/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url)
+
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
 
     # def test_player_fields_validation_via_http(self):
     #     """Тест на валидацию некорректных значений полей через сайт."""
@@ -763,6 +868,9 @@ class PlayerCrudTest(ModelTestBaseClass):
             team=1,
         )
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_player_fields_validation_via_admin(self):
     #     """Тест на валидацию некорректных значений полей через
     #     административную часть."""
@@ -780,6 +888,9 @@ class PlayerCrudTest(ModelTestBaseClass):
         url = f"/admin/main/player/{self.future_obj_id}/delete/"
         self.correct_delete_tests(url=url, post="yes")
 
+    # TODO: Раскомментировать после согласования объема валидаций и
+    #  доработки валидации полей модели.
+
     # def test_player_fields_admit_values_via_admin(self):
     #     """Тест на допуск корректных значений полей через административную
     #     часть."""
@@ -789,3 +900,6 @@ class PlayerCrudTest(ModelTestBaseClass):
     #         team=1,
     #         **self.admin_inlines_no_team_no_docs,
     #     )
+
+
+# TODO: Сделать тест модели Document.
