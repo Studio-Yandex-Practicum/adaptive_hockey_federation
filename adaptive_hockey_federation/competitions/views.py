@@ -88,6 +88,7 @@ class CompetitionListView(
         if search_date.values():
             search_column = self.request.GET.get("search_column")
             if search_column == "data":
+                print(search_date)
                 queryset = queryset.filter(
                     Q(date_start__year__icontains=search_date["year"])
                     & Q(
