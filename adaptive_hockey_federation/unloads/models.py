@@ -1,4 +1,4 @@
-from core.constants import CHAR_FIELD_LENGTH
+from core.constants import CHAR_FIELD_LENGTH, UNLOAD_DIR
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -24,7 +24,7 @@ class Unload(models.Model):
         on_delete=models.CASCADE,
     )
     unload_file_slug = models.FileField(
-        verbose_name=_("Ссылка на файл"), upload_to="unloads_data/"
+        verbose_name=_("Ссылка на файл"), upload_to=UNLOAD_DIR
     )
 
     class Meta:

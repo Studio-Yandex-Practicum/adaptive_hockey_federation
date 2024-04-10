@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from typing import Any, List
 
-from core.constants import TIME_FORMAT
+from core.constants import SEARCH_ALIAS, TIME_FORMAT, UNLOAD_DIR
 from django.conf import settings
 from django.db.models import QuerySet
 from openpyxl import Workbook
@@ -14,6 +14,17 @@ def unload_file_name(user: str, prefix: str) -> str:
     return (
         f"{prefix}_{user.id}_{datetime.now().strftime(TIME_FORMAT)}.xlsx"
     )
+
+
+def get_lookup(params: dict) -> dict:
+    columns = params.get("search_column", [])
+    searchs = params.get("search", [])
+    lookup = {}
+    for column, search in zip(columns, searchs):
+        lookup_column = SEARCH_ALIAS.get(column, None)
+        if lookup_column is not None:
+            lookup["{lookup_columnf}__icontains"] = search
+    return lookup
 
 
 def column_width(workbook: Worksheet) -> None:
@@ -102,7 +113,7 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
             for letter in list_letter:
                 ws[letter + str(i)].fill = fill_rows
 
-    media_data_path = os.path.join(settings.MEDIA_ROOT, "unloads_data")
+    media_data_path = os.path.join(settings.MEDIA_ROOT, UNLOAD_DIR)
     os.makedirs(media_data_path, exist_ok=True)
     file_path = os.path.join(media_data_path, filename)
     wb.save(file_path)

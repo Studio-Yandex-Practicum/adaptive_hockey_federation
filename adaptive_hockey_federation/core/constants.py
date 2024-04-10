@@ -89,3 +89,17 @@ FORM_HELP_TEXTS = {
 FILE_RESOLUTION = ('png', 'jpeg', 'jpg', 'pdf')
 MAX_UPLOAD_SIZE: int = 10485760
 MAX_UPLOAD_SIZE_MB: str = str(int(MAX_UPLOAD_SIZE / (1024 * 1024))) + " MB"
+
+
+SEARCH_ALIAS = {
+    "surname": "surname",
+    "name": "name",
+    "birthday": "birthday",
+    "gender": "gender",
+    "number": "surname",
+    "discipline": "discipline__discipline_name_id__name",
+    "diagnosis": "diagnosis__name",
+    "city": "city_name",
+}
+
+UNLOAD_DIR = "unloads_data"
