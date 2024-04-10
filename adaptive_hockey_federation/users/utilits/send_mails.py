@@ -60,7 +60,7 @@ console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 console_handler.setFormatter(formatter)
 
@@ -77,8 +77,7 @@ def send_welcome_mail(
     """
     template = "emailing/welcome_letter.html"
     link = reverse(
-        "competitions:competitions_id",
-        kwargs={"pk": competition.pk}
+        "competitions:competitions_id", kwargs={"pk": competition.pk}
     )
     try:
         email = render_email_message(
@@ -86,18 +85,21 @@ def send_welcome_mail(
             context={
                 "instance": team,
                 "competition": competition,
-                "link_to_info":
-                    f"http://{os.environ.get('HOST', '127.0.0.1')}:"
-                    f"{os.environ.get('PORT', '8000')}{link}"},
+                "link_to_info": f"http://{os.environ.get('HOST', '127.0.0.1')}:"  # noqa
+                f"{os.environ.get('PORT', '8000')}{link}",
+            },
             from_email=dev_settings.EMAIL_HOST_USER,
-            to=[curator_email,],
+            to=[
+                curator_email,
+            ],
             template=template,
         )
         email.send(fail_silently=False)
         logger.info(
-            f'Электронное письмо успешно отправлено на адрес {curator_email}'
+            f"Электронное письмо успешно отправлено на адрес {curator_email}"
         )
     except Exception as e:
         logger.error(
             "Произошла ошибка при отправке электронного письма"
-            f" на {curator_email}: {e}")
+            f" на {curator_email}: {e}"
+        )
