@@ -92,6 +92,12 @@ class DataExportView(LoginRequiredMixin, View):
             "competitions_data.xlsx",
             "Данные соревнований",
         ),
+        "users": (
+            "users",
+            "User",
+            "users_data.xlsx",
+            "Данные пользователей",
+        ),
     }
 
     def get(self, request, *args, **kwargs):
@@ -142,6 +148,15 @@ class DataExportView(LoginRequiredMixin, View):
                     }
                     queryset = model.objects.filter(**lookup)
 
+                # TODO: (Нужно переделать стадартное название
+                # для файла выгрузки,
+                # в данный момент внезависимости от модели выгрузки,
+                # штаное имя players_all.xlsx.
+                # базовое название файла должно начинаться с названия модели,
+                # которую хотим выгрузить.
+                # Сейчас присуствует баг, что файл в unloads_data
+                # перезаписывается, соотвественно получить сатарые файлы
+                # на странице Выгрузки не получится.)
                 filename = "players_search.xlsx"
             else:
                 queryset = model.objects.all()
@@ -157,7 +172,9 @@ class DataExportView(LoginRequiredMixin, View):
             )
             unload_record.save()
 
-            file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
+            file_path = os.path.join(
+                settings.MEDIA_ROOT, "unloads_data", filename
+            )
             if os.path.exists(file_path):
                 file_unload = open(file_path, "rb")
                 response = FileResponse(file_unload)
