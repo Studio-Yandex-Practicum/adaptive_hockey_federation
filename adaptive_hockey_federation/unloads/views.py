@@ -157,7 +157,11 @@ class DataExportView(LoginRequiredMixin, View):
             )
             unload_record.save()
 
-            file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
+            file_path = os.path.join(
+                settings.MEDIA_ROOT,
+                "unloads_data",
+                filename
+            )
             if os.path.exists(file_path):
                 file_unload = open(file_path, "rb")
                 response = FileResponse(file_unload)
