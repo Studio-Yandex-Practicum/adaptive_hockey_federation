@@ -5,7 +5,6 @@ from urllib.parse import parse_qs, urlparse
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -13,8 +12,8 @@ from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from unloads.models import Unload
-from unloads.utils import export_excel
-from unloads.utils import model_get_queryset
+from unloads.utils import export_excel, model_get_queryset
+
 
 class UnloadListView(
     LoginRequiredMixin,
@@ -92,7 +91,12 @@ class DataExportView(LoginRequiredMixin, View):
             "competitions_data.xlsx",
             "Данные соревнований",
         ),
-        "analytics": ("main", "Player", "analytics_data.xlsx", "Данные аналитики"),
+        "analytics": (
+            "main",
+            "Player",
+            "analytics_data.xlsx",
+            "Данные аналитики"
+        ),
     }
 
     def get(self, request, *args, **kwargs):

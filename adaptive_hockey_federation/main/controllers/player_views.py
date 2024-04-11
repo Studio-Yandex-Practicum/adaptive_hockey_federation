@@ -4,7 +4,6 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -16,7 +15,6 @@ from main.mixins import FileUploadMixin
 from main.models import Player
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
-    SEARCH_FIELDS,
     get_player_fields,
     get_player_fields_personal,
     get_player_table_data,
