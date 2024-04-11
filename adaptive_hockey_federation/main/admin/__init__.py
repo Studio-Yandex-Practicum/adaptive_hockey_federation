@@ -1,7 +1,6 @@
 from main.admin.admin import (
     CityAdmin,
     DiagnosisAdmin,
-    DisciplineAdmin,
     DisciplineLevelAdmin,
     DisciplineNameAdmin,
     DocumentAdmin,
@@ -15,7 +14,6 @@ from main.admin.admin import (
 from main.models import (
     City,
     Diagnosis,
-    Discipline,
     DisciplineLevel,
     DisciplineName,
     Document,
@@ -28,7 +26,6 @@ from main.models import (
 
 admin.site.register(City, CityAdmin)
 admin.site.register(Diagnosis, DiagnosisAdmin)
-admin.site.register(Discipline, DisciplineAdmin)
 admin.site.register(DisciplineLevel, DisciplineLevelAdmin)
 admin.site.register(DisciplineName, DisciplineNameAdmin)
 admin.site.register(Document, DocumentAdmin)

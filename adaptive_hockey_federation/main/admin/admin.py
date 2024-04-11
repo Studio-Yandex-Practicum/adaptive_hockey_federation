@@ -42,15 +42,6 @@ class DisciplineLevelAdmin(admin.ModelAdmin):
     ordering = ["name"]
 
 
-class DisciplineAdmin(admin.ModelAdmin):
-    list_display = ("pk", "discipline_name", "discipline_level")
-    search_fields = (
-        "discipline_name__name",
-        "discipline_level__name",
-    )
-    ordering = ["discipline_name"]
-
-
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "file")
     search_fields = (
