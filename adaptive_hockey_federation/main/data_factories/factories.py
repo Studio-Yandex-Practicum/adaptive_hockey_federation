@@ -11,7 +11,6 @@ from main.models import (
     PLAYER_POSITION_CHOICES,
     City,
     Diagnosis,
-    Discipline,
     DisciplineLevel,
     DisciplineName,
     Document,
@@ -140,11 +139,6 @@ class DisciplineNameFactory(factory.django.DjangoModelFactory):
         skip_postgeneration_save = True
 
     name = factory.Faker("sentence", nb_words=2, locale="ru_RU")
-    discipline = factory.RelatedFactoryList(
-        "main.data_factories.factories.DisciplineFactory",
-        factory_related_name="discipline_name",
-        size=5,
-    )
 
 
 class DisciplineLevelFactory(factory.django.DjangoModelFactory):
@@ -158,16 +152,6 @@ class DisciplineLevelFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ["name"]
 
     name = factory.Iterator(["A1", "A2", "B1", "B2", "C1", "C2"])
-
-
-class DisciplineFactory(factory.django.DjangoModelFactory):
-    """Привязка адаптивных дисциплин к определёным уровням."""
-
-    class Meta:
-        model = Discipline
-
-    discipline_name = factory.SubFactory(DisciplineNameFactory)
-    discipline_level = factory.SubFactory(DisciplineLevelFactory)
 
 
 class TeamFactory(factory.django.DjangoModelFactory):

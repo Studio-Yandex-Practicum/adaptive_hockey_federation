@@ -45,14 +45,6 @@ ADMIN_DIAGNOSIS_URLS = (
     "/admin/main/diagnosis/<path:object_id>/history/",
     "/admin/main/diagnosis/add/",
 )
-ADMIN_DISCIPLINE_URL_302 = ("/admin/main/discipline/<path:object_id>/",)
-ADMIN_DISCIPLINE_URLS = (
-    "/admin/main/discipline/",
-    "/admin/main/discipline/<path:object_id>/change/",
-    "/admin/main/discipline/<path:object_id>/delete/",
-    "/admin/main/discipline/<path:object_id>/history/",
-    "/admin/main/discipline/add/",
-)
 ADMIN_DISCIPLINE_LEVEL_URL_302 = (
     "/admin/main/disciplinelevel/<path:object_id>/",
 )
@@ -247,7 +239,6 @@ ADMIN_SITE_ADMIN_OK = (
     + ADMIN_DIAGNOSIS_URLS
     + ADMIN_DISCIPLINE_LEVEL_URLS
     + ADMIN_DISCIPLINE_NAME_URLS
-    + ADMIN_DISCIPLINE_URLS
     + ADMIN_DOCUMENT_URLS
     + ADMIN_NOSOLOGY_URLS
     + ADMIN_PASSWORD_URLS
