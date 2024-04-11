@@ -49,24 +49,40 @@ class PlayersListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            search_column = self.request.GET.get("search_column")
+        search_params = self.request.GET.dict()
+        if search_params:
+            search = search_params.get("search")
+            search_column = search_params.get("search_column")
             if not search_column or search_column.lower() in ["все", "all"]:
                 or_lookup = (
                     Q(surname__icontains=search)
                     | Q(name__icontains=search)
-                    | Q(birthday__icontains=search)
                     | Q(gender__icontains=search)
+                    | Q(birthday__icontains=search)
                     | Q(number__icontains=search)
                     | Q(discipline__discipline_name_id__name__icontains=search)
                     | Q(diagnosis__name__icontains=search)
                 )
                 queryset = queryset.filter(or_lookup)
+            elif search_column == "birthday":
+                queryset = queryset.filter(
+                    Q(birthday__year__icontains=search_params["year"])
+                    & Q(
+                        birthday__month__icontains=search_params[
+                            "month"
+                        ].lstrip("0")
+                    )
+                    & Q(
+                        birthday__day__icontains=search_params["day"].lstrip(
+                            "0"
+                        )
+                    )
+                )
             else:
                 search_fields = SEARCH_FIELDS
-                lookup = {f"{search_fields[search_column]}__icontains": search}
-                queryset = queryset.filter(**lookup)
+                queryset = queryset.filter(
+                    **{f"{search_fields[search_column]}__icontains": search}
+                )
 
         return (
             queryset.select_related("diagnosis")
