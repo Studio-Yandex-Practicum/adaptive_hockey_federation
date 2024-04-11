@@ -21,6 +21,7 @@ from main.schemas.player_schema import (
     get_player_fields_personal,
     get_player_table_data,
 )
+from unloads.utils import model_get_queryset
 
 
 class PlayersListView(
@@ -49,24 +50,12 @@ class PlayersListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            search_column = self.request.GET.get("search_column")
-            if not search_column or search_column.lower() in ["все", "all"]:
-                or_lookup = (
-                    Q(surname__icontains=search)
-                    | Q(name__icontains=search)
-                    | Q(birthday__icontains=search)
-                    | Q(gender__icontains=search)
-                    | Q(number__icontains=search)
-                    | Q(discipline__discipline_name_id__name__icontains=search)
-                    | Q(diagnosis__name__icontains=search)
-                )
-                queryset = queryset.filter(or_lookup)
-            else:
-                search_fields = SEARCH_FIELDS
-                lookup = {f"{search_fields[search_column]}__icontains": search}
-                queryset = queryset.filter(**lookup)
+        queryset = model_get_queryset(
+            "players",
+            Player,
+            dict(self.request.GET),
+            queryset
+        )
 
         return (
             queryset.select_related("diagnosis")

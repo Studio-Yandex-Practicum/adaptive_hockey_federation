@@ -14,7 +14,7 @@ from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from unloads.models import Unload
 from unloads.utils import export_excel
-
+from unloads.utils import model_get_queryset
 
 class UnloadListView(
     LoginRequiredMixin,
@@ -92,6 +92,7 @@ class DataExportView(LoginRequiredMixin, View):
             "competitions_data.xlsx",
             "Данные соревнований",
         ),
+        "analytics": ("main", "Player", "analytics_data.xlsx", "Данные аналитики"),
     }
 
     def get(self, request, *args, **kwargs):
@@ -105,47 +106,18 @@ class DataExportView(LoginRequiredMixin, View):
             last_url = request.META.get("HTTP_REFERER")
             parsed = urlparse(last_url)
             params = parse_qs(parsed.query)
-            if "search" in params:
-                search_column = ""
-                search = parse_qs(parsed.query)["search"][0]
-                if "search_column" in params:
-                    search_column = parse_qs(parsed.query)["search_column"][0]
-
-                if search_column == "" or search_column.lower() in [
-                    "все",
-                    "all",
-                ]:
-                    or_lookup = (
-                        Q(surname__icontains=search)
-                        | Q(name__icontains=search)
-                        | Q(birthday__icontains=search)
-                        | Q(gender__icontains=search)
-                        | Q(number__icontains=search)
-                        | Q(
-                            discipline__discipline_name_id__name__icontains=search  # Noqa
-                        )
-                        | Q(diagnosis__name__icontains=search)
-                    )
-                    queryset = model.objects.filter(or_lookup)
-                else:
-                    search_fields = {
-                        "surname": "surname",
-                        "name": "name",
-                        "birthday": "birthday",
-                        "gender": "gender",
-                        "number": "surname",
-                        "discipline": "discipline__discipline_name_id__name",
-                        "diagnosis": "diagnosis__name",
-                    }
-                    lookup = {
-                        f"{search_fields[search_column]}__icontains": search
-                    }
-                    queryset = model.objects.filter(**lookup)
-
-                filename = "players_search.xlsx"
+            new_queryset = model_get_queryset(
+                page_name,
+                model,
+                params,
+                None
+            )
+            if new_queryset:
+                queryset = new_queryset
+                filename = page_name + "_search.xlsx"
             else:
                 queryset = model.objects.all()
-                filename = "players_all.xlsx"
+                filename = page_name + "_all.xlsx"
 
             export_excel(queryset, filename, title)
             file_slug = f"unloads_data/{filename}"
