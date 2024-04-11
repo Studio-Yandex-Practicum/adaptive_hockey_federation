@@ -27,14 +27,17 @@
       style="border-top-left-radius: 0; border-bottom-left-radius: 0;"
     />
     <div
-      id="date-picker"
-      style="display: none; border-top-left-radius: 0; border-bottom-left-radius: 0;"
-      class="date-picker form-control select-form"
-    >
-      <select name="year" class="date-picker__select" id="date-picker-year"></select>
-      <select name="month" class="date-picker__select" id="date-picker-month"></select>
-      <select name="day" class="date-picker__select" id="date-picker-day"></select>
+      id="date-picker" style="display: none; border-radius: 0;">
+      <select name="year" class="form-select picker__select" id="date-picker-year"></select>
+      <select name="month" class="form-select picker__select" id="date-picker-month"></select>
+      <select name="day" class="form-select picker__select" id="date-picker-day"></select>
     </div>
+    <select
+      name="active"
+      style="display: none; border-radius: 0;"
+      class="form-select"
+      id="active-picker-select"
+    ></select>
     <button id="search_button" type="submit" class="btn bg-white search__button">
       <i class="bi bi-search"></i>
     </button>
