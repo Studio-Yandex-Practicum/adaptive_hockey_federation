@@ -185,8 +185,8 @@ PLAYER_GET_URLS = (
 PLAYER_POST_URLS = (
     {URL: "/players/1/delete/", PERMISSION_REQUIRED: "delete_player"},
     # TODO: Тест на данный урл выдает TemplateDoesNotExist. Необходимо
-    #  раскомментировать, когда будет починен player_id_deleted() в
-    #  main.views или вообще удалить, если эта страница не нужна.
+    #   раскомментировать, когда будет починен player_id_deleted() в
+    #   main.views или вообще удалить, если эта страница не нужна.
     # "/players/deleted/",
 )
 STAFF_GET_URLS = (

@@ -3,7 +3,37 @@
   Список соревнований
 {% endblock %}
 {% block content %}
-  <div class="container">
-    {% include 'main/competitions/table.html' with table_head=table_head table_data=table_data %}
-  </div>
+  {% include 'main/competitions/table.html' with table_head=table_head table_data=table_data %}
+{% endblock %}
+{% block JavaScript %}
+  <script>
+    const searchFieldElement = document.getElementById("search_form_input")
+    const datePickerContainer = document.getElementById("date-picker")
+
+    const searchColumnSelect = document.getElementById("search_column")
+    const searchColumnOptions = document.querySelectorAll("#search_column option")
+
+    const submitButton = document.getElementById("search_button")
+
+    const datePicker = new DatePicker(
+      document.getElementById('date-picker-year'),
+      document.getElementById('date-picker-month'),
+      document.getElementById('date-picker-day')
+    )
+
+    function toggleInputDisplay() {
+      const selectedOption = searchColumnOptions[searchColumnSelect.selectedIndex]
+      const searchKey = selectedOption.id
+
+      if (searchKey === "search_data" || searchKey === "search_data_end") {
+        searchFieldElement.style.display = "none"
+        datePickerContainer.style.display = "flex"
+      } else {
+        searchFieldElement.style.display = "flex"
+        datePickerContainer.style.display = "none"
+      }
+    }
+    searchColumnSelect.addEventListener("change", toggleInputDisplay)
+    toggleInputDisplay()
+  </script>
 {% endblock %}
