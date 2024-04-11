@@ -1,4 +1,4 @@
-from main.models import Diagnosis, Discipline
+from main.models import Diagnosis, DisciplineLevel, DisciplineName
 from tests.model_schemas.fields_validation_schemas import (
     ALL_CAPS,
     ALL_LOWER,
@@ -30,7 +30,8 @@ PLAYER_MODEL_TEST_SCHEMA = {
         "surname": "Иванович",
         "patronymic": "Петров",
         "diagnosis": Diagnosis,
-        "discipline": Discipline,
+        "discipline_name": DisciplineName,
+        "discipline_level": DisciplineLevel,
         "birthday": "2010-03-25",
         "gender": "Мужской",
         "level_revision": "Тестовый уровень ревизии.",
@@ -45,7 +46,8 @@ PLAYER_MODEL_TEST_SCHEMA = {
         "surname": "Съешьещеэтихмягкихфранцузскихбулочекдавыпейчаюев",
         "patronymic": "Кракозябробормоглототроглодитобрандашмыгович",
         "diagnosis": Diagnosis,
-        "discipline": Discipline,
+        "discipline_name": DisciplineName,
+        "discipline_level": DisciplineLevel,
         "birthday": "2009-03-25",
         "gender": "Женский",
         "level_revision": "Какой-то другой тестовый уровень ревизии.",
