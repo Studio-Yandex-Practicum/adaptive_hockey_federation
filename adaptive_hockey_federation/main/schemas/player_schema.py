@@ -8,7 +8,7 @@ SEARCH_FIELDS = {
     "number": "surname",
     "discipline_name": "discipline_name__name",
     "discipline_level": "discipline_level__name",
-    "diagnosis": "diagnosis__name",
+    "team": "team__name",
 }
 
 
@@ -26,9 +26,11 @@ def get_player_table_data(context):
             "discipline_level": (
                 player.discipline_level if player.discipline_level else None
             ),
-            "diagnosis": (
-                player.diagnosis.name if player.diagnosis else None
-            ),  # Noqa
+            "team": (
+                player.team.first().name
+                if player.team.exists()
+                else "Нет команды"
+            ),
             "url": reverse("main:player_id", args=[player.id]),
             "id": player.pk,
         }

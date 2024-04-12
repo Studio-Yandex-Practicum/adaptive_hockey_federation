@@ -45,7 +45,7 @@ class PlayersListView(
         "number",
         "discipline_name",
         "discipline_level",
-        "diagnosis",
+        "team",
     ]
 
     def get_queryset(self):
@@ -60,7 +60,7 @@ class PlayersListView(
                     | Q(birthday__icontains=search)
                     | Q(gender__icontains=search)
                     | Q(number__icontains=search)
-                    | Q(diagnosis__name__icontains=search)
+                    | Q(team__name__icontains=search)
                 )
                 queryset = queryset.filter(or_lookup)
             else:
