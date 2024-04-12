@@ -12,8 +12,9 @@ from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from unloads.models import Unload
-from unloads.utils import export_excel, model_get_queryset
-
+from core.utils import export_excel
+from unloads.utils import model_get_queryset
+from unloads.mapping import model_mapping
 
 class UnloadListView(
     LoginRequiredMixin,
@@ -82,28 +83,13 @@ class DataExportView(LoginRequiredMixin, View):
     # TODO: (Если требуется выгрузка других моделей,
     # нужно добавить их в словарь(model_mapping)
     # и дополнить шаблон base/footer.html.)
-    model_mapping = {
-        "players": ("main", "Player", "players_data.xlsx", "Данные игроков"),
-        "teams": ("main", "Team", "teams_data.xlsx", "Данные команд"),
-        "competitions": (
-            "competitions",
-            "Competition",
-            "competitions_data.xlsx",
-            "Данные соревнований",
-        ),
-        "analytics": (
-            "main",
-            "Player",
-            "analytics_data.xlsx",
-            "Данные аналитики"
-        ),
-    }
+    
 
     def get(self, request, *args, **kwargs):
         page_name = kwargs.get("page_name")
 
-        if page_name in self.model_mapping:
-            app_label, model_name, filename, title = self.model_mapping[
+        if page_name in model_mapping:
+            app_label, model_name, filename, title = model_mapping[
                 page_name
             ]
             model = apps.get_model(app_label, model_name)
@@ -123,7 +109,7 @@ class DataExportView(LoginRequiredMixin, View):
                 queryset = model.objects.all()
                 filename = page_name + "_all.xlsx"
 
-            export_excel(queryset, filename, title)
+            filename = export_excel(queryset, filename, title)
             file_slug = f"unloads_data/{filename}"
 
             unload_record = Unload(

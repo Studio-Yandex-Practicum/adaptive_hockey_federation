@@ -10,7 +10,9 @@
     {% if request.resolver_match.url_name in 'main' %}
       {% include 'main/home/search_form.html' %}
     {% else %}
-      {% include 'base/search_form.html' %}
+      {% if request.resolver_match.url_name != 'analytics' %}
+        {% include 'base/search_form.html' %}
+      {% endif%}
     {% endif%}
   </div>
   <div class="nav-item ms-2">
