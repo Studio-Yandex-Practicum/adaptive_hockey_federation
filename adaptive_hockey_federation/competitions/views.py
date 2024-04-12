@@ -78,7 +78,7 @@ class CompetitionListView(
                     Q(title__icontains=search)
                     | Q(city__name__icontains=search)
                     | Q(date_start__icontains=search)
-                    | Q(city__name__icontains=search)
+                    | Q(date_end__icontains=search)
                     | Q(pk__icontains=search)
                 )
             elif search_column == "title":
