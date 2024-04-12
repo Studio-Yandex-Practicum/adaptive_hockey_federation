@@ -4,9 +4,20 @@ html, body {
   padding: 0;
 }
 
-/* * {
-  outline: 1px solid red;
-} */
+*::-webkit-scrollbar {
+  background-color: transparent;
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #269FBD;
+  border-radius: 8px;
+}
 
 section {
   padding: 100px;
@@ -292,6 +303,8 @@ li {
 .btns-edit-del {
   margin: 0;
   padding: 0;
+  margin: 0;
+  padding: 0;
   background-color: #fff;
   border: none;
   display: flex;
@@ -483,6 +496,7 @@ li {
   padding: 0;
   margin: 0;
   min-height: 81px;
+  min-height: 81px;
   width: 100%;
   position: fixed;
   bottom: 0;
@@ -616,7 +630,9 @@ td {
   margin: 15px 0;
   padding: 0;
   width: 100vw;
+  width: 100vw;
   max-height: 95vh;
+  overflow: auto;
   overflow: auto;
   text-align: center;
   display: flex;
@@ -698,12 +714,36 @@ td {
   display: flex;
   justify-content: center;
   gap: 20px;
+  justify-content: center;
+  gap: 20px;
 }
 
 .navbar-header {
   display: flex;
   justify-content: space-around;
   align-items: center;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .navbar-header {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: max-content 1fr;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .nav-signout-button {
+    grid-column: 8;
+    justify-self: center;
+  }
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .nav-user-info {
+    grid-column: 1 / 3;
+    justify-self: center;
+  }
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
@@ -729,6 +769,13 @@ td {
   justify-content: center;
 }
 
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .height {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
 .group-input {
   display: flex;
   justify-content: center;
@@ -736,6 +783,7 @@ td {
 
 .cell__buttons {
   display: flex;
+  gap: 20px;
   gap: 20px;
   justify-content: center;
   align-items: center;
@@ -798,6 +846,8 @@ td {
   flex-direction: column;
   align-items: center;
   white-space: nowrap;
+  align-items: center;
+  white-space: nowrap;
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
@@ -811,11 +861,15 @@ td {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
   .filter-item__wrapper {
     width: 100%;
+    grid-template-columns: repeat(2, 1fr);
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -1110,16 +1164,6 @@ td {
   text-align: center;
 }
 
-.base-select-teams::-webkit-scrollbar {
-  background-color: transparent;
-  width: 8px;
-}
-
-.base-select-teams::-webkit-scrollbar-thumb {
-  background-color: #269FBD;
-  border-radius: 8px;
-}
-
 .base-select-teams-errors {
   margin: 0px 10px 0 10px;
   padding: 2px;
@@ -1153,6 +1197,12 @@ td {
   float: center;
   min-width: 80%;
   justify-content: center;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .selectors-teams {
+    flex-direction: column;
+  }
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
@@ -1307,25 +1357,33 @@ td {
   background:#269FBD;
   color: #fff;
   border-radius: 10px;
-}
-
-.scroll-class::-webkit-scrollbar {
-  background-color: transparent;
-  width: 8px;
-  height: 8px;
-}
-
-.scroll-class::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-.scroll-class::-webkit-scrollbar-thumb {
-  background-color: #269FBD;
-  border-radius: 8px;
+  margin: 0 15px 5px 15px;
+  padding: 8px;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  text-align: center;
+  background:#269FBD;
+  color: #fff;
+  border-radius: 10px;
 }
 
 .search-form-control {
   margin: 0;
   padding: 0;
   max-width: 80%;
+}
+
+.date-picker {
+  display: flex;
+  justify-content: space-around;
+  gap: 2px;
+}
+
+.date-picker__select {
+  border: none;
+  border-bottom: 2px solid #269FBD;
+}
+
+.date-picker__select:focus {
+  outline: none;
 }

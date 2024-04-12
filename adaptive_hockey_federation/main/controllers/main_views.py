@@ -21,7 +21,8 @@ class MainView(
         "birthday",
         "gender",
         "number",
-        "discipline",
+        "discipline_name",
+        "discipline_level",
         "diagnosis",
     ]
 
@@ -35,7 +36,7 @@ class MainView(
             )
             queryset = (
                 queryset.select_related("diagnosis")
-                .select_related("discipline")
+                .select_related("discipline_name")
                 .order_by("surname")
             )
 

@@ -42,22 +42,34 @@ class PlayersListView(
         "birthday",
         "gender",
         "number",
-        "discipline",
-        "diagnosis",
+        "discipline_name",
+        "discipline_level",
+        "team",
     ]
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = model_get_queryset(
-            "players",
-            Player,
-            dict(self.request.GET),
-            queryset
-        )
+        search = self.request.GET.get("search")
+        if search:
+            search_column = self.request.GET.get("search_column")
+            if not search_column or search_column.lower() in ["все", "all"]:
+                or_lookup = (
+                    Q(surname__icontains=search)
+                    | Q(name__icontains=search)
+                    | Q(birthday__icontains=search)
+                    | Q(gender__icontains=search)
+                    | Q(number__icontains=search)
+                    | Q(team__name__icontains=search)
+                )
+                queryset = queryset.filter(or_lookup)
+            else:
+                search_fields = SEARCH_FIELDS
+                lookup = {f"{search_fields[search_column]}__icontains": search}
+                queryset = queryset.filter(**lookup)
 
         return (
             queryset.select_related("diagnosis")
-            .select_related("discipline")
+            .select_related("discipline_name")
             .order_by("surname")
         )
 
@@ -161,7 +173,8 @@ class PlayerIdView(
         "patronymic",
         "gender",
         "birthday",
-        "discipline",
+        "discipline_name",
+        "discipline_level",
         "diagnosis",
         "level_revision",
         "identity_document",

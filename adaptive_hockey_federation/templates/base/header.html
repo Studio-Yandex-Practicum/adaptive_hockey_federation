@@ -1,6 +1,6 @@
 {% load static %}
 <nav class="navbar-header" style="background-color: #64c2d1;">
-  <ul class="nav d-flex align-items-center justify-content-start">
+  <ul class="nav-user-info nav tw-pl-2 d-flex align-items-center justify-content-start">
     <div class="border border-white rounded px-2 user-info">
       <i class="bi bi-circle-fill" style="color: red;"></i>
       <b class="text-xl" style="color: #340061;">{{ request.user.first_name }} {{ request.user.last_name }}</b>
@@ -15,7 +15,7 @@
       {% endif%}
     {% endif%}
   </div>
-  <div class="nav-item ms-2">
+  <div class="nav-signout-button nav-item">
     <a  href="{% url 'logout' %}">
       <i class="bi bi-box-arrow-right fs-1" style="color: white;"></i>
     </a>

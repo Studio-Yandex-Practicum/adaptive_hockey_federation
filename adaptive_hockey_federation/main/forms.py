@@ -67,7 +67,8 @@ class PlayerForm(forms.ModelForm):
             "patronymic",
             "gender",
             "birthday",
-            "discipline",
+            "discipline_name",
+            "discipline_level",
             "diagnosis",
             "level_revision",
             "team",
@@ -96,14 +97,14 @@ class PlayerForm(forms.ModelForm):
                 attrs={"placeholder": "Введите уровень ревизии"}
             ),
             "birthday": forms.DateInput(
-                format=('%Y-%m-%d'),
+                format=("%Y-%m-%d"),
                 attrs={
                     "type": "date",
                     "placeholder": "Введите дату рождения",
                     "class": "form-control",
                     "min": min_date,
                     "max": max_date,
-                }
+                },
             ),
         }
         help_texts = {

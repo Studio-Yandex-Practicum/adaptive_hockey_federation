@@ -104,7 +104,8 @@ fill-db:
 fill-test-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --users
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --diagnosis --amount 8
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --discipline --amount 3
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --discipline_name --amount 5
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --discipline_level --amount 6
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --team --amount 20
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --staffteam
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --player --amount 300
