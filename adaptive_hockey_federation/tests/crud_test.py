@@ -1,10 +1,7 @@
 from typing import Any
 
 from core.constants import ROLE_AGENT
-from main.data_factories.factories import (
-    DisciplineLevelFactory,
-    DisciplineNameFactory,
-)
+from main.data_factories.factories import DisciplineLevelFactory
 from main.models import (
     City,
     Diagnosis,
@@ -362,12 +359,6 @@ class DisciplineNameCrudTest(ModelTestBaseClass):
     model = DisciplineName
     model_schema = DISCIPLINE_NAME_MODEL_TEST_SCHEMA
     model_schema = DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA
-    discipline_name_1: DisciplineName
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.discipline_name_1 = DisciplineNameFactory.create(name='test')
-        super().setUpClass()
 
     def test_discipline_name_correct_creation(self):
         """Тест на корректное создание напрямую через БД."""
@@ -431,7 +422,7 @@ class DisciplineLevelCrudTest(ModelTestBaseClass):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.discipline_level_1 = DisciplineLevelFactory.create(name='test')
+        cls.discipline_level_1 = DisciplineLevelFactory.create(name="test")
         super().setUpClass()
 
     def test_discipline_level_correct_creation(self):

@@ -1,11 +1,12 @@
+import random
 from datetime import datetime
 from typing import Any
 
+from core.constants import DISCIPLINES
 from django.test import TestCase
 from main.data_factories.factories import (
     DiagnosisFactory,
     DisciplineLevelFactory,
-    DisciplineNameFactory,
     PlayerFactory,
 )
 from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
@@ -25,7 +26,6 @@ class TestUser(TestCase):
     def setUpTestData(cls):
         """Создание тестовых данных."""
         cls.diagnosis = DiagnosisFactory.create()
-        cls.discipline_name = DisciplineNameFactory.create()
         cls.discipline_level = DisciplineLevelFactory.create()
         cls.player = PlayerFactory.create()
         cls.player_test = cls.player
@@ -38,7 +38,7 @@ class TestUser(TestCase):
             patronymic=self.player_test.patronymic + "тест",
             gender=self.player_test.gender,
             birthday=self.player_test.birthday,
-            discipline_name=self.discipline_name,
+            discipline_name=self.player_test.discipline_name,
             discipline_level=self.discipline_level,
             diagnosis=self.diagnosis,
             level_revision=self.player_test.level_revision,
@@ -46,7 +46,6 @@ class TestUser(TestCase):
             number=self.player_test.number,
             identity_document=self.player_test.identity_document,
         )
-        self.discipline_name = self.player.discipline_name
         self.diagnosis = self.player.diagnosis
 
     def test_player_create(self):
@@ -79,7 +78,7 @@ class TestUser(TestCase):
         new_patronymic = self.player_test.patronymic + "редактирование"
         new_gender = self.player_test.gender
         new_birthday = datetime.strptime("2014-01-18", "%Y-%m-%d").date()
-        new_discipline_name = DisciplineNameFactory.create()
+        new_discipline_name = random.choice(DISCIPLINES)[1]
         new_discipline_level = DisciplineLevelFactory.create()
         new_diagnosis = DiagnosisFactory.create()
         new_level_revision = self.player_test.level_revision + "ред."

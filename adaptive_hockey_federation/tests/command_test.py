@@ -1,12 +1,7 @@
 import pytest
-from main.data_factories.factories import DisciplineNameFactory, TeamFactory
+from main.data_factories.factories import TeamFactory
 from main.models import Team
 from users.factories import UserFactory
-
-
-@pytest.fixture
-def create_discipline_name():
-    return DisciplineNameFactory()
 
 
 @pytest.fixture
@@ -16,8 +11,9 @@ def create_user():
 
 @pytest.fixture
 def create_team(create_discipline_name, create_user):
-    return TeamFactory(discipline_name=create_discipline_name,
-                       curator=create_user)
+    return TeamFactory(
+        discipline_name=create_discipline_name, curator=create_user
+    )
 
 
 @pytest.mark.django_db

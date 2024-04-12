@@ -14,7 +14,6 @@ from factory.django import DjangoModelFactory  # type: ignore
 from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,
-    DisciplineNameFactory,
     DocumentFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
@@ -72,7 +71,6 @@ class BaseTestClass(TestCase):
             is_superuser=True,
         )
         cls.user = UserFactory.create(role=test_role_user)
-        cls.discipline_name = DisciplineNameFactory.create()
         cls.team = TeamFactory.create()
         cls.competition = CompetitionFactory.create()
         cls.diagnosis = DiagnosisFactory.create()
