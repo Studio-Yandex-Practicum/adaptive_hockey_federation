@@ -31,12 +31,12 @@ class UsersListView(
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().order_by("last_name")
         search_params = self.request.GET.dict()
-        if search_params:
-            search = search_params.get("search")
-            search_column = search_params.get("search_column")
-            if not search_column or search_column.lower() in ["все", "all"]:
+        search_column = search_params.get("search_column")
+        search = search_params.get("search")
+        if search_column:
+            if search_column and search_column.lower() in ["все", "all"]:
                 or_lookup = (
                     Q(first_name__icontains=search)
                     | Q(last_name__icontains=search)
@@ -76,7 +76,6 @@ class UsersListView(
                 queryset = queryset.filter(
                     **{f"{search_fields[search_column]}__icontains": search}
                 )
-
         return queryset.order_by("last_name")
 
     def get_context_data(self, **kwargs):

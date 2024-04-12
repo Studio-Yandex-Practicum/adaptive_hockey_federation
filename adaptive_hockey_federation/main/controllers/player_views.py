@@ -50,10 +50,10 @@ class PlayersListView(
     def get_queryset(self):
         queryset = super().get_queryset()
         search_params = self.request.GET.dict()
-        if search_params:
-            search = search_params.get("search")
-            search_column = search_params.get("search_column")
-            if not search_column or search_column.lower() in ["все", "all"]:
+        search_column = search_params.get("search_column")
+        search = search_params.get("search")
+        if search_column:
+            if search_column.lower() in ["все", "all"]:
                 or_lookup = (
                     Q(surname__icontains=search)
                     | Q(name__icontains=search)
@@ -78,12 +78,15 @@ class PlayersListView(
                         )
                     )
                 )
+            elif search_column == "gender":
+                queryset = queryset.filter(
+                    gender__icontains=search_params["gender"]
+                )
             else:
                 search_fields = SEARCH_FIELDS
                 queryset = queryset.filter(
                     **{f"{search_fields[search_column]}__icontains": search}
                 )
-
         return (
             queryset.select_related("diagnosis")
             .select_related("discipline")

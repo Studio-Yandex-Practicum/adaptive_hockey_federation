@@ -1,6 +1,7 @@
 const searchFieldElement = document.getElementById("search_form_input")
 const datePickerContainer = document.getElementById("date-picker")
 const activePickerContainer = document.getElementById("active-picker-select")
+const genderPickerContainer = document.getElementById("gender-picker-select")
 
 const searchColumnSelect = document.getElementById("search_column")
 const searchColumnOptions = document.querySelectorAll("#search_column option")
@@ -13,8 +14,14 @@ const datePicker = new DatePicker(
     document.getElementById('date-picker-day'),
 )
 
-const activePicker = new YesNoPicker(
+const activePicker = new OptionsPicker(
     document.getElementById("active-picker-select"),
+    [["да", "true"], ["нет", "false"]],
+)
+
+const genderPicker = new OptionsPicker(
+    document.getElementById("gender-picker-select"),
+    [["женский", "женский"], ["мужской", "мужской"]],
 )
 
 function toggleInputDisplay() {
@@ -27,15 +34,22 @@ function toggleInputDisplay() {
         searchFieldElement.style.display = "none"
         datePickerContainer.style.display = "flex"
         activePickerContainer.style.display = "none"
-
+        genderPickerContainer.style.display = "none"
     } else if (searchKey === "search_is_active") {
         searchFieldElement.style.display = "none"
         datePickerContainer.style.display = "none"
         activePickerContainer.style.display = "flex"
+        genderPickerContainer.style.display = "none"
+    } else if (searchKey === "search_gender") {
+        searchFieldElement.style.display = "none"
+        datePickerContainer.style.display = "none"
+        activePickerContainer.style.display = "none"
+        genderPickerContainer.style.display = "flex"
     } else {
         searchFieldElement.style.display = "flex"
         datePickerContainer.style.display = "none"
         activePickerContainer.style.display = "none"
+        genderPickerContainer.style.display = "none"
     }
 }
 searchColumnSelect.addEventListener("change", toggleInputDisplay)
