@@ -1,11 +1,13 @@
 from typing import Any
 
 from core.constants import ROLE_AGENT
-from main.data_factories.factories import DisciplineNameFactory
+from main.data_factories.factories import (
+    DisciplineLevelFactory,
+    DisciplineNameFactory,
+)
 from main.models import (
     City,
     Diagnosis,
-    Discipline,
     DisciplineLevel,
     DisciplineName,
     Nosology,
@@ -17,7 +19,6 @@ from main.models import (
 from tests.base import ModelTestBaseClass
 from tests.model_schemas.city import CITY_MODEL_TEST_SCHEMA
 from tests.model_schemas.diagnosis import DIAGNOSIS_MODEL_TEST_SCHEMA
-from tests.model_schemas.discipline import DISCIPLINE_MODEL_TEST_SCHEMA
 from tests.model_schemas.discipline_level import (
     DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA,
 )
@@ -360,6 +361,13 @@ class DisciplineNameCrudTest(ModelTestBaseClass):
 
     model = DisciplineName
     model_schema = DISCIPLINE_NAME_MODEL_TEST_SCHEMA
+    model_schema = DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA
+    discipline_name_1: DisciplineName
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.discipline_name_1 = DisciplineNameFactory.create(name='test')
+        super().setUpClass()
 
     def test_discipline_name_correct_creation(self):
         """Тест на корректное создание напрямую через БД."""
@@ -419,6 +427,12 @@ class DisciplineLevelCrudTest(ModelTestBaseClass):
 
     model = DisciplineLevel
     model_schema = DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA
+    discipline_level_1: DisciplineLevel
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.discipline_level_1 = DisciplineLevelFactory.create(name='test')
+        super().setUpClass()
 
     def test_discipline_level_correct_creation(self):
         """Тест на корректное создание напрямую через БД."""
@@ -471,45 +485,6 @@ class DisciplineLevelCrudTest(ModelTestBaseClass):
         часть."""
         url = f"/admin/main/disciplinelevel/{self.future_obj_id}/change/"
         self.correct_field_tests(url=url)
-
-
-class DisciplineCrudTest(ModelTestBaseClass):
-    """CRUD-тесты модели дисциплины."""
-
-    model = Discipline
-    model_schema = DISCIPLINE_MODEL_TEST_SCHEMA
-    discipline_name_1: DisciplineName
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.discipline_name_1 = DisciplineNameFactory.create(discipline=None)
-        super().setUpClass()
-
-    def test_discipline_correct_creation(self):
-        """Тест на корректное создание напрямую через БД."""
-        self.correct_create_tests()
-
-    def test_discipline_correct_update(self):
-        """Тест на корректное изменение напрямую через БД."""
-        self.correct_update_tests()
-
-    def test_discipline_deletion(self):
-        """Тест на удаление объекта напрямую через БД."""
-        self.correct_delete_tests()
-
-    def test_discipline_correct_create_via_admin(self):
-        """Тест на корректное создание через административную часть."""
-        self.correct_create_tests(url="/admin/main/discipline/add/")
-
-    def test_discipline_correct_update_via_admin(self):
-        """Тест на корректное изменение через административную часть."""
-        url = f"/admin/main/discipline/{self.future_obj_id}/change/"
-        self.correct_update_tests(url=url, _save="Сохранить")
-
-    def test_discipline_delete_via_admin(self):
-        """Тест на корректное удаление через административную часть."""
-        url = f"/admin/main/discipline/{self.future_obj_id}/delete/"
-        self.correct_delete_tests(url=url, post="yes")
 
 
 class StaffMemberCrudTest(ModelTestBaseClass):

@@ -4,10 +4,11 @@ from typing import Any
 from django.test import TestCase
 from main.data_factories.factories import (
     DiagnosisFactory,
-    DisciplineFactory,
+    DisciplineLevelFactory,
+    DisciplineNameFactory,
     PlayerFactory,
 )
-from main.models import Diagnosis, Discipline, Player
+from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
 
 
 class TestUser(TestCase):
@@ -17,13 +18,15 @@ class TestUser(TestCase):
     diagnosis: Diagnosis | Any = None
     player: Player | Any = None
     player_test: Player | Any = None
-    discipline: Discipline | Any = None
+    discipline_name: DisciplineName | Any = None
+    discipline_level: DisciplineLevel | Any = None
 
     @classmethod
     def setUpTestData(cls):
         """Создание тестовых данных."""
         cls.diagnosis = DiagnosisFactory.create()
-        cls.discipline = DisciplineFactory.create()
+        cls.discipline_name = DisciplineNameFactory.create()
+        cls.discipline_level = DisciplineLevelFactory.create()
         cls.player = PlayerFactory.create()
         cls.player_test = cls.player
 
@@ -35,14 +38,15 @@ class TestUser(TestCase):
             patronymic=self.player_test.patronymic + "тест",
             gender=self.player_test.gender,
             birthday=self.player_test.birthday,
-            discipline=self.discipline,
+            discipline_name=self.discipline_name,
+            discipline_level=self.discipline_level,
             diagnosis=self.diagnosis,
             level_revision=self.player_test.level_revision,
             position=self.player_test.position,
             number=self.player_test.number,
             identity_document=self.player_test.identity_document,
         )
-        self.discipline = self.player.discipline
+        self.discipline_name = self.player.discipline_name
         self.diagnosis = self.player.diagnosis
 
     def test_player_create(self):
@@ -56,7 +60,8 @@ class TestUser(TestCase):
         )
         self.assertEqual(self.player.gender, self.player_test.gender)
         self.assertEqual(self.player.birthday, self.player_test.birthday)
-        self.assertEqual(self.player.discipline, self.discipline)
+        self.assertEqual(self.player.discipline_name, self.discipline_name)
+        self.assertEqual(self.player.discipline_level, self.discipline_level)
         self.assertEqual(self.player.diagnosis, self.diagnosis)
         self.assertEqual(
             self.player.level_revision, self.player_test.level_revision
@@ -74,7 +79,8 @@ class TestUser(TestCase):
         new_patronymic = self.player_test.patronymic + "редактирование"
         new_gender = self.player_test.gender
         new_birthday = datetime.strptime("2014-01-18", "%Y-%m-%d").date()
-        new_discipline = DisciplineFactory.create()
+        new_discipline_name = DisciplineNameFactory.create()
+        new_discipline_level = DisciplineLevelFactory.create()
         new_diagnosis = DiagnosisFactory.create()
         new_level_revision = self.player_test.level_revision + "ред."
         new_position = self.player_test.position + "редактирование"
@@ -86,7 +92,8 @@ class TestUser(TestCase):
         self.player.patronymic = new_patronymic
         self.player.gender = new_gender
         self.player.birthday = new_birthday
-        self.player.discipline = new_discipline
+        self.player.discipline_name = new_discipline_name
+        self.player.discipline_level = new_discipline_level
         self.player.diagnosis = new_diagnosis
         self.player.level_revision = new_level_revision
         self.player.position = new_position
@@ -100,7 +107,8 @@ class TestUser(TestCase):
         self.assertEqual(edited_player.patronymic, new_patronymic)
         self.assertEqual(edited_player.gender, new_gender)
         self.assertEqual(edited_player.birthday, new_birthday)
-        self.assertEqual(edited_player.discipline, new_discipline)
+        self.assertEqual(edited_player.discipline_name, new_discipline_name)
+        self.assertEqual(edited_player.discipline_level, new_discipline_level)
         self.assertEqual(edited_player.diagnosis, new_diagnosis)
         self.assertEqual(edited_player.level_revision, new_level_revision)
         self.assertEqual(edited_player.position, new_position)

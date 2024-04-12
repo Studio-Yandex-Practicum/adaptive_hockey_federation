@@ -4,7 +4,7 @@ import subprocess
 from django.db import connection
 from main import models
 from main.models import (
-    Discipline,
+    DisciplineName,
     DisciplineLevel,
     Player,
     StaffMember,
@@ -32,17 +32,24 @@ def parse_file(file_path: str) -> list[BaseUserInfo]:
         return data
 
 
-def get_discipline(item_name: str):
+def get_discipline_name(item_name: str):
     try:
-        discipline_level_id = DisciplineLevel.objects.get(
+        discipline_name = DisciplineName.objects.get(
             name=item_name
         )
-        discipline = Discipline.objects.get(
-            discipline_level_id=discipline_level_id
+    except DisciplineName.DoesNotExist:
+        discipline_name = None
+    return discipline_name
+
+
+def get_discipline_level(item_name: str):
+    try:
+        discipline_level = DisciplineLevel.objects.get(
+            name=item_name
         )
     except DisciplineLevel.DoesNotExist:
-        discipline = None
-    return discipline
+        discipline_level = None
+    return discipline_level
 
 
 def create_staff_member(item):
@@ -77,7 +84,7 @@ def create_staff_member(item):
         print(f'Ошибка вставки данных {e} -> {item}')
 
 
-def create_players(item, discipline) -> None:
+def create_players(item, discipline_name) -> None:
     try:
         player_model = Player(
             surname=item['surname'],
@@ -91,7 +98,7 @@ def create_players(item, discipline) -> None:
             is_captain=item['is_captain'],
             is_assistent=item['is_assistant'],
             identity_document=item['passport'],
-            discipline=discipline,
+            discipline_name=discipline_name,
         )
         player_model.save()
         teams = Team.objects.get(name=item['team'])
@@ -114,7 +121,7 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
             if i in item['position']:
                 create_players(
                     item,
-                    get_discipline(item['classification'])
+                    get_discipline_name(item['classification'])
                 )
         for i in STAFF_POSITIONS:
             if i in item['position']:
@@ -153,11 +160,16 @@ def importing_real_data_db(
                     patronymic=item['patronymic'],
                 )
                 model_ins.save()
-            if key == 'main_discipline':
+            if key == 'main_discipline_name':
                 model_ins = models_name(
                     id=item['id'],
-                    discipline_level_id=item['discipline_level_id'],
-                    discipline_name_id=item['discipline_name_id']
+                    name=item['discipline_name_id'],
+                )
+                model_ins.save()
+            if key == 'main_discipline_level':
+                model_ins = models_name(
+                    id=item['id'],
+                    name=item['discipline_level_id'],
                 )
                 model_ins.save()
             if key == 'main_staffteammember':
@@ -194,7 +206,7 @@ def importing_real_data_db(
                     is_assistent=item['is_assistent'],
                     identity_document=item['identity_document'],
                     diagnosis_id=item['diagnosis_id'],
-                    discipline_id=item['discipline_id'],
+                    discipline_name=item['discipline_name_id'],
                     document_id=item['document_id']
                 )
                 model_ins.save()
