@@ -17,16 +17,13 @@ class AnalyticsListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        or_lookup = {
-            "addition_date__gte": self.request.GET.get("timespan"),
-            "birthday__year": self.request.GET.get("birthday"),
-            "discipline_name_id": self.request.GET.get("discipline"),
-            "team__city": self.request.GET.get("city"),
-        }
-        or_lookup = {key: value for key, value in or_lookup.items() if value}
-        if not or_lookup:
-            return queryset
-        return queryset.filter(Q(**or_lookup))
+
+        return model_get_queryset(
+            "analytics",
+            Player,
+            dict(self.request.GET),
+            queryset
+        )
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

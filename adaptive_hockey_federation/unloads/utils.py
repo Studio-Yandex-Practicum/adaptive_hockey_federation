@@ -37,18 +37,10 @@ def analytics_get_queryset(model, dict_param, queryset):
     if not any(elem in dict_param for elem in keys_param):
         return queryset
 
-    timespan = None
-    birthday = None
-    discipline = None
-    city = None
-    if "timespan" in dict_param:
-        timespan = dict_param["timespan"][0]
-    if "birthday" in dict_param:
-        birthday = dict_param["birthday"][0]
-    if "discipline" in dict_param:
-        discipline = dict_param["discipline"][0]
-    if "city" in dict_param:
-        city = dict_param["city"][0]
+    timespan = dict_param["timespan"][0]
+    birthday = dict_param["birthday"][0]
+    discipline = dict_param["discipline"][0]
+    city = dict_param["city"][0]
 
     or_lookup = {
         "addition_date__gte": timespan,

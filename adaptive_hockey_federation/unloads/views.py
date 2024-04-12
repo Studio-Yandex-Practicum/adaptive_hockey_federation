@@ -95,7 +95,7 @@ class DataExportView(LoginRequiredMixin, View):
             model = apps.get_model(app_label, model_name)
             last_url = request.META.get("HTTP_REFERER")
             parsed = urlparse(last_url)
-            params = parse_qs(parsed.query)
+            params = parse_qs(parsed.query,keep_blank_values=True)
             new_queryset = model_get_queryset(
                 page_name,
                 model,

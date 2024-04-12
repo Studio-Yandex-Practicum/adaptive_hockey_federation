@@ -86,6 +86,8 @@ def create_staff_member(item):
 
 def create_players(item, discipline_name) -> None:
     try:
+        # Поставил type: ignore т.к. не смог победить
+        # конфликт на поле discipline_name :-)
         player_model = Player(
             surname=item['surname'],
             name=item['name'],
