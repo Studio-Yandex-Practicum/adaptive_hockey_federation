@@ -3,7 +3,7 @@ from main.schemas.player_schema import SEARCH_FIELDS
 
 
 def players_get_queryset(model, dict_param, queryset):
-    """Функция поиска для игроков"""
+    """Функция поиска для игроков."""
     if "search" in dict_param:
         search = dict_param["search"][0]
         search_column = dict_param["search_column"][0]
