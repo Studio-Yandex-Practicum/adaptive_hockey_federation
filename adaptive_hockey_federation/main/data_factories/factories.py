@@ -130,17 +130,6 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
             self.name = check_len(field, 5, 3)
 
 
-class DisciplineNameFactory(factory.django.DjangoModelFactory):
-    """Создание адаптивных дисциплин. Колонка "name" является уникальной."""
-
-    class Meta:
-        model = DisciplineName
-        django_get_or_create = ["name"]
-        skip_postgeneration_save = True
-
-    name = factory.Faker("sentence", nb_words=2, locale="ru_RU")
-
-
 class DisciplineLevelFactory(factory.django.DjangoModelFactory):
     """
     Создание уровней для адаптивных дисциплин. Колонка "name"

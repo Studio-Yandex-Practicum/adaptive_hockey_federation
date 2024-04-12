@@ -25,6 +25,13 @@ GROUPS_BY_ROLE = {
     ROLE_SUPERUSER: GROUP_ADMINS,
 }
 
+DISCIPLINES = (
+    "Следж-хоккей",
+    "Хоккей для незрячих",
+    "Специальный хоккей",
+    "Роликовый следж-хоккей",
+)
+
 # constants for main/models.py
 CHAR_FIELD_LENGTH = 256
 EMPTY_VALUE_DISPLAY = ""
@@ -62,30 +69,23 @@ MIN_AGE_PlAYER: int = 6
 MAX_AGE_PlAYER: int = 18
 
 FORM_HELP_TEXTS = {
-
     "identity_document": (
         "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или "
         "'Свидетельство о рождении X-XX XXXXXX'"
     ),
-    "birthday":
-    (
+    "birthday": (
         f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет"
     ),
-    "available_teams": (
-        "Список доступных команд перемещение двойным щелчком"
-    ),
+    "available_teams": ("Список доступных команд перемещение двойным щелчком"),
     "email": (
-        "Введите актуальную электронную почту"
-        " в формате example@domen.ru"
+        "Введите актуальную электронную почту" " в формате example@domen.ru"
     ),
-    "role": (
-        "Выберите роль которая соответствует пользователю"
-    ),
+    "role": ("Выберите роль которая соответствует пользователю"),
     "teams": (
         "Список команд в которых состоит игрок удаление двойным щелчком"
     ),
 }
 
-FILE_RESOLUTION = ('png', 'jpeg', 'jpg', 'pdf')
+FILE_RESOLUTION = ("png", "jpeg", "jpg", "pdf")
 MAX_UPLOAD_SIZE: int = 10485760
 MAX_UPLOAD_SIZE_MB: str = str(int(MAX_UPLOAD_SIZE / (1024 * 1024))) + " MB"
