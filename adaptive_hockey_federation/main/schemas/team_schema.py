@@ -3,8 +3,8 @@ from django.urls import reverse
 from main.controllers.utils import get_player_href
 
 TEAM_SEARCH_FIELDS = {
-    "discipline_name": "discipline_name_id__name",
     "name": "name",
+    "discipline_name": "discipline_name__name",
     "city": "city__name",
 }
 
@@ -55,6 +55,8 @@ def get_players_table(players):
             "gender": "Пол",
             "position": "Квалификация",
             "diagnosis": "Диагноз",
+            "discipline_name": "Дисциплина",
+            "discipline_level": "Числовой статус",
             "number": "Номер игрока",
             "level_revision": "Уровень ревизии",
         },
@@ -66,6 +68,14 @@ def get_players_table(players):
                 "position": player.get_position_display(),
                 "diagnosis": (
                     player.diagnosis.name if player.diagnosis else None
+                ),
+                "discipline_name": (
+                    player.discipline_name if player.discipline_name else None
+                ),
+                "discipline_level": (
+                    player.discipline_level
+                    if player.discipline_level
+                    else None
                 ),
                 "number": player.number,
                 "level_revision": player.level_revision,

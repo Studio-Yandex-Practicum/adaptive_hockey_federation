@@ -41,7 +41,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
         players = (
             Player.objects.filter(team=self.kwargs["team_id"])
             .select_related("diagnosis")
-            .select_related("discipline")
+            .select_related("discipline_name")
             .all()
         )
         context["players_table"] = get_players_table(players)
@@ -82,7 +82,7 @@ class TeamListView(
             )
             if not search_column or search_column.lower() in ["все", "all"]:
                 or_lookup = (
-                    Q(discipline_name_id__name__icontains=search)
+                    Q(discipline_name__name__icontains=search)
                     | Q(name__icontains=search)
                     | Q(city__name__icontains=search)
                 )
