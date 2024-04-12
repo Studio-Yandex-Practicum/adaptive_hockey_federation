@@ -1,8 +1,6 @@
 import os
 from datetime import datetime
-
-from django.db.models import QuerySet
-from openpyxl import Workbook
+from typing import Any, List
 
 from core.constants import (
     FILE_RESOLUTION,
@@ -11,7 +9,6 @@ from core.constants import (
     MAX_AGE_PlAYER,
     MIN_AGE_PlAYER,
 )
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from core.settings.openpyxl_settings import (
     ALIGNMENT_CENTER,
     HEADERS_BORDER,
@@ -21,12 +18,13 @@ from core.settings.openpyxl_settings import (
     ROWS_FILL,
     TITLE_FILL,
     TITLE_FONT,
-    TITLE_HEIGHT
+    TITLE_HEIGHT,
 )
-
-from openpyxl.worksheet.worksheet import Worksheet
-from typing import Any, List
 from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db.models import QuerySet
+from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 
 def generate_file_name(filename: str, prefix: str) -> str:
@@ -58,6 +56,7 @@ def max_date():
     month_day = format(now.strftime("%m-%d"))
     return f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
 
+
 def column_width(workbook: Worksheet) -> None:
     for col in workbook.columns:
         max_length = 0
@@ -67,6 +66,7 @@ def column_width(workbook: Worksheet) -> None:
                 max_length = len(str(cell.value))
         adjusted_width = max_length + 2
         workbook.column_dimensions[column].width = adjusted_width
+
 
 def export_excel(queryset: QuerySet, filename: str, title: str) -> str:
     """Выгрузка данных в excel (формат xlsx).
@@ -89,14 +89,14 @@ def export_excel(queryset: QuerySet, filename: str, title: str) -> str:
             row: List[Any] = []
             for field in fields:
                 value = getattr(obj, field)
-                if type(value)==bool:
-                    value = 'Да' if value == True else 'Нет'
+                if isinstance(value, bool):
+                    value = 'Да' if value else 'Нет'
                 else:
                     if hasattr(value, "__str__"):
                         value = value.__str__()
-                
+
                 row.append(value)
-            
+
             ws.append(row)
 
         column_width(ws)

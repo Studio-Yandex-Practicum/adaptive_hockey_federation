@@ -4,10 +4,10 @@ from typing import Tuple
 
 import factory
 from competitions.models import Competition
+from core.utils import export_excel
 from django.db.models import QuerySet
 from main.models import Player, Team
 from unloads.models import Unload
-from core.utils import export_excel
 from users.factories import UserFactory
 
 
