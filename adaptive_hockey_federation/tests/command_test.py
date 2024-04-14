@@ -10,10 +10,8 @@ def create_user():
 
 
 @pytest.fixture
-def create_team(create_discipline_name, create_user):
-    return TeamFactory(
-        discipline_name=create_discipline_name, curator=create_user
-    )
+def create_team(create_user):
+    return TeamFactory(curator=create_user)
 
 
 @pytest.mark.django_db

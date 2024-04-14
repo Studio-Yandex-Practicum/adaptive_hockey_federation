@@ -357,7 +357,6 @@ class DisciplineNameCrudTest(ModelTestBaseClass):
 
     model = DisciplineName
     model_schema = DISCIPLINE_NAME_MODEL_TEST_SCHEMA
-    model_schema = DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA
 
     def test_discipline_name_correct_creation(self):
         """Тест на корректное создание напрямую через БД."""

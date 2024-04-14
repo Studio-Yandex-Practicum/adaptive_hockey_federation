@@ -31,8 +31,6 @@ class TestUser(TestCase):
             patronymic=self.player_test.patronymic + "тест",
             gender=self.player_test.gender,
             birthday=self.player_test.birthday,
-            discipline_name=self.player_test.discipline_name,
-            discipline_level=self.player_test.discipline_level,
             diagnosis=self.diagnosis,
             level_revision=self.player_test.level_revision,
             position=self.player_test.position,
@@ -71,8 +69,6 @@ class TestUser(TestCase):
         new_patronymic = self.player_test.patronymic + "редактирование"
         new_gender = self.player_test.gender
         new_birthday = datetime.strptime("2014-01-18", "%Y-%m-%d").date()
-        new_discipline_name = None  # random.choice(DISCIPLINE_LEVELS.keys())
-        new_discipline_level = None  # DisciplineLevelFactory.create()
         new_diagnosis = DiagnosisFactory.create()
         new_level_revision = self.player_test.level_revision + "ред."
         new_position = self.player_test.position + "редактирование"
@@ -84,8 +80,6 @@ class TestUser(TestCase):
         self.player.patronymic = new_patronymic
         self.player.gender = new_gender
         self.player.birthday = new_birthday
-        self.player.discipline_name = new_discipline_name
-        self.player.discipline_level = new_discipline_level
         self.player.diagnosis = new_diagnosis
         self.player.level_revision = new_level_revision
         self.player.position = new_position
@@ -99,8 +93,6 @@ class TestUser(TestCase):
         self.assertEqual(edited_player.patronymic, new_patronymic)
         self.assertEqual(edited_player.gender, new_gender)
         self.assertEqual(edited_player.birthday, new_birthday)
-        self.assertEqual(edited_player.discipline_name, new_discipline_name)
-        self.assertEqual(edited_player.discipline_level, new_discipline_level)
         self.assertEqual(edited_player.diagnosis, new_diagnosis)
         self.assertEqual(edited_player.level_revision, new_level_revision)
         self.assertEqual(edited_player.position, new_position)

@@ -1,3 +1,4 @@
+from main.models import DisciplineName
 from tests.model_schemas.fields_validation_schemas import (
     ALL_LETTERS,
     CORRECT_CREATE,
@@ -12,9 +13,11 @@ from tests.model_schemas.fields_validation_schemas import (
 DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {
         "name": "Наименование дисциплины или статуса дисциплины",
+        "discipline_name": DisciplineName,
     },
     CORRECT_UPDATE: {
         "name": "Новое наименование дисциплины или статуса дисциплины",
+        "discipline_name": DisciplineName,
     },
     "must_not_be_admitted": (
         {
