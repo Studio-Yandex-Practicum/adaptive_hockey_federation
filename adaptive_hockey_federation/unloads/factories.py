@@ -7,7 +7,7 @@ from competitions.models import Competition
 from django.db.models import QuerySet
 from main.models import Player, Team
 from unloads.models import Unload
-from unloads.utils import export_excel
+from core.utils import export_excel
 from users.factories import UserFactory
 
 
