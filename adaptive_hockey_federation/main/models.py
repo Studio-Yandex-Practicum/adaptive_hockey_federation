@@ -85,42 +85,6 @@ class DisciplineLevel(BaseUniqueName):
         return self.name
 
 
-class Discipline(models.Model):
-    """
-    Модель Дисциплина.
-    """
-
-    discipline_name = models.ForeignKey(
-        DisciplineName,
-        on_delete=models.CASCADE,
-        max_length=CLASS_FIELD_LENGTH,
-        verbose_name=_("Название дисциплины"),
-        help_text=_("Название дисциплины"),
-        related_name="disciplines",
-    )
-    discipline_level = models.ForeignKey(
-        DisciplineLevel,
-        on_delete=models.CASCADE,
-        max_length=CLASS_FIELD_LENGTH,
-        verbose_name=_("Класс/статус"),
-        help_text=_("Класс/статус"),
-        related_name="disciplines",
-    )
-
-    class Meta:
-        verbose_name = "Дисциплина"
-        verbose_name_plural = "Дисциплины"
-        constraints = [
-            models.UniqueConstraint(
-                name="discipline_name_level_unique",
-                fields=["discipline_name", "discipline_level"],
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.discipline_name.name} ({self.discipline_level.name})"
-
-
 class Nosology(BaseUniqueName):
     """
     Модель Нозология.
@@ -201,7 +165,7 @@ class StaffMember(BasePerson):
         blank=True,
         validators=[
             validate_international_phonenumber,
-            zone_code_without_seven_hundred
+            zone_code_without_seven_hundred,
         ],
         verbose_name=_("Актуальный номер телефона"),
         help_text=_("Номер телефона, допустимый формат - +7 ХХХ ХХХ ХХ ХХ"),
@@ -352,13 +316,21 @@ class Player(BasePerson):
         verbose_name=_("Диагноз"),
         help_text=_("Диагноз"),
     )
-    discipline = models.ForeignKey(
-        Discipline,
+    discipline_name = models.ForeignKey(
+        DisciplineName,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="player_disciplines",
+        related_name="player_disciplines_names",
         verbose_name=_("Дисциплина"),
         help_text=_("Дисциплина"),
+    )
+    discipline_level = models.ForeignKey(
+        DisciplineLevel,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="player_disciplines_levels",
+        verbose_name=_("Числовой статус"),
+        help_text=_("Числовой статус"),
     )
     team = models.ManyToManyField(
         Team,

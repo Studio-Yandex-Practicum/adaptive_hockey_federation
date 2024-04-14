@@ -10,7 +10,8 @@ from django.core.management.base import BaseCommand
 from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,
-    DisciplineFactory,
+    DisciplineLevelFactory,
+    DisciplineNameFactory,
     DocumentFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
@@ -61,10 +62,16 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы StaffTeamMember",
         )
         parser.add_argument(
-            "-ds",
-            "--discipline",
+            "-ds_name",
+            "--discipline_name",
             action="store_true",
-            help="Фикстуры для таблицы Discipline",
+            help="Фикстуры для таблицы DisciplineName",
+        )
+        parser.add_argument(
+            "-ds_lvl",
+            "--discipline_level",
+            action="store_true",
+            help="Фикстуры для таблицы DisciplineLevel",
         )
         parser.add_argument(
             "-t",
@@ -108,7 +115,8 @@ class Command(BaseCommand):
         test_users = options.get("users", False)
         diagnosis = options.get("diagnosis", False)
         staff_team = options.get("staffteam", False)
-        discipline = options.get("discipline", False)
+        discipline_name = options.get("discipline_name", False)
+        discipline_level = options.get("discipline_level", False)
         team = options.get("team", False)
         player = options.get("player", False)
         document = options.get("document", False)
@@ -143,11 +151,18 @@ class Command(BaseCommand):
                     "StaffTeamMember создано!"
                 )
             )
-        if discipline:
-            DisciplineFactory.create_batch(amount)
+        if discipline_name:
+            DisciplineNameFactory.create_batch(amount)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Discipline созданы!"
+                    f"{amount} фикстур для таблицы DisciplineName созданы!"
+                )
+            )
+        if discipline_level:
+            DisciplineLevelFactory.create_batch(amount)
+            return self.stdout.write(
+                self.style.SUCCESS(
+                    f"{amount} фикстур для таблицы DisciplineLevel созданы!"
                 )
             )
         if team:
