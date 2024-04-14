@@ -25,12 +25,18 @@ GROUPS_BY_ROLE = {
     ROLE_SUPERUSER: GROUP_ADMINS,
 }
 
-DISCIPLINES = (
-    "Следж-хоккей",
-    "Хоккей для незрячих",
-    "Специальный хоккей",
-    "Роликовый следж-хоккей",
-)
+# Виды дисциплин в хоккее
+SLEDGE_HOCKEY = "Следж-хоккей"
+BLIND_HOCKEY = "Хоккей для незрячих"
+SPECIAL_HOCKEY = "Специальный хоккей"
+ROLLER_HOCKEY = "Роликовый следж-хоккей"
+
+DISCIPLINE_LEVELS = {
+    SLEDGE_HOCKEY: (1, 2, 3, 4, 5, 6),
+    ROLLER_HOCKEY: (1, 2, 3, 4, 5, 6),
+    BLIND_HOCKEY: ("B1", "B2", "B3", "B4", "B5", "б/к"),
+    SPECIAL_HOCKEY: ("A", "B", "C"),
+}
 
 # constants for main/models.py
 CHAR_FIELD_LENGTH = 256

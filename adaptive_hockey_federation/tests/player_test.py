@@ -1,14 +1,8 @@
-import random
 from datetime import datetime
 from typing import Any
 
-from core.constants import DISCIPLINES
 from django.test import TestCase
-from main.data_factories.factories import (
-    DiagnosisFactory,
-    DisciplineLevelFactory,
-    PlayerFactory,
-)
+from main.data_factories.factories import DiagnosisFactory, PlayerFactory
 from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
 
 
@@ -26,7 +20,6 @@ class TestUser(TestCase):
     def setUpTestData(cls):
         """Создание тестовых данных."""
         cls.diagnosis = DiagnosisFactory.create()
-        cls.discipline_level = DisciplineLevelFactory.create()
         cls.player = PlayerFactory.create()
         cls.player_test = cls.player
 
@@ -39,7 +32,7 @@ class TestUser(TestCase):
             gender=self.player_test.gender,
             birthday=self.player_test.birthday,
             discipline_name=self.player_test.discipline_name,
-            discipline_level=self.discipline_level,
+            discipline_level=self.player_test.discipline_level,
             diagnosis=self.diagnosis,
             level_revision=self.player_test.level_revision,
             position=self.player_test.position,
@@ -78,8 +71,8 @@ class TestUser(TestCase):
         new_patronymic = self.player_test.patronymic + "редактирование"
         new_gender = self.player_test.gender
         new_birthday = datetime.strptime("2014-01-18", "%Y-%m-%d").date()
-        new_discipline_name = random.choice(DISCIPLINES)[1]
-        new_discipline_level = DisciplineLevelFactory.create()
+        new_discipline_name = None  # random.choice(DISCIPLINE_LEVELS.keys())
+        new_discipline_level = None  # DisciplineLevelFactory.create()
         new_diagnosis = DiagnosisFactory.create()
         new_level_revision = self.player_test.level_revision + "ред."
         new_position = self.player_test.position + "редактирование"

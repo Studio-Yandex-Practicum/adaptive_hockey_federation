@@ -10,7 +10,6 @@ from django.core.management.base import BaseCommand
 from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,
-    DisciplineLevelFactory,
     DocumentFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
@@ -61,12 +60,6 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы StaffTeamMember",
         )
         parser.add_argument(
-            "-ds_lvl",
-            "--discipline_level",
-            action="store_true",
-            help="Фикстуры для таблицы DisciplineLevel",
-        )
-        parser.add_argument(
             "-t",
             "--team",
             action="store_true",
@@ -108,7 +101,6 @@ class Command(BaseCommand):
         test_users = options.get("users", False)
         diagnosis = options.get("diagnosis", False)
         staff_team = options.get("staffteam", False)
-        discipline_level = options.get("discipline_level", False)
         team = options.get("team", False)
         player = options.get("player", False)
         document = options.get("document", False)
@@ -141,13 +133,6 @@ class Command(BaseCommand):
                 self.style.SUCCESS(
                     f"{staff_amount} фикстур для таблицы "
                     "StaffTeamMember создано!"
-                )
-            )
-        if discipline_level:
-            DisciplineLevelFactory.create_batch(amount)
-            return self.stdout.write(
-                self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы DisciplineLevel созданы!"
                 )
             )
         if team:

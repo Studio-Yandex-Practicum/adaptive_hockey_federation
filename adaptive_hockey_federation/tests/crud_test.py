@@ -1,7 +1,6 @@
 from typing import Any
 
 from core.constants import ROLE_AGENT
-from main.data_factories.factories import DisciplineLevelFactory
 from main.models import (
     City,
     Diagnosis,
@@ -418,12 +417,6 @@ class DisciplineLevelCrudTest(ModelTestBaseClass):
 
     model = DisciplineLevel
     model_schema = DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA
-    discipline_level_1: DisciplineLevel
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.discipline_level_1 = DisciplineLevelFactory.create(name="test")
-        super().setUpClass()
 
     def test_discipline_level_correct_creation(self):
         """Тест на корректное создание напрямую через БД."""

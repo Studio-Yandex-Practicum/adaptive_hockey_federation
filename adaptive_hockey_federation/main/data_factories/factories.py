@@ -4,7 +4,6 @@ from io import BytesIO
 
 import factory
 from competitions.models import Competition
-from core.constants import DISCIPLINES
 from django.core.files.base import File
 from django.db.models import Count
 from main.models import (
@@ -12,7 +11,6 @@ from main.models import (
     PLAYER_POSITION_CHOICES,
     City,
     Diagnosis,
-    DisciplineLevel,
     DisciplineName,
     Document,
     Nosology,
@@ -131,19 +129,6 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
             self.name = check_len(field, 5, 3)
 
 
-class DisciplineLevelFactory(factory.django.DjangoModelFactory):
-    """
-    Создание уровней для адаптивных дисциплин. Колонка "name"
-    является уникальной.
-    """
-
-    class Meta:
-        model = DisciplineLevel
-        django_get_or_create = ["name"]
-
-    name = factory.Iterator(["A1", "A2", "B1", "B2", "C1", "C2"])
-
-
 class TeamFactory(factory.django.DjangoModelFactory):
     """
     Создание команд. Привязка к ним уже созданных городов,
@@ -208,9 +193,6 @@ class PlayerFactory(factory.django.DjangoModelFactory):
         "date_time_this_decade", before_now=True, after_now=False
     )
     gender = factory.LazyFunction(lambda: random.choice(GENDER_CHOICES)[1])
-    discipline_name = factory.LazyFunction(
-        lambda: random.choice(DISCIPLINES)[1]
-    )
     level_revision = factory.Faker("sentence", nb_words=1, locale="ru_RU")
     position = factory.LazyFunction(
         lambda: random.choice(PLAYER_POSITION_CHOICES)[1]
@@ -223,6 +205,10 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def diagnosis(self):
         return get_random_objects(Diagnosis)
+
+    @factory.lazy_attribute
+    def discipline_name(self):
+        return get_random_objects(DisciplineName)
 
     @factory.post_generation
     def team(self, create, extracted, **kwargs):
