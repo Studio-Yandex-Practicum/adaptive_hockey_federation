@@ -17,7 +17,6 @@ class AnalyticsListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
         return model_get_queryset(
             "analytics", Player, dict(self.request.GET), queryset
         )
