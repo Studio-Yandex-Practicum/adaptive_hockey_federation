@@ -2,6 +2,7 @@ import os
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
+from core.utils import export_excel
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,8 +12,9 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
+from unloads.mapping import model_mapping
 from unloads.models import Unload
-from unloads.utils import export_excel, get_lookup, unload_file_name
+from unloads.utils import model_get_queryset
 
 
 class UnloadListView(
@@ -26,7 +28,7 @@ class UnloadListView(
     template_name = "main/unloads/unloads.html"
     context_object_name = "unloads"
     paginate_by = 10
-    ordering = ["-date"]
+    ordering = ["date"]
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -81,34 +83,25 @@ class DataExportView(LoginRequiredMixin, View):
     # TODO: (Если требуется выгрузка других моделей,
     # нужно добавить их в словарь(model_mapping)
     # и дополнить шаблон base/footer.html.)
-    model_mapping = {
-        "players": ("main", "Player", "players", "Данные игроков"),
-        "teams": ("main", "Team", "teams", "Данные команд"),
-        "competitions": (
-            "competitions",
-            "Competition",
-            "competitions",
-            "Данные соревнований",
-        ),
-    }
 
     def get(self, request, *args, **kwargs):
         page_name = kwargs.get("page_name")
 
-        if page_name in self.model_mapping:
-            app_label, model_name, filename, title = self.model_mapping[
-                page_name
-            ]
+        if page_name in model_mapping:
+            app_label, model_name, filename, title = model_mapping[page_name]
             model = apps.get_model(app_label, model_name)
             last_url = request.META.get("HTTP_REFERER")
             parsed = urlparse(last_url)
-            params = parse_qs(parsed.query)
-            lookup = get_lookup(params)
+            params = parse_qs(parsed.query, keep_blank_values=True)
+            new_queryset = model_get_queryset(page_name, model, params, None)
+            if new_queryset:
+                queryset = new_queryset
+                filename = page_name + "_search.xlsx"
+            else:
+                queryset = model.objects.all()
+                filename = page_name + "_all.xlsx"
 
-            queryset = model.objects.filter(**lookup)
-            filename = unload_file_name(request.user, filename)
-
-            export_excel(queryset, filename, title)
+            filename = export_excel(queryset, filename, title)
             file_slug = f"unloads_data/{filename}"
 
             unload_record = Unload(
@@ -118,7 +111,9 @@ class DataExportView(LoginRequiredMixin, View):
             )
             unload_record.save()
 
-            file_path = unload_record.unload_file_slug.path
+            file_path = os.path.join(
+                settings.MEDIA_ROOT, "unloads_data", filename
+            )
             if os.path.exists(file_path):
                 file_unload = open(file_path, "rb")
                 response = FileResponse(file_unload)

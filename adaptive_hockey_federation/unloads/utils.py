@@ -1,124 +1,64 @@
-import os
-from datetime import datetime
-from typing import Any, List
-
-from core.constants import SEARCH_ALIAS, TIME_FORMAT, UNLOAD_DIR
-from django.conf import settings
-from django.db.models import QuerySet
-from openpyxl import Workbook
-from openpyxl.styles import Border, Font, PatternFill, Side
-from openpyxl.worksheet.worksheet import Worksheet
+from django.db.models import Q
+from main.schemas.player_schema import SEARCH_FIELDS
 
 
-def unload_file_name(user: str, prefix: str) -> str:
-    return (
-        f"{prefix}_{user.id}_{datetime.now().strftime(TIME_FORMAT)}.xlsx"
-    )
+def players_get_queryset(model, dict_param, queryset):
+    """Функция поиска для игроков."""
+    if "search" in dict_param:
+        search = dict_param["search"][0]
+        search_column = dict_param["search_column"][0]
+        if not search_column or search_column.lower() in ["все", "all"]:
+            or_lookup = (
+                Q(surname__icontains=search)
+                | Q(name__icontains=search)
+                | Q(birthday__icontains=search)
+                | Q(gender__icontains=search)
+                | Q(number__icontains=search)
+                | Q(discipline__discipline_name_id__name__icontains=search)
+                | Q(diagnosis__name__icontains=search)
+            )
+            if queryset:
+                queryset = queryset.filter(or_lookup)
+            else:
+                model.objects.filter(or_lookup)
+        else:
+            search_fields = SEARCH_FIELDS
+            lookup = {f"{search_fields[search_column]}__icontains": search}
+            if queryset:
+                queryset = queryset.filter(**lookup)
+            else:
+                queryset = model.objects.filter(**lookup)
+    return queryset
 
 
-def get_lookup(params: dict) -> dict:
-    columns = params.get("search_column", [])
-    searchs = params.get("search", [])
-    lookup = {}
-    for column, search in zip(columns, searchs):
-        lookup_column = SEARCH_ALIAS.get(column, None)
-        if lookup_column is not None:
-            lookup["{lookup_columnf}__icontains"] = search
-    return lookup
+def analytics_get_queryset(model, dict_param, queryset):
+    """Функция поиска для аналитики"""
+    keys_param = ("timespan", "birthday", "discipline", "city")
+    if not any(elem in dict_param for elem in keys_param):
+        return queryset
 
+    timespan = dict_param["timespan"][0]
+    birthday = dict_param["birthday"][0]
+    discipline = dict_param["discipline"][0]
+    city = dict_param["city"][0]
 
-def column_width(workbook: Worksheet) -> None:
-    for col in workbook.columns:
-        max_length = 0
-        column = col[0].column_letter
-        for cell in col:
-            if len(str(cell.value)) > max_length:
-                max_length = len(str(cell.value))
-        adjusted_width = (max_length + 2) * 1.2
-        adjusted_width = max_length
-        workbook.column_dimensions[column].width = adjusted_width
-
-
-def export_excel(queryset: QuerySet, filename: str, title: str) -> None:
-    """Выгрузка данных в excel. После создания файла возвращает его имя."""
-    wb = Workbook()
-    del wb["Sheet"]
-    ws: Worksheet = wb.create_sheet("Лист1")
-    ws.append([title])
-
+    or_lookup = {
+        "addition_date__gte": timespan,
+        "birthday__year": birthday,
+        "discipline__discipline_name_id": discipline,
+        "team__city": city,
+    }
+    or_lookup = {key: value for key, value in or_lookup.items() if value}
     if queryset:
-        headers = []
-        fields = []
-        for field in queryset.model._meta.fields:
-            headers.append(str(field.verbose_name))
-            fields.append(field.name)
+        queryset = queryset.filter(Q(**or_lookup))
+    else:
+        queryset = model.objects.filter(Q(**or_lookup))
 
-        ws.append(headers)
-
-        for obj in queryset:
-            row: List[Any] = []
-            for field in fields:
-                value = getattr(obj, field)
-                if hasattr(value, "__str__"):
-                    value = value.__str__()
-                row.append(value)
-            ws.append(row)
-
-        column_width(ws)
-
-        font_title = Font(
-            name="Calibri",
-            size=14,
-            bold=True,
-            italic=False,
-            vertAlign=None,
-            underline="none",
-            strike=False,
-            color="ffffff",
-        )
-        fill_title = PatternFill(patternType="solid", fgColor="729fcf")
-        ws.merge_cells("A1:O1")
-        ws["A1"].font = font_title
-        ws["A1"].fill = fill_title
-
-        font_headers = Font(
-            name="Calibri",
-            size=12,
-            bold=True,
-            italic=True,
-            vertAlign=None,
-            underline="none",
-            strike=False,
-            color="729fcf",
-        )
-        fill_headers = PatternFill(patternType="solid", fgColor="ffffff")
-
-        style_headers = Side(border_style="thin", color="000000")
-        border_headers = Border(
-            top=style_headers,
-            bottom=style_headers,
-            left=style_headers,
-            right=style_headers,
-        )
-
-        list_letter = list(letter_range("A", "P"))
-        for letter in list_letter:
-            ws[letter + "2"].font = font_headers
-            ws[letter + "2"].fill = fill_headers
-            ws[letter + "2"].border = border_headers
-
-        fill_rows = PatternFill(patternType="solid", fgColor="dee6ef")
-        number_rows = int(ws.dimensions.split(":")[1][1:])
-        for i in range(3, number_rows, 2):
-            for letter in list_letter:
-                ws[letter + str(i)].fill = fill_rows
-
-    media_data_path = os.path.join(settings.MEDIA_ROOT, UNLOAD_DIR)
-    os.makedirs(media_data_path, exist_ok=True)
-    file_path = os.path.join(media_data_path, filename)
-    wb.save(file_path)
+    return queryset
 
 
-def letter_range(start: str, stop: str = "{", step=1):
-    for ord_ in range(ord(start.upper()), ord(stop.upper()), step):
-        yield chr(ord_)
+def model_get_queryset(page_name, model, dict_param, queryset):
+    if page_name == "players":
+        return players_get_queryset(model, dict_param, queryset)
+    elif page_name == "analytics":
+        return analytics_get_queryset(model, dict_param, queryset)
