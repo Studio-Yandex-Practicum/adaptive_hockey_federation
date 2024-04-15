@@ -38,8 +38,11 @@ def updates_for_players():
         disciplines_names = DisciplineName.objects.filter(
             id=team.discipline_name.id
         )
-        discipline_level = random.choice(DisciplineLevel.objects.all())
         discipline_name = random.choice(disciplines_names)
+        discipline_levels = DisciplineLevel.objects.filter(
+            discipline_name=discipline_name,
+        )
+        discipline_level = random.choice(discipline_levels)
         captain = random.choice(player_in_team)
         assistent = random.choice(player_in_team)
         captain.is_captain = True
@@ -47,6 +50,5 @@ def updates_for_players():
         captain.save()
         assistent.save()
         player_in_team.update(
-            discipline_name=discipline_name,
-            discipline_level=discipline_level
+            discipline_name=discipline_name, discipline_level=discipline_level
         )
