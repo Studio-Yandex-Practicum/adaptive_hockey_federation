@@ -11,7 +11,6 @@ from main.models import (
     PLAYER_POSITION_CHOICES,
     City,
     Diagnosis,
-    DisciplineLevel,
     DisciplineName,
     Document,
     Nosology,
@@ -130,30 +129,6 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
             self.name = check_len(field, 5, 3)
 
 
-class DisciplineNameFactory(factory.django.DjangoModelFactory):
-    """Создание адаптивных дисциплин. Колонка "name" является уникальной."""
-
-    class Meta:
-        model = DisciplineName
-        django_get_or_create = ["name"]
-        skip_postgeneration_save = True
-
-    name = factory.Faker("sentence", nb_words=2, locale="ru_RU")
-
-
-class DisciplineLevelFactory(factory.django.DjangoModelFactory):
-    """
-    Создание уровней для адаптивных дисциплин. Колонка "name"
-    является уникальной.
-    """
-
-    class Meta:
-        model = DisciplineLevel
-        django_get_or_create = ["name"]
-
-    name = factory.Iterator(["A1", "A2", "B1", "B2", "C1", "C2"])
-
-
 class TeamFactory(factory.django.DjangoModelFactory):
     """
     Создание команд. Привязка к ним уже созданных городов,
@@ -229,6 +204,10 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def diagnosis(self):
         return get_random_objects(Diagnosis)
+
+    @factory.lazy_attribute
+    def discipline_name(self):
+        return get_random_objects(DisciplineName)
 
     @factory.post_generation
     def team(self, create, extracted, **kwargs):
