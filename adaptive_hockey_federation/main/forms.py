@@ -47,16 +47,14 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
 class PlayerForm(forms.ModelForm):
 
     available_teams = ModelMultipleChoiceField(
-        queryset=Team.objects.all().order_by('name'),
+        queryset=Team.objects.all().order_by("name"),
         required=False,
         help_text=FORM_HELP_TEXTS["available_teams"],
         label="Команды",
     )
 
     team = CustomMultipleChoiceField(
-        required=True,
-        help_text=FORM_HELP_TEXTS["teams"],
-        label="Команды"
+        required=True, help_text=FORM_HELP_TEXTS["teams"], label="Команды"
     )
 
     class Meta:
@@ -72,7 +70,7 @@ class PlayerForm(forms.ModelForm):
             "diagnosis",
             "level_revision",
             "team",
-            'available_teams',
+            "available_teams",
             "is_captain",
             "is_assistent",
             "position",
@@ -94,7 +92,7 @@ class PlayerForm(forms.ModelForm):
                 attrs={"placeholder": "Введите номер игрока"}
             ),
             "level_revision": forms.TextInput(
-                attrs={"placeholder": "Введите уровень ревизии"}
+                attrs={"placeholder": "Введите игровую классификацию"}
             ),
             "birthday": forms.DateInput(
                 format=("%Y-%m-%d"),

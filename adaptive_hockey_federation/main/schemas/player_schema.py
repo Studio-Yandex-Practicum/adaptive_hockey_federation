@@ -64,7 +64,7 @@ def get_player_fields(player):
     ]
     player_fields = [
         ("Команда", player_teams),
-        ("Уровень ревизии", player.level_revision),
+        ("Игровая классификация", player.level_revision),
         ("Капитан", player.is_captain),
         ("Ассистент", player.is_assistent),
         ("Игровая позиция", player.position),
