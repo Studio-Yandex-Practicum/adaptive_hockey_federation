@@ -26,6 +26,9 @@
           {% if view_name == 'main:players' %}
             {% url 'main:data_unloads' page_name='players' as player_unload_url %}
             {% include "base/button.html" with url_name=player_unload_url name="Выгрузить" %}
+          {% elif view_name == 'analytics:analytics' %}
+            {% url 'main:data_unloads' page_name='analytics' as analytics_unload_url %}
+            {% include "base/button.html" with url_name=analytics_unload_url name="Выгрузить" %}
           {% elif view_name == 'main:teams' %}
             {% url 'main:data_unloads' page_name='teams' as team_unload_url %}
             {% include "base/button.html" with url_name=team_unload_url name="Выгрузить" %}

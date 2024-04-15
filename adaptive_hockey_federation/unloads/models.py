@@ -1,5 +1,7 @@
-from core.constants import CHAR_FIELD_LENGTH
+from core.constants import CHAR_FIELD_LENGTH, UNLOAD_DIR
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from django.utils.translation import gettext_lazy as _
 from users.models import User
 
@@ -22,7 +24,7 @@ class Unload(models.Model):
         on_delete=models.CASCADE,
     )
     unload_file_slug = models.FileField(
-        verbose_name=_("Ссылка на файл"), upload_to="unloads_data/"
+        verbose_name=_("Ссылка на файл"), upload_to=UNLOAD_DIR + "/"
     )
 
     class Meta:
@@ -32,3 +34,9 @@ class Unload(models.Model):
 
     def __str__(self) -> str:
         return f"{self.unload_name}"
+
+
+@receiver(post_delete, sender=Unload)
+def document_file_delete(sender, instance, **kwargs):
+    if instance.unload_file_slug:
+        instance.unload_file_slug.delete(False)
