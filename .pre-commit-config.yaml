@@ -41,6 +41,8 @@ repos:
         - django_extensions
         - types-python-dateutil
         - psycopg2-binary
+        - openpyxl
+
 
   - repo: local
     hooks:
