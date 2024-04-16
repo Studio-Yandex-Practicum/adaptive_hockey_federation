@@ -8,4 +8,10 @@ model_mapping = {
         "Данные соревнований",
     ),
     "analytics": ("main", "Player", "analytics_data.xlsx", "Данные аналитики"),
+    "users": (
+        "users",
+        "User",
+        "users_data.xlsx",
+        "Данные пользователей",
+    ),
 }

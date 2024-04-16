@@ -69,8 +69,8 @@ class DeleteUnloadView(
 
     object = Unload
     model = Unload
-    success_url = reverse_lazy("main:unloads")
-    permission_required = "main.delete_unload"
+    success_url = reverse_lazy("unloads:unloads")
+    permission_required = "unloads.delete_unload"
     permission_denied_message = "Отсутствует разрешение на удаление выгрузки."
 
     def get_object(self, queryset=None):
