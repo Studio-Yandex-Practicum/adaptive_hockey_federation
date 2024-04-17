@@ -80,10 +80,6 @@ class DeleteUnloadView(
 class DataExportView(LoginRequiredMixin, View):
     """Выгрузка данных в Excel."""
 
-    # TODO: (Если требуется выгрузка других моделей,
-    # нужно добавить их в словарь(model_mapping)
-    # и дополнить шаблон base/footer.html.)
-
     def get(self, request, *args, **kwargs):
         page_name = kwargs.get("page_name")
 
@@ -100,8 +96,24 @@ class DataExportView(LoginRequiredMixin, View):
             else:
                 queryset = model.objects.all()
                 filename = page_name + "_all.xlsx"
-
-            filename = export_excel(queryset, filename, title)
+            if model_name == "User":
+                excluded_fields = ["id", "password", "is_active"]
+                fields_order = [
+                    "last_name",
+                    "first_name",
+                    "patronymic",
+                    "email",
+                    "phone",
+                    "role",
+                    "is_staff",
+                    "date_joined",
+                ]
+            else:
+                excluded_fields = []
+                fields_order = []
+            filename = export_excel(
+                queryset, filename, title, excluded_fields, fields_order
+            )
             file_slug = f"unloads_data/{filename}"
 
             unload_record = Unload(
