@@ -1,5 +1,5 @@
 {% load static %}
-<div class="table-responsive">
+<div class="table-responsive scroll-class">
   <table class="table-table">
     <thead>
       <tr>
@@ -36,8 +36,17 @@
                 <a href="{{ cell_value.url }}">{{ cell_value.name }} </a>
               </td>
             {% endif %}
-          {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
-            <td class="rounded-md">{{ cell_value }}</td>
+            {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
+            <td class="rounded-md">
+              {% if cell_name == 'team' %}
+                {% for team in cell_value %}
+                  {{ team }}
+                  <br>
+                {% endfor %}
+              {% else %}
+                {{ cell_value }}
+              {% endif %}
+            </td>
           {% endif %}
         {% endfor %}
         {% with request.resolver_match.view_name as view_name %}

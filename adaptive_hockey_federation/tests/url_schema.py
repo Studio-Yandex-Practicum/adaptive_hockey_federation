@@ -45,14 +45,6 @@ ADMIN_DIAGNOSIS_URLS = (
     "/admin/main/diagnosis/<path:object_id>/history/",
     "/admin/main/diagnosis/add/",
 )
-ADMIN_DISCIPLINE_URL_302 = ("/admin/main/discipline/<path:object_id>/",)
-ADMIN_DISCIPLINE_URLS = (
-    "/admin/main/discipline/",
-    "/admin/main/discipline/<path:object_id>/change/",
-    "/admin/main/discipline/<path:object_id>/delete/",
-    "/admin/main/discipline/<path:object_id>/history/",
-    "/admin/main/discipline/add/",
-)
 ADMIN_DISCIPLINE_LEVEL_URL_302 = (
     "/admin/main/disciplinelevel/<path:object_id>/",
 )
@@ -193,8 +185,8 @@ PLAYER_GET_URLS = (
 PLAYER_POST_URLS = (
     {URL: "/players/1/delete/", PERMISSION_REQUIRED: "delete_player"},
     # TODO: Тест на данный урл выдает TemplateDoesNotExist. Необходимо
-    #  раскомментировать, когда будет починен player_id_deleted() в
-    #  main.views или вообще удалить, если эта страница не нужна.
+    #   раскомментировать, когда будет починен player_id_deleted() в
+    #   main.views или вообще удалить, если эта страница не нужна.
     # "/players/deleted/",
 )
 STAFF_GET_URLS = (
@@ -247,7 +239,6 @@ ADMIN_SITE_ADMIN_OK = (
     + ADMIN_DIAGNOSIS_URLS
     + ADMIN_DISCIPLINE_LEVEL_URLS
     + ADMIN_DISCIPLINE_NAME_URLS
-    + ADMIN_DISCIPLINE_URLS
     + ADMIN_DOCUMENT_URLS
     + ADMIN_NOSOLOGY_URLS
     + ADMIN_PASSWORD_URLS

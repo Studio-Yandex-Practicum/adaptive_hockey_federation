@@ -1,22 +1,50 @@
 <form method="GET">
   <div class="group-input">
-        <select class="form-select select-form" aria-label="Default select example" name="search_column">
-        <option selected>Все</option>
-        {% for key, column_name in table_head.items %}
-          <option value="{{ key }}">{{ column_name }}</option>
-        {% endfor %}
+    <select id="search_column" class="form-select select-form" aria-label="Default select example" name="search_column">
+      <option selected>
+        Все
+      </option>
+      {% for key, column_name in table_head.items %}
+        <option value="{{ key }}" id="search_{{ key }}">
+          {{ column_name }}
+        </option>
+      {% endfor %}
     </select>
-    <input type="search" id="form1" class="form-control select-form" name="search" aria-label="search"
-      placeholder="{% if request.resolver_match.url_name in 'players' %}Игрок
-      {% elif request.resolver_match.url_name == 'users' %}Роль
-      {% elif request.resolver_match.url_name == 'teams' %}Команда
-      {% elif request.resolver_match.url_name in 'teams_id' %}Игрок
-      {% elif request.resolver_match.url_name == 'competitions' %}Соревнование
-      {% elif request.resolver_match.url_name == 'analytics' %}Аналитика
+    <input
+      type="search"
+      id="search_form_input"
+      class="form-control select-form"
+      name="search"
+      aria-label="search"
+      placeholder="{% if request.resolver_match.url_name in "players" %}Игрок
+      {% elif request.resolver_match.url_name == "users" %}Роль
+      {% elif request.resolver_match.url_name == "teams" %}Команда
+      {% elif request.resolver_match.url_name in "teams_id" %}Игрок
+      {% elif request.resolver_match.url_name == "competitions" %}Соревнование
+      {% elif request.resolver_match.url_name == "analytics" %}Аналитика
       {% else %}Выгрузка
       {% endif %}"
-      style="border-top-left-radius: 0; border-bottom-left-radius: 0;"/>
-    <button type="submit" class="btn bg-white search__button">
+      style="border-top-left-radius: 0; border-bottom-left-radius: 0;"
+    />
+    <div
+      id="date-picker" style="display: none; border-radius: 0;">
+      <select name="year" class="form-select picker__select" id="date-picker-year"></select>
+      <select name="month" class="form-select picker__select" id="date-picker-month"></select>
+      <select name="day" class="form-select picker__select" id="date-picker-day"></select>
+    </div>
+    <select
+      name="gender"
+      style="display: none; border-radius: 0;"
+      class="form-select"
+      id="gender-picker-select"
+    ></select>
+    <select
+      name="active"
+      style="display: none; border-radius: 0;"
+      class="form-select"
+      id="active-picker-select"
+    ></select>
+    <button id="search_button" type="submit" class="btn bg-white search__button">
       <i class="bi bi-search"></i>
     </button>
   </div>

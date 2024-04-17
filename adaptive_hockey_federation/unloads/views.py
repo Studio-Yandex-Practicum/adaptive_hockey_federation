@@ -1,18 +1,20 @@
 import os
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
+from core.utils import export_excel
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.utils.timezone import now
 from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
+from unloads.mapping import model_mapping
 from unloads.models import Unload
-from unloads.utils import export_excel
+from unloads.utils import model_get_queryset
 
 
 class UnloadListView(
@@ -22,7 +24,6 @@ class UnloadListView(
     """Список выгрузок."""
 
     # TODO: (Добавить пермишенны.)
-    # TODO: Реализовать удаление файлов с диска
     model = Unload
     template_name = "main/unloads/unloads.html"
     context_object_name = "unloads"
@@ -82,32 +83,26 @@ class DataExportView(LoginRequiredMixin, View):
     # TODO: (Если требуется выгрузка других моделей,
     # нужно добавить их в словарь(model_mapping)
     # и дополнить шаблон base/footer.html.)
-    model_mapping = {
-        "players": ("main", "Player", "players_data.xlsx", "Данные игроков"),
-        "teams": ("main", "Team", "teams_data.xlsx", "Данные команд"),
-        "competitions": (
-            "competitions",
-            "Competition",
-            "competitions_data.xlsx",
-            "Данные соревнований",
-        ),
-    }
 
     def get(self, request, *args, **kwargs):
         page_name = kwargs.get("page_name")
 
-        if page_name in self.model_mapping:
-            app_label, model_name, filename, title = self.model_mapping[
-                page_name
-            ]
+        if page_name in model_mapping:
+            app_label, model_name, filename, title = model_mapping[page_name]
             model = apps.get_model(app_label, model_name)
-            queryset = model.objects.all()
+            last_url = request.META.get("HTTP_REFERER")
+            parsed = urlparse(last_url)
+            params = parse_qs(parsed.query, keep_blank_values=True)
+            new_queryset = model_get_queryset(page_name, model, params, None)
+            if new_queryset:
+                queryset = new_queryset
+                filename = page_name + "_search.xlsx"
+            else:
+                queryset = model.objects.all()
+                filename = page_name + "_all.xlsx"
 
-            export_excel(queryset, filename, title)
-
-            timestamp = now().strftime("%Y%m%d%H%M%S")
-            base_filename, file_extension = os.path.splitext(filename)
-            file_slug = f"data/{base_filename}_{timestamp}{file_extension}"
+            filename = export_excel(queryset, filename, title)
+            file_slug = f"unloads_data/{filename}"
 
             unload_record = Unload(
                 unload_name=filename,
@@ -116,9 +111,12 @@ class DataExportView(LoginRequiredMixin, View):
             )
             unload_record.save()
 
-            file_path = os.path.join(settings.MEDIA_ROOT, "data", filename)
+            file_path = os.path.join(
+                settings.MEDIA_ROOT, "unloads_data", filename
+            )
             if os.path.exists(file_path):
-                response = FileResponse(file_path)
+                file_unload = open(file_path, "rb")
+                response = FileResponse(file_unload)
                 response["Content-Disposition"] = (
                     f'attachment; filename="{filename}"'
                 )

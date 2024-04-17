@@ -25,6 +25,19 @@ GROUPS_BY_ROLE = {
     ROLE_SUPERUSER: GROUP_ADMINS,
 }
 
+# Виды дисциплин в хоккее
+SLEDGE_HOCKEY = "Следж-хоккей"
+BLIND_HOCKEY = "Хоккей для незрячих"
+SPECIAL_HOCKEY = "Специальный хоккей"
+ROLLER_HOCKEY = "Роликовый следж-хоккей"
+
+DISCIPLINE_LEVELS = {
+    SLEDGE_HOCKEY: (1, 2, 3, 4, 5, 6),
+    ROLLER_HOCKEY: (1, 2, 3, 4, 5, 6),
+    BLIND_HOCKEY: ("B1", "B2", "B3", "B4", "B5", "б/к"),
+    SPECIAL_HOCKEY: ("A", "B", "C"),
+}
+
 # constants for main/models.py
 CHAR_FIELD_LENGTH = 256
 EMPTY_VALUE_DISPLAY = ""
@@ -62,30 +75,37 @@ MIN_AGE_PlAYER: int = 6
 MAX_AGE_PlAYER: int = 18
 
 FORM_HELP_TEXTS = {
-
     "identity_document": (
         "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или "
         "'Свидетельство о рождении X-XX XXXXXX'"
     ),
-    "birthday":
-    (
+    "birthday": (
         f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет"
     ),
-    "available_teams": (
-        "Список доступных команд перемещение двойным щелчком"
-    ),
+    "available_teams": ("Список доступных команд перемещение двойным щелчком"),
     "email": (
-        "Введите актуальную электронную почту"
-        " в формате example@domen.ru"
+        "Введите актуальную электронную почту" " в формате example@domen.ru"
     ),
-    "role": (
-        "Выберите роль которая соответствует пользователю"
-    ),
+    "role": ("Выберите роль которая соответствует пользователю"),
     "teams": (
         "Список команд в которых состоит игрок удаление двойным щелчком"
     ),
 }
 
-FILE_RESOLUTION = ('png', 'jpeg', 'jpg', 'pdf')
+FILE_RESOLUTION = ("png", "jpeg", "jpg", "pdf")
 MAX_UPLOAD_SIZE: int = 10485760
 MAX_UPLOAD_SIZE_MB: str = str(int(MAX_UPLOAD_SIZE / (1024 * 1024))) + " MB"
+
+
+SEARCH_ALIAS = {
+    "surname": "surname",
+    "name": "name",
+    "birthday": "birthday",
+    "gender": "gender",
+    "number": "surname",
+    "discipline": "discipline__discipline_name_id__name",
+    "diagnosis": "diagnosis__name",
+    "city": "city_name",
+}
+
+UNLOAD_DIR = "unloads_data"

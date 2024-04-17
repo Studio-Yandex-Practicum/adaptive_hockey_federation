@@ -28,24 +28,19 @@ class Competition(models.Model):
         help_text=_("Состав команд участников"),
     )
 
-    is_active = models.BooleanField(default=True)
-
     class Meta:
         verbose_name = "Соревнование"
         verbose_name_plural = "Соревнования"
         ordering = ("date_start",)
         permissions = [
-            (
-                "list_view_competition",
-                "Can view list of Соревнование"
-            ),
+            ("list_view_competition", "Can view list of Соревнование"),
             (
                 "list_team_competition",
-                "Can view list of Команда on Соревнование"
+                "Can view list of Команда on Соревнование",
             ),
             (
                 "delete_team_competition",
-                "Can delete Команда from Соревнование"
+                "Can delete Команда from Соревнование",
             ),
         ]
 
@@ -61,9 +56,7 @@ class Competition(models.Model):
 
     @property
     def is_in_process(self) -> bool:
-        """Возвращает True, если соревнование сейчас идет.
-        Метод опирается на даты начала и окончания соревнования.
-        При этом поле is_active не используется."""
+        """Возвращает True, если соревнование сейчас идет."""
         return self.date_start <= get_now_day() <= self.date_end
 
     @property

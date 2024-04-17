@@ -2,7 +2,8 @@
     <div class="filter-item__wrapper">
         {% for field in form %}
             <div class="filter-item">
-                {{ field.label }} {{ field }}
+                <small>{{ field.label }}</small>
+                {{ field }}
             </div>
         {% endfor %}
     </div>

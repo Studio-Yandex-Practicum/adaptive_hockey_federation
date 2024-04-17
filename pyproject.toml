@@ -86,3 +86,5 @@ parser = "adaptive_hockey_federation.parser.parser:parsing_file"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "adaptive_hockey_federation.core.config.test_settings"
 python_files = ["*_test.py"]
+console_output_style = "progress"
+verbosity_test_cases = 2

@@ -1,5 +1,5 @@
 {% load static %}
-<div class="table-responsive">
+<div class="table-responsive scroll-class">
   <table class="table-table">
     <thead>
       <tr>
@@ -35,7 +35,7 @@
           {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk' and cell_name != 'allow_edit' %}
             <td class="rounded-md">{{ cell_value }}</td>
           {% endif %}
-          
+
           {% if cell_name == 'allow_edit' and cell_value == True %}
             {% include "main/teams/team_edit_delete_buttons.html" %}
           {% endif %}

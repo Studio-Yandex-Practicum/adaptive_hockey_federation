@@ -32,7 +32,7 @@ help:
 	@echo "	shell           - $(SHELL_GREEN)Команда для запуска Django-shell_plus.$(SHELL_NC)"
 	@echo "	help            - $(SHELL_GREEN)Команда вызова справки.$(SHELL_NC)"
 	@echo "$(SHELL_YELLOW)Для запуска исполнения команд используйте данные ключи совместно с командой 'make', например 'make init-app'."
-	@echo "При запуске команды 'make' без какого либо ключа, происходит вызов справки.$(SHELL_NC)"
+	@echo "При запуске команды 'make' без aкакого либо ключа, происходит вызов справки.$(SHELL_NC)"
 
 
 # Подготовка проекта к локальному запуску
@@ -104,12 +104,12 @@ fill-db:
 fill-test-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --users
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --diagnosis --amount 8
-	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --discipline --amount 3
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --team --amount 20
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --staffteam
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --player --amount 300
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --document
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --competition --amount 10
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --unload
 
 
 # Прогон тестов с помощью pytest

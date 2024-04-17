@@ -32,7 +32,7 @@ repos:
     rev: v1.6.0
     hooks:
       - id: mypy
-        exclude: migrations/|config/|.*settings(\.py|/)?
+        exclude: migrations/|config/|tests/|.*settings(\.py|/)?
         additional_dependencies:
         - django-debug-toolbar
         - django-stubs
@@ -41,6 +41,8 @@ repos:
         - django_extensions
         - types-python-dateutil
         - psycopg2-binary
+        - openpyxl
+
 
   - repo: local
     hooks:

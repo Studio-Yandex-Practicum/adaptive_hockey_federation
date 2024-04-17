@@ -11,8 +11,6 @@ from main.models import (
     PLAYER_POSITION_CHOICES,
     City,
     Diagnosis,
-    Discipline,
-    DisciplineLevel,
     DisciplineName,
     Document,
     Nosology,
@@ -131,45 +129,6 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
             self.name = check_len(field, 5, 3)
 
 
-class DisciplineNameFactory(factory.django.DjangoModelFactory):
-    """Создание адаптивных дисциплин. Колонка "name" является уникальной."""
-
-    class Meta:
-        model = DisciplineName
-        django_get_or_create = ["name"]
-        skip_postgeneration_save = True
-
-    name = factory.Faker("sentence", nb_words=2, locale="ru_RU")
-    discipline = factory.RelatedFactoryList(
-        "main.data_factories.factories.DisciplineFactory",
-        factory_related_name="discipline_name",
-        size=5,
-    )
-
-
-class DisciplineLevelFactory(factory.django.DjangoModelFactory):
-    """
-    Создание уровней для адаптивных дисциплин. Колонка "name"
-    является уникальной.
-    """
-
-    class Meta:
-        model = DisciplineLevel
-        django_get_or_create = ["name"]
-
-    name = factory.Iterator(["A1", "A2", "B1", "B2", "C1", "C2"])
-
-
-class DisciplineFactory(factory.django.DjangoModelFactory):
-    """Привязка адаптивных дисциплин к определёным уровням."""
-
-    class Meta:
-        model = Discipline
-
-    discipline_name = factory.SubFactory(DisciplineNameFactory)
-    discipline_level = factory.SubFactory(DisciplineLevelFactory)
-
-
 class TeamFactory(factory.django.DjangoModelFactory):
     """
     Создание команд. Привязка к ним уже созданных городов,
@@ -209,7 +168,6 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
     date_start = date.today() + timedelta(days=random.randrange(5, 30, 5))
     date_end = date_start + timedelta(days=random.randrange(2, 10, 2))
     location = factory.Faker("sentence", nb_words=4, locale="ru_RU")
-    is_active = factory.LazyFunction(lambda: random.choice([True, False]))
 
     @factory.post_generation
     def teams(self, create, extracted, **kwargs):
@@ -246,6 +204,10 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def diagnosis(self):
         return get_random_objects(Diagnosis)
+
+    @factory.lazy_attribute
+    def discipline_name(self):
+        return get_random_objects(DisciplineName)
 
     @factory.post_generation
     def team(self, create, extracted, **kwargs):

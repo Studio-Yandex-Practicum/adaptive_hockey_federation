@@ -42,15 +42,6 @@ class DisciplineLevelAdmin(admin.ModelAdmin):
     ordering = ["name"]
 
 
-class DisciplineAdmin(admin.ModelAdmin):
-    list_display = ("pk", "discipline_name", "discipline_level")
-    search_fields = (
-        "discipline_name__name",
-        "discipline_level__name",
-    )
-    ordering = ["discipline_name"]
-
-
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "file")
     search_fields = (
@@ -101,7 +92,8 @@ class PlayerAdmin(admin.ModelAdmin):
         "birthday",
         "gender",
         "diagnosis",
-        "discipline",
+        "discipline_name",
+        "discipline_level",
         "level_revision",
         "position",
         "number",
@@ -117,8 +109,8 @@ class PlayerAdmin(admin.ModelAdmin):
         "birthday",
         "gender",
         "diagnosis__nosology__name",
-        "discipline__discipline_name__name",
-        "discipline__discipline_level__name",
+        "discipline_name__name",
+        "discipline_level__name",
         "level_revision",
         "position",
         "number",
@@ -145,7 +137,8 @@ class PlayerAdmin(admin.ModelAdmin):
                         "birthday",
                     ),
                     "identity_document",
-                    "discipline",
+                    "discipline_name",
+                    "discipline_level",
                     "diagnosis",
                     "level_revision",
                     "addition_date",
