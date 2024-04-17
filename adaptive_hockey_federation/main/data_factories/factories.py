@@ -168,7 +168,6 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
     date_start = date.today() + timedelta(days=random.randrange(5, 30, 5))
     date_end = date_start + timedelta(days=random.randrange(2, 10, 2))
     location = factory.Faker("sentence", nb_words=4, locale="ru_RU")
-    is_active = factory.LazyFunction(lambda: random.choice([True, False]))
 
     @factory.post_generation
     def teams(self, create, extracted, **kwargs):

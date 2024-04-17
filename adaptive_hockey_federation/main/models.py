@@ -370,8 +370,8 @@ class Player(BasePerson):
         help_text=_("Пол"),
     )
     level_revision = models.TextField(
-        verbose_name=_("Уровень ревизии"),
-        help_text=_("Уровень ревизии"),
+        verbose_name=_("Игровая классификация"),
+        help_text=_("Игровая классификация"),
         default=EMPTY_VALUE_DISPLAY,
         blank=True,
     )
