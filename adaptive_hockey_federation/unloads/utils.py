@@ -31,8 +31,6 @@ def players_get_queryset(model, dict_param, queryset):
     return queryset
 
 
-# TODO: (У нас поиска в аналитике нет,
-# следовательно, это лишние?)
 def analytics_get_queryset(model, dict_param, queryset):
     """Функция поиска для аналитики"""
     keys_param = ("timespan", "birthday", "discipline", "city")
