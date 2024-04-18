@@ -10,7 +10,7 @@
     {% if request.resolver_match.url_name in 'main' %}
       {% include 'main/home/search_form.html' %}
     {% else %}
-      {% if request.resolver_match.url_name != 'analytics' %}
+      {% if request.resolver_match.url_name not in 'analytics teams' %}
         {% include 'base/search_form.html' %}
       {% endif%}
     {% endif%}
