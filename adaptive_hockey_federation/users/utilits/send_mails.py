@@ -77,7 +77,7 @@ def send_welcome_mail(
     """
     template = "emailing/welcome_letter.html"
     link = reverse(
-        "competitions:competitions_id", kwargs={"pk": competition.pk}
+        "competitions:competition_id", kwargs={"pk": competition.pk}
     )
     try:
         email = render_email_message(
