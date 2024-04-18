@@ -116,9 +116,6 @@ class StaffMemberIdView(
                         )
                     )
                     team_fields_coach.append(
-                        ("Статус сотрудника", staff_team.staff_position),
-                    )
-                    team_fields_coach.append(
                         ("Квалификация", staff_team.qualification),
                     )
                     team_fields_coach.append(
@@ -135,9 +132,6 @@ class StaffMemberIdView(
                                 [team.name for team in staff_team.team.all()]
                             ),
                         )
-                    )
-                    team_fields_pusher.append(
-                        ("Статус сотрудника", staff_team.staff_position),
                     )
                     team_fields_pusher.append(
                         ("Квалификация", staff_team.qualification),
