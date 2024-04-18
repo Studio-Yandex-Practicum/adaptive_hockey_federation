@@ -221,7 +221,7 @@ class StaffMemberIdTeamCreateView(
     model = StaffTeamMember
     form_class = StaffTeamMemberForm
     template_name = "main/staffs/staff_id_team_edit_create.html"
-    permission_required = "main.change_staffmember"
+    permission_required = "main.change_staffteammember"
     permission_denied_message = "У Вас нет разрешения на"
     " редактирование сотрудника."
 
@@ -268,7 +268,7 @@ class StaffMemberIDTeamEditView(
     model = StaffTeamMember
     form_class = StaffTeamMemberForm
     template_name = "main/staffs/staff_id_team_edit_create.html"
-    permission_required = "main.change_staffmember"
+    permission_required = "main.change_staffteammember"
     permission_denied_message = (
         "У Вас нет разрешения на редактирование сотрудника."
     )
@@ -300,7 +300,7 @@ class StaffMemberIdTeamDeleteView(
 
     model = StaffTeamMember
     object = StaffTeamMember
-    permission_required = "main.delete_staffmember"
+    permission_required = "main.change_staffteammember"
     permission_denied_message = "У Вас нет разрешения на удаление сотрудника."
 
     def get_object(self, queryset=None):
