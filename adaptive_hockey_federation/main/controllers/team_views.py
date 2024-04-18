@@ -20,6 +20,37 @@ from main.schemas.team_schema import (
 )
 
 
+class StaffTeamMemberListMixin:
+    """Миксин, для выбора сотрудника команды."""
+
+    @staticmethod
+    def get_staff(position: str | None = None):
+        """Формирует список из сотрудников команд (StaffTeamMember).
+        Формат: [["Фамилия Имя Отчество", id], [....]].
+        Если передан параметр position, то выбор фильтруется по полю
+        staff_position и значению этого параметра."""
+        if position:
+            query_set = StaffTeamMember.objects.filter(staff_position=position)
+        else:
+            query_set = StaffTeamMember.objects.all()
+        staffs = query_set.annotate(
+            fio=Concat(
+                "staff_member__surname",
+                Value(" "),
+                "staff_member__name",
+                Value(" "),
+                "staff_member__patronymic",
+            )
+        ).values_list("fio", "id")
+        return list(staffs)
+
+    def get_coaches(self):
+        return self.get_staff("тренер")
+
+    def def_pushers(self):
+        return self.get_staff("пушер-тьютор")
+
+
 class TeamIdView(PermissionRequiredMixin, DetailView):
     """Вид команды.
     Детальный просмотр команды по игрокам и сотрудникам."""
@@ -109,31 +140,6 @@ class TeamListView(
         context["table_head"] = TEAM_TABLE_HEAD
         context["table_data"] = get_team_table_data(teams, user)
         return context
-
-
-class StaffTeamMemberListMixin:
-    """Миксин, для выбора сотрудника команды."""
-
-    @staticmethod
-    def get_staff(position: str | None = None):
-        """Формирует список из сотрудников команд (StaffTeamMember).
-        Формат: [["Фамилия Имя Отчество", id], [....]].
-        Если передан параметр position, то выбор фильтруется по полю
-        staff_position и значению этого параметра."""
-        if position:
-            query_set = StaffTeamMember.objects.filter(staff_position=position)
-        else:
-            query_set = StaffTeamMember.objects.all()
-        staffs = query_set.annotate(
-            fio=Concat(
-                "staff_member__surname",
-                Value(" "),
-                "staff_member__name",
-                Value(" "),
-                "staff_member__patronymic",
-            )
-        ).values_list("fio", "id")
-        return list(staffs)
 
 
 class CityListMixin:

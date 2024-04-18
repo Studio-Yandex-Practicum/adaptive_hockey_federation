@@ -47,16 +47,14 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
 class PlayerForm(forms.ModelForm):
 
     available_teams = ModelMultipleChoiceField(
-        queryset=Team.objects.all().order_by('name'),
+        queryset=Team.objects.all().order_by("name"),
         required=False,
         help_text=FORM_HELP_TEXTS["available_teams"],
         label="Команды",
     )
 
     team = CustomMultipleChoiceField(
-        required=True,
-        help_text=FORM_HELP_TEXTS["teams"],
-        label="Команды"
+        required=True, help_text=FORM_HELP_TEXTS["teams"], label="Команды"
     )
 
     class Meta:
@@ -72,7 +70,7 @@ class PlayerForm(forms.ModelForm):
             "diagnosis",
             "level_revision",
             "team",
-            'available_teams',
+            "available_teams",
             "is_captain",
             "is_assistent",
             "position",
@@ -180,6 +178,41 @@ class CityChoiceField(ModelChoiceField):
         City) по введенному названию, проверяет наличие введенного
         наименования города в БД. Если такого города в БД нет, то создает
         соответствующий город (объект класса City) и возвращает его на
+        дальнейшую стандартную валидацию формы."""
+
+        if not value:
+            raise ValidationError(self.error_messages["required"])
+
+        if value.isdigit():
+            return super().clean(value)
+        else:
+            city, created = City.objects.get_or_create(name=value)
+            return city
+
+
+class StaffTeamMemberChoiceField(ModelChoiceField):
+    """Самодельное поле выбора сотрудника команды."""
+
+    def __init__(self, label: str | None = None):
+        super().__init__(
+            queryset=StaffTeamMember.objects.all(),
+            widget=TextInput(
+                attrs={
+                    "list": "cities",
+                    "placeholder": "Начните ввод и выберите из списка",
+                }
+            ),
+            required=True,
+            error_messages={
+                "required": "Пожалуйста, выберите сотрудника из списка."
+            },
+            label=label or "Выберите сотрудника",
+        )
+
+    def clean(self, value: Any) -> Any:
+        """Переопределенный метод родительского класса.
+        Прежде, чем вызвать родительский метод, получает объект
+        StaffTeamMember и возвращает его на
         дальнейшую стандартную валидацию формы."""
 
         if not value:
@@ -309,3 +342,26 @@ class StaffMemberForm(forms.ModelForm):
                 attrs={"placeholder": "Введите номер телефона"}
             ),
         }
+
+
+class StaffTeamMemberAddToTeamForm(forms.ModelForm):
+
+    staffteammember = StaffTeamMemberChoiceField()
+
+    def __init__(self, position_filter: str | None = None, *args, **kwargs):
+        self.team = kwargs.pop("team")
+        self.position_filter = position_filter
+        super(StaffTeamMemberAddToTeamForm, self).__init__(*args, **kwargs)
+        # self.fields["staffteammember"] = TeamField(
+        #     competition=self.competition
+        # )
+
+    class Meta:
+        model = StaffTeamMember.team.through
+        fields = ("staffteammember",)
+
+    def save(self, commit=True):
+        instance = super(StaffTeamMemberAddToTeamForm, self).save(commit=False)
+        if commit:
+            instance.save()
+        return instance
