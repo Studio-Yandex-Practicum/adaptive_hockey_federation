@@ -1,9 +1,6 @@
 <form method="GET">
   <div class="group-input">
     <select id="search_column" class="form-select select-form" aria-label="Default select example" name="search_column">
-      <option selected>
-        Все
-      </option>
       {% for key, column_name in table_head.items %}
         <option value="{{ key }}" id="search_{{ key }}">
           {{ column_name }}
