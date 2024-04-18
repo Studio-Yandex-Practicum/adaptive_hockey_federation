@@ -1,5 +1,6 @@
 <div class="text-center">
-    <h3> Добавить сотрудника {% if position == "coach" %} тренером {% else %} пушер-тьютором {% endif %}</h3>
+    <h4> Нет информации по команде </h4>
+    <h4> Добавить сотрудника {% if position == "coach" %} тренером {% else %} пушер-тьютором {% endif %}</h4>
     <div style="display: flex; justify-content: center;">
         <a href="{% url 'main:staff_id_team_create' staff.pk position %}" class="btn btn-secondary text-white" style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px;">Добавить</a>
     </div>
