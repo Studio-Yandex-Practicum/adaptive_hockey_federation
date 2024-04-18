@@ -278,7 +278,6 @@ class StaffTeamMemberForm(forms.ModelForm):
     class Meta:
         model = StaffTeamMember
         fields = (
-            "staff_position",
             "team",
             "qualification",
             "notes",
