@@ -299,6 +299,7 @@ class StaffMemberIdTeamDeleteView(
     """Представление для удаления сотрудника из команды"""
 
     model = StaffTeamMember
+    object = StaffTeamMember
     permission_required = "main.delete_staffmember"
     permission_denied_message = "У Вас нет разрешения на удаление сотрудника."
 
