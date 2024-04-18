@@ -27,9 +27,9 @@ def get_player_table_data(context):
                 player.discipline_level if player.discipline_level else None
             ),
             "team": (
-                player.team.first().name
+                [team.name for team in player.team.all()]
                 if player.team.exists()
-                else "Нет команды"
+                else ["Отсуствует"]
             ),
             "url": reverse("main:player_id", args=[player.id]),
             "id": player.pk,
@@ -64,7 +64,7 @@ def get_player_fields(player):
     ]
     player_fields = [
         ("Команда", player_teams),
-        ("Уровень ревизии", player.level_revision),
+        ("Игровая классификация", player.level_revision),
         ("Капитан", player.is_captain),
         ("Ассистент", player.is_assistent),
         ("Игровая позиция", player.position),

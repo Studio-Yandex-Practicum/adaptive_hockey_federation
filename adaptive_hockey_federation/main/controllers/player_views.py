@@ -50,24 +50,43 @@ class PlayersListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            search_column = self.request.GET.get("search_column")
-            if not search_column or search_column.lower() in ["все", "all"]:
+        search_params = self.request.GET.dict()
+        search_column = search_params.get("search_column")
+        search = search_params.get("search")
+        if search_column:
+            if search_column.lower() in ["все", "all"]:
                 or_lookup = (
                     Q(surname__icontains=search)
                     | Q(name__icontains=search)
-                    | Q(birthday__icontains=search)
                     | Q(gender__icontains=search)
+                    | Q(birthday__icontains=search)
                     | Q(number__icontains=search)
                     | Q(team__name__icontains=search)
                 )
                 queryset = queryset.filter(or_lookup)
+            elif search_column == "birthday":
+                queryset = queryset.filter(
+                    Q(birthday__year__icontains=search_params["year"])
+                    & Q(
+                        birthday__month__icontains=search_params[
+                            "month"
+                        ].lstrip("0")
+                    )
+                    & Q(
+                        birthday__day__icontains=search_params["day"].lstrip(
+                            "0"
+                        )
+                    )
+                )
+            elif search_column == "gender":
+                queryset = queryset.filter(
+                    gender__icontains=search_params["gender"]
+                )
             else:
                 search_fields = SEARCH_FIELDS
-                lookup = {f"{search_fields[search_column]}__icontains": search}
-                queryset = queryset.filter(**lookup)
-
+                queryset = queryset.filter(
+                    **{f"{search_fields[search_column]}__icontains": search}
+                )
         return (
             queryset.select_related("diagnosis")
             .select_related("discipline_name")
