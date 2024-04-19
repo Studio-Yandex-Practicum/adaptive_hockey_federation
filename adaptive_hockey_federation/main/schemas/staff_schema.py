@@ -44,6 +44,7 @@ def add_pisition_in_context(queryset=None):
                 "Команда",
                 ", ".join(
                     [team.name for team in staff_team.team.all()]
+                    if staff_team.team.all().exists() else ['Свободный агент']
                 ),
             ))
             team_fields.append(
