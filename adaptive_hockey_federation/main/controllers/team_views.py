@@ -64,7 +64,7 @@ class TeamListView(
     )
     context_object_name = "teams"
     paginate_by = 10
-    ordering = ["id"]
+    ordering = ["name"]
 
     def get_queryset(self):
         queryset = super().get_queryset()

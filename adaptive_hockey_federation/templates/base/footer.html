@@ -1,7 +1,11 @@
 <footer class="footer footer-class">
   <nav class="navbar-footer">
     <div style="width: 50px;"></div>
-    {% include "base/pagination.html" %}
+    {% if request.resolver_match.view_name == 'main:teams' %}
+      {% include "base/pagination_2.html" %}
+    {% else %}
+      {% include "base/pagination.html" %}
+    {% endif %}
     <ul class="nav nav-pills">
       {% with request.resolver_match.view_name as view_name %}
         {% if view_name == 'users:users' and perms.users.add_user %}

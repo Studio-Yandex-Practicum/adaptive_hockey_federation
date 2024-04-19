@@ -100,7 +100,9 @@ def teams_get_queryset(model, dict_param, queryset):
     lookup = {}
     for param_key, param_value in dict_param.items():
         if any(len(value) > 0 for value in param_value):
-            lookup[filter[param_key]] = param_value
+            param = filter.get(param_key)
+            if param is not None:
+                lookup[param] = param_value
 
     if queryset:
         queryset = queryset.filter(**lookup)

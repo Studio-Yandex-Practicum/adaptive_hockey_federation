@@ -18,8 +18,9 @@
         {% else %}
           <li class="page-item page-num pg-list">
             <a class="page-link pg-list"
-              href="?page={{ num }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}"
-            >{{ num }}</a>
+            href="?page={{ num }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}"
+            >
+            {{ num }}</a>
           </li>
         {% endif %}
       {% endif %}
