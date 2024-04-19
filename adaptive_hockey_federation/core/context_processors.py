@@ -9,4 +9,7 @@ def search_form_context(request):
 
 
 def return_button_context(request):
+    """Отвечает за отображение кнопки назад.
+    Если следует добавить кнопку назад, нужно внести изменения в список
+    main/schemas/main_schema.py"""
     return {"show_return_button": show_return_button}
