@@ -12,6 +12,7 @@ from main.forms import StaffMemberForm, StaffTeamMemberForm
 from main.models import StaffMember, StaffTeamMember
 from main.schemas.staff_schema import (
     STAFF_SEARCH_FIELDS,
+    add_pisition_in_context,
     get_staff_fields,
     get_staff_table_data,
 )
@@ -98,50 +99,15 @@ class StaffMemberIdView(
         queryset = StaffTeamMember.objects.filter(
             staff_member=self.kwargs["pk"]
         )
-        context["on_team"] = False
         if queryset.exists():
-            context["on_team"] = True
             queryset_coach = queryset.filter(staff_position="тренер")
             queryset_pusher = queryset.difference(queryset_coach)
-            team_fields_coach = []
-            team_fields_pusher = []
-            if queryset_coach.exists():
-                for staff_team in queryset_coach:
-                    team_fields_coach.append(
-                        (
-                            "Команда",
-                            ", ".join(
-                                [team.name for team in staff_team.team.all()]
-                            ),
-                        )
-                    )
-                    team_fields_coach.append(
-                        ("Квалификация", staff_team.qualification),
-                    )
-                    team_fields_coach.append(
-                        ("Описание", staff_team.notes),
-                    )
-                    context["team_fields_coach"] = team_fields_coach
-                    context["coach"] = staff_team
-            if queryset_pusher.exists():
-                for staff_team in queryset_pusher:
-                    team_fields_pusher.append(
-                        (
-                            "Команда",
-                            ", ".join(
-                                [team.name for team in staff_team.team.all()]
-                            ),
-                        )
-                    )
-                    team_fields_pusher.append(
-                        ("Квалификация", staff_team.qualification),
-                    )
-                    team_fields_pusher.append(
-                        ("Описание", staff_team.notes),
-                    )
-                    context["team_fields_pusher"] = team_fields_pusher
-                    context["pusher"] = staff_team
-                    context["pusher_position"] = "pusher"
+            (context["coach"],
+                context["team_fields_coach"]) = add_pisition_in_context(
+                queryset_coach)
+            (context["pusher"],
+                context["team_fields_pusher"]) = add_pisition_in_context(
+                queryset_pusher)
         context["staff_fields"] = get_staff_fields(staff)
         return context
 

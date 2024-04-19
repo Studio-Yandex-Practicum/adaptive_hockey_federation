@@ -31,3 +31,26 @@ def get_staff_fields(staff):
         ("Номер телефона", staff.phone),
     ]
     return staff_fields
+
+
+def add_pisition_in_context(queryset=None):
+    """
+    Функция добавления формы staff_member по позициям в context
+    """
+    team_fields = []
+    if queryset.exists():
+        for staff_team in queryset:
+            team_fields.append((
+                "Команда",
+                ", ".join(
+                    [team.name for team in staff_team.team.all()]
+                ),
+            ))
+            team_fields.append(
+                ("Квалификация", staff_team.qualification),
+            )
+            team_fields.append(
+                ("Описание", staff_team.notes),
+            )
+        return staff_team, team_fields
+    return None, None
