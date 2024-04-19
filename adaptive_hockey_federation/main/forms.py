@@ -243,31 +243,30 @@ class TeamForm(forms.ModelForm):
 
 
 class TeamFilterForm(forms.Form):
-    name = forms.CharField(
+    name = forms.ModelChoiceField(
+        queryset=Team.objects.all().order_by("name"),
         required=False,
-        label="Название команды",
+        label="Команда",
+        widget=forms.Select(attrs={"class": "form-control arrow-before"}),
+        empty_label="Все",
     )
     discipline = forms.ModelChoiceField(
-        queryset=DisciplineName.objects.all(),
+        queryset=DisciplineName.objects.all().order_by("name"),
         required=False,
         label="Дисциплина",
         widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
     city = forms.ModelChoiceField(
-        queryset=City.objects.all(),
+        queryset=City.objects.all().order_by("name"),
         required=False,
         label="Город",
         widget=forms.Select(attrs={"class": "form-control arrow-before"}),
         empty_label="Все",
     )
-    team_content = forms.CharField(
-        required=False,
-        label="Состав команды",
-    )
 
     class Meta:
-        fields = ("name", "discipline", "city", "team_content")
+        fields = ("name", "discipline", "city")
 
 
 class PlayerTeamForm(forms.ModelForm):

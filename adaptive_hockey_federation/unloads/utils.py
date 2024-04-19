@@ -92,60 +92,22 @@ def users_get_queryset(model, dict_param, queryset):
 
 
 def teams_get_queryset(model, dict_param, queryset):
-    # keys_param = ("timespan", "birthday", "discipline", "city")
-    # if not any(elem in dict_param for elem in keys_param):
-    #     return queryset
+    filter = {
+        "city": "city__in",
+        "discipline": "discipline_name__in",
+        "name": "id__in",
+    }
+    lookup = {}
+    for param_key, param_value in dict_param.items():
+        if any(len(value) > 0 for value in param_value):
+            lookup[filter[param_key]] = param_value
 
-    # timespan = dict_param["timespan"][0]
-    # birthday = dict_param["birthday"][0]
-    # discipline = dict_param["discipline"][0]
-    # city = dict_param["city"][0]
-
-    # or_lookup = {
-    #     "addition_date__gte": timespan,
-    #     "birthday__year": birthday,
-    #     "discipline__discipline_name_id": discipline,
-    #     "team__city": city,
-    # }
-    # or_lookup = {key: value for key, value in or_lookup.items() if value}
-    # c = {}
-    # lookup = Q(**c)
-    # a = 'team_players__name__icontains'
-    # b = 'ров'
-    # c = {a: b}
-    # lookup = (
-    #     Q(team_players__name__icontains=b)
-    #     | Q(team_players__patronymic__icontains=b)
-    # )
-
-    # a = 'team_players__patronymic__icontains'
-    # c = {a: b}
-    # lookup |= Q(**c)
-    # print(f'>>> {lookup=}')
-    # if queryset:
-    #     queryset = queryset.filter(lookup)
-    # else:
-    #     queryset = model.objects.filter(lookup)
+    if queryset:
+        queryset = queryset.filter(**lookup)
+    else:
+        queryset = model.objects.filter(**lookup)
 
     return queryset
-# filter = {
-#     "team_content": (
-#             "team_players__name__icontains",
-#             "team_players__surname__icontains",
-#             "team_players__patronymic__icontains",
-#             "team_members__staff_member__name__icontains",
-#             "team_members__staff_member__surname__icontains",
-#             "team_members__staff_member__patronymic__icontains",
-#         ),
-#     "city": ("city__in",),
-#     "discipline_name": ("discipline_name__in"),
-#     "name": ("name__icontains"),
-# }
-# dict_param = {'name': [''], 'discipline': ['1'], 'city': ['1'], 'team_content': ['']}
-# lookup = {}
-# for param_key, param_value in dict_param.items():
-#     if any(len(value) > 0 for value in param_value):
-#        print(f'{param_key=} {param_value=}')
 
 
 def model_get_queryset(page_name, model, dict_param, queryset):
