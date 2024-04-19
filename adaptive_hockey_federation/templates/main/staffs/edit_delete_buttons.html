@@ -1,3 +1,4 @@
+{% if perms.users.change_staffteammember %}
 <div class="text-center">
     <div style="display: flex; justify-content: center;">
         <a href="{% url 'main:staff_id_edit' staff.pk %}" 
@@ -5,7 +6,6 @@
         <form action="{% url 'main:staff_id_delete' staff.pk %}" method="post" id="deleteForm">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger" 
-              {% if not perms.users.delete_staff %} disabled {% endif %} 
               {% if staff.name %} 
                 onclick="return confirm('Вы точно хотите удалить сотрудника {{ staff.name }} {{ staff.surname }}?');"
               {% else %} 
@@ -15,3 +15,4 @@
         </form>
     </div>
 </div>
+{% endif %}

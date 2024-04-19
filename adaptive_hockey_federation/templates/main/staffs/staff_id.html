@@ -4,7 +4,7 @@
   Профиль сотрудника команды
 {% endblock %}
 {% block content %}
-  <h2 class="text-center mb-4">Профиль сотрудника команды</h2>
+  <h2 class="text-center mb-4">Профиль сотрудника команды </h2>
   <div class="container text-center">
         <h4 class="text-center mb-4">Личная информация</h4>
         <table class="table-table">
@@ -19,9 +19,7 @@
             {% endfor %}
           </tbody>
         </table>
-        <div class="container">
-          {% include 'main/staffs/edit_delete_buttons.html' with staff=staff%}
-        </div>
+        {% include 'main/staffs/edit_delete_buttons.html' with staff=staff %}
         <div class="container">
           <h4> Информация о состоянии в команде </h4>
           <div class="row row-cols-2">
@@ -40,13 +38,11 @@
                     {% endfor %}
                   </tbody>
                 </table>
-                <div class="container">
-                    {% include 'main/staffs/edit_delete_team_buttons.html' with staff=coach %}
-                </div>
+                {% include 'main/staffs/edit_delete_team_buttons.html' with staff=coach  %}
               </div>
             {% else%}
               <div class="container">
-                {% include 'main/staffs/add_button.html' with position="coach" %}
+                {% include 'main/staffs/add_button.html' with position="coach"  %}
               </div>
             {% endif %}
             {% if team_fields_pusher %}
@@ -64,14 +60,10 @@
                     {% endfor %}
                   </tbody>
                 </table>
-                <div class="container">
-                  {% include 'main/staffs/edit_delete_team_buttons.html' with staff=pusher %}
-                </div>
+                {% include 'main/staffs/edit_delete_team_buttons.html' with staff=pusher %}
               </div>
               {% else %}
-              <div class="container">
-                {% include 'main/staffs/add_button.html' with position="pusher" %}
-              </div>
+              {% include 'main/staffs/add_button.html' with position="pusher" %}
           {% endif %}
     </div>
   </div>
