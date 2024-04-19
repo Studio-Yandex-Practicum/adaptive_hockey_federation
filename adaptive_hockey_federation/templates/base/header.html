@@ -9,7 +9,7 @@
   <div class="height">
     {% if request.resolver_match.url_name in 'main' %}
       {% include 'main/home/search_form.html' %}
-    {% else %}
+    {% elif request.resolver_match.url_name not in no_search_pages %}
       {% include 'base/search_form.html' %}
     {% endif%}
   </div>

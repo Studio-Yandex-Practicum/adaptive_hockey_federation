@@ -92,7 +92,7 @@ class PlayerForm(forms.ModelForm):
                 attrs={"placeholder": "Введите номер игрока"}
             ),
             "level_revision": forms.TextInput(
-                attrs={"placeholder": "Введите уровень ревизии"}
+                attrs={"placeholder": "Введите игровую классификацию"}
             ),
             "birthday": forms.DateInput(
                 format=("%Y-%m-%d"),

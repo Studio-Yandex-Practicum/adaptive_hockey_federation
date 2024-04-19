@@ -25,7 +25,7 @@
         </td>
       {% endfor %}
       {% with request.resolver_match.view_name as view_name %}
-        {% if view_name == 'main:unloads' %}
+        {% if view_name == 'unloads:unloads' %}
           {% include "main/unloads/unloads_delete.html" %}
         {% else %}
           <td>

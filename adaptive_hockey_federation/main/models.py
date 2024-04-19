@@ -77,6 +77,20 @@ class DisciplineLevel(BaseUniqueName):
     Модель классификация, статусы дисциплин.
     """
 
+    name = models.CharField(
+        max_length=CHAR_FIELD_LENGTH,
+        verbose_name=_("Наименование"),
+        help_text=_("Наименование"),
+    )
+
+    discipline_name = models.ForeignKey(
+        DisciplineName,
+        on_delete=models.CASCADE,
+        verbose_name=_("Дисциплина"),
+        help_text=_("Дисциплина"),
+        related_name="levels",
+    )
+
     class Meta:
         verbose_name = "Классификация/статус дисциплины"
         verbose_name_plural = "Классификация/статусы дисциплин"
@@ -356,8 +370,8 @@ class Player(BasePerson):
         help_text=_("Пол"),
     )
     level_revision = models.TextField(
-        verbose_name=_("Уровень ревизии"),
-        help_text=_("Уровень ревизии"),
+        verbose_name=_("Игровая классификация"),
+        help_text=_("Игровая классификация"),
         default=EMPTY_VALUE_DISPLAY,
         blank=True,
     )

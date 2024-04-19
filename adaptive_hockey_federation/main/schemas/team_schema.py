@@ -58,7 +58,7 @@ def get_players_table(players):
             "discipline_name": "Дисциплина",
             "discipline_level": "Числовой статус",
             "number": "Номер игрока",
-            "level_revision": "Уровень ревизии",
+            "level_revision": "Игровая классификация",
         },
         "data": [
             {
