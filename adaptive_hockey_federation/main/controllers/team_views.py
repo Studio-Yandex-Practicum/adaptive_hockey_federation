@@ -1,3 +1,4 @@
+from core.constants import TRAINER
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -8,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import TeamForm
+from main.forms import StaffTeamMemberAddToTeamForm, TeamForm
 from main.models import City, Player, StaffTeamMember, Team
 from main.permissions import TeamEditPermissionsMixin
 from main.schemas.team_schema import (
@@ -79,6 +80,9 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
         context["players_table"] = get_players_table(players)
         context["staff_table"] = get_staff_table(team)
         context["team"] = team
+        context["new_coach_form"] = StaffTeamMemberAddToTeamForm(
+            position_filter=TRAINER, team=team
+        )
         return context
 
 
