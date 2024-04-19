@@ -9,17 +9,17 @@
 
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="container text-center">
-        <div class="full-container">
-          <h4 class="text-center mb-4">Информация о сотруднике</h4>
-          <table class="table-table">
-            <tbody>
-            {% for field in form.visible_fields %}
-              {% if field.name in 'surname name patronymic phone' %} {% include "main/fields/text_input_field.html" %} {% endif %}
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
+    <div class="container">
+      <table class="table-table">
+        <tbody>
+          {% for field in form.visible_fields %}
+            {% if field.name in "qualification notes"%} {% include "main/fields/text_input_field.html" %}
+            {% elif  field.name in "team" %} {% include "main/fields/team_select_field_1_field.html" %}
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     <!-- Save Button -->
     <div class="container">
       <div class="row">
