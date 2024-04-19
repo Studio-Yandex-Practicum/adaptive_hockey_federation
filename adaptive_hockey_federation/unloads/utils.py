@@ -92,26 +92,40 @@ def users_get_queryset(model, dict_param, queryset):
 
 
 def teams_get_queryset(model, dict_param, queryset):
-    keys_param = ("timespan", "birthday", "discipline", "city")
-    if not any(elem in dict_param for elem in keys_param):
-        return queryset
+    # keys_param = ("timespan", "birthday", "discipline", "city")
+    # if not any(elem in dict_param for elem in keys_param):
+    #     return queryset
 
-    timespan = dict_param["timespan"][0]
-    birthday = dict_param["birthday"][0]
-    discipline = dict_param["discipline"][0]
-    city = dict_param["city"][0]
+    # timespan = dict_param["timespan"][0]
+    # birthday = dict_param["birthday"][0]
+    # discipline = dict_param["discipline"][0]
+    # city = dict_param["city"][0]
 
-    or_lookup = {
-        "addition_date__gte": timespan,
-        "birthday__year": birthday,
-        "discipline__discipline_name_id": discipline,
-        "team__city": city,
-    }
-    or_lookup = {key: value for key, value in or_lookup.items() if value}
-    if queryset:
-        queryset = queryset.filter(Q(**or_lookup))
-    else:
-        queryset = model.objects.filter(Q(**or_lookup))
+    # or_lookup = {
+    #     "addition_date__gte": timespan,
+    #     "birthday__year": birthday,
+    #     "discipline__discipline_name_id": discipline,
+    #     "team__city": city,
+    # }
+    # or_lookup = {key: value for key, value in or_lookup.items() if value}
+    # c = {}
+    # lookup = Q(**c)
+    # a = 'team_players__name__icontains'
+    # b = 'ров'
+    # c = {a: b}
+    # lookup = (
+    #     Q(team_players__name__icontains=b)
+    #     | Q(team_players__patronymic__icontains=b)
+    # )
+
+    # a = 'team_players__patronymic__icontains'
+    # c = {a: b}
+    # lookup |= Q(**c)
+    # print(f'>>> {lookup=}')
+    # if queryset:
+    #     queryset = queryset.filter(lookup)
+    # else:
+    #     queryset = model.objects.filter(lookup)
 
     return queryset
 # filter = {
