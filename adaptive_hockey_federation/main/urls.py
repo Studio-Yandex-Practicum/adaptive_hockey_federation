@@ -96,6 +96,21 @@ staffs_urlpatterns = [
         staff_views.StaffMemberIdDeleteView.as_view(),
         name="staff_id_delete",
     ),
+    path(
+        "<int:pk>/<slug:position>/team/create/",
+        staff_views.StaffMemberIdTeamCreateView.as_view(),
+        name="staff_id_team_create",
+    ),
+    path(
+        "<int:pk>/<slug:position>/team/edit/",
+        staff_views.StaffMemberIDTeamEditView.as_view(),
+        name="staff_id_team_edit",
+    ),
+    path(
+        "<int:pk>/<slug:position>/team/delete/",
+        staff_views.StaffMemberIdTeamDeleteView.as_view(),
+        name="staff_id_team_delete",
+    ),
 ]
 
 urlpatterns = [
