@@ -52,7 +52,9 @@ class StaffTeamMemberListMixin:
         return self.get_staff("пушер-тьютор")
 
 
-class TeamIdView(PermissionRequiredMixin, DetailView):
+class TeamIdView(
+    PermissionRequiredMixin, DetailView, StaffTeamMemberListMixin
+):
     """Вид команды.
     Детальный просмотр команды по игрокам и сотрудникам."""
 
@@ -83,6 +85,7 @@ class TeamIdView(PermissionRequiredMixin, DetailView):
         context["new_coach_form"] = StaffTeamMemberAddToTeamForm(
             position_filter=TRAINER, team=team
         )
+        context["available_coaches_list"] = self.get_coaches()
         return context
 
 

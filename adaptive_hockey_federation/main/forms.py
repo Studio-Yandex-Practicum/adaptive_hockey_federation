@@ -198,7 +198,7 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
             queryset=StaffTeamMember.objects.all(),
             widget=TextInput(
                 attrs={
-                    "list": "cities",
+                    "list": "available_coaches",
                     "placeholder": "Начните ввод и выберите из списка",
                 }
             ),
