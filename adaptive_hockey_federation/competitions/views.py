@@ -154,7 +154,7 @@ class UpdateCompetitionView(
 
     def get_success_url(self):
         return reverse_lazy(
-            "competitions:competitions_id", kwargs={"pk": self.object.pk}
+            "competitions:competition_id", kwargs={"pk": self.object.pk}
         )
 
     def get_object(self, queryset=None):
@@ -202,7 +202,7 @@ class AddTeamToCompetition(
     редирект на страницу управления соответствующим
     соревнованием."""
 
-    pattern_name = "competitions:competitions_id"
+    pattern_name = "competitions:competition_id"
     http_method_names = ("post",)
     permission_required = "competitions.change_competition"
     permission_denied_message = (
@@ -253,7 +253,7 @@ class DeleteTeamFromCompetition(
 
     def get_success_url(self):
         return reverse_lazy(
-            "competitions:competitions_id",
+            "competitions:competition_id",
             kwargs={"pk": self.kwargs["competition_id"]},
         )
 
@@ -270,7 +270,7 @@ class CreateCompetitionView(
 
     def get_success_url(self):
         return reverse_lazy(
-            "competitions:competitions_id", kwargs={"pk": self.object.pk}
+            "competitions:competition_id", kwargs={"pk": self.object.pk}
         )
 
     def get_object(self, queryset=None):
@@ -384,4 +384,4 @@ def competition_team_manage_view(request, pk):
     competition_team = form.save(commit=False)
     competition_team.competition = competition
     competition_team.save()
-    return redirect("competitions:competitions_id", competition.id)
+    return redirect("competitions:competition_id", competition.id)
