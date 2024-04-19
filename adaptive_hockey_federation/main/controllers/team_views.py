@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import (
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from django.shortcuts import get_object_or_404
+from django.views.generic import RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
@@ -87,6 +88,26 @@ class TeamIdView(
         )
         context["available_coaches_list"] = self.get_coaches()
         return context
+
+
+class AddStaffView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
+    """Представление добавления сотрудника в команду.
+    В данном виде не отображает какой-то отдельной страницы либо формы.
+    Используется для обработки нажатия кнопки либо соответствующего
+    post-запроса. Добавляет сотрудника в команду, после чего делает
+    редирект на страницу управления соответствующей командой."""
+
+    pattern_name = "main:teams_id"
+    http_method_names = ("post",)
+    permission_required = "main.change_team"
+
+    def post(self, request, *args, **kwargs):
+        staff_team_member = get_object_or_404(
+            StaffTeamMember, id=kwargs.get("staff_team_member_id", 0)
+        )
+        team = get_object_or_404(Team, id=kwargs.get("team_id"))
+        staff_team_member.team.add(team)
+        return super().post(request, *args, **kwargs)
 
 
 class TeamListView(
