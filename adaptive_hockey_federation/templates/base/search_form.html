@@ -16,7 +16,7 @@
       name="search"
       aria-label="search"
       placeholder="{% if request.resolver_match.url_name in "players" %}Игрок
-      {% elif request.resolver_match.url_name == "users" %}Роль
+      {% elif request.resolver_match.url_name == "users" %}Пользователь
       {% elif request.resolver_match.url_name == "teams" %}Команда
       {% elif request.resolver_match.url_name in "teams_id" %}Игрок
       {% elif request.resolver_match.url_name == "competitions" %}Соревнование
