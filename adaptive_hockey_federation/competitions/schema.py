@@ -20,7 +20,7 @@ def get_competitions_table_data(competitions):
                     "name": "Участники",
                     "type": "button",
                     "url": reverse(
-                        "competitions:competitions_id",
+                        "competitions:competition_id",
                         args=[competition.pk],
                     ),
                 },
