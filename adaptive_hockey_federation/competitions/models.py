@@ -1,7 +1,7 @@
 from competitions.utils import get_now_day, pluralize_days
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from main.models import City, Team
+from main.models import City, DisciplineName, Team
 
 CHAR_FIELD_LENGTH = 250
 
@@ -26,6 +26,12 @@ class Competition(models.Model):
         related_name="competition_teams",
         verbose_name=_("Состав команд участников"),
         help_text=_("Состав команд участников"),
+    )
+    disciplines = models.ManyToManyField(
+        DisciplineName,
+        related_name=("competitions"),
+        verbose_name=_("Дисциплины"),
+        help_text=_("Дисциплины"),
     )
 
     class Meta:

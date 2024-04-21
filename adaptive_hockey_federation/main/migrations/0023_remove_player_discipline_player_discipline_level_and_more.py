@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("main", "0022_alter_document_file_alter_player_name_and_more"),
+        ("main", "0022_alter_document_file"),
     ]
 
     operations = [
