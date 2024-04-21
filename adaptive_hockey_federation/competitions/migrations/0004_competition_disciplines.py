@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('main', '0026_setting_disciplines'),
-        ('competitions', '0002_alter_event_options'),
+        ('competitions', '0003_remove_competition_is_active'),
     ]
 
     operations = [
