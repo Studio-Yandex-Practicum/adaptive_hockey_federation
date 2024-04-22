@@ -1,11 +1,11 @@
 <form method="GET" class="analitics-filter">
-    <div class="filter-item__wrapper" name="search_column">
+    <div class="filter-three-item__wrapper">
         {% for field in form %}
-            <div class="filter-item">
+            <div class="teams_filter">
                 <small>{{ field.label }}</small>
                 {{ field }}
             </div>
         {% endfor %}
     </div>
-    <input class="btn analitics-button" type="submit" value="Применить">
+    <input class="btn filter-button" type="submit" value="Применить">
 </form>

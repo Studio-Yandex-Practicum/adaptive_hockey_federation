@@ -2,7 +2,7 @@
   <nav class="navbar-footer">
     <div style="width: 50px;"></div>
     {% if request.resolver_match.view_name == 'main:teams' %}
-      {% include "base/pagination_2.html" %}
+      {% include "base/pagination_teams.html" %}
     {% else %}
       {% include "base/pagination.html" %}
     {% endif %}
