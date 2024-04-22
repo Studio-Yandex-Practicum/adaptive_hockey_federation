@@ -14,7 +14,7 @@ from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from unloads.mapping import model_mapping
 from unloads.models import Unload
-from unloads.utils import model_get_queryset
+from unloads.utils import models_get_queryset
 
 
 class UnloadListView(
@@ -84,14 +84,17 @@ class DataExportView(LoginRequiredMixin, View):
         page_name = kwargs.get("page_name")
 
         if page_name in model_mapping:
-            app_label, model_name, filename, title = model_mapping[page_name]
+            app_label, model_name, title, search_fields = model_mapping[
+                page_name
+            ]
             model = apps.get_model(app_label, model_name)
             last_url = request.META.get("HTTP_REFERER")
             parsed = urlparse(last_url)
-            params = parse_qs(parsed.query, keep_blank_values=True)
-            new_queryset = model_get_queryset(page_name, model, params, None)
-            if new_queryset:
-                queryset = new_queryset
+            params = parse_qs(parsed.query)
+            if len(params) > 1:
+                queryset = models_get_queryset(
+                    model, params, None, search_fields
+                )
                 filename = page_name + "_search.xlsx"
             else:
                 queryset = model.objects.all()

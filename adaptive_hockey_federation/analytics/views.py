@@ -4,21 +4,32 @@ from analytics.forms import AnalyticsFilterForm
 from core.constants import GENDER_CHOICES
 from core.permissions import AdminRequiredMixin
 from dateutil.relativedelta import relativedelta
-from main.controllers.player_views import PlayersListView
+from django.views.generic.list import ListView
 from main.models import Nosology, Player, Team
-from unloads.utils import model_get_queryset
+from main.schemas.player_schema import ANALITICS_SEARCH_FIELDS
+from unloads.utils import analytics_get_queryset
 
 
 class AnalyticsListView(
     AdminRequiredMixin,
-    PlayersListView,
+    ListView,
 ):
     template_name = "analytics/analytics.html"
+    paginate_by = 10
+    # PlayersListView,
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return model_get_queryset(
-            "analytics", Player, dict(self.request.GET), queryset
+        dict_param = dict(self.request.GET)
+        dict_param = {k: v for k, v in dict_param.items() if v != [""]}
+        if len(dict_param) > 0:
+            queryset = analytics_get_queryset(
+                Player, dict_param, queryset, ANALITICS_SEARCH_FIELDS
+            )
+        return (
+            queryset.select_related("diagnosis")
+            .select_related("discipline_name")
+            .order_by("surname")
         )
 
     def get_context_data(self, *, object_list=None, **kwargs):

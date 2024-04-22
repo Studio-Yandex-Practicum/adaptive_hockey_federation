@@ -2,7 +2,6 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -17,6 +16,7 @@ from main.schemas.team_schema import (
     get_staff_table,
     get_team_table_data,
 )
+from unloads.utils import models_get_queryset
 
 
 class TeamIdView(PermissionRequiredMixin, DetailView):
@@ -69,31 +69,12 @@ class TeamListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            search_column = self.request.GET.get("search_column")
-            team_structure_lookup = (
-                Q(team_players__name__icontains=search)
-                | Q(team_players__surname__icontains=search)
-                | Q(team_players__patronymic__icontains=search)
-                | Q(team_members__staff_member__name__icontains=search)
-                | Q(team_members__staff_member__surname__icontains=search)
-                | Q(team_members__staff_member__patronymic__icontains=search)
+        dict_param = dict(self.request.GET)
+        dict_param = {k: v for k, v in dict_param.items() if v != [""]}
+        if len(dict_param) > 1:
+            queryset = models_get_queryset(
+                Team, dict_param, queryset, TEAM_SEARCH_FIELDS
             )
-            if not search_column or search_column.lower() in ["все", "all"]:
-                or_lookup = (
-                    Q(discipline_name__name__icontains=search)
-                    | Q(name__icontains=search)
-                    | Q(city__name__icontains=search)
-                )
-                queryset = queryset.filter(or_lookup)
-            elif search_column == "team_structure":
-                or_lookup = team_structure_lookup
-                queryset = queryset.filter(or_lookup)
-            else:
-                search_fields = TEAM_SEARCH_FIELDS
-                lookup = {f"{search_fields[search_column]}__icontains": search}
-                queryset = queryset.filter(**lookup)
 
         return (
             queryset.select_related("discipline_name")

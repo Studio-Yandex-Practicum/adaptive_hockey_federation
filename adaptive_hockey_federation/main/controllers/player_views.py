@@ -4,7 +4,6 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -21,6 +20,7 @@ from main.schemas.player_schema import (
     get_player_fields_personal,
     get_player_table_data,
 )
+from unloads.utils import models_get_queryset
 
 
 class PlayersListView(
@@ -49,44 +49,17 @@ class PlayersListView(
     ]
 
     def get_queryset(self):
+
         queryset = super().get_queryset()
-        search_params = self.request.GET.dict()
-        search_column = search_params.get("search_column")
-        search = search_params.get("search")
-        if search_column:
-            if search_column.lower() in ["все", "all"]:
-                or_lookup = (
-                    Q(surname__icontains=search)
-                    | Q(name__icontains=search)
-                    | Q(gender__icontains=search)
-                    | Q(birthday__icontains=search)
-                    | Q(number__icontains=search)
-                    | Q(team__name__icontains=search)
-                )
-                queryset = queryset.filter(or_lookup)
-            elif search_column == "birthday":
-                queryset = queryset.filter(
-                    Q(birthday__year__icontains=search_params["year"])
-                    & Q(
-                        birthday__month__icontains=search_params[
-                            "month"
-                        ].lstrip("0")
-                    )
-                    & Q(
-                        birthday__day__icontains=search_params["day"].lstrip(
-                            "0"
-                        )
-                    )
-                )
-            elif search_column == "gender":
-                queryset = queryset.filter(
-                    gender__icontains=search_params["gender"]
-                )
-            else:
-                search_fields = SEARCH_FIELDS
-                queryset = queryset.filter(
-                    **{f"{search_fields[search_column]}__icontains": search}
-                )
+        # if self.request.path == '/analytics/':
+        #     return queryset
+        dict_param = dict(self.request.GET)
+        dict_param = {k: v for k, v in dict_param.items() if v != [""]}
+        if len(dict_param) > 1:
+            queryset = models_get_queryset(
+                Player, dict_param, queryset, SEARCH_FIELDS
+            )
+
         return (
             queryset.select_related("diagnosis")
             .select_related("discipline_name")

@@ -1,17 +1,18 @@
+from main.schemas.player_schema import SEARCH_FIELDS
+from main.schemas.team_schema import TEAM_SEARCH_FIELDS
+
 model_mapping = {
-    "players": ("main", "Player", "players_data.xlsx", "Данные игроков"),
-    "teams": ("main", "Team", "teams_data.xlsx", "Данные команд"),
+    "players": ("main", "Player", "Данные игроков", SEARCH_FIELDS),
+    "teams": ("main", "Team", "Данные команд", TEAM_SEARCH_FIELDS),
     "competitions": (
         "competitions",
         "Competition",
-        "competitions_data.xlsx",
         "Данные соревнований",
     ),
-    "analytics": ("main", "Player", "analytics_data.xlsx", "Данные аналитики"),
+    "analytics": ("main", "Player", "Данные аналитики", SEARCH_FIELDS),
     "users": (
         "users",
         "User",
-        "users_data.xlsx",
         "Данные пользователей",
     ),
 }
