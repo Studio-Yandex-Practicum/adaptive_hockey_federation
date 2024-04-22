@@ -246,6 +246,7 @@ class TeamFilterForm(forms.Form):
     name = forms.CharField(
         required=False,
         label="Команда",
+        widget=forms.TextInput(attrs={"class": "form-control arrow-before"}),
     )
     discipline = forms.ModelChoiceField(
         queryset=DisciplineName.objects.all().order_by("name"),
