@@ -143,6 +143,22 @@ def clear_data_db(file_name: str) -> None:
     )
 
 
+def parse_disciplines(FIXSTURES_DIR) -> dict:
+    with open(
+        FIXSTURES_DIR / "main_discipline.json", "r", encoding="utf-8"
+    ) as file:
+        data = json.load(file)
+    disciplines = {
+        None: {"discipline_level_id": None, "discipline_name_id": None}
+    }
+    for item in data:
+        disciplines[item["id"]] = {
+            "discipline_level_id": item["discipline_level_id"],
+            "discipline_name_id": item["discipline_name_id"],
+        }
+    return disciplines
+
+
 def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
     with open(FIXSTURES_DIR / file_name, "r", encoding="utf-8") as file:
         data = json.load(file)
@@ -166,7 +182,7 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                 #         id=item["id"],
                 #         name=item["discipline_name_id"],
                 #     )
-                model_ins.save()
+                # model_ins.save()
             if key == "main_disciplinelevel":
                 model_ins = models_name(
                     id=item["id"],
@@ -194,6 +210,8 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                 )
                 model_ins.save()
             if key == "main_player":
+                disciplines = parse_disciplines(FIXSTURES_DIR)
+                # print(disciplines)
                 model_ins = models_name(
                     id=item["id"],
                     surname=item["surname"],
@@ -208,8 +226,12 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     is_assistent=item["is_assistent"],
                     identity_document=item["identity_document"],
                     diagnosis_id=item["diagnosis_id"],
-                    # discipline_name=item["discipline_name_id"],
-                    # discipline_level=item["discipline_level_id"],
+                    discipline_name_id=disciplines[item["discipline_id"]][
+                        "discipline_name_id"
+                    ],
+                    discipline_level_id=disciplines[item["discipline_id"]][
+                        "discipline_level_id"
+                    ],
                     # document_id=item["document_id"],
                 )
                 model_ins.save()
