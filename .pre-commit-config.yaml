@@ -43,7 +43,6 @@ repos:
         - psycopg2-binary
         - openpyxl
 
-
   - repo: local
     hooks:
       - id: export-dev-dependencies

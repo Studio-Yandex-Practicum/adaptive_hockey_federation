@@ -1,6 +1,5 @@
 from django.urls import include, path
 from main.controllers import main_views, player_views, staff_views, team_views
-from unloads import views
 
 app_name = "main"
 
@@ -92,26 +91,27 @@ staffs_urlpatterns = [
         staff_views.StaffMemberIdDeleteView.as_view(),
         name="staff_id_delete",
     ),
-]
-
-
-# TODO Перенести в модуль unloads
-unloads_urlpattern = [
-    path("", views.UnloadListView.as_view(), name="unloads"),
     path(
-        "<str:page_name>/", views.DataExportView.as_view(), name="data_unloads"
+        "<int:pk>/<slug:position>/team/create/",
+        staff_views.StaffMemberIdTeamCreateView.as_view(),
+        name="staff_id_team_create",
     ),
     path(
-        "<int:pk>/delete",
-        views.DeleteUnloadView.as_view(),
-        name="delete_unload",
+        "<int:pk>/<slug:position>/team/edit/",
+        staff_views.StaffMemberIDTeamEditView.as_view(),
+        name="staff_id_team_edit",
+    ),
+    path(
+        "<int:pk>/<slug:position>/team/delete/",
+        staff_views.StaffMemberIdTeamDeleteView.as_view(),
+        name="staff_id_team_delete",
     ),
 ]
+
 
 urlpatterns = [
     path("", include(main_urlpatterns)),
     path("players/", include(players_urlpatterns)),
     path("teams/", include(teams_urlpatterns)),
     path("staffs/", include(staffs_urlpatterns)),
-    path("unloads/", include(unloads_urlpattern)),
 ]

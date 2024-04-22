@@ -171,6 +171,7 @@ static/
 
 #Data JSON
 *.json
+*.zip
 
 #Data XLSX
 *.XLSX

@@ -36,7 +36,7 @@
             {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
           </li>
           <li class="nav-item py-2">
-            {% url 'main:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
+            {% url 'unloads:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
           </li>
         {% endif %}
       </ul>

@@ -1,13 +1,12 @@
 <form method="GET">
   <div class="group-input">
     <select id="search_column" class="form-select select-form" aria-label="Default select example" name="search_column">
-      <option selected>
-        Все
-      </option>
       {% for key, column_name in table_head.items %}
-        <option value="{{ key }}" id="search_{{ key }}">
-          {{ column_name }}
-        </option>
+        {% if column_name != 'Nr.' %}
+          <option value="{{ key }}" id="search_{{ key }}">
+            {{ column_name }}
+          </option>
+        {% endif %}
       {% endfor %}
     </select>
     <input
@@ -17,7 +16,7 @@
       name="search"
       aria-label="search"
       placeholder="{% if request.resolver_match.url_name in "players" %}Игрок
-      {% elif request.resolver_match.url_name == "users" %}Роль
+      {% elif request.resolver_match.url_name == "users" %}Пользователь
       {% elif request.resolver_match.url_name == "teams" %}Команда
       {% elif request.resolver_match.url_name in "teams_id" %}Игрок
       {% elif request.resolver_match.url_name == "competitions" %}Соревнование

@@ -57,8 +57,44 @@ def analytics_get_queryset(model, dict_param, queryset):
     return queryset
 
 
+def users_get_queryset(model, dict_param, queryset):
+    """Функция поиска для пользоватлей."""
+    if "search" in dict_param:
+        search = dict_param["search"][0]
+        search_column = dict_param["search_column"][0]
+        if not search_column or search_column.lower() in ["все", "all"]:
+            or_lookup = (
+                Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
+                | Q(patronymic__icontains=search)
+                | Q(date_joined__icontains=search)
+                | Q(role__icontains=search)
+                | Q(email__icontains=search)
+                | Q(phone__icontains=search)
+            )
+            if queryset:
+                queryset = queryset.filter(or_lookup)
+            else:
+                model.objects.filter(or_lookup)
+        else:
+            search_fields = {
+                "date": "date_joined",
+                "role": "role",
+                "email": "email",
+                "phone": "phone",
+            }
+            lookup = {f"{search_fields[search_column]}__icontains": search}
+            if queryset:
+                queryset = queryset.filter(**lookup)
+            else:
+                queryset = model.objects.filter(**lookup)
+    return queryset
+
+
 def model_get_queryset(page_name, model, dict_param, queryset):
     if page_name == "players":
         return players_get_queryset(model, dict_param, queryset)
     elif page_name == "analytics":
         return analytics_get_queryset(model, dict_param, queryset)
+    elif page_name == "users":
+        return users_get_queryset(model, dict_param, queryset)

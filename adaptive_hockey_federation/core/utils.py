@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import Any, List
+from typing import Any, List, Optional
 
 from core.constants import (
     FILE_RESOLUTION,
@@ -68,20 +68,41 @@ def column_width(workbook: Worksheet) -> None:
         workbook.column_dimensions[column].width = adjusted_width
 
 
-def export_excel(queryset: QuerySet, filename: str, title: str) -> str:
+def export_excel(
+    queryset: QuerySet,
+    filename: str,
+    title: str,
+    excluded_fields: Optional[List[str]] = None,
+    fields_order: Optional[List[str]] = None,
+) -> str:
     """Выгрузка данных в excel (формат xlsx).
     После создания файла возвращает его имя."""
+    if excluded_fields is None:
+        excluded_fields = []
+
     wb = Workbook()
     del wb["Sheet"]
     ws: Worksheet = wb.create_sheet("Лист1")
     ws.append(["", title])
 
     if queryset:
-        headers = []
-        fields = []
-        for field in queryset.model._meta.fields:
-            headers.append(str(field.verbose_name))
-            fields.append(field.name)
+        model_fields = queryset.model._meta.fields
+        fields_dict = {
+            field.name: str(field.verbose_name)
+            for field in model_fields
+            if field.name not in excluded_fields
+        }
+
+        if fields_order:
+            headers = [
+                fields_dict[field]
+                for field in fields_order
+                if field in fields_dict
+            ]
+            fields = [field for field in fields_order if field in fields_dict]
+        else:
+            headers = list(fields_dict.values())
+            fields = list(fields_dict.keys())
 
         ws.append(headers)
 

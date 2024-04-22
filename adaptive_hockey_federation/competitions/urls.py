@@ -23,7 +23,7 @@ competitions_urlpatterns = [
     path(
         "<int:pk>/",
         views.competition_team_manage_view,
-        name="competitions_id",
+        name="competition_id",
     ),
     path(
         "<int:competition_id>/teams/<int:pk>/delete/",
