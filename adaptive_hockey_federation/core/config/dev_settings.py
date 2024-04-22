@@ -40,7 +40,7 @@ RESOURSES_ROOT = BASE_DIR / 'resourses'
 
 # Важен порядок ключей для вставки/удаления
 FILE_MODEL_MAP = {
-    # 'main_player_team': 'Player',
+    'main_player_team': 'Player',
     'main_player': 'Player',
     'main_team': 'Team',
     'main_staffteammember': 'StaffTeamMember',

@@ -164,6 +164,8 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
         data = json.load(file)
     key = file_name.replace(".json", "")
     models_name = getattr(models, FILE_MODEL_MAP[key])
+    if key == "main_player":
+        disciplines = parse_disciplines(FIXSTURES_DIR)
     for item in data:
         try:
             if key in MODELS_ONE_FIELD_NAME:
@@ -177,12 +179,6 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     patronymic=item["patronymic"],
                 )
                 model_ins.save()
-                # if key == "main_discipline_name":
-                #     model_ins = models_name(
-                #         id=item["id"],
-                #         name=item["discipline_name_id"],
-                #     )
-                # model_ins.save()
             if key == "main_disciplinelevel":
                 model_ins = models_name(
                     id=item["id"],
@@ -205,13 +201,16 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     name=item["name"],
                     city_id=item["city_id"],
                     discipline_name_id=item["discipline_name_id"],
-                    # staff_team_member_id=item['staff_team_member_id'],
                     curator_id=1,
                 )
                 model_ins.save()
+                if item["staff_team_member_id"]:
+                    staff_team_member = StaffTeamMember.objects.get(
+                        pk=item["staff_team_member_id"]
+                    )
+                    team = Team.objects.get(pk=item["id"])
+                    staff_team_member.team.add(team)
             if key == "main_player":
-                disciplines = parse_disciplines(FIXSTURES_DIR)
-                # print(disciplines)
                 model_ins = models_name(
                     id=item["id"],
                     surname=item["surname"],
@@ -232,7 +231,6 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     discipline_level_id=disciplines[item["discipline_id"]][
                         "discipline_level_id"
                     ],
-                    # document_id=item["document_id"],
                 )
                 model_ins.save()
             if key == "main_player_team":
