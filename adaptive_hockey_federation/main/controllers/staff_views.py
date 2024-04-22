@@ -2,7 +2,6 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -13,6 +12,7 @@ from main.forms import StaffMemberForm, StaffTeamMemberForm
 from main.models import StaffMember, StaffTeamMember
 from main.schemas.staff_schema import (
     STAFF_SEARCH_FIELDS,
+    add_pisition_in_context,
     get_staff_fields,
     get_staff_table_data,
 )
@@ -99,25 +99,16 @@ class StaffMemberIdView(
         queryset = StaffTeamMember.objects.filter(
             staff_member=self.kwargs["pk"]
         )
-        team_fields = []
-        for staff_team in queryset:
-            team_fields.append(
-                (
-                    "Команда",
-                    ", ".join([team.name for team in staff_team.team.all()]),
-                )
-            )
-            team_fields.append(
-                ("Статус сотрудника", staff_team.staff_position),
-            )
-            team_fields.append(
-                ("Квалификация", staff_team.qualification),
-            )
-            team_fields.append(
-                ("Описание", staff_team.notes),
-            )
+        if queryset.exists():
+            queryset_coach = queryset.filter(staff_position="тренер")
+            queryset_pusher = queryset.difference(queryset_coach)
+            (context["coach"],
+                context["team_fields_coach"]) = add_pisition_in_context(
+                queryset_coach)
+            (context["pusher"],
+                context["team_fields_pusher"]) = add_pisition_in_context(
+                queryset_pusher)
         context["staff_fields"] = get_staff_fields(staff)
-        context["team_fields"] = team_fields
         return context
 
 
@@ -132,42 +123,14 @@ class StaffMemberIdCreateView(
     success_url = reverse_lazy("main:staffs")
     permission_required = "main.add_staffmember"
     permission_denied_message = "У Вас нет разрешения на создание сотрудника."
-    team_id: int | None = None
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        staff_form = context["staff_form"]
-        with transaction.atomic():
-            self.object = form.save()
-            if staff_form.is_valid():
-                staff_form.instance.staff_member = self.object
-                staff_form.save()
-        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            form = StaffTeamMemberForm(self.request.POST)
-        else:
-            form = StaffTeamMemberForm(initial={"team": self.team_id})
         context["page_title"] = "Создание профиля нового сотрудника"
-        context["staff_form"] = form
-        context["team_id"] = self.team_id
         return context
 
-    def get(self, request, *args, **kwargs):
-        self.team_id = request.GET.get("team", None)
-        return super().get(request, *args, **kwargs)
-
     def get_success_url(self):
-        if self.team_id is None:
-            return reverse("main:staffs")
-        else:
-            return reverse("main:teams_id", kwargs={"team_id": self.team_id})
-
-    def post(self, request, *args, **kwargs):
-        self.team_id = request.POST.get("team_id", None)
-        return super().post(request, *args, **kwargs)
+        return reverse("main:staffs")
 
 
 class StaffMemberIdEditView(
@@ -194,27 +157,6 @@ class StaffMemberIdEditView(
     def get_object(self, queryset=None):
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
 
-    def form_valid(self, form):
-        context = self.get_context_data()
-        staff_form = context["staff_form"]
-        context["page_title"] = "Редактирование профиля сотрудника"
-        with transaction.atomic():
-            form.save()
-            if staff_form.is_valid():
-                staff_form.save()
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        staff = StaffTeamMember.objects.get(staff_member=self.object)
-        if self.request.POST:
-            context["staff_form"] = StaffTeamMemberForm(
-                self.request.POST, instance=staff
-            )
-        else:
-            context["staff_form"] = StaffTeamMemberForm(instance=staff)
-        return context
-
 
 class StaffMemberIdDeleteView(
     LoginRequiredMixin, PermissionRequiredMixin, DeleteView
@@ -229,3 +171,106 @@ class StaffMemberIdDeleteView(
 
     def get_object(self, queryset=None):
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
+
+
+class StaffMemberIdTeamCreateView(
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView
+):
+    """Представление назначения сотрудника в команду"""
+
+    model = StaffTeamMember
+    form_class = StaffTeamMemberForm
+    template_name = "main/staffs/staff_id_team_edit_create.html"
+    permission_required = "main.change_staffteammember"
+    permission_denied_message = "У Вас нет разрешения на"
+    " редактирование сотрудника."
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.kwargs["position"] == 'coach':
+            context["page_title"] = (
+                "Добавление сотрудника в команду тренером"
+            )
+        else:
+            context["page_title"] = (
+                "Добавление сотрудника в команду пушер-тьютором"
+            )
+        return context
+
+    def get_success_url(self):
+        return reverse(
+            "main:staff_id",
+            kwargs={
+                "pk": self.get_object().pk,
+            },
+        )
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(StaffMember, id=self.kwargs["pk"])
+
+    def form_valid(self, form):
+        positions = {
+            'coach': 'тренер',
+            'pusher': 'пушер-тьютор'
+        }
+        position = positions[self.kwargs["position"]]
+        if form.cleaned_data.get('staff_posistion') is None:
+            form.instance.staff_member = self.get_object()
+            form.instance.staff_position = position
+        return super(StaffMemberIdTeamCreateView, self).form_valid(form)
+
+
+class StaffMemberIDTeamEditView(
+    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+):
+    """Представление редактирования сотрудника находящегося в команде"""
+
+    model = StaffTeamMember
+    form_class = StaffTeamMemberForm
+    template_name = "main/staffs/staff_id_team_edit_create.html"
+    permission_required = "main.change_staffteammember"
+    permission_denied_message = (
+        "У Вас нет разрешения на редактирование сотрудника."
+    )
+
+    def get_success_url(self):
+        return reverse(
+            "main:staff_id",
+            kwargs={
+                "pk": self.object.staff_member.pk,
+            },
+        )
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(StaffTeamMember, id=self.kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = (
+            f"Редактирование данных {self.get_object().staff_position}а"
+            " команды")
+        context["on_team"] = True
+        return context
+
+
+class StaffMemberIdTeamDeleteView(
+    LoginRequiredMixin, PermissionRequiredMixin, DeleteView
+):
+    """Представление для удаления сотрудника из команды"""
+
+    model = StaffTeamMember
+    object = StaffTeamMember
+    permission_required = "main.change_staffteammember"
+    permission_denied_message = "У Вас нет разрешения на удаление сотрудника."
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            StaffTeamMember, id=self.kwargs["pk"])
+
+    def get_success_url(self):
+        return reverse(
+            "main:staff_id",
+            kwargs={
+                "pk": self.get_object().staff_member.pk,
+            },
+        )
