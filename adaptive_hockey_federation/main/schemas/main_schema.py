@@ -19,6 +19,23 @@ no_search_pages = [
     "competition_id",
 ]
 
+show_return_button = [
+    "player_id",
+    "player_create",
+    "player_id_edit",
+    "user_create",
+    "user_update",
+    "team_create",
+    "team_update",
+    "teams_id",
+    "staff_create",
+    "staff_id",
+    "staff_id_edit",
+    "competition_add",
+    "competition_update",
+    "competition_id",
+]
+
 
 def get_main_table_data(context):
     table_data = [

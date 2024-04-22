@@ -45,6 +45,9 @@
           {% endif %}
         {% endif %}
       {% endwith %}
+      {% if request.resolver_match.url_name in show_return_button %}
+        {% include "base/return_button.html" %}
+      {% endif %}
     </ul>
   </nav>
 </footer>
