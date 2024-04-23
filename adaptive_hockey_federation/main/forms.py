@@ -1,7 +1,7 @@
 import re
 from typing import Any
 
-from core.constants import FORM_HELP_TEXTS, ROLE_AGENT
+from core.constants import FORM_HELP_TEXTS, OTHER, ROLE_AGENT, TRAINER
 from core.utils import max_date, min_date
 from django import forms
 from django.core.exceptions import ValidationError
@@ -194,12 +194,12 @@ class CityChoiceField(ModelChoiceField):
 class StaffTeamMemberChoiceField(ModelChoiceField):
     """Самодельное поле выбора сотрудника команды."""
 
-    def __init__(self, team: Team, label: str | None = None):
+    def __init__(self, team: Team, data_list: str, label: str | None = None):
         super().__init__(
             queryset=StaffTeamMember.objects.all(),
             widget=TextInput(
                 attrs={
-                    "list": "available_coaches",
+                    "list": data_list,
                     "placeholder": "Начните ввод и выберите из списка",
                 }
             ),
@@ -366,10 +366,16 @@ class StaffTeamMemberAddToTeamForm(forms.ModelForm):
 
     def __init__(self, position_filter: str | None = None, *args, **kwargs):
         self.team = kwargs.pop("team")
-        self.position_filter = position_filter
+        data_list_dict = {
+            TRAINER: "available_coaches",
+            OTHER: "available_pushers",
+            "None": "available_staffs",
+        }
+        self.position_filter = position_filter or "None"
+        self.data_list_id = data_list_dict[self.position_filter]
         super(StaffTeamMemberAddToTeamForm, self).__init__(*args, **kwargs)
         self.fields["staffteammember"] = StaffTeamMemberChoiceField(
-            team=self.team
+            team=self.team, data_list=self.data_list_id
         )
 
     class Meta:

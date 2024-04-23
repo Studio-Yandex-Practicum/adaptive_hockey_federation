@@ -1,7 +1,7 @@
 {% if field.name == 'staffteammember' %}
-  <datalist id="available_coaches">
-    {% for staff in available_coaches_list %}
-      <option value="{{ staff }}"></option>
+  <datalist id="{{ staff.add_staff_field_data_list_id }}">
+    {% for staff_member in staff.data_list %}
+      <option value="{{ staff_member }}"></option>
     {% endfor %}
   </datalist>
 {% endif %}

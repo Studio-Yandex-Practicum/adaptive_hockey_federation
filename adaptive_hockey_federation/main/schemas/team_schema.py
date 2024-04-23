@@ -43,6 +43,8 @@ def get_staff_table(team):
         }
         for staff_position in STAFF_POSITION_CHOICES
     ]
+    # staff_table[0]["add_staff_field_data_list_id"] = "available_coaches"
+    # staff_table[1]["add_staff_field_data_list_id"] = "available_pushers"
     return staff_table
 
 

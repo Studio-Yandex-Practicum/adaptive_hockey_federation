@@ -18,7 +18,7 @@
         {% endif %}
       >
         {% csrf_token %}
-        {% for field in new_coach_form %}
+        {% for field in staff.add_staff_form %}
           <div class="tw-w-full tw-flex tw-justify-center">
             <div class="row my-1 tw-min-w-[70%] tw-max-w-[80%]">
               <label for="{{ field.id_for_label }}">
@@ -35,7 +35,9 @@
             </div>
           </div>
         {% endfor %}
-          <button type="submit" class="update_btn tw-rounded-lg">
+          <button type="submit" class="update_btn tw-rounded-lg"
+                  name="btn_add_staff"
+                  value="{{ forloop.counter0 }}">
             Добавить
           </button>
       </form>
