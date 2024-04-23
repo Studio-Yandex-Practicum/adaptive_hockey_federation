@@ -6,8 +6,7 @@ from core.permissions import AdminRequiredMixin
 from dateutil.relativedelta import relativedelta
 from main.controllers.player_views import PlayersListView
 from main.models import Nosology, Player, Team
-from main.schemas.player_schema import ANALITICS_SEARCH_FIELDS
-from unloads.utils import analytics_get_queryset
+from unloads.utils import model_get_queryset
 
 
 class AnalyticsListView(
@@ -21,8 +20,8 @@ class AnalyticsListView(
         dict_param = dict(self.request.GET)
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
         if len(dict_param) > 0:
-            queryset = analytics_get_queryset(
-                Player, dict_param, queryset, ANALITICS_SEARCH_FIELDS
+            queryset = model_get_queryset(
+                "analytics", Player, dict_param, queryset
             )
         return (
             queryset.select_related("diagnosis")

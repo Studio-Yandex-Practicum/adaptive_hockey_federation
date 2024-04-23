@@ -1,40 +1,14 @@
 from django.urls import reverse
 
-SEARCH_FIELDS = {
-    "surname": ("surname__icontains", "", "search", None),
-    "name": ("name__icontains", "", "search", None),
-    "birthday": (
-        ("birthday__year__icontains", "birthday__year__exact", "year", None),
-        (
-            "birthday__month__icontains",
-            "birthday__month__exact",
-            "month",
-            None,
-        ),
-        ("birthday__day__icontains", "birthday__day__exact", "day", None),
-    ),
-    "gender": ("gender__icontains", "gender__exact", "gender", None),
-    "number": ("number__icontains", "", "search", None),
-    "discipline_name": (
-        "discipline_name__name__icontains",
-        "",
-        "search",
-        None,
-    ),
-    "discipline_level": (
-        "discipline_level__name__icontains",
-        "",
-        "search",
-        None,
-    ),
-    "team": ("team__name__icontains", "", "search", None),
-}
-
-ANALITICS_SEARCH_FIELDS = {
-    "timespan": "addition_date__gte",
-    "birthday": "birthday__year__exact",
-    "discipline": "discipline_name__id",
-    "city": "team__city",
+SEARCH_FIELDS: dict = {
+    "surname": "surname",
+    "name": "name",
+    "birthday": ("year", "month", "day"),
+    "gender": "gender",
+    "number": "number",
+    "discipline_name": "discipline_name__name",
+    "discipline_level": "discipline_level__name",
+    "team": "team__name",
 }
 
 

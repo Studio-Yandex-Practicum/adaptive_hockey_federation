@@ -86,7 +86,6 @@ class CompetitionListView(
             elif search_column == "city":
                 queryset = queryset.filter(city__name__icontains=search)
             elif search_column == "is_active":
-                # queryset.filter(date_start__lte=dt, date_end__gte=dt)
                 queryset = queryset.annotate(
                     is_active_view=Case(
                         When(

@@ -15,12 +15,11 @@ from main.mixins import FileUploadMixin
 from main.models import Player
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
-    SEARCH_FIELDS,
     get_player_fields,
     get_player_fields_personal,
     get_player_table_data,
 )
-from unloads.utils import models_get_queryset
+from unloads.utils import model_get_queryset
 
 
 class PlayersListView(
@@ -54,8 +53,8 @@ class PlayersListView(
         dict_param = dict(self.request.GET)
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
         if len(dict_param) > 1 and "search_column" in dict_param:
-            queryset = models_get_queryset(
-                Player, dict_param, queryset, SEARCH_FIELDS
+            queryset = model_get_queryset(
+                "players", Player, dict_param, queryset
             )
 
         return (

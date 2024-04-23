@@ -1,76 +1,62 @@
+from analytics.schema import ANALYTICS_SEARCH_FIELDS
 from django.db.models import Q
+from main.schemas.player_schema import SEARCH_FIELDS
 
 
 def checking_value(input_value: str) -> str:
+    """Функция проверки значения. Если цифровое - уберем нули слева"""
     if input_value.isdigit():
         return str(int(input_value))
     return input_value
 
 
-def create_lookup_all(value: tuple, search: str) -> Q:
-    or_lookup_all = Q()
-    if isinstance(value[0], tuple):
-        or_lookup_all_inside = Q()
-        for inside in value:
-            or_lookup_all_inside |= Q((inside[0], checking_value(search)))
+def create_lookup_all(dict_param) -> Q:
+    """Функция создания запроса по всем полям"""
+    or_lookup_all: Q = Q()
+    search = dict_param["search"][0]
+    for key, value in SEARCH_FIELDS.items():
+        if key == "birthday":
+            for choice in value:
+                or_lookup_all |= Q((f"birthday__{choice}__icontains", search))
+        else:
+            or_lookup_all |= Q((f"{value}__icontains", search))
 
-        or_lookup_all |= or_lookup_all_inside
-    else:
-        or_lookup_all |= Q((value[0], checking_value(search)))
     return or_lookup_all
 
 
-def create_lookup_select(value: tuple, dict_param: dict) -> Q:
-    def select_value(valueA, valueB):
-        return checking_value(valueB if valueB else valueA)
-
-    or_lookup_select = Q()
-    if isinstance(value[0], tuple):
-        or_lookup_inside: Q = Q()
-        for inside in value:
-            i_private_expression = inside[1]
-            i_parametr = inside[2]
-            i_comparison = inside[3]
-            if i_parametr in dict_param:
-                or_lookup_inside &= Q(
-                    (
-                        i_private_expression,
-                        select_value(dict_param[i_parametr][0], i_comparison),
-                    )
-                )
-        or_lookup_select |= or_lookup_inside
-    else:
-        expression = value[0]
-        parametr = value[2]
-        comparison = value[3]
-        or_lookup_select |= Q(
-            (expression, select_value(dict_param[parametr][0], comparison))
-        )
-    return or_lookup_select
-
-
-def models_get_queryset(model, dict_param, queryset, search_fields):
+def players_get_queryset(model, dict_param, queryset):
+    """Функция создания запроса для игроков"""
     or_lookup: Q = Q()
     search_column_name: str = dict_param["search_column"][0]
     if search_column_name.lower() in ["все", "all"]:
-        search = dict_param["search"][0]
-        for value in search_fields.values():
-            or_lookup |= create_lookup_all(value, search)
+        or_lookup |= create_lookup_all(dict_param)
+    elif search_column_name == "birthday":
+        for choice in SEARCH_FIELDS["birthday"]:
+            if choice in dict_param:
+                or_lookup &= Q(
+                    (f"birthday__{choice}__exact", int(dict_param[choice][0]))
+                )
+    elif search_column_name == "gender":
+        if "gender" in dict_param:
+            or_lookup |= Q(("gender__icontains", dict_param["gender"][0]))
     else:
-        or_lookup |= create_lookup_select(
-            search_fields[search_column_name], dict_param
+        search = dict_param["search"][0]
+        or_lookup |= Q(
+            (f"{SEARCH_FIELDS[search_column_name]}__icontains", search)
         )
+
     if queryset:
         return queryset.filter(or_lookup)
     else:
         return model.objects.filter(or_lookup)
 
 
-def analytics_get_queryset(model, dict_param, queryset, search_fields):
+def analytics_get_queryset(model, dict_param, queryset):
+    """Функция создания запроса для аналитики"""
     or_lookup: Q = Q()
-    for key, value in dict_param.items():
-        if key in search_fields:
-            or_lookup &= Q((search_fields[key], value[0]))
+    for key, value in ANALYTICS_SEARCH_FIELDS.items():
+        if key in dict_param:
+            or_lookup &= Q((value, checking_value(dict_param[key][0])))
 
     if queryset:
         queryset = queryset.filter(or_lookup)
@@ -116,3 +102,7 @@ def users_get_queryset(model, dict_param, queryset):
 def model_get_queryset(page_name, model, dict_param, queryset):
     if page_name == "users":
         return users_get_queryset(model, dict_param, queryset)
+    elif page_name == "players":
+        return players_get_queryset(model, dict_param, queryset)
+    elif page_name == "analytics":
+        return analytics_get_queryset(model, dict_param, queryset)
