@@ -6,13 +6,14 @@ from django.contrib.auth.mixins import (
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.forms import StaffTeamMemberAddToTeamForm, TeamForm
 from main.models import City, Player, StaffTeamMember, Team
-from main.permissions import TeamEditPermissionsMixin
+from main.permissions import CustomPermissionMixin, TeamEditPermissionsMixin
 from main.schemas.team_schema import (
     TEAM_SEARCH_FIELDS,
     TEAM_TABLE_HEAD,
@@ -308,3 +309,31 @@ class CreateTeamView(
         context["cities"] = self.get_cities()
         context["page_title"] = "Создание команды"
         return context
+
+
+class FireStaffFromTeam(
+    LoginRequiredMixin,
+    CustomPermissionMixin,
+    DeleteView,
+):
+    model = StaffTeamMember.team.through
+    permission_required = "main.change_team"
+    object = StaffTeamMember.team.through
+
+    def get_success_url(self):
+        team_id = self.kwargs["team_id"]
+        return reverse("main:teams_id", args=[team_id])
+
+    def get_object(self):
+        team_id = self.kwargs["team_id"]
+        staff_team_member_id = self.kwargs["staff_team_member_id"]
+        return get_object_or_404(
+            self.model,
+            team__id=team_id,
+            staffteammember__id=staff_team_member_id,
+        )
+
+    def test_func(self):
+        team = get_object_or_404(Team, id=self.kwargs["team_id"])
+        user = self.request.user
+        return not user.is_agent or team.curator == user

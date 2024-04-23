@@ -42,7 +42,7 @@
                 {{ cell_value.name }}
               {% endif %}
             </td>
-          {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
+          {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk' and cell_name != 'staff_position_slug'%}
             <td class="rounded-md">{{ cell_value }}</td>
           {% endif %}
         {% endfor %}
