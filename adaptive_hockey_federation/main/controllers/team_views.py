@@ -1,11 +1,11 @@
-from core.constants import TRAINER
+from core.constants import OTHER, TRAINER
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -27,8 +27,8 @@ class StaffTeamMemberListMixin:
 
     @staticmethod
     def get_staff(position: str | None = None):
-        """Формирует список из сотрудников команд (StaffTeamMember).
-        Формат: [["Фамилия Имя Отчество", id], [....]].
+        """Формирует кортеж из сотрудников команд (StaffTeamMember).
+        Формат элемента кортежа: "Фамилия Имя Отчество, должность (ID: id)",
         Если передан параметр position, то выбор фильтруется по полю
         staff_position и значению этого параметра."""
         if position:
@@ -43,13 +43,16 @@ class StaffTeamMemberListMixin:
                 Value(" "),
                 "staff_member__patronymic",
             )
-        ).values_list("fio", "id")
-        return list(staffs)
+        ).values("fio", "staff_position", "id")
+        return tuple(
+            (f"{i['fio']}, " f"{i['staff_position']} " f"(ID: {i['id']})")
+            for i in staffs
+        )
 
     def get_coaches(self):
         return self.get_staff("тренер")
 
-    def def_pushers(self):
+    def get_pushers(self):
         return self.get_staff("пушер-тьютор")
 
 
@@ -71,6 +74,32 @@ class TeamIdView(
     def get_object(self, queryset=None):
         return get_object_or_404(Team, id=self.kwargs["team_id"])
 
+    def get_new_staff_form(
+        self, form_name_in_context: str, position_filter: str | None = None
+    ):
+        """Возвращает форму добавления нового сотрудника.
+        Параметры:
+            - form_name_in_context: наименование формы в контексте,
+            по которому будет производиться поиск наличия этой формы в
+            self.kwargs;
+            - position_filter: фильтрация для списка сотрудников в поле
+            поиска."""
+        new_staff_form = self.kwargs.get(form_name_in_context, None)
+        new_staff_form = new_staff_form or StaffTeamMemberAddToTeamForm(
+            position_filter=position_filter, team=self.get_object()
+        )
+        return new_staff_form
+
+    def update_context_with_additional_forms(self, context):
+        new_coach_form = self.get_new_staff_form(
+            "new_coach_form", position_filter=TRAINER
+        )
+        new_pusher_form = self.get_new_staff_form(
+            "new_pusher_form", position_filter=OTHER
+        )
+        context["new_coach_form"] = new_coach_form
+        context["new_pusher_form"] = new_pusher_form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team = self.object
@@ -83,11 +112,38 @@ class TeamIdView(
         context["players_table"] = get_players_table(players)
         context["staff_table"] = get_staff_table(team)
         context["team"] = team
-        context["new_coach_form"] = StaffTeamMemberAddToTeamForm(
-            position_filter=TRAINER, team=team
-        )
+        # new_coach_form = self.kwargs.get("new_coach_form", None)
+        # new_pusher_form = self.kwargs.get("new_pusher_form", None)
+        #
+        # new_coach_form = new_coach_form or StaffTeamMemberAddToTeamForm(
+        #     position_filter=TRAINER, team=self.get_object()
+        # )
+        # context["new_coach_form"] = new_coach_form
+        self.update_context_with_additional_forms(context)
         context["available_coaches_list"] = self.get_coaches()
+        context["available_pushers_list"] = self.get_pushers()
         return context
+
+    def post(self, request, *args, **kwargs):
+        new_coach_form = StaffTeamMemberAddToTeamForm(
+            data=request.POST, team=self.get_object(), position_filter=TRAINER
+        )
+        if new_coach_form.is_valid():
+            staff_team_member_team = new_coach_form.save(commit=False)
+            staff_team_member_team.team = self.get_object()
+            staff_team_member_team.save()
+            return redirect(
+                "main:teams_id",
+                team_id=self.kwargs["team_id"],
+            )
+        self.object = self.get_object()
+        context = self.get_context_data()
+        context["new_coach_form"] = new_coach_form
+        # return redirect(
+        #     "main:teams_id", team_id=self.kwargs["team_id"],
+        #     **context
+        # )
+        return render(request, self.template_name, context)
 
 
 class AddStaffView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):

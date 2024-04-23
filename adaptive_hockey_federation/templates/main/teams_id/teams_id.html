@@ -9,6 +9,7 @@
     <div class="container">
       <h3 class="text-start mb-4">{{ staff.position }}</h3>
       {% include 'main/teams_id/table.html' with table_head=staff.head table_data=staff.data table_name='staff' %}
+
       <form
         method="post"
         {% if action_url %}
@@ -29,7 +30,7 @@
               {{ field|addclass:'form-control' }}
               {% include 'main/teams_id/components/staff_search_field.html' %}
               {% if field.errors %}
-                <small class="error">{{ field.errors|striptags  }}</small>
+                <small style="color: red" class="error">{{ field.errors|striptags  }}</small>
               {% endif %}
             </div>
           </div>

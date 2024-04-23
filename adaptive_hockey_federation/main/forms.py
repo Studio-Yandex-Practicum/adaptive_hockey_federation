@@ -12,6 +12,7 @@ from django.forms import (
     Select,
     TextInput,
 )
+from django.shortcuts import get_object_or_404
 from main.models import (
     City,
     DisciplineName,
@@ -193,7 +194,7 @@ class CityChoiceField(ModelChoiceField):
 class StaffTeamMemberChoiceField(ModelChoiceField):
     """Самодельное поле выбора сотрудника команды."""
 
-    def __init__(self, label: str | None = None):
+    def __init__(self, team: Team, label: str | None = None):
         super().__init__(
             queryset=StaffTeamMember.objects.all(),
             widget=TextInput(
@@ -208,6 +209,7 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
             },
             label=label or "Выберите сотрудника",
         )
+        self.team = team
 
     def clean(self, value: Any) -> Any:
         """Переопределенный метод родительского класса.
@@ -219,10 +221,25 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
             raise ValidationError(self.error_messages["required"])
 
         if value.isdigit():
-            return super().clean(value)
+            value = value
+        elif m := re.search(r"\d+\)\Z", value):
+            value = int(m.group()[:-1])
         else:
-            city, created = City.objects.get_or_create(name=value)
-            return city
+            raise ValidationError("Неверный формат введенных данных.")
+        staff_team_member = get_object_or_404(StaffTeamMember, id=value)
+        if StaffTeamMember.team.through.objects.filter(
+            staffteammember=staff_team_member, team=self.team
+        ).exists():
+            raise ValidationError("Этот сотрудник уже есть в команде.")
+        return super().clean(value)
+
+
+# class StaffTeamTeamForm(forms.ModelForm):
+#     staffteammember = StaffTeamMemberChoiceField()
+#
+#     class Meta:
+#         fields = ["staffteammember", "team"]
+#         model = StaffTeamMember.team.through
 
 
 class TeamForm(forms.ModelForm):
@@ -345,15 +362,15 @@ class StaffMemberForm(forms.ModelForm):
 
 class StaffTeamMemberAddToTeamForm(forms.ModelForm):
 
-    staffteammember = StaffTeamMemberChoiceField()
+    # staffteammember = StaffTeamMemberChoiceField()
 
     def __init__(self, position_filter: str | None = None, *args, **kwargs):
         self.team = kwargs.pop("team")
         self.position_filter = position_filter
         super(StaffTeamMemberAddToTeamForm, self).__init__(*args, **kwargs)
-        # self.fields["staffteammember"] = TeamField(
-        #     competition=self.competition
-        # )
+        self.fields["staffteammember"] = StaffTeamMemberChoiceField(
+            team=self.team
+        )
 
     class Meta:
         model = StaffTeamMember.team.through

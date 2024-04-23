@@ -61,6 +61,7 @@ teams_urlpatterns = [
     path(
         "teams/<int:team_id>/",
         team_views.TeamIdView.as_view(),
+        # team_views.TeaVeiew.as_view(),
         name="teams_id",
     ),
     path(
