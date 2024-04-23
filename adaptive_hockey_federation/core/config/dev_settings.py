@@ -47,9 +47,8 @@ FILE_MODEL_MAP = {
     'main_staffmember': 'StaffMember',
     'main_city': 'City',
     'main_nosology': 'Nosology',
-    'main_discipline': 'Discipline',
-    'main_disciplinename': 'DisciplineName',
     'main_disciplinelevel': 'DisciplineLevel',
+    'main_disciplinename': 'DisciplineName',
 }
 
 EMAIL_BACKEND = env.str(

@@ -3,23 +3,23 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Q, Value
+from django.db.models import Value
 from django.db.models.functions import Concat
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import StaffTeamMemberAddToTeamForm, TeamForm
+from main.forms import StaffTeamMemberAddToTeamForm, TeamFilterForm, TeamForm
 from main.models import City, Player, StaffTeamMember, Team
 from main.permissions import CustomPermissionMixin, TeamEditPermissionsMixin
 from main.schemas.team_schema import (
-    TEAM_SEARCH_FIELDS,
     TEAM_TABLE_HEAD,
     get_players_table,
     get_staff_table,
     get_team_table_data,
 )
+from unloads.utils import model_get_queryset
 
 
 class StaffTeamMemberListMixin:
@@ -165,46 +165,19 @@ class TeamListView(
     )
     context_object_name = "teams"
     paginate_by = 10
-    ordering = ["id"]
+    ordering = ["name"]
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search = self.request.GET.get("search")
-        if search:
-            search_column = self.request.GET.get("search_column")
-            team_structure_lookup = (
-                Q(team_players__name__icontains=search)
-                | Q(team_players__surname__icontains=search)
-                | Q(team_players__patronymic__icontains=search)
-                | Q(team_members__staff_member__name__icontains=search)
-                | Q(team_members__staff_member__surname__icontains=search)
-                | Q(team_members__staff_member__patronymic__icontains=search)
-            )
-            if not search_column or search_column.lower() in ["все", "all"]:
-                or_lookup = (
-                    Q(discipline_name__name__icontains=search)
-                    | Q(name__icontains=search)
-                    | Q(city__name__icontains=search)
-                )
-                queryset = queryset.filter(or_lookup)
-            elif search_column == "team_structure":
-                or_lookup = team_structure_lookup
-                queryset = queryset.filter(or_lookup)
-            else:
-                search_fields = TEAM_SEARCH_FIELDS
-                lookup = {f"{search_fields[search_column]}__icontains": search}
-                queryset = queryset.filter(**lookup)
-
-        return (
-            queryset.select_related("discipline_name")
-            .select_related("city")
-            .order_by("name")
+        return model_get_queryset(
+            "teams", Team, dict(self.request.GET), queryset
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teams = context["teams"]
         user = self.request.user
+        context["form_filter"] = TeamFilterForm(self.request.GET or None)
         context["table_head"] = TEAM_TABLE_HEAD
         context["table_data"] = get_team_table_data(teams, user)
         return context

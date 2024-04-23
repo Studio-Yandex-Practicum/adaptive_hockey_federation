@@ -294,6 +294,31 @@ class TeamForm(forms.ModelForm):
         return instance
 
 
+class TeamFilterForm(forms.Form):
+    name = forms.CharField(
+        required=False,
+        label="Команда",
+        widget=forms.TextInput(attrs={"class": "form-control arrow-before"}),
+    )
+    discipline = forms.ModelChoiceField(
+        queryset=DisciplineName.objects.all().order_by("name"),
+        required=False,
+        label="Дисциплина",
+        widget=forms.Select(attrs={"class": "form-control arrow-before"}),
+        empty_label="Все",
+    )
+    city = forms.ModelChoiceField(
+        queryset=City.objects.all().order_by("name"),
+        required=False,
+        label="Город",
+        widget=forms.Select(attrs={"class": "form-control arrow-before"}),
+        empty_label="Все",
+    )
+
+    class Meta:
+        fields = ("name", "discipline", "city")
+
+
 class PlayerTeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PlayerTeamForm, self).__init__(*args, **kwargs)
