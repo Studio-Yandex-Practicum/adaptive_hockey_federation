@@ -95,26 +95,10 @@ class TeamIdView(
         }
         context["staff_table"][staff_table_index].update(update_data)
 
-    def get_new_staff_form(
-        self, form_name_in_context: str, position_filter: str | None = None
-    ):
-        """Возвращает форму добавления нового сотрудника.
-        Параметры:
-            - form_name_in_context: наименование формы в контексте,
-            по которому будет производиться поиск наличия этой формы в
-            self.kwargs;
-            - position_filter: фильтрация для списка сотрудников в поле
-            поиска."""
-        # new_staff_form = self.kwargs.get(form_name_in_context, None)
-        new_staff_form = StaffTeamMemberAddToTeamForm(
-            position_filter=position_filter, team=self.get_object()
-        )
-        return new_staff_form
-
     def update_context_with_additional_forms(self, context):
         """Добавляет в контекст формы добавления тренера и пушера в команду.
         Также добавляет соответствующие списки для инкрементного поиска в
-        поле формы.
+        поле форм.
         - context: параметр по ссылке, т.е. данная переменная будет изменена в
           вызывающей функции."""
 
@@ -127,20 +111,6 @@ class TeamIdView(
         self.update_context_with_staff_add_form(
             context, OTHER, 1, data_list, "available_pushers"
         )
-        #
-        #
-        # new_coach_form = self.get_new_staff_form(
-        #     "new_coach_form", position_filter=TRAINER
-        # )
-        # new_pusher_form = self.get_new_staff_form(
-        #     "new_pusher_form", position_filter=OTHER
-        # )
-        #
-        # context["staff_table"][0]["add_staff_form"] = new_coach_form
-        # context["staff_table"][0]["data_list"] = data_list
-        #
-        # context["staff_table"][1]["add_staff_form"] = new_pusher_form
-        # context["staff_table"][1]["data_list"] = data_list
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -159,8 +129,12 @@ class TeamIdView(
 
     def post(self, request, *args, **kwargs):
         """Обработка POST-запроса от форм добавления тренера или пушера."""
+        form_index = int(request.POST["btn_add_staff"])
+        position_filter = (TRAINER, OTHER)[form_index]
         new_staff_form = StaffTeamMemberAddToTeamForm(
-            data=request.POST, team=self.get_object(), position_filter=TRAINER
+            data=request.POST,
+            team=self.get_object(),
+            position_filter=position_filter,
         )
         if new_staff_form.is_valid():
             staff_team_member_team = new_staff_form.save(commit=False)
@@ -172,7 +146,6 @@ class TeamIdView(
             )
         self.object = self.get_object()
         context = self.get_context_data()
-        form_index = int(request.POST["btn_add_staff"])
         context["staff_table"][form_index]["add_staff_form"] = new_staff_form
         return render(request, self.template_name, context)
 
