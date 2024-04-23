@@ -50,8 +50,8 @@ def create_lookup_select(value: tuple, dict_param: dict) -> Q:
 
 
 def models_get_queryset(model, dict_param, queryset, search_fields):
-    search_column_name: str = dict_param["search_column"][0]
     or_lookup: Q = Q()
+    search_column_name: str = dict_param["search_column"][0]
     if search_column_name.lower() in ["все", "all"]:
         search = dict_param["search"][0]
         for value in search_fields.values():
@@ -60,7 +60,6 @@ def models_get_queryset(model, dict_param, queryset, search_fields):
         or_lookup |= create_lookup_select(
             search_fields[search_column_name], dict_param
         )
-
     if queryset:
         return queryset.filter(or_lookup)
     else:
@@ -70,7 +69,8 @@ def models_get_queryset(model, dict_param, queryset, search_fields):
 def analytics_get_queryset(model, dict_param, queryset, search_fields):
     or_lookup: Q = Q()
     for key, value in dict_param.items():
-        or_lookup &= Q((search_fields[key], value[0]))
+        if key in search_fields:
+            or_lookup &= Q((search_fields[key], value[0]))
 
     if queryset:
         queryset = queryset.filter(or_lookup)

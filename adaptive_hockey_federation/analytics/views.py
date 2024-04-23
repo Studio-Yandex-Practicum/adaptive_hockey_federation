@@ -4,7 +4,7 @@ from analytics.forms import AnalyticsFilterForm
 from core.constants import GENDER_CHOICES
 from core.permissions import AdminRequiredMixin
 from dateutil.relativedelta import relativedelta
-from django.views.generic.list import ListView
+from main.controllers.player_views import PlayersListView
 from main.models import Nosology, Player, Team
 from main.schemas.player_schema import ANALITICS_SEARCH_FIELDS
 from unloads.utils import analytics_get_queryset
@@ -12,11 +12,9 @@ from unloads.utils import analytics_get_queryset
 
 class AnalyticsListView(
     AdminRequiredMixin,
-    ListView,
+    PlayersListView,
 ):
     template_name = "analytics/analytics.html"
-    paginate_by = 10
-    # PlayersListView,
 
     def get_queryset(self):
         queryset = super().get_queryset()

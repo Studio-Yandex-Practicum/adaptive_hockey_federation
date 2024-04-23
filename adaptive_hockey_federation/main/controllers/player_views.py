@@ -51,11 +51,9 @@ class PlayersListView(
     def get_queryset(self):
 
         queryset = super().get_queryset()
-        # if self.request.path == '/analytics/':
-        #     return queryset
         dict_param = dict(self.request.GET)
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
-        if len(dict_param) > 1:
+        if len(dict_param) > 1 and "search_column" in dict_param:
             queryset = models_get_queryset(
                 Player, dict_param, queryset, SEARCH_FIELDS
             )
