@@ -91,6 +91,26 @@ def users_get_queryset(model, dict_param, queryset):
     return queryset
 
 
+def teams_get_queryset(model, dict_param, queryset):
+    filter = {
+        "city": "city__id",
+        "discipline": "discipline_name__in",
+        "name": "name__icontains",
+    }
+    lookup = {}
+    for param_key, param_value in dict_param.items():
+        if any(len(value) > 0 for value in param_value):
+            param = filter.get(param_key)
+            if param is not None:
+                lookup[param] = param_value[0]
+    if queryset:
+        queryset = queryset.filter(**lookup)
+    else:
+        queryset = model.objects.filter(**lookup)
+
+    return queryset
+
+
 def model_get_queryset(page_name, model, dict_param, queryset):
     if page_name == "players":
         return players_get_queryset(model, dict_param, queryset)
@@ -98,3 +118,5 @@ def model_get_queryset(page_name, model, dict_param, queryset):
         return analytics_get_queryset(model, dict_param, queryset)
     elif page_name == "users":
         return users_get_queryset(model, dict_param, queryset)
+    elif page_name == "teams":
+        return teams_get_queryset(model, dict_param, queryset)

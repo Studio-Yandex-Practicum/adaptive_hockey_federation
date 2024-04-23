@@ -13,6 +13,7 @@ no_search_pages = [
     "staff_create",
     "staff_id",
     "staff_id_edit",
+    "teams",
     "competition_add",
     "competition_update",
     "competition_id",

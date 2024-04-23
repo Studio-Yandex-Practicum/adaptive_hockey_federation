@@ -841,7 +841,7 @@ td {
   }
 }
 
-.filter-item {
+.teams-filter {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -851,7 +851,7 @@ td {
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
-  .filter-item {
+  .teams-filter {
     min-width: 68px;
   }
 }
@@ -868,6 +868,24 @@ td {
 
 @media screen and (min-width: 320px) and (max-width: 767px) {
   .filter-item__wrapper {
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.filter-three-item__wrapper {
+  width: 80%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .filter-three-item__wrapper {
     width: 100%;
     grid-template-columns: repeat(2, 1fr);
     grid-template-columns: repeat(2, 1fr);
@@ -1148,6 +1166,11 @@ td {
 }
 
 .analitics-button {
+  background-color: #269FBD;
+  color: #fff;
+}
+
+.filter-button {
   background-color: #269FBD;
   color: #fff;
 }
