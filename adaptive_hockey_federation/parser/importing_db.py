@@ -18,12 +18,7 @@ from adaptive_hockey_federation.core.config.dev_settings import (
 )
 from adaptive_hockey_federation.parser.user_card import BaseUserInfo
 
-MODELS_ONE_FIELD_NAME = [
-    "main_city",
-    "main_disciplinename",
-    "main_disciplinelevel",
-    "main_nosology",
-]
+MODELS_ONE_FIELD_NAME = ["main_city", "main_disciplinename", "main_nosology"]
 
 PLAYER_POSITIONS = [
     "нападающий",
@@ -148,11 +143,29 @@ def clear_data_db(file_name: str) -> None:
     )
 
 
+def parse_disciplines(FIXSTURES_DIR) -> dict:
+    with open(
+        FIXSTURES_DIR / "main_discipline.json", "r", encoding="utf-8"
+    ) as file:
+        data = json.load(file)
+    disciplines = {
+        None: {"discipline_level_id": None, "discipline_name_id": None}
+    }
+    for item in data:
+        disciplines[item["id"]] = {
+            "discipline_level_id": item["discipline_level_id"],
+            "discipline_name_id": item["discipline_name_id"],
+        }
+    return disciplines
+
+
 def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
     with open(FIXSTURES_DIR / file_name, "r", encoding="utf-8") as file:
         data = json.load(file)
     key = file_name.replace(".json", "")
     models_name = getattr(models, FILE_MODEL_MAP[key])
+    if key == "main_player":
+        disciplines = parse_disciplines(FIXSTURES_DIR)
     for item in data:
         try:
             if key in MODELS_ONE_FIELD_NAME:
@@ -166,16 +179,11 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     patronymic=item["patronymic"],
                 )
                 model_ins.save()
-            if key == "main_discipline_name":
+            if key == "main_disciplinelevel":
                 model_ins = models_name(
                     id=item["id"],
-                    name=item["discipline_name_id"],
-                )
-                model_ins.save()
-            if key == "main_discipline_level":
-                model_ins = models_name(
-                    id=item["id"],
-                    name=item["discipline_level_id"],
+                    name=item["name"],
+                    discipline_name_id=item["discipline_name_id"],
                 )
                 model_ins.save()
             if key == "main_staffteammember":
@@ -193,10 +201,15 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     name=item["name"],
                     city_id=item["city_id"],
                     discipline_name_id=item["discipline_name_id"],
-                    staff_team_member_id=item["staff_team_member_id"],
                     curator_id=1,
                 )
                 model_ins.save()
+                if item["staff_team_member_id"]:
+                    staff_team_member = StaffTeamMember.objects.get(
+                        pk=item["staff_team_member_id"]
+                    )
+                    team = Team.objects.get(pk=item["id"])
+                    staff_team_member.team.add(team)
             if key == "main_player":
                 model_ins = models_name(
                     id=item["id"],
@@ -212,8 +225,12 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     is_assistent=item["is_assistent"],
                     identity_document=item["identity_document"],
                     diagnosis_id=item["diagnosis_id"],
-                    discipline_name=item["discipline_name_id"],
-                    document_id=item["document_id"],
+                    discipline_name_id=disciplines[item["discipline_id"]][
+                        "discipline_name_id"
+                    ],
+                    discipline_level_id=disciplines[item["discipline_id"]][
+                        "discipline_level_id"
+                    ],
                 )
                 model_ins.save()
             if key == "main_player_team":

@@ -12,101 +12,63 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="player",
-            name="name",
-            field=models.CharField(
-                default="",
-                help_text="Имя",
-                max_length=256,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        "^[А-Яа-яёA-Za-z -]+$",
-                        "Строка должны состоять из кирилических или латинских символов.Возможно использование дефиса.",
-                    )
-                ],
-                verbose_name="Имя",
-            ),
+            model_name='player',
+            name='name',
+            field=models.CharField(default='', help_text='Имя', max_length=256,
+                                   validators=[
+                                       django.core.validators.RegexValidator(
+                                           '^[А-Яа-яё -]+$',
+                                           'Строка должны состоять из кирилических символов. Возможно использование дефиса.')],
+                                   verbose_name='Имя'),
         ),
         migrations.AlterField(
-            model_name="player",
-            name="patronymic",
-            field=models.CharField(
-                blank=True,
-                default="",
-                help_text="Отчество",
-                max_length=256,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        "^[А-Яа-яёA-Za-z -]+$",
-                        "Строка должны состоять из кирилических или латинских символов.Возможно использование дефиса.",
-                    )
-                ],
-                verbose_name="Отчество",
-            ),
+            model_name='player',
+            name='patronymic',
+            field=models.CharField(blank=True, default='',
+                                   help_text='Отчество', max_length=256,
+                                   validators=[
+                                       django.core.validators.RegexValidator(
+                                           '^[А-Яа-яё -]+$',
+                                           'Строка должны состоять из кирилических символов. Возможно использование дефиса.')],
+                                   verbose_name='Отчество'),
         ),
         migrations.AlterField(
-            model_name="player",
-            name="surname",
-            field=models.CharField(
-                default="",
-                help_text="Фамилия",
-                max_length=256,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        "^[А-Яа-яёA-Za-z -]+$",
-                        "Строка должны состоять из кирилических или латинских символов.Возможно использование дефиса.",
-                    )
-                ],
-                verbose_name="Фамилия",
-            ),
+            model_name='player',
+            name='surname',
+            field=models.CharField(default='', help_text='Фамилия',
+                                   max_length=256, validators=[
+                    django.core.validators.RegexValidator('^[А-Яа-яё -]+$',
+                                                          'Строка должны состоять из кирилических символов. Возможно использование дефиса.')],
+                                   verbose_name='Фамилия'),
         ),
         migrations.AlterField(
-            model_name="staffmember",
-            name="name",
-            field=models.CharField(
-                default="",
-                help_text="Имя",
-                max_length=256,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        "^[А-Яа-яёA-Za-z -]+$",
-                        "Строка должны состоять из кирилических или латинских символов.Возможно использование дефиса.",
-                    )
-                ],
-                verbose_name="Имя",
-            ),
+            model_name='staffmember',
+            name='name',
+            field=models.CharField(default='', help_text='Имя', max_length=256,
+                                   validators=[
+                                       django.core.validators.RegexValidator(
+                                           '^[А-Яа-яё -]+$',
+                                           'Строка должны состоять из кирилических символов. Возможно использование дефиса.')],
+                                   verbose_name='Имя'),
         ),
         migrations.AlterField(
-            model_name="staffmember",
-            name="patronymic",
-            field=models.CharField(
-                blank=True,
-                default="",
-                help_text="Отчество",
-                max_length=256,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        "^[А-Яа-яёA-Za-z -]+$",
-                        "Строка должны состоять из кирилических или латинских символов.Возможно использование дефиса.",
-                    )
-                ],
-                verbose_name="Отчество",
-            ),
+            model_name='staffmember',
+            name='patronymic',
+            field=models.CharField(blank=True, default='',
+                                   help_text='Отчество', max_length=256,
+                                   validators=[
+                                       django.core.validators.RegexValidator(
+                                           '^[А-Яа-яё -]+$',
+                                           'Строка должны состоять из кирилических символов. Возможно использование дефиса.')],
+                                   verbose_name='Отчество'),
         ),
         migrations.AlterField(
-            model_name="staffmember",
-            name="surname",
-            field=models.CharField(
-                default="",
-                help_text="Фамилия",
-                max_length=256,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        "^[А-Яа-яёA-Za-z -]+$",
-                        "Строка должны состоять из кирилических или латинских символов.Возможно использование дефиса.",
-                    )
-                ],
-                verbose_name="Фамилия",
-            ),
+            model_name='staffmember',
+            name='surname',
+            field=models.CharField(default='', help_text='Фамилия',
+                                   max_length=256, validators=[
+                    django.core.validators.RegexValidator('^[А-Яа-яё -]+$',
+                                                          'Строка должны состоять из кирилических символов. Возможно использование дефиса.')],
+                                   verbose_name='Фамилия'),
         ),
     ]

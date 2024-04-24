@@ -272,6 +272,8 @@ class StaffTeamMember(models.Model):
         related_name="team_members",
         verbose_name=_("Команда"),
         help_text=_("Команда"),
+        default='Свободный агент',
+        blank=True,
     )
     qualification = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
