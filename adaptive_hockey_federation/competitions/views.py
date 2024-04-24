@@ -1,4 +1,8 @@
-from competitions.forms import CompetitionForm, CompetitionTeamForm
+from competitions.forms import (
+    CompetitionForm,
+    CompetitionTeamForm,
+    CompetitionUpdateForm,
+)
 from competitions.models import Competition, Team
 from competitions.schema import (
     get_competitions_table_data,
@@ -131,6 +135,7 @@ class CompetitionListView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         competitions = context["competitions"]
+        context["page_title"] = "Редактирование соревнование"
         context["table_head"] = get_competitions_table_head
         context["table_data"] = get_competitions_table_data(competitions)
         return context
@@ -145,7 +150,7 @@ class UpdateCompetitionView(
     """Обновление информации о соревновании."""
 
     model = Competition
-    form_class = CompetitionForm
+    form_class = CompetitionUpdateForm
     template_name = "main/competitions/competition_create_edit.html"
     permission_required = "competitions.change_competition"
     permission_denied_message = (
@@ -281,6 +286,10 @@ class CreateCompetitionView(
         context["cities"] = self.get_cities()
         context["page_title"] = "Создать соревнование"
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.disciplines = request.POST.get("disciplines", None)
+        return super().post(request, *args, **kwargs)
 
 
 def check_permissions(user):

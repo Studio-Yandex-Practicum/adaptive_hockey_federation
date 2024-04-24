@@ -8,5 +8,5 @@ def date_not_before_today(value):
     Должен вызываться только при создании соревнования."""
     if value < datetime.date(datetime.now()):
         raise ValidationError(
-            "Введите дату не позднее сегодняшней.", code="past_is_forbidden"
+            "Введите дату не раньше сегодняшней.", code="past_is_forbidden"
         )

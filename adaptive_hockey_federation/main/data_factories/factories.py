@@ -177,6 +177,14 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
             for team in list_teams:
                 self.teams.add(team)
 
+    @factory.post_generation
+    def disciplines(self, create, extracted, **kwargs):
+        if create:
+            disciplines = DisciplineName.objects.all()
+            list_disciplines = random.choices(disciplines, k=4)
+            for discipline in list_disciplines:
+                self.disciplines.add(discipline)
+
 
 class PlayerFactory(factory.django.DjangoModelFactory):
     class Meta:
