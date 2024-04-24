@@ -55,7 +55,9 @@ class PlayerForm(forms.ModelForm):
     )
 
     team = CustomMultipleChoiceField(
-        required=True, help_text=FORM_HELP_TEXTS["teams"], label="Команды"
+        required=True,
+        help_text=FORM_HELP_TEXTS["player_teams"],
+        label="Команды"
     )
 
     class Meta:
@@ -142,7 +144,7 @@ class PlayerUpdateForm(PlayerForm):
             self.fields["team"] = CustomModelMultipleChoiceField(
                 queryset=queryset,
                 required=True,
-                help_text=FORM_HELP_TEXTS["teams"],
+                help_text=FORM_HELP_TEXTS["player_teams"],
                 label="Команды",
             )
         queryset_available = Team.objects.all().difference(queryset)
@@ -350,7 +352,9 @@ class StaffTeamMemberForm(forms.ModelForm):
     )
 
     team = CustomMultipleChoiceField(
-        required=True, help_text=FORM_HELP_TEXTS["teams"], label="Команды"
+        required=True,
+        help_text=FORM_HELP_TEXTS["staff_teams"],
+        label="Команды"
     )
 
     class Meta:
@@ -362,7 +366,7 @@ class StaffTeamMemberForm(forms.ModelForm):
             "notes",
         )
         help_texts = {
-            "team": FORM_HELP_TEXTS["teams"],
+            "team": FORM_HELP_TEXTS["staff_teams"],
         }
 
 
@@ -374,7 +378,7 @@ class StaffTeamMemberEditForm(StaffTeamMemberForm):
             self.fields["team"] = CustomModelMultipleChoiceField(
                 queryset=queryset,
                 required=True,
-                help_text=FORM_HELP_TEXTS["teams"],
+                help_text=FORM_HELP_TEXTS["staff_teams"],
                 label="Команды",
             )
         queryset_available = Team.objects.all().difference(queryset)
