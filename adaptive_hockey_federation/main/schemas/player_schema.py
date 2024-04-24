@@ -1,11 +1,11 @@
 from django.urls import reverse
 
-SEARCH_FIELDS = {
+SEARCH_FIELDS: dict = {
     "surname": "surname",
     "name": "name",
-    "birthday": "birthday",
+    "birthday": ("year", "month", "day"),
     "gender": "gender",
-    "number": "surname",
+    "number": "number",
     "discipline_name": "discipline_name__name",
     "discipline_level": "discipline_level__name",
     "team": "team__name",

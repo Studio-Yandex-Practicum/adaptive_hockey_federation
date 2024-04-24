@@ -17,8 +17,16 @@ class AnalyticsListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return model_get_queryset(
-            "analytics", Player, dict(self.request.GET), queryset
+        dict_param = dict(self.request.GET)
+        dict_param = {k: v for k, v in dict_param.items() if v != [""]}
+        if len(dict_param) > 0:
+            queryset = model_get_queryset(
+                "analytics", Player, dict_param, queryset
+            )
+        return (
+            queryset.select_related("diagnosis")
+            .select_related("discipline_name")
+            .order_by("surname")
         )
 
     def get_context_data(self, *, object_list=None, **kwargs):
