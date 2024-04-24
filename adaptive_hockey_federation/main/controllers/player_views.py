@@ -256,6 +256,7 @@ class PlayerIDEditView(
         context["file_resolution"] = ", ".join(
             ["." + res for res in FILE_RESOLUTION]
         )
+        context["help_text_role"] = "Команды игрока"
         return context
 
     def form_valid(self, form):

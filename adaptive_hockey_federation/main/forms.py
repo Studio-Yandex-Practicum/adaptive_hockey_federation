@@ -342,9 +342,21 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
 class StaffTeamMemberForm(forms.ModelForm):
 
+    available_teams = ModelMultipleChoiceField(
+        queryset=Team.objects.all().order_by("name"),
+        required=False,
+        help_text=FORM_HELP_TEXTS["available_teams"],
+        label="Команды",
+    )
+
+    team = CustomMultipleChoiceField(
+        required=True, help_text=FORM_HELP_TEXTS["teams"], label="Команды"
+    )
+
     class Meta:
         model = StaffTeamMember
         fields = (
+            "available_teams",
             "team",
             "qualification",
             "notes",
@@ -352,6 +364,26 @@ class StaffTeamMemberForm(forms.ModelForm):
         help_texts = {
             "team": FORM_HELP_TEXTS["teams"],
         }
+
+
+class StaffTeamMemberEditForm(StaffTeamMemberForm):
+
+    def __init__(self, *args, **kwargs):
+        super(StaffTeamMemberForm, self).__init__(*args, **kwargs)
+        if queryset := self.instance.team.all():
+            self.fields["team"] = CustomModelMultipleChoiceField(
+                queryset=queryset,
+                required=True,
+                help_text=FORM_HELP_TEXTS["teams"],
+                label="Команды",
+            )
+        queryset_available = Team.objects.all().difference(queryset)
+        self.fields["available_teams"] = CustomModelMultipleChoiceField(
+            queryset=queryset_available,
+            required=False,
+            help_text=FORM_HELP_TEXTS["available_teams"],
+            label="Команды",
+        )
 
 
 class StaffMemberForm(forms.ModelForm):
