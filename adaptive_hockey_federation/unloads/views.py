@@ -84,14 +84,13 @@ class DataExportView(LoginRequiredMixin, View):
         page_name = kwargs.get("page_name")
 
         if page_name in model_mapping:
-            app_label, model_name, filename, title = model_mapping[page_name]
+            app_label, model_name, title = model_mapping[page_name]
             model = apps.get_model(app_label, model_name)
             last_url = request.META.get("HTTP_REFERER")
             parsed = urlparse(last_url)
-            params = parse_qs(parsed.query, keep_blank_values=True)
-            new_queryset = model_get_queryset(page_name, model, params, None)
-            if new_queryset:
-                queryset = new_queryset
+            params = parse_qs(parsed.query)
+            if len(params) > 1:
+                queryset = model_get_queryset(page_name, model, params, None)
                 filename = page_name + "_search.xlsx"
             else:
                 queryset = model.objects.all()

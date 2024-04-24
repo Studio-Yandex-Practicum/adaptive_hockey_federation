@@ -1,7 +1,7 @@
 {% extends 'base/base.html' %}
 {% load user_filters %}
 {% block title %}
-
+    {{ page_title }}
 {% endblock %}
 {% block content %}
 <h2 class="text-center mb-4">{{ page_title }}</h2>
@@ -15,6 +15,7 @@
                   {% for field in form.visible_fields %}
                     {% if field.name in 'title location'%} {% include "main/fields/text_input_field.html" %}
                     {% elif field.name in 'city'%} {% include "main/fields/city_field.html" %}
+                    {% elif  field.name in 'disciplines' %} {% include "main/fields/discipline_select_field.html" %}
                     {% elif field.name in 'date_start date_end'%} {% include "main/fields/text_input_field.html" %}
                     {% endif %}
                   {% endfor %}
@@ -37,4 +38,12 @@
       </div>
   </div>
 </form>
+{% endblock %}
+{% block JavaScript %}
+<script>
+    const mover = new SelectManipulation('id_available_disciplines', 'id_disciplines');
+    const selectAllSelected = new SelectAllSelected('id_disciplines');
+    const search_available_teams = new SearchValue('id_available_disciplines', 'selector-filter-available');
+    const search_current_teams = new SearchValue('id_disciplines', 'selector-filter-current');
+</script>
 {% endblock %}

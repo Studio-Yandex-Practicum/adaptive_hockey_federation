@@ -2,10 +2,24 @@ from typing import Any
 
 from competitions.models import CHAR_FIELD_LENGTH, Competition
 from competitions.validators import date_not_before_today
+from core.constants import FORM_HELP_TEXTS
 from django import forms
 from django.core.exceptions import ValidationError
-from main.forms import CityChoiceField
-from main.models import Team
+from django.forms import ModelMultipleChoiceField
+from main.forms import CityChoiceField, CustomMultipleChoiceField
+from main.models import DisciplineName, Team
+
+
+class CustomDisciplineMultipleChoiceField(ModelMultipleChoiceField):
+
+    def _check_values(self, value):
+        try:
+            value = frozenset(value)
+        except TypeError:
+            raise ValidationError("Неверный список дисциплин!")
+        value = list(value)
+        qs = DisciplineName.objects.filter(pk__in=value)
+        return qs
 
 
 class CompetitionForm(forms.ModelForm):
@@ -25,6 +39,19 @@ class CompetitionForm(forms.ModelForm):
 
     title = forms.CharField(label="Название")
     city = CityChoiceField(label="Город, где проводятся соревнования")
+
+    available_disciplines = ModelMultipleChoiceField(
+        queryset=DisciplineName.objects.all().order_by("name"),
+        required=False,
+        help_text=FORM_HELP_TEXTS["disciplines"],
+        label="Дисциплины",
+    )
+
+    disciplines = CustomMultipleChoiceField(
+        required=True,
+        help_text=FORM_HELP_TEXTS["disciplines"],
+        label="Дисциплины",
+    )
 
     location = forms.CharField(
         label="Место проведения (адрес, учреждение и т.д.)",
@@ -56,12 +83,27 @@ class CompetitionForm(forms.ModelForm):
 
     class Meta:
         model = Competition
-        fields = ["title", "city", "location", "date_start", "date_end"]
+        fields = [
+            "title",
+            "city",
+            "location",
+            "available_disciplines",
+            "disciplines",
+            "date_start",
+            "date_end",
+        ]
+
+    def save_m2m(self):
+        self.instance.disciplines.through.objects.filter(
+            disciplinename__in=self.cleaned_data["disciplines"]
+        ).delete()
+        self.instance.disciplines.set(self.cleaned_data["disciplines"])
 
     def save(self, commit=True):
         instance = super(CompetitionForm, self).save(commit=True)
         if commit:
             instance.save()
+        self.save_m2m()
         return instance
 
     def clean(self):
@@ -118,6 +160,28 @@ class TeamField(forms.ModelChoiceField):
             return super().clean(team)
 
         raise ValidationError("Такой команды не существует")
+
+
+class CompetitionUpdateForm(CompetitionForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CompetitionForm, self).__init__(*args, **kwargs)
+        if queryset := self.instance.disciplines.all():
+            self.fields["disciplines"] = CustomDisciplineMultipleChoiceField(
+                queryset=queryset,
+                required=True,
+                help_text=FORM_HELP_TEXTS["disciplines"],
+                label="Дисциплины",
+            )
+        queryset_available = DisciplineName.objects.all().difference(queryset)
+        self.fields["available_disciplines"] = (
+            CustomDisciplineMultipleChoiceField(
+                queryset=queryset_available,
+                required=False,
+                help_text=FORM_HELP_TEXTS["available_disciplines"],
+                label="Дисциплины",
+            )
+        )
 
 
 class CompetitionTeamForm(forms.ModelForm):
