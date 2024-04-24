@@ -1,0 +1,7 @@
+{% if field.name == 'staffteammember' %}
+  <datalist id="{{ staff.add_staff_field_data_list_id }}">
+    {% for staff_member in staff.data_list %}
+      <option value="{{ staff_member }}"></option>
+    {% endfor %}
+  </datalist>
+{% endif %}

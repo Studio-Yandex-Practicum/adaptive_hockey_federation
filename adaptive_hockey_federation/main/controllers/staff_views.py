@@ -8,7 +8,11 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from main.forms import StaffMemberForm, StaffTeamMemberForm
+from main.forms import (
+    StaffMemberForm,
+    StaffTeamMemberEditForm,
+    StaffTeamMemberForm,
+)
 from main.models import StaffMember, StaffTeamMember
 from main.schemas.staff_schema import (
     STAFF_SEARCH_FIELDS,
@@ -195,6 +199,7 @@ class StaffMemberIdTeamCreateView(
             context["page_title"] = (
                 "Добавление сотрудника в команду пушер-тьютором"
             )
+        context["help_text_role"] = "Команды сотрудника"
         return context
 
     def get_success_url(self):
@@ -226,7 +231,7 @@ class StaffMemberIDTeamEditView(
     """Представление редактирования сотрудника находящегося в команде"""
 
     model = StaffTeamMember
-    form_class = StaffTeamMemberForm
+    form_class = StaffTeamMemberEditForm
     template_name = "main/staffs/staff_id_team_edit_create.html"
     permission_required = "main.change_staffteammember"
     permission_denied_message = (
@@ -250,6 +255,7 @@ class StaffMemberIDTeamEditView(
             f"Редактирование данных {self.get_object().staff_position}а"
             " команды")
         context["on_team"] = True
+        context["help_text_role"] = "Команды сотрудника"
         return context
 
 

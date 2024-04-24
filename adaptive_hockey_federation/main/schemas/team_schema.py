@@ -1,4 +1,4 @@
-from core.constants import STAFF_POSITION_CHOICES
+from core.constants import OTHER, STAFF_POSITION_CHOICES, TRAINER
 from django.urls import reverse
 from main.controllers.utils import get_player_href
 
@@ -14,6 +14,13 @@ TEAM_TABLE_HEAD = {
     "city": "Город",
     "team_structure": "Состав команды",
 }
+
+
+def get_staff_position_slug(staff_position: str) -> str:
+    slugs = {TRAINER: "coach", OTHER: "pusher"}
+    if staff_position in slugs.keys():
+        return slugs[staff_position]
+    return "no_position_found"
 
 
 def get_staff_table(team):
@@ -33,6 +40,9 @@ def get_staff_table(team):
                     "surname": staff.staff_member.surname,
                     "name": staff.staff_member.name,
                     "position": staff.qualification,
+                    "staff_position_slug": get_staff_position_slug(
+                        staff.staff_position
+                    ),
                     "note": staff.notes,
                     "id": staff.id,
                 }

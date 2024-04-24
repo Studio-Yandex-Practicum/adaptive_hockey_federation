@@ -1,7 +1,7 @@
 import re
 from typing import Any
 
-from core.constants import FORM_HELP_TEXTS, ROLE_AGENT
+from core.constants import FORM_HELP_TEXTS, OTHER, ROLE_AGENT, TRAINER
 from core.utils import max_date, min_date
 from django import forms
 from django.core.exceptions import ValidationError
@@ -12,6 +12,7 @@ from django.forms import (
     Select,
     TextInput,
 )
+from django.shortcuts import get_object_or_404
 from main.models import (
     City,
     DisciplineName,
@@ -54,7 +55,9 @@ class PlayerForm(forms.ModelForm):
     )
 
     team = CustomMultipleChoiceField(
-        required=True, help_text=FORM_HELP_TEXTS["teams"], label="Команды"
+        required=True,
+        help_text=FORM_HELP_TEXTS["player_teams"],
+        label="Команды"
     )
 
     class Meta:
@@ -141,7 +144,7 @@ class PlayerUpdateForm(PlayerForm):
             self.fields["team"] = CustomModelMultipleChoiceField(
                 queryset=queryset,
                 required=True,
-                help_text=FORM_HELP_TEXTS["teams"],
+                help_text=FORM_HELP_TEXTS["player_teams"],
                 label="Команды",
             )
         queryset_available = Team.objects.all().difference(queryset)
@@ -188,6 +191,49 @@ class CityChoiceField(ModelChoiceField):
         else:
             city, created = City.objects.get_or_create(name=value)
             return city
+
+
+class StaffTeamMemberChoiceField(ModelChoiceField):
+    """Самодельное поле выбора сотрудника команды."""
+
+    def __init__(self, team: Team, data_list: str, label: str | None = None):
+        super().__init__(
+            queryset=StaffTeamMember.objects.all(),
+            widget=TextInput(
+                attrs={
+                    "list": data_list,
+                    "placeholder": "Начните ввод и выберите из списка",
+                }
+            ),
+            required=True,
+            error_messages={
+                "required": "Пожалуйста, выберите сотрудника из списка."
+            },
+            label=label or "Выберите сотрудника",
+        )
+        self.team = team
+
+    def clean(self, value: Any) -> Any:
+        """Переопределенный метод родительского класса.
+        Прежде, чем вызвать родительский метод, получает объект
+        StaffTeamMember и возвращает его на
+        дальнейшую стандартную валидацию формы."""
+
+        if not value:
+            raise ValidationError(self.error_messages["required"])
+
+        if value.isdigit():
+            value = value
+        elif m := re.search(r"\d+\)\Z", value):
+            value = int(m.group()[:-1])
+        else:
+            raise ValidationError("Неверный формат введенных данных.")
+        staff_team_member = get_object_or_404(StaffTeamMember, id=value)
+        if StaffTeamMember.team.through.objects.filter(
+            staffteammember=staff_team_member, team=self.team
+        ).exists():
+            raise ValidationError("Этот сотрудник уже есть в команде.")
+        return super().clean(value)
 
 
 class TeamForm(forms.ModelForm):
@@ -298,16 +344,50 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
 class StaffTeamMemberForm(forms.ModelForm):
 
+    available_teams = ModelMultipleChoiceField(
+        queryset=Team.objects.all().order_by("name"),
+        required=False,
+        help_text=FORM_HELP_TEXTS["available_teams"],
+        label="Команды",
+    )
+
+    team = CustomMultipleChoiceField(
+        required=True,
+        help_text=FORM_HELP_TEXTS["staff_teams"],
+        label="Команды"
+    )
+
     class Meta:
         model = StaffTeamMember
         fields = (
+            "available_teams",
             "team",
             "qualification",
             "notes",
         )
         help_texts = {
-            "team": FORM_HELP_TEXTS["teams"],
+            "team": FORM_HELP_TEXTS["staff_teams"],
         }
+
+
+class StaffTeamMemberEditForm(StaffTeamMemberForm):
+
+    def __init__(self, *args, **kwargs):
+        super(StaffTeamMemberForm, self).__init__(*args, **kwargs)
+        if queryset := self.instance.team.all():
+            self.fields["team"] = CustomModelMultipleChoiceField(
+                queryset=queryset,
+                required=True,
+                help_text=FORM_HELP_TEXTS["staff_teams"],
+                label="Команды",
+            )
+        queryset_available = Team.objects.all().difference(queryset)
+        self.fields["available_teams"] = CustomModelMultipleChoiceField(
+            queryset=queryset_available,
+            required=False,
+            help_text=FORM_HELP_TEXTS["available_teams"],
+            label="Команды",
+        )
 
 
 class StaffMemberForm(forms.ModelForm):
@@ -331,3 +411,30 @@ class StaffMemberForm(forms.ModelForm):
                 attrs={"placeholder": "Введите номер телефона"}
             ),
         }
+
+
+class StaffTeamMemberAddToTeamForm(forms.ModelForm):
+
+    def __init__(self, position_filter: str | None = None, *args, **kwargs):
+        self.team = kwargs.pop("team")
+        data_list_dict = {
+            TRAINER: "available_coaches",
+            OTHER: "available_pushers",
+            "None": "available_staffs",
+        }
+        self.position_filter = position_filter or "None"
+        self.data_list_id = data_list_dict[self.position_filter]
+        super(StaffTeamMemberAddToTeamForm, self).__init__(*args, **kwargs)
+        self.fields["staffteammember"] = StaffTeamMemberChoiceField(
+            team=self.team, data_list=self.data_list_id
+        )
+
+    class Meta:
+        model = StaffTeamMember.team.through
+        fields = ("staffteammember",)
+
+    def save(self, commit=True):
+        instance = super(StaffTeamMemberAddToTeamForm, self).save(commit=False)
+        if commit:
+            instance.save()
+        return instance

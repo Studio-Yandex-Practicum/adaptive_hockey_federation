@@ -59,9 +59,9 @@ teams_urlpatterns = [
         name="team_delete",
     ),
     path(
-        "teams/<int:team_id>/",
-        team_views.TeamIdView.as_view(),
-        name="teams_id",
+        "<int:team_id>/fire_staff/<int:staff_team_member_id>/",
+        team_views.FireStaffFromTeam.as_view(),
+        name="fire_staff_from_team",
     ),
 ]
 
@@ -107,7 +107,6 @@ staffs_urlpatterns = [
         name="staff_id_team_delete",
     ),
 ]
-
 
 urlpatterns = [
     path("", include(main_urlpatterns)),

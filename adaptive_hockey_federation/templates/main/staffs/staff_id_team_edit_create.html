@@ -14,7 +14,7 @@
         <tbody>
           {% for field in form.visible_fields %}
             {% if field.name in "qualification notes"%} {% include "main/fields/text_input_field.html" %}
-            {% elif  field.name in "team" %} {% include "main/fields/team_select_field_1_field.html" %}
+            {% elif  field.name in "team" %} {% include "main/fields/team_select_field_2_fields.html" %}
             {% endif %}
           {% endfor %}
         </tbody>
@@ -35,4 +35,16 @@
     </div>
   </form>
   <div class="container mb-4"></div>
+{% endblock %}
+
+
+{% block JavaScript %}
+<script>
+
+    const mover = new SelectManipulation('id_available_teams', 'id_team');
+    const selectAllSelected = new SelectAllSelected('id_team');
+    const search_available_teams = new SearchValue('id_available_teams', 'selector-filter-available');
+    const search_current_teams = new SearchValue('id_team', 'selector-filter-current');
+
+</script>
 {% endblock %}

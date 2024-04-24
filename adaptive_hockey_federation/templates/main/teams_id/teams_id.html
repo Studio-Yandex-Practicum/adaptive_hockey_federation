@@ -1,14 +1,47 @@
 {% extends 'base/base.html' %}
+{% load user_filters %}
 {% block title %}
   Профиль команды: {{ team }}
 {% endblock %}
 {% block content %}
   <h2 class="text-center mb-4">Команда: {{ team }}</h2>
-{% for staff in staff_table %}
-      <div class="container">
-        <h3 class="text-start mb-4">{{ staff.position }}</h3>
-        {% include 'main/teams_id/table.html' with table_head=staff.head table_data=staff.data table_name='staff' %}
-      </div>
+  {% for staff in staff_table %}
+    <div class="container">
+      <h3 class="text-start mb-4">{{ staff.position }}</h3>
+      {% include 'main/teams_id/table.html' with table_head=staff.head table_data=staff.data table_name='staff' %}
+
+      <form
+        method="post"
+        {% if action_url %}
+        action="{% url action_url %}"
+{#          enctype="multipart/form-data"#}
+        {% endif %}
+      >
+        {% csrf_token %}
+        {% for field in staff.add_staff_form %}
+          <div class="tw-w-full tw-flex tw-justify-center">
+            <div class="row my-1 tw-min-w-[70%] tw-max-w-[80%]">
+              <label for="{{ field.id_for_label }}">
+              {{ field.label }}
+              {% if field.field.required %}
+                <span class="required text-danger">*</span>
+              {% endif %}
+              </label>
+              {{ field|addclass:'form-control' }}
+              {% include 'main/teams_id/components/staff_search_field.html' %}
+              {% if field.errors %}
+                <small style="color: red" class="error">{{ field.errors|striptags  }}</small>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+          <button type="submit" class="update_btn tw-rounded-lg"
+                  name="btn_add_staff"
+                  value="{{ forloop.counter0 }}">
+            Добавить
+          </button>
+      </form>
+    </div>
   {% endfor %}
   <div class="container">
     <h3 class="text-start mb-4">{{ players_table.name }}</h3>
