@@ -234,14 +234,6 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
         return super().clean(value)
 
 
-# class StaffTeamTeamForm(forms.ModelForm):
-#     staffteammember = StaffTeamMemberChoiceField()
-#
-#     class Meta:
-#         fields = ["staffteammember", "team"]
-#         model = StaffTeamMember.team.through
-
-
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user: User | None = kwargs.pop("user", None)
@@ -386,8 +378,6 @@ class StaffMemberForm(forms.ModelForm):
 
 
 class StaffTeamMemberAddToTeamForm(forms.ModelForm):
-
-    # staffteammember = StaffTeamMemberChoiceField()
 
     def __init__(self, position_filter: str | None = None, *args, **kwargs):
         self.team = kwargs.pop("team")
