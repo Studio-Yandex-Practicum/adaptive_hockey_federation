@@ -157,6 +157,7 @@ class PlayerIdView(
         "У Вас нет разрешения на просмотр карточки игрока."
     )
     context_object_name = "player"
+
     fields = [
         "surname",
         "name",

@@ -15,7 +15,9 @@ from django.forms import (
 from django.shortcuts import get_object_or_404
 from main.models import (
     City,
+    Diagnosis,
     DisciplineName,
+    Nosology,
     Player,
     StaffMember,
     StaffTeamMember,
@@ -45,6 +47,60 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
         return qs
 
 
+class CustomNosologyChoiceField(ModelChoiceField):
+    def __init__(self, label: str | None = None):
+        super().__init__(
+            queryset=Nosology.objects.all(),
+            required=True,
+            error_messages={
+                "required": "Пожалуйста, выберите нозологию из списка."
+            },
+            label=label or "Выберите нозологию",
+        )
+
+    def clean(self, value: Any) -> Any:
+        """"""
+        if not value:
+            raise ValidationError(self.error_messages["required"])
+
+        if value.isdigit():
+            nosology = get_object_or_404(Nosology, id=value)
+            return nosology.id
+
+
+class CustomDiagnosisChoiceField(ModelChoiceField):
+    def __init__(self, nosology, label: str | None = None):
+        self.nosology = nosology
+        super().__init__(
+            queryset=Diagnosis.objects.all(),
+            widget=TextInput(
+                attrs={
+                    "list": "diagnosis",
+                    "placeholder": "Введите название диагноза",
+                }
+            ),
+            required=True,
+            error_messages={
+                "required": "Пожалуйста, выберите диагноз из списка."
+            },
+            label=label or "Выберите диагноз",
+        )
+
+    def clean(self, value: Any) -> Any:
+        """"""
+        # diagnosis_list = Diagnosis.objects.values()
+        if not value:
+            raise ValidationError(self.error_messages["required"])
+        # for item in diagnosis_list:
+        # if item["name"] != value and item["nosology_id"] != self.nosology:
+        # Проверка пары Нозология + Имя заболевания
+        # nosology =
+        # diagnosis, created = Diagnosis.objects.create(
+        #    name=value, nosology=Diagnosis.objects.get(id=3)
+        # )
+        return value
+
+
 class PlayerForm(forms.ModelForm):
 
     available_teams = ModelMultipleChoiceField(
@@ -57,8 +113,11 @@ class PlayerForm(forms.ModelForm):
     team = CustomMultipleChoiceField(
         required=True,
         help_text=FORM_HELP_TEXTS["player_teams"],
-        label="Команды"
+        label="Команды",
     )
+    nosology = CustomNosologyChoiceField()
+
+    disease = CustomDiagnosisChoiceField(nosology=nosology)
 
     class Meta:
         model = Player
@@ -70,7 +129,8 @@ class PlayerForm(forms.ModelForm):
             "birthday",
             "discipline_name",
             "discipline_level",
-            "diagnosis",
+            "nosology",
+            "disease",
             "level_revision",
             "team",
             "available_teams",
@@ -354,7 +414,7 @@ class StaffTeamMemberForm(forms.ModelForm):
     team = CustomMultipleChoiceField(
         required=True,
         help_text=FORM_HELP_TEXTS["staff_teams"],
-        label="Команды"
+        label="Команды",
     )
 
     class Meta:
