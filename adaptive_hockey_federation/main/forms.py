@@ -48,6 +48,8 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
 
 
 class CustomNosologyChoiceField(ModelChoiceField):
+    """Самодельное поле для выбора нозологии."""
+
     def __init__(self, label: str | None = None):
         super().__init__(
             queryset=Nosology.objects.all(),
@@ -59,7 +61,7 @@ class CustomNosologyChoiceField(ModelChoiceField):
         )
 
     def clean(self, value: Any) -> Any:
-        """"""
+        """Метод возвращает id Nosology"""
         if not value:
             raise ValidationError(self.error_messages["required"])
 
@@ -69,6 +71,8 @@ class CustomNosologyChoiceField(ModelChoiceField):
 
 
 class CustomDiagnosisChoiceField(ModelChoiceField):
+    """Самодельное поле для ввода диагноза."""
+
     def __init__(self, nosology, label: str | None = None):
         self.nosology = nosology
         super().__init__(
@@ -87,18 +91,27 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
         )
 
     def clean(self, value: Any) -> Any:
-        """"""
+        """
+        Прежде, чем вызвать родительский метод, получает объект диагноза
+        и нозологии (Diagnosis, Nosology) по введенному названию, проверяет
+        наличие введенного наименования диагноза в БД. Если такого в БД нет,
+        то создает соответствующий (объект класса Diagnosis) и возвращает его
+        на дальнейшую стандартную валидацию формы.
+        """
         # diagnosis_list = Diagnosis.objects.values()
-        if not value:
-            raise ValidationError(self.error_messages["required"])
+        # if not value:
+        #    raise ValidationError(self.error_messages["required"])
         # for item in diagnosis_list:
-        # if item["name"] != value and item["nosology_id"] != self.nosology:
+        #    if item["name"] != value and item["nosology_id"] != self.nosology:
         # Проверка пары Нозология + Имя заболевания
         # nosology =
-        # diagnosis, created = Diagnosis.objects.create(
-        #    name=value, nosology=Diagnosis.objects.get(id=3)
-        # )
-        return value
+        #        diagnosis, created = Diagnosis.objects.create(
+        #            name=value,
+        #            nosology=Diagnosis.objects.get(id=3)
+        # Вместо 3, должно быть id, Nosology
+        #        )
+        # return diagnosis
+        pass
 
 
 class PlayerForm(forms.ModelForm):
@@ -117,7 +130,7 @@ class PlayerForm(forms.ModelForm):
     )
     nosology = CustomNosologyChoiceField()
 
-    disease = CustomDiagnosisChoiceField(nosology=nosology)
+    diagnosis = CustomDiagnosisChoiceField(nosology=nosology)
 
     class Meta:
         model = Player
@@ -130,7 +143,7 @@ class PlayerForm(forms.ModelForm):
             "discipline_name",
             "discipline_level",
             "nosology",
-            "disease",
+            "diagnosis",
             "level_revision",
             "team",
             "available_teams",
