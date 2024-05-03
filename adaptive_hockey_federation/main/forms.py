@@ -73,8 +73,7 @@ class CustomNosologyChoiceField(ModelChoiceField):
 class CustomDiagnosisChoiceField(ModelChoiceField):
     """Самодельное поле для ввода диагноза."""
 
-    def __init__(self, nosology, label: str | None = None):
-        self.nosology = nosology
+    def __init__(self, label: str | None = None):
         super().__init__(
             queryset=Diagnosis.objects.all(),
             widget=TextInput(
@@ -99,19 +98,20 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
         на дальнейшую стандартную валидацию формы.
         """
         # diagnosis_list = Diagnosis.objects.values()
-        # if not value:
-        #    raise ValidationError(self.error_messages["required"])
+        # nosology = self.form.cleaned_data.get("nosology")
+        if not value:
+            raise ValidationError(self.error_messages["required"])
+        if value.isdigit():
+            return super().clean(value)
+        else:
+            diagnosis, created = Diagnosis.objects.get_or_create(name=value)
         # for item in diagnosis_list:
-        #    if item["name"] != value and item["nosology_id"] != self.nosology:
+        #    if item["name"] != value and item["nosology_id"] != nosology:
         # Проверка пары Нозология + Имя заболевания
-        # nosology =
-        #        diagnosis, created = Diagnosis.objects.create(
-        #            name=value,
-        #            nosology=Diagnosis.objects.get(id=3)
+
         # Вместо 3, должно быть id, Nosology
-        #        )
-        # return diagnosis
-        pass
+
+        return diagnosis
 
 
 class PlayerForm(forms.ModelForm):
@@ -130,7 +130,7 @@ class PlayerForm(forms.ModelForm):
     )
     nosology = CustomNosologyChoiceField()
 
-    diagnosis = CustomDiagnosisChoiceField(nosology=nosology)
+    diagnosis = CustomDiagnosisChoiceField()
 
     class Meta:
         model = Player
