@@ -35,11 +35,13 @@
             </div>
           </div>
         {% endfor %}
-          <button type="submit" class="update_btn tw-rounded-lg"
-                  name="btn_add_staff"
-                  value="{{ forloop.counter0 }}">
-            Добавить
-          </button>
+          {% if request.user == team.curator or user.is_staff %}
+            <button type="submit" class="update_btn tw-rounded-lg"
+                    name="btn_add_staff"
+                    value="{{ forloop.counter0 }}">
+              Добавить
+            </button>
+          {% endif %}
       </form>
     </div>
   {% endfor %}
