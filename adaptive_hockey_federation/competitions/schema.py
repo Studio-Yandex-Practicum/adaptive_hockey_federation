@@ -33,8 +33,8 @@ def get_competitions_table_head():
     return {
         "pk": "Nr.",
         "disciplines": "Дисциплины",
-        "data": "Начало соревнований",
-        "data_end": "Конец соревнований",
+        "date": "Начало соревнований",
+        "date_end": "Конец соревнований",
         "title": "Наименование",
         "city": "Город",
         "duration": "Длительность",
