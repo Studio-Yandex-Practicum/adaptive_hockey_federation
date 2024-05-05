@@ -18,28 +18,32 @@
         {% endif %}
       >
         {% csrf_token %}
-        {% for field in staff.add_staff_form %}
-          <div class="tw-w-full tw-flex tw-justify-center">
-            <div class="row my-1 tw-min-w-[70%] tw-max-w-[80%]">
-              <label for="{{ field.id_for_label }}">
-              {{ field.label }}
-              {% if field.field.required %}
-                <span class="required text-danger">*</span>
-              {% endif %}
-              </label>
-              {{ field|addclass:'form-control' }}
-              {% include 'main/teams_id/components/staff_search_field.html' %}
-              {% if field.errors %}
-                <small style="color: red" class="error">{{ field.errors|striptags  }}</small>
-              {% endif %}
+        {% if request.user == team.curator or user.is_staff %}
+          {% for field in staff.add_staff_form %}
+            <div class="tw-w-full tw-flex tw-justify-center">
+              <div class="row my-1 tw-min-w-[70%] tw-max-w-[80%]">
+                <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span class="required text-danger">*</span>
+                {% endif %}
+                </label>
+                {{ field|addclass:'form-control' }}
+                {% include 'main/teams_id/components/staff_search_field.html' %}
+                {% if field.errors %}
+                  <small style="color: red" class="error">{{ field.errors|striptags  }}</small>
+                {% endif %}
+              </div>
             </div>
-          </div>
-        {% endfor %}
-          <button type="submit" class="update_btn tw-rounded-lg"
-                  name="btn_add_staff"
-                  value="{{ forloop.counter0 }}">
-            Добавить
-          </button>
+          {% endfor %}
+        {% endif %}
+          {% if request.user == team.curator or user.is_staff %}
+            <button type="submit" class="update_btn tw-rounded-lg"
+                    name="btn_add_staff"
+                    value="{{ forloop.counter0 }}">
+              Добавить
+            </button>
+          {% endif %}
       </form>
     </div>
   {% endfor %}
