@@ -47,29 +47,6 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
         return qs
 
 
-class CustomNosologyChoiceField(ModelChoiceField):
-    """Самодельное поле для выбора нозологии."""
-
-    def __init__(self, label: str | None = None):
-        super().__init__(
-            queryset=Nosology.objects.all(),
-            required=True,
-            error_messages={
-                "required": "Пожалуйста, выберите нозологию из списка."
-            },
-            label=label or "Выберите нозологию",
-        )
-
-    def clean(self, value: Any) -> Any:
-        """Метод возвращает id Nosology"""
-        if not value:
-            raise ValidationError(self.error_messages["required"])
-
-        if value.isdigit():
-            nosology = get_object_or_404(Nosology, id=value)
-            return nosology.id
-
-
 class CustomDiagnosisChoiceField(ModelChoiceField):
     """Самодельное поле для ввода диагноза."""
 
@@ -82,7 +59,6 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
                     "placeholder": "Введите название диагноза",
                 }
             ),
-            required=True,
             error_messages={
                 "required": "Пожалуйста, выберите диагноз из списка."
             },
@@ -90,6 +66,7 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
         )
 
     def clean(self, value: Any) -> Any:
+        """"""
         """
         Прежде, чем вызвать родительский метод, получает объект диагноза
         и нозологии (Diagnosis, Nosology) по введенному названию, проверяет
@@ -97,21 +74,9 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
         то создает соответствующий (объект класса Diagnosis) и возвращает его
         на дальнейшую стандартную валидацию формы.
         """
-        # diagnosis_list = Diagnosis.objects.values()
-        # nosology = self.form.cleaned_data.get("nosology")
         if not value:
             raise ValidationError(self.error_messages["required"])
-        if value.isdigit():
-            return super().clean(value)
-        else:
-            diagnosis, created = Diagnosis.objects.get_or_create(name=value)
-        # for item in diagnosis_list:
-        #    if item["name"] != value and item["nosology_id"] != nosology:
-        # Проверка пары Нозология + Имя заболевания
-
-        # Вместо 3, должно быть id, Nosology
-
-        return diagnosis
+        return value
 
 
 class PlayerForm(forms.ModelForm):
@@ -128,7 +93,14 @@ class PlayerForm(forms.ModelForm):
         help_text=FORM_HELP_TEXTS["player_teams"],
         label="Команды",
     )
-    nosology = CustomNosologyChoiceField()
+    nosology = ModelChoiceField(
+        queryset=Nosology.objects.all(),
+        required=True,
+        error_messages={
+            "required": "Пожалуйста, выберите нозологию из списка."
+        },
+        label="Нозология",
+    )
 
     diagnosis = CustomDiagnosisChoiceField()
 
@@ -208,6 +180,20 @@ class PlayerForm(forms.ModelForm):
             "'Свидетельство о рождении X-XX XXXXXX'"
         )
 
+    def clean_diagnosis(self):
+        nosology = self.cleaned_data.get("nosology")
+        diagnosis = self.cleaned_data.get("diagnosis")
+        if Diagnosis.objects.filter(name=diagnosis).exists():
+            diagnos = Diagnosis.objects.get(name=diagnosis)
+            if diagnos.nosology != nosology:
+                raise ValidationError(
+                    "Вы пытаетесь изменить нозологию у диагноза"
+                    f" текущее значение {diagnos.nosology}"
+                )
+            return diagnos
+        diagnos = Diagnosis.objects.create(name=diagnosis, nosology=nosology)
+        return diagnos
+
 
 class PlayerUpdateForm(PlayerForm):
 
@@ -227,6 +213,7 @@ class PlayerUpdateForm(PlayerForm):
             help_text=FORM_HELP_TEXTS["available_teams"],
             label="Команды",
         )
+        self.fields["nosology"].initial = self.instance.diagnosis.nosology
 
 
 class CityChoiceField(ModelChoiceField):

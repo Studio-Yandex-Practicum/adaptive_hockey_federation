@@ -209,6 +209,7 @@ class PlayerIDEditView(
     LoginRequiredMixin,
     FileUploadMixin,
     PlayerIdPermissionsMixin,
+    DiagnosisListMixin,
     UpdateView,
 ):
     model = Player
@@ -230,11 +231,18 @@ class PlayerIDEditView(
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
+    def get_initial(self):
+        initial = {
+            "diagnosis": self.object.diagnosis.name,
+        }
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         player_documents = self.get_object().player_documemts.all()
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
+        context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
             ["." + res for res in FILE_RESOLUTION]
         )
