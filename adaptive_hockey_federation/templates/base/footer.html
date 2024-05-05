@@ -26,27 +26,29 @@
         {% if view_name == 'main:teams_id' %}
           {% include "main/teams_id/button_create_team_member.html" with name="+ Добавить" %}
         {% endif %}
-        {% if view_name != 'unloads:unloads' %}
-          {% if view_name == 'main:players' %}
-            {% url 'unloads:data_unloads' page_name='players' as player_unload_url %}
-            {% include "base/button.html" with url_name=player_unload_url name="Выгрузить" %}
-          {% elif view_name == 'analytics:analytics' %}
-            {% url 'unloads:data_unloads' page_name='analytics' as analytics_unload_url %}
-            {% include "base/button.html" with url_name=analytics_unload_url name="Выгрузить" %}
-          {% elif view_name == 'main:teams' %}
-            {% url 'unloads:data_unloads' page_name='teams' as team_unload_url %}
-            {% include "base/button.html" with url_name=team_unload_url name="Выгрузить" %}
-          {% elif view_name == 'competitions:competitions' %}
-            {% url 'unloads:data_unloads' page_name='competitions' as competition_unload_url %}
-            {% include "base/button.html" with url_name=competition_unload_url name="Выгрузить" %}
-          {% elif view_name == 'users:users' %}
-            {% url 'unloads:data_unloads' page_name='users' as user_unload_url %}
-            {% include "base/button.html" with url_name=user_unload_url name="Выгрузить" %}
-          {% endif %}
+        {% if view_name == 'unloads:unloads' %}
+          {% url 'unloads:data_unloads' page_name='unloads' as unloads_unload_url %}
+          {% include "base/button.html" with url_name=unloads_unload_url name="Выгрузить" %}
+        {% elif view_name == 'main:players' %}
+          {% url 'unloads:data_unloads' page_name='players' as player_unload_url %}
+          {% include "base/button.html" with url_name=player_unload_url name="Выгрузить" %}
+        {% elif view_name == 'analytics:analytics' %}
+          {% url 'unloads:data_unloads' page_name='analytics' as analytics_unload_url %}
+          {% include "base/button.html" with url_name=analytics_unload_url name="Выгрузить" %}
+        {% elif view_name == 'main:teams' %}
+          {% url 'unloads:data_unloads' page_name='teams' as team_unload_url %}
+          {% include "base/button.html" with url_name=team_unload_url name="Выгрузить" %}
+        {% elif view_name == 'competitions:competitions' %}
+          {% url 'unloads:data_unloads' page_name='competitions' as competition_unload_url %}
+          {% include "base/button.html" with url_name=competition_unload_url name="Выгрузить" %}
+        {% elif view_name == 'users:users' %}
+          {% url 'unloads:data_unloads' page_name='users' as user_unload_url %}
+          {% include "base/button.html" with url_name=user_unload_url name="Выгрузить" %}
         {% endif %}
       {% endwith %}
       {% if request.resolver_match.url_name in show_return_button %}
         {% include "base/return_button.html" %}
+        {% include "base/button.html" with url_name=user_unload_url name="Выгрузить" %}
       {% endif %}
     </ul>
   </nav>

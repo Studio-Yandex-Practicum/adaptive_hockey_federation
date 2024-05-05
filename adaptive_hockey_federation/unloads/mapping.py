@@ -7,6 +7,7 @@ model_mapping = {
         "Данные соревнований",
     ),
     "analytics": ("main", "Player", "Данные аналитики"),
+    "unloads": ("unloads", "Unload", "Журнал Выгрузок"),
     "users": (
         "users",
         "User",
