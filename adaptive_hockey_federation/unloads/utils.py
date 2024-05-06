@@ -68,35 +68,38 @@ def analytics_get_queryset(model, dict_param, queryset):
 
 def users_get_queryset(model, dict_param, queryset):
     print(f'>>> {dict_param=}')
-    if "search" in dict_param:
-        search = dict_param["search"][0]
-        search_column = dict_param["search_column"][0]
-        if not search_column or search_column.lower() in ["все", "all"]:
-            or_lookup = (
+    search_column = dict_param.get("search_column")
+    search = dict_param.get("search")
+    if search_column:
+        if search_column == "name":
+            queryset = queryset.filter(
                 Q(first_name__icontains=search)
                 | Q(last_name__icontains=search)
                 | Q(patronymic__icontains=search)
-                | Q(date_joined__icontains=search)
-                | Q(role__icontains=search)
-                | Q(email__icontains=search)
-                | Q(phone__icontains=search)
             )
-            if queryset:
-                queryset = queryset.filter(or_lookup)
-            else:
-                model.objects.filter(or_lookup)
+        elif search_column == "date":
+            queryset = queryset.filter(
+                Q(date_joined__year__icontains=dict_param["year"])
+                & Q(
+                    date_joined__month__icontains=dict_param[
+                        "month"
+                    ].lstrip("0")
+                )
+                & Q(
+                    date_joined__day__icontains=dict_param[
+                        "day"
+                    ].lstrip("0")
+                )
+            )
         else:
             search_fields = {
-                "date": "date_joined",
                 "role": "role",
                 "email": "email",
                 "phone": "phone",
             }
-            lookup = {f"{search_fields[search_column]}__icontains": search}
-            if queryset:
-                queryset = queryset.filter(**lookup)
-            else:
-                queryset = model.objects.filter(**lookup)
+            queryset = queryset.filter(
+                **{f"{search_fields[search_column]}__icontains": search}
+            )
     return queryset
 
 

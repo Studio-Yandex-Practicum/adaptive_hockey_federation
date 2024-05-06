@@ -10,8 +10,10 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from main.models import Team
+from unloads.utils import model_get_queryset
 from users.forms import CustomUserCreateForm, CustomUserUpdateForm
 from users.utilits.send_mails import send_password_reset_email
+from users.schemas import USER_TABLE_HEAD
 
 User = get_user_model()
 
@@ -32,51 +34,66 @@ class UsersListView(
 
     def get_queryset(self):
         queryset = super().get_queryset().order_by("last_name")
-        search_params = self.request.GET.dict()
-        search_column = search_params.get("search_column")
-        search = search_params.get("search")
-        if search_column:
-            if search_column and search_column.lower() in ["все", "all"]:
-                or_lookup = (
-                    Q(first_name__icontains=search)
-                    | Q(last_name__icontains=search)
-                    | Q(patronymic__icontains=search)
-                    | Q(role__icontains=search)
-                    | Q(email__icontains=search)
-                    | Q(phone__icontains=search)
-                    | Q(date_joined__icontains=search)
-                )
-                queryset = queryset.filter(or_lookup)
-            elif search_column == "name":
-                queryset = queryset.filter(
-                    Q(first_name__icontains=search)
-                    | Q(last_name__icontains=search)
-                    | Q(patronymic__icontains=search)
-                )
-            elif search_column == "date":
-                queryset = queryset.filter(
-                    Q(date_joined__year__icontains=search_params["year"])
-                    & Q(
-                        date_joined__month__icontains=search_params[
-                            "month"
-                        ].lstrip("0")
-                    )
-                    & Q(
-                        date_joined__day__icontains=search_params[
-                            "day"
-                        ].lstrip("0")
-                    )
-                )
-            else:
-                search_fields = {
-                    "role": "role",
-                    "email": "email",
-                    "phone": "phone",
-                }
-                queryset = queryset.filter(
-                    **{f"{search_fields[search_column]}__icontains": search}
-                )
+        dict_param = dict(self.request.GET)
+
+        dict_param = {k: v for k, v in dict_param.items() if v != [""]}
+        print(f'{dict_param=}')
+        if (len(dict_param) > 1
+                and "search_column" in dict_param
+                and "search" in dict_param):
+            queryset = model_get_queryset(
+                "users", User, dict_param, queryset
+            )
+
         return queryset.order_by("last_name")
+
+    # def get_queryset(self):
+    #     queryset = super().get_queryset().order_by("last_name")
+    #     search_params = self.request.GET.dict()
+    #     search_column = search_params.get("search_column")
+    #     search = search_params.get("search")
+    #     if search_column:
+    #         if search_column and search_column.lower() in ["все", "all"]:
+    #             or_lookup = (
+    #                 Q(first_name__icontains=search)
+    #                 | Q(last_name__icontains=search)
+    #                 | Q(patronymic__icontains=search)
+    #                 | Q(role__icontains=search)
+    #                 | Q(email__icontains=search)
+    #                 | Q(phone__icontains=search)
+    #                 | Q(date_joined__icontains=search)
+    #             )
+    #             queryset = queryset.filter(or_lookup)
+    #         elif search_column == "name":
+    #             queryset = queryset.filter(
+    #                 Q(first_name__icontains=search)
+    #                 | Q(last_name__icontains=search)
+    #                 | Q(patronymic__icontains=search)
+    #             )
+    #         elif search_column == "date":
+    #             queryset = queryset.filter(
+    #                 Q(date_joined__year__icontains=search_params["year"])
+    #                 & Q(
+    #                     date_joined__month__icontains=search_params[
+    #                         "month"
+    #                     ].lstrip("0")
+    #                 )
+    #                 & Q(
+    #                     date_joined__day__icontains=search_params[
+    #                         "day"
+    #                     ].lstrip("0")
+    #                 )
+    #             )
+    #         else:
+    #             search_fields = {
+    #                 "role": "role",
+    #                 "email": "email",
+    #                 "phone": "phone",
+    #             }
+    #             queryset = queryset.filter(
+    #                 **{f"{search_fields[search_column]}__icontains": search}
+    #             )
+    #     return queryset.order_by("last_name")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -93,13 +110,7 @@ class UsersListView(
                     "id": user.pk,
                 }
             )
-        context["table_head"] = {
-            "name": "Имя",
-            "date": "Дата регистрации",
-            "role": "Роль",
-            "email": "Email",
-            "phone": "Телефон",
-        }
+        context["table_head"] = USER_TABLE_HEAD
         context["table_data"] = table_data
         return context
 
