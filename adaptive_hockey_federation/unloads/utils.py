@@ -67,6 +67,7 @@ def analytics_get_queryset(model, dict_param, queryset):
 
 
 def users_get_queryset(model, dict_param, queryset):
+    print(f'>>> {dict_param=}')
     if "search" in dict_param:
         search = dict_param["search"][0]
         search_column = dict_param["search_column"][0]
