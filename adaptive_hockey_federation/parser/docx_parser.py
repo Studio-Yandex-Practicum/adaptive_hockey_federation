@@ -21,36 +21,36 @@ CAPTAIN = ['К', 'к', '(К)', '(к)', 'Капитан', 'капитан']
 DISCIPLINE_LEVEL = 'без ограничений'
 
 
-def read_file_columns(file: docx) -> list[docx]:
+def read_file_columns(file: docx) -> list[docx]: # type: ignore
     """Функция находит таблицы в файле и возвращает список объектов
     docx с данными каждого столбца.
     """
     return [
         column
-        for table in file.tables
+        for table in file.tables # type: ignore[attr-defined]
         for index, column in enumerate(table.columns)
     ]
 
 
-def read_file_text(file: docx) -> list[str]:
+def read_file_text(file: docx) -> list[str]: # type: ignore
     """Функция находит текстовые данные в файле и возвращает список объектов
     docx с найденными данными.
     """
     return [
         run.text
-        for paragraph in file.paragraphs
+        for paragraph in file.paragraphs  # type: ignore[attr-defined]
         for run in paragraph.runs
     ]
 
 
 def get_counter_for_columns_parser(
-        columns: list[docx]
+        columns: list[docx] # type: ignore
 ) -> int:
     count = 0
     for column in columns:
-        for index, cell in enumerate(column.cells):
+        for index, cell in enumerate(column.cells): # type: ignore[attr-defined]
             if re.search(r'п/п', cell.text):
-                for cell in column.cells[index + 1:]:
+                for cell in column.cells[index + 1:]: # type: ignore[attr-defined]
                     if cell.text and len(cell.text) < 4:
                         count += 1
                     else:
@@ -62,7 +62,7 @@ def get_counter_for_columns_parser(
 
 
 def columns_parser(
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str,
 ) -> list[Optional[str]]:
     """Функция находит столбец по названию и списком выводит содержимое
@@ -74,21 +74,21 @@ def columns_parser(
         for column in columns
         if re.search(
             regular_expression,
-            list(cell.text for cell in column.cells)[0]
+            list(cell.text for cell in column.cells)[0] # type: ignore[attr-defined]
         )
-        for text in list(cell.text for cell in column.cells)[1:]
+        for text in list(cell.text for cell in column.cells)[1:] # type: ignore[attr-defined]
     ]
     if not output:
         count = get_counter_for_columns_parser(columns)
         for column in columns:
-            for index, cell in enumerate(column.cells):
+            for index, cell in enumerate(column.cells): # type: ignore[attr-defined]
                 if re.search(regular_expression, cell.text):
-                    for cell in column.cells[index + 1:index + 1 + count]:
+                    for cell in column.cells[index + 1:index + 1 + count]: # type: ignore[attr-defined]
                         output.append(cell.text)
     return output
 
 
-def find_names(columns: list[docx], regular_expression: str) -> list[str]:
+def find_names(columns: list[docx], regular_expression: str) -> list[str]: # type: ignore
     """Функция парсит в искомом столбце имена. Опирается на шаблон ФИО
     (имя идет после фамилии на втором месте).
     """
@@ -100,7 +100,7 @@ def find_names(columns: list[docx], regular_expression: str) -> list[str]:
     ]
 
 
-def find_surnames(columns: list[docx], regular_expression: str) -> list[str]:
+def find_surnames(columns: list[docx], regular_expression: str) -> list[str]: # type: ignore
     """Функция парсит в искомом столбце фамилии. Опирается на шаблон ФИО
     (фамилия идет на первом месте).
     """
@@ -113,7 +113,7 @@ def find_surnames(columns: list[docx], regular_expression: str) -> list[str]:
 
 
 def find_patronymics(
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str,
 ) -> list[str]:
     """Функция парсит в искомом столбце отчества. Опирается на шаблон ФИО
@@ -129,7 +129,7 @@ def find_patronymics(
 
 
 def find_dates_of_birth(
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str,
 ) -> list[date]:
     """Функция парсит в искомом столбце дату рождения
@@ -161,7 +161,7 @@ def find_dates_of_birth(
 
 def find_team(
         text: list[str],
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str,
 ) -> str:
     """Функция парсит название команды.
@@ -221,7 +221,7 @@ def find_team(
         ][0]
     except IndexError:
         for column in columns:
-            for cell in column.cells:
+            for cell in column.cells: # type: ignore[attr-defined]
                 if re.search(regular_expression, cell.text):
                     txt = re.sub(r'\W', ' ', cell.text)
                     return txt.split()[1].capitalize()
@@ -230,7 +230,7 @@ def find_team(
 
 
 def find_players_number(
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str,
 ) -> list[int]:
     """Функция парсит в искомом столбце номер игрока.
@@ -251,7 +251,7 @@ def find_players_number(
     return players_number_list_clear
 
 
-def find_positions(columns: list[docx], regular_expression: str) -> list[str]:
+def find_positions(columns: list[docx], regular_expression: str) -> list[str]: # type: ignore
     """Функция парсит в искомом столбце позицию игрока на поле.
     """
     positions_list = columns_parser(columns, regular_expression)
@@ -277,9 +277,9 @@ def find_positions(columns: list[docx], regular_expression: str) -> list[str]:
     ]
 
 
-def find_numeric_statuses(file: docx) -> list[list[str]]:
+def find_numeric_statuses(file: docx) -> list[list[str]]: # type: ignore
     numeric_statuses_list = []
-    for table in file.tables:
+    for table in file.tables: # type: ignore[attr-defined]
         for row in table.rows:
             txt = row.cells[1].text.title()
             txt = re.sub(r'\W|Коляс.+|Здоровый', ' ', txt)
@@ -299,7 +299,7 @@ def find_numeric_statuses(file: docx) -> list[list[str]]:
     return numeric_statuses_list
 
 
-def find_passport(columns: list[docx], regular_expression: str) -> list[str]:
+def find_passport(columns: list[docx], regular_expression: str) -> list[str]: # type: ignore
     """Функция парсит в искомом столбце ПД.
     """
     identity_list = columns_parser(columns, regular_expression)
@@ -311,7 +311,7 @@ def find_passport(columns: list[docx], regular_expression: str) -> list[str]:
 
 
 def find_players_is_captain(
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str
 ) -> list[bool]:
     """Функция парсит в искомом столбце капитанов.
@@ -330,7 +330,7 @@ def find_players_is_captain(
 
 
 def find_players_is_assistant(
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str,
 ) -> list[bool]:
     """Функция парсит в искомом столбце асситсента.
@@ -349,7 +349,7 @@ def find_players_is_assistant(
 
 
 def find_discipline_level(
-        columns: list[docx],
+        columns: list[docx], # type: ignore
         regular_expression: str,
 ) -> list[str]:
     """Функция парсит в искомом столбце класс/статус.
