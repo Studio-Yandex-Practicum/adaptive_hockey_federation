@@ -53,6 +53,7 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
     def __init__(self, label: str | None = None):
         super().__init__(
             queryset=Diagnosis.objects.all(),
+            required=True,
             widget=TextInput(
                 attrs={
                     "list": "diagnosis",
