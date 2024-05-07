@@ -186,10 +186,8 @@ class PlayerForm(forms.ModelForm):
         if Diagnosis.objects.filter(name=diagnosis).exists():
             diagnos = Diagnosis.objects.get(name=diagnosis)
             if diagnos.nosology != nosology:
-                raise ValidationError(
-                    "Вы пытаетесь изменить нозологию у диагноза"
-                    f" текущее значение {diagnos.nosology}"
-                )
+                diagnos.nosology = nosology
+                diagnos.save()
             return diagnos
         diagnos = Diagnosis.objects.create(name=diagnosis, nosology=nosology)
         return diagnos
