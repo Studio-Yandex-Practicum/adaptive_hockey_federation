@@ -57,7 +57,7 @@ class PlayerForm(forms.ModelForm):
     team = CustomMultipleChoiceField(
         required=True,
         help_text=FORM_HELP_TEXTS["player_teams"],
-        label="Команды"
+        label="Команды",
     )
 
     class Meta:
@@ -126,8 +126,8 @@ class PlayerForm(forms.ModelForm):
 
     def clean_identity_document(self):
         document = self.cleaned_data["identity_document"]
-        if re.fullmatch(r"Паспорт \d{4}\s\d{6}", document) or re.fullmatch(
-            r"Свидетельство о рождении \D{4}\s\d{6}", document
+        if re.search(r"[П|п]аспорт", document) or re.search(
+            r"[С|с]видетельство о рождении", document
         ):
             return document
         raise ValidationError(
@@ -354,7 +354,7 @@ class StaffTeamMemberForm(forms.ModelForm):
     team = CustomMultipleChoiceField(
         required=True,
         help_text=FORM_HELP_TEXTS["staff_teams"],
-        label="Команды"
+        label="Команды",
     )
 
     class Meta:
