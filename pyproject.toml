@@ -61,7 +61,9 @@ plugins = ["mypy_django_plugin.main"]
 mypy_path = "./adaptive_hockey_federation"
 exclude = [
     "config",
+    "adaptive_hockey_federation/parser/*"
 ]
+
 
 [[tool.mypy.overrides]]
 module = [
