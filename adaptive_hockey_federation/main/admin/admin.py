@@ -139,6 +139,7 @@ class PlayerAdmin(admin.ModelAdmin):
                     "identity_document",
                     "discipline_name",
                     "discipline_level",
+                    "nosology",
                     "diagnosis",
                     "level_revision",
                     "addition_date",
