@@ -151,7 +151,7 @@ def find_dates_of_birth(
                     dates_of_birth_list_clear.append(
                         date(int(year), int(month), int(day))
                     )
-            except ValueError or IndexError:  # type: ignore
+            except ValueError or IndexError:
                 dates_of_birth_list_clear.append(date(1900, 1, 1))
         else:
             dates_of_birth_list_clear.append(date(1900, 1, 1))
@@ -172,7 +172,7 @@ def find_team(
         '|по специальному хоккею|Спец хоккей|по специальному|по следж-хоккею',
         ' ',
         text_clear
-    ).split()  # type: ignore
+    ).split()
     try:
         return [
             'Молния Прикамья'
