@@ -15,7 +15,9 @@ from django.forms import (
 from django.shortcuts import get_object_or_404
 from main.models import (
     City,
+    Diagnosis,
     DisciplineName,
+    Nosology,
     Player,
     StaffMember,
     StaffTeamMember,
@@ -45,6 +47,36 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
         return qs
 
 
+class CustomDiagnosisChoiceField(ModelChoiceField):
+    """Самодельное поле для ввода диагноза."""
+
+    def __init__(self, label: str | None = None):
+        super().__init__(
+            queryset=Diagnosis.objects.all(),
+            required=True,
+            widget=TextInput(
+                attrs={
+                    "list": "diagnosis",
+                    "placeholder": "Введите название диагноза",
+                }
+            ),
+            error_messages={
+                "required": "Пожалуйста, выберите диагноз из списка."
+            },
+            label=label or "Выберите диагноз",
+        )
+
+    def clean(self, value: Any) -> Any:
+        """
+        Прежде, чем вызвать родительский метод, получает объект диагноза
+        (Diagnosis) по введенному названию, проверяет наличие введенного
+        наименования диагноза в БД.
+        """
+        if not value:
+            raise ValidationError(self.error_messages["required"])
+        return value
+
+
 class PlayerForm(forms.ModelForm):
 
     available_teams = ModelMultipleChoiceField(
@@ -59,6 +91,16 @@ class PlayerForm(forms.ModelForm):
         help_text=FORM_HELP_TEXTS["player_teams"],
         label="Команды",
     )
+    nosology = ModelChoiceField(
+        queryset=Nosology.objects.all(),
+        required=True,
+        error_messages={
+            "required": "Пожалуйста, выберите нозологию из списка."
+        },
+        label="Нозология",
+    )
+
+    diagnosis = CustomDiagnosisChoiceField()
 
     class Meta:
         model = Player
@@ -70,6 +112,7 @@ class PlayerForm(forms.ModelForm):
             "birthday",
             "discipline_name",
             "discipline_level",
+            "nosology",
             "diagnosis",
             "level_revision",
             "team",
@@ -135,6 +178,18 @@ class PlayerForm(forms.ModelForm):
             "'Свидетельство о рождении X-XX XXXXXX'"
         )
 
+    def clean_diagnosis(self):
+        nosology = self.cleaned_data.get("nosology")
+        diagnosis = self.cleaned_data.get("diagnosis")
+        if Diagnosis.objects.filter(name=diagnosis).exists():
+            diagnos = Diagnosis.objects.get(name=diagnosis)
+            if diagnos.nosology != nosology:
+                diagnos.nosology = nosology
+                diagnos.save()
+            return diagnos
+        diagnos = Diagnosis.objects.create(name=diagnosis, nosology=nosology)
+        return diagnos
+
 
 class PlayerUpdateForm(PlayerForm):
 
@@ -154,6 +209,7 @@ class PlayerUpdateForm(PlayerForm):
             help_text=FORM_HELP_TEXTS["available_teams"],
             label="Команды",
         )
+        self.fields["nosology"].initial = self.instance.diagnosis.nosology
 
 
 class CityChoiceField(ModelChoiceField):

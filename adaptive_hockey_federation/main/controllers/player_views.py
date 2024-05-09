@@ -12,7 +12,7 @@ from django.views.generic.list import ListView
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
-from main.models import Player
+from main.models import Diagnosis, Player
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
     get_player_fields,
@@ -74,10 +74,20 @@ class PlayersListView(
         return context
 
 
+class DiagnosisListMixin:
+    """Миксин для использования в видах редактирования и создания команд."""
+
+    @staticmethod
+    def get_diagnosis():
+        """Возвращает список диагнозов из БД."""
+        return Diagnosis.objects.values_list("name", flat=True)
+
+
 class PlayerIDCreateView(
     LoginRequiredMixin,
     PlayerIdPermissionsMixin,
     CreateView,
+    DiagnosisListMixin,
     FileUploadMixin,
 ):
     """Представление для создания нового игрока."""
@@ -119,6 +129,7 @@ class PlayerIDCreateView(
         if self.team_id is not None:
             context["team_id"] = self.team_id
         context["page_title"] = "Создание профиля нового игрока"
+        context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
             ["." + res for res in FILE_RESOLUTION]
         )
@@ -157,6 +168,7 @@ class PlayerIdView(
         "У Вас нет разрешения на просмотр карточки игрока."
     )
     context_object_name = "player"
+
     fields = [
         "surname",
         "name",
@@ -197,6 +209,7 @@ class PlayerIDEditView(
     LoginRequiredMixin,
     FileUploadMixin,
     PlayerIdPermissionsMixin,
+    DiagnosisListMixin,
     UpdateView,
 ):
     model = Player
@@ -218,11 +231,18 @@ class PlayerIDEditView(
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
+    def get_initial(self):
+        initial = {
+            "diagnosis": self.object.diagnosis.name,
+        }
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         player_documents = self.get_object().player_documemts.all()
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
+        context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
             ["." + res for res in FILE_RESOLUTION]
         )

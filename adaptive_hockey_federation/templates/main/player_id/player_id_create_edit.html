@@ -15,9 +15,9 @@
             <table class="table-table">
                 <tbody>
                   {% for field in form.visible_fields %}
-                    {% if field.name in 'surname name patronymic birthday identity_document'%} {% include "main/fields/text_input_field.html" %}
-                      {% elif  field.name in 'gender discipline_name discipline_level diagnosis' %} {% include "main/fields/select_field.html" %}
-
+                    {% if field.name in 'surname name patronymic birthday identity_document '%} {% include "main/fields/text_input_field.html" %}
+                      {% elif  field.name in 'gender discipline_name discipline_level nosology' %} {% include "main/fields/select_field.html" %}
+                      {% elif  field.name in 'diagnosis' %} {% include "main/fields/diagnosis_field.html" %}
                     {% endif %}
                   {% endfor %}
                 </tbody>

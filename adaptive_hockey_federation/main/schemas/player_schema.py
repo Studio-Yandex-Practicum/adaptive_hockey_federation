@@ -49,7 +49,8 @@ def get_player_fields_personal(player):
         ("Удостоверение личности", player.identity_document),
         ("Дисциплина", player.discipline_name),
         ("Числовой статус", player.discipline_level),
-        ("Диагноз", player.diagnosis),
+        ("Нозология", player.diagnosis.nosology),
+        ("Диагноз", player.diagnosis.name),
     ]
     return data
 

@@ -1,0 +1,17 @@
+{% load user_filters %}
+<tr>
+  <th>{{ field.label_tag }}</th>
+  <td class="base-wrapper">
+    {% if field.errors %}
+      {{ field |addclass:'base-input-errors'}}
+      {{ field.errors }}
+    {% else %}
+      {{ field |addclass:'base-input'}}
+      <datalist id="diagnosis">
+        {% for diagnos in diagnosis %}
+          <option value="{{ diagnos }}"></option>
+        {% endfor %}
+      </datalist>
+    {% endif %}
+  </td>
+</tr>
