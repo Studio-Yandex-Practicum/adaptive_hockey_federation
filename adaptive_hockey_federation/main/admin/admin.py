@@ -91,6 +91,7 @@ class PlayerAdmin(admin.ModelAdmin):
         "patronymic",
         "birthday",
         "gender",
+        "get_nosology",
         "diagnosis",
         "discipline_name",
         "discipline_level",
@@ -163,6 +164,12 @@ class PlayerAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("addition_date",)
     list_filter = ("addition_date",)
+
+    @admin.display(
+        description="Нозология", ordering="diagnosis__nosology__name"
+    )
+    def get_nosology(self, obj):
+        return obj.diagnosis.nosology.name
 
 
 class TeamAdmin(admin.ModelAdmin):
