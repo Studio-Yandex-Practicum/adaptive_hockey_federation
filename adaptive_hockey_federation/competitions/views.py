@@ -16,9 +16,7 @@ from django.contrib.auth.mixins import (
 )
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
-from django.db.models import Case, F, Q, QuerySet, Value, When
-from django.db.models.functions import Now
-from django.db.models.lookups import GreaterThan, LessThan
+from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -33,6 +31,7 @@ from django.views.generic.edit import (
 from django.views.generic.list import ListView
 from main.controllers.team_views import CityListMixin
 from main.controllers.utils import get_team_href
+from unloads.utils import model_get_queryset
 from users.utilits.send_mails import send_welcome_mail
 
 
@@ -73,63 +72,12 @@ class CompetitionListView(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search_params = self.request.GET.dict()
-        search_column = search_params.get("search_column")
-        search = search_params.get("search")
-        if search_column:
-            if search_column.lower() in ["все", "all"]:
-                queryset = queryset.filter(
-                    Q(title__icontains=search)
-                    | Q(city__name__icontains=search)
-                    | Q(date_start__icontains=search)
-                    | Q(date_end__icontains=search)
-                    | Q(pk__icontains=search)
-                )
-            elif search_column == "title":
-                queryset = queryset.filter(title__icontains=search)
-            elif search_column == "city":
-                queryset = queryset.filter(city__name__icontains=search)
-            elif search_column == "is_active":
-                queryset = queryset.annotate(
-                    is_active_view=Case(
-                        When(
-                            LessThan(F("date_start"), Now())
-                            & GreaterThan(F("date_end"), Now()),
-                            then=Value("true"),
-                        ),
-                        default=Value("false"),
-                    )
-                ).filter(is_active_view__icontains=search_params["active"])
-            elif search_column == "teams":
-                queryset = queryset.filter(teams__name__icontains=search)
-            elif search_column == "date":
-                queryset = queryset.filter(
-                    Q(date_start__year__icontains=search_params["year"])
-                    & Q(
-                        date_start__month__icontains=search_params[
-                            "month"
-                        ].lstrip("0")
-                    )
-                    & Q(
-                        date_start__day__icontains=search_params["day"].lstrip(
-                            "0"
-                        )
-                    )
-                )
-            elif search_column == "date_end":
-                queryset = queryset.filter(
-                    Q(date_end__year__icontains=search_params["year"])
-                    & Q(
-                        date_end__month__icontains=search_params[
-                            "month"
-                        ].lstrip("0")
-                    )
-                    & Q(
-                        date_end__day__icontains=search_params["day"].lstrip(
-                            "0"
-                        )
-                    )
-                )
+        dict_param = dict(self.request.GET)
+        dict_param = {k: v for k, v in dict_param.items() if v != [""]}
+        if len(dict_param) > 1 and "search_column" in dict_param:
+            queryset = model_get_queryset(
+                "competitions", Competition, dict_param, queryset
+            )
         return queryset
 
     def get_context_data(self, **kwargs):

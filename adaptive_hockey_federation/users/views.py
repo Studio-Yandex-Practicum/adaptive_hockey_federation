@@ -37,10 +37,7 @@ class UsersListView(
         dict_param = dict(self.request.GET)
 
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
-        print(f'{dict_param=}')
-        if (len(dict_param) > 1
-                and "search_column" in dict_param
-                and "search" in dict_param):
+        if len(dict_param) > 1 and "search_column" in dict_param:
             queryset = model_get_queryset(
                 "users", User, dict_param, queryset
             )
