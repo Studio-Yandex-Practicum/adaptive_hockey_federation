@@ -1,4 +1,9 @@
+from typing import Any
+
+from core.config.dev_settings import ADMIN_PAGE_ORDERING
 from django.contrib import admin
+from django.contrib.admin.sites import AdminSite
+from django.http import HttpRequest
 from main.admin.inlines import (
     DocumentInline,
     PlayerInline,
@@ -192,3 +197,24 @@ class TeamAdmin(admin.ModelAdmin):
         StaffTeamMemberTeamInline,
         PlayerTeamInline,
     )
+
+
+def get_app_list(
+    self: AdminSite,
+    request: HttpRequest,
+) -> Any:
+    app_dict = self._build_app_dict(request)
+    for app_name, object_list in app_dict.items():
+        if app_name in ADMIN_PAGE_ORDERING:
+            app = app_dict[app_name]
+            app["models"].sort(
+                key=lambda x: ADMIN_PAGE_ORDERING[app_name].index(
+                    x["object_name"]
+                )
+            )
+            yield app
+        else:
+            yield app_dict[app_name]
+
+
+AdminSite.get_app_list = get_app_list

@@ -4,7 +4,6 @@ ROOT_DIR = BASE_DIR.parent
 
 env.read_env(ROOT_DIR / '.env')
 
-
 DEV_APPS = [
     'django_extensions',
     'debug_toolbar',
@@ -75,3 +74,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 
 EMAIL_ADMIN = EMAIL_HOST_USER
+
+ADMIN_PAGE_ORDERING = {
+    "main": [
+        "Player",
+        "Team",
+        "StaffMember",
+        "DisciplineName",
+        "DisciplineLevel",
+        "Nosology",
+        "Diagnosis",
+    ],
+}
