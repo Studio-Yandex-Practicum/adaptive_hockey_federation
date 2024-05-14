@@ -27,7 +27,7 @@ USER_MODEL_TEST_SCHEMA = {
         "first_name": "Василий",
         "last_name": "Иванович",
         "patronymic": "Петров",
-        "role": ROLE_SUPERUSER,
+        "role": ROLE_AGENT,
         "email": "fake@fake.com",
         "phone": "+7 990 060-45-71",
         "is_staff": False,
