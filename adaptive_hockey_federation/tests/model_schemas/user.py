@@ -1,4 +1,4 @@
-from core.constants import ROLE_AGENT, ROLE_SUPERUSER
+from core.constants import ROLE_AGENT
 from tests.model_schemas.fields_validation_schemas import (
     ALL_CAPS,
     ALL_LOWER,
