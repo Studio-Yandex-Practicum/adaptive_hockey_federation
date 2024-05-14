@@ -202,7 +202,7 @@ class TestUrls(TestCase):
             UrlToTest("/teams/1/", permission_required="view_team"),
             UrlToTest("/teams/1/edit/", permission_required="change_team"),
             UrlToTest("/teams/create/", permission_required="add_team"),
-            UrlToTest("/unloads/"),
+            UrlToTest("/unloads/", permission_required="list_view_unload"),
             # TODO Раскомментировать при доработке пермишенов для страниц с
             #  пользователями.
             UrlToTest("/users/create/", permission_required="add_user"),

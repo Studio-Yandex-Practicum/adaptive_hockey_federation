@@ -35,6 +35,8 @@
           <li class="nav-item py-2">
             {% url 'analytics:analytics' as url_name %}{% include "base/button.html" with name="Аналитика" %}
           </li>
+        {% endif %}
+        {% if request.user.is_admin %}
           <li class="nav-item py-2">
             {% url 'unloads:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
           </li>

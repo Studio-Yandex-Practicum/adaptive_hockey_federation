@@ -31,6 +31,9 @@ class Unload(models.Model):
         verbose_name = "Выгрузку"
         verbose_name_plural = "Выгрузки"
         ordering = ("date",)
+        permissions = [
+            ("list_view_unload", "Can view list of Выгрузку"),
+        ]
 
     def __str__(self) -> str:
         return f"{self.unload_name}"
