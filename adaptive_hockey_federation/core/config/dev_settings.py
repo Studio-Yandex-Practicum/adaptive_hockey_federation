@@ -82,6 +82,7 @@ ADMIN_PAGE_ORDERING = {
         "StaffMember",
         "DisciplineName",
         "DisciplineLevel",
+        "City",
         "Nosology",
         "Diagnosis",
     ],
