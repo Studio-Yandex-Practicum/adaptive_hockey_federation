@@ -200,21 +200,21 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 def get_app_list(
-    self: AdminSite,
-    request: HttpRequest,
-) -> Any:
+        self: AdminSite,
+        request: HttpRequest,
+        app_name: str = ' ',
+) -> list:
     app_dict = self._build_app_dict(request)
-    for app_name, object_list in app_dict.items():
+    app_list = []
+
+    for app_name, app in app_dict.items():
         if app_name in ADMIN_PAGE_ORDERING:
-            app = app_dict[app_name]
             app["models"].sort(
-                key=lambda x: ADMIN_PAGE_ORDERING[app_name].index(
-                    x["object_name"]
-                )
+                key=lambda model: ADMIN_PAGE_ORDERING[app_name].index(model["object_name"])
             )
-            yield app
-        else:
-            yield app_dict[app_name]
+        app_list.append(app)
+
+    return app_list
 
 
 setattr(AdminSite, "get_app_list", get_app_list)
