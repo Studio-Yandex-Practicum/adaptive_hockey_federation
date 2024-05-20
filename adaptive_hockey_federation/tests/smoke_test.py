@@ -15,8 +15,6 @@ from tests.url_schema import (
     ADMIN_DIAGNOSIS_URLS,
     ADMIN_DISCIPLINE_NAME_URL_302,
     ADMIN_DISCIPLINE_NAME_URLS,
-    # ADMIN_DOCUMENT_URL_302,
-    # ADMIN_DOCUMENT_URLS,
     ADMIN_LOGIN,
     ADMIN_LOGOUT,
     ADMIN_MAIN_URL,
@@ -28,8 +26,6 @@ from tests.url_schema import (
     ADMIN_PROXY_GROUP_URLS,
     ADMIN_STAFF_MEMBER_URL_302,
     ADMIN_STAFF_MEMBER_URLS,
-    # ADMIN_STAFF_TEAM_MEMBER_URL_302,
-    # ADMIN_STAFF_TEAM_MEMBER_URLS,
     ADMIN_TEAM_URL_302,
     ADMIN_TEAM_URLS,
     ADMIN_USER_URL_302,
@@ -177,7 +173,9 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     @pytest.mark.skip(reason="Модель Document был исключен из админки")
     def test_admin_document(self):
         """Тесты страниц с документом в админке."""
-        # self.url_get_test(ADMIN_DOCUMENT_URL_302, status_code=HTTPStatus.FOUND)
+        # self.url_get_test(
+        #   ADMIN_DOCUMENT_URL_302, status_code=HTTPStatus.FOUND
+        # )
         # self.url_get_test(ADMIN_DOCUMENT_URLS)
 
     def test_admin_nosology(self):
