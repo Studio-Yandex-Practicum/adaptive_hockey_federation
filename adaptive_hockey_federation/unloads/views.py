@@ -5,7 +5,10 @@ from urllib.parse import parse_qs, urlparse
 from core.utils import export_excel
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -19,13 +22,17 @@ from unloads.utils import model_get_queryset
 
 class UnloadListView(
     LoginRequiredMixin,
+    PermissionRequiredMixin,
     ListView,
 ):
     """Список выгрузок."""
 
-    # TODO: (Добавить пермишенны.)
     model = Unload
     template_name = "main/unloads/unloads.html"
+    permission_required = "unloads.list_view_unload"
+    permission_denied_message = (
+        "Отсутствует разрешение на просмотр списка выгрузок."
+    )
     context_object_name = "unloads"
     paginate_by = 10
     ordering = ["date"]

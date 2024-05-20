@@ -190,7 +190,7 @@ class TestPermissions(BaseTestClass):
 
     def test_unload_urls(self):
         """Тесты get-страниц выгрузки на соответствующие разрешения."""
-        urls_to_test = tuple(UrlToTest(url) for url in UNLOAD_URLS)
+        urls_to_test = tuple(UrlToTest(**url) for url in UNLOAD_URLS)
         self.batch_url_test(urls_to_test)
 
 

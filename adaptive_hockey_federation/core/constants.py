@@ -6,7 +6,7 @@ QUERY_SET_LENGTH = 15
 ROLE_AGENT = "Представитель команды"
 ROLE_MODERATOR = "Модератор"
 ROLE_ADMIN = "Администратор"
-ROLE_SUPERUSER = "admin"
+ROLE_SUPERUSER = "Администратор"
 ROLES_CHOICES = (
     (ROLE_AGENT, "Представитель команды"),
     (ROLE_MODERATOR, "Модератор"),
