@@ -217,4 +217,4 @@ def get_app_list(
             yield app_dict[app_name]
 
 
-AdminSite.get_app_list = get_app_list
+setattr(AdminSite, "get_app_list", get_app_list)
