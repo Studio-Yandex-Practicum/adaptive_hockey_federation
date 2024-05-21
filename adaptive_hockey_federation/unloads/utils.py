@@ -28,6 +28,8 @@ def create_lookup_all(dict_param) -> Q:
 
 def players_get_queryset(model, dict_param, queryset):
     """Функция создания запроса для игроков"""
+    if not queryset:
+        queryset = model.objects.all()
     or_lookup: Q = Q()
     search_column_name: str = dict_param["search_column"][0]
     if search_column_name.lower() in ["все", "all"]:
@@ -49,28 +51,24 @@ def players_get_queryset(model, dict_param, queryset):
     else:
         return model.objects.all()
 
-    if queryset:
-        return queryset.filter(or_lookup)
-    else:
-        return model.objects.filter(or_lookup)
+    return queryset.filter(or_lookup)
 
 
 def analytics_get_queryset(model, dict_param, queryset):
     """Функция создания запроса для аналитики"""
     or_lookup: Q = Q()
+    if not queryset:
+        queryset = model.objects.all()
     for key, value in ANALYTICS_SEARCH_FIELDS.items():
         if key in dict_param:
             or_lookup &= Q((value, checking_value(dict_param[key][0])))
 
-    if queryset:
-        queryset = queryset.filter(or_lookup)
-    else:
-        queryset = model.objects.filter(or_lookup)
-
-    return queryset
+    return queryset.filter(or_lookup)
 
 
 def users_get_queryset(model, dict_param, queryset):
+    if not queryset:
+        queryset = model.objects.all()
     search_column = dict_param.get("search_column")[0]
     search = dict_param.get("search")
     if search_column:
@@ -86,16 +84,10 @@ def users_get_queryset(model, dict_param, queryset):
                 f"date_joined__{key}__icontains": val[0].lstrip("0")
                 for key, val in dict_param.items() if key in search
             }
-            if queryset:
-                queryset = queryset.filter(**lookup)
-            else:
-                queryset = model.objects.filter(**lookup)
+            queryset = queryset.filter(**lookup)
         else:
             lookup = {f"{search_column}__icontains": search[0]}
-            if queryset:
-                queryset = queryset.filter(**lookup)
-            else:
-                queryset = model.objects.filter(**lookup)
+            queryset = queryset.filter(**lookup)
     return queryset
 
 
