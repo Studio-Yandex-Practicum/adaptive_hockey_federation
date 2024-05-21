@@ -404,6 +404,14 @@ class Player(BasePerson):
         blank=True,
     )
 
+    video_frame_info = models.JSONField(
+        verbose_name=_("Метаинформация с видео о игроке"),
+        help_text=_("Метаинформация с видео о игроке"),
+        default=dict,
+        blank=True,
+        null=True
+    )
+
     class Meta(BasePerson.Meta):
         default_related_name = "players"
         verbose_name = "Игрок"
