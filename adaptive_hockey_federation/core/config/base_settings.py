@@ -35,7 +35,8 @@ LOCAL_APPS = [
     'core.apps.CoreConfig',
     'competitions.apps.CompetitionsConfig',
     'analytics.apps.AnalyticsConfig',
-    'unloads.apps.UnloadsConfig'
+    'unloads.apps.UnloadsConfig',
+    'games.apps.GamesConfig'
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + DEFAULT_APPS + LOCAL_APPS
