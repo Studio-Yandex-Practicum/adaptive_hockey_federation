@@ -101,6 +101,7 @@ class PlayerAdmin(admin.ModelAdmin):
         "is_captain",
         "is_assistent",
         "identity_document",
+        "video_frame_info"
     )
     search_fields = (
         "pk",
@@ -144,6 +145,7 @@ class PlayerAdmin(admin.ModelAdmin):
                     "diagnosis",
                     "level_revision",
                     "addition_date",
+                    "video_frame_info"
                 ),
             },
         ),

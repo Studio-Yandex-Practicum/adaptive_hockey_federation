@@ -96,12 +96,12 @@ FORM_HELP_TEXTS = {
         "Список доступных дисциплин перемещение двойным щелчком"
     ),
     "disciplines": "Список дисциплин в соревновании",
+    "video_frame_info": "Введите информацию в формате json"
 }
 
 FILE_RESOLUTION = ("png", "jpeg", "jpg", "pdf")
 MAX_UPLOAD_SIZE: int = 10485760
 MAX_UPLOAD_SIZE_MB: str = str(int(MAX_UPLOAD_SIZE / (1024 * 1024))) + " MB"
-
 
 SEARCH_ALIAS = {
     "surname": "surname",

@@ -78,7 +78,6 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
 
 
 class PlayerForm(forms.ModelForm):
-
     available_teams = ModelMultipleChoiceField(
         queryset=Team.objects.all().order_by("name"),
         required=False,
@@ -102,6 +101,13 @@ class PlayerForm(forms.ModelForm):
 
     diagnosis = CustomDiagnosisChoiceField()
 
+    video_frame_info = forms.JSONField(
+        widget=forms.Textarea,
+        required=False,
+        help_text=FORM_HELP_TEXTS["video_frame_info"],
+        label='Метаинформация'
+    )
+
     class Meta:
         model = Player
         fields = [
@@ -122,6 +128,7 @@ class PlayerForm(forms.ModelForm):
             "position",
             "number",
             "identity_document",
+            "video_frame_info"
         ]
         widgets = {
             "surname": forms.TextInput(
@@ -150,6 +157,12 @@ class PlayerForm(forms.ModelForm):
                     "max": max_date,
                 },
             ),
+            "video_frame_info": forms.Textarea(
+                attrs={
+                    "placeholder":
+                        "Введите метаинформация из видео о игроке"
+                }
+            )
         }
         help_texts = {
             "identity_document": FORM_HELP_TEXTS["identity_document"],
@@ -170,7 +183,7 @@ class PlayerForm(forms.ModelForm):
     def clean_identity_document(self):
         document = self.cleaned_data["identity_document"]
         if re.search(r"[П|п]аспорт", document) or re.search(
-            r"[С|с]видетельство о рождении", document
+                r"[С|с]видетельство о рождении", document
         ):
             return document
         raise ValidationError(
@@ -286,7 +299,7 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
             raise ValidationError("Неверный формат введенных данных.")
         staff_team_member = get_object_or_404(StaffTeamMember, id=value)
         if StaffTeamMember.team.through.objects.filter(
-            staffteammember=staff_team_member, team=self.team
+                staffteammember=staff_team_member, team=self.team
         ).exists():
             raise ValidationError("Этот сотрудник уже есть в команде.")
         return super().clean(value)
@@ -399,7 +412,6 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
 
 class StaffTeamMemberForm(forms.ModelForm):
-
     available_teams = ModelMultipleChoiceField(
         queryset=Team.objects.all().order_by("name"),
         required=False,
