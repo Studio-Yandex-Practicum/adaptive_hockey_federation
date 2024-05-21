@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+import pytest
 from django.test import Client
 from tests.base import BaseTestClass, UrlTestMixin
 from tests.url_schema import (
@@ -14,10 +15,8 @@ from tests.url_schema import (
     ADMIN_DIAGNOSIS_URLS,
     ADMIN_DISCIPLINE_NAME_URL_302,
     ADMIN_DISCIPLINE_NAME_URLS,
-    ADMIN_DOCUMENT_URL_302,
-    ADMIN_DOCUMENT_URLS,
     ADMIN_LOGIN,
-    ADMIN_LOGUOT,
+    ADMIN_LOGOUT,
     ADMIN_MAIN_URL,
     ADMIN_NOSOLOGY_URL_302,
     ADMIN_NOSOLOGY_URLS,
@@ -27,8 +26,6 @@ from tests.url_schema import (
     ADMIN_PROXY_GROUP_URLS,
     ADMIN_STAFF_MEMBER_URL_302,
     ADMIN_STAFF_MEMBER_URLS,
-    ADMIN_STAFF_TEAM_MEMBER_URL_302,
-    ADMIN_STAFF_TEAM_MEMBER_URLS,
     ADMIN_TEAM_URL_302,
     ADMIN_TEAM_URLS,
     ADMIN_USER_URL_302,
@@ -133,7 +130,7 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
 
     def test_admin_log_in_out(self):
         """Тесты страниц входа-выхода в/из админки."""
-        self.url_get_test(ADMIN_LOGUOT, "post", status_code=HTTPStatus.FOUND)
+        self.url_get_test(ADMIN_LOGOUT, "post", status_code=HTTPStatus.FOUND)
         self.client.logout()
         self.url_get_test(ADMIN_LOGIN)
 
@@ -155,6 +152,7 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
             ADMIN_DIAGNOSIS_URL_302, status_code=HTTPStatus.FOUND
         )
         self.url_get_test(ADMIN_DIAGNOSIS_URLS)
+
     """
     Что - то этот тест не хочет работать
     def test_admin_discipline_level(self):
@@ -172,10 +170,13 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
         )
         self.url_get_test(ADMIN_DISCIPLINE_NAME_URLS)
 
+    @pytest.mark.skip(reason="Модель Document был исключен из админки")
     def test_admin_document(self):
         """Тесты страниц с документом в админке."""
-        self.url_get_test(ADMIN_DOCUMENT_URL_302, status_code=HTTPStatus.FOUND)
-        self.url_get_test(ADMIN_DOCUMENT_URLS)
+        # self.url_get_test(
+        #   ADMIN_DOCUMENT_URL_302, status_code=HTTPStatus.FOUND
+        # )
+        # self.url_get_test(ADMIN_DOCUMENT_URLS)
 
     def test_admin_nosology(self):
         """Тесты страниц с нозологией в админке."""
@@ -197,12 +198,13 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
         )
         self.url_get_test(ADMIN_STAFF_MEMBER_URLS)
 
+    @pytest.mark.skip(reason="Модель StuffTeamMember был исключен из админки")
     def test_admin_staff_team_member(self):
         """Тесты страниц с сотрудником команды в админке."""
-        self.url_get_test(
-            ADMIN_STAFF_TEAM_MEMBER_URL_302, status_code=HTTPStatus.FOUND
-        )
-        self.url_get_test(ADMIN_STAFF_TEAM_MEMBER_URLS)
+        # self.url_get_test(
+        #     ADMIN_STAFF_TEAM_MEMBER_URL_302, status_code=HTTPStatus.FOUND
+        # )
+        # self.url_get_test(ADMIN_STAFF_TEAM_MEMBER_URLS)
 
     def test_admin_team(self):
         """Тесты страниц с командами в админке."""

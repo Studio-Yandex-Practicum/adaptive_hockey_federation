@@ -1,5 +1,6 @@
 from typing import Any
 
+import pytest
 from core.constants import ROLE_AGENT
 from main.models import (
     City,
@@ -532,6 +533,7 @@ class StaffMemberCrudTest(ModelTestBaseClass):
     #     self.correct_field_tests(url=url)
 
 
+@pytest.mark.skip(reason="Модель StuffTeamMember был исключен из админки")
 class StaffTeamMemberCrudTest(ModelTestBaseClass):
     """CRUD-тесты сотрудника команды."""
 

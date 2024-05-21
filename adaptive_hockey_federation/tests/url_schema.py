@@ -28,7 +28,7 @@ ADMIN_COMPETITIONS_URLS = (
 )
 ADMIN_SERVICE_PAGES = ("/admin/jsi18n/",)
 ADMIN_LOGIN = ("/admin/login/",)
-ADMIN_LOGUOT = ("/admin/logout/",)
+ADMIN_LOGOUT = ("/admin/logout/",)
 ADMIN_CITY_URL_302 = ("/admin/main/city/<path:object_id>/",)
 ADMIN_CITY_URLS = (
     "/admin/main/city/",
@@ -65,14 +65,15 @@ ADMIN_DISCIPLINE_NAME_URLS = (
     "/admin/main/disciplinename/<path:object_id>/history/",
     "/admin/main/disciplinename/add/",
 )
-ADMIN_DOCUMENT_URL_302 = ("/admin/main/document/<path:object_id>/",)
-ADMIN_DOCUMENT_URLS = (
-    "/admin/main/document/",
-    "/admin/main/document/<path:object_id>/change/",
-    "/admin/main/document/<path:object_id>/delete/",
-    "/admin/main/document/<path:object_id>/history/",
-    "/admin/main/document/add/",
-)
+# Document был исключен из админки
+# ADMIN_DOCUMENT_URL_302 = ("/admin/main/document/<path:object_id>/",)
+# ADMIN_DOCUMENT_URLS = (
+#     "/admin/main/document/",
+#     "/admin/main/document/<path:object_id>/change/",
+#     "/admin/main/document/<path:object_id>/delete/",
+#     "/admin/main/document/<path:object_id>/history/",
+#     "/admin/main/document/add/",
+# )
 ADMIN_NOSOLOGY_URL_302 = ("/admin/main/nosology/<path:object_id>/",)
 ADMIN_NOSOLOGY_URLS = (
     "/admin/main/nosology/",
@@ -97,16 +98,17 @@ ADMIN_STAFF_MEMBER_URLS = (
     "/admin/main/staffmember/<path:object_id>/history/",
     "/admin/main/staffmember/add/",
 )
-ADMIN_STAFF_TEAM_MEMBER_URL_302 = (
-    "/admin/main/staffteammember/<path:object_id>/",
-)
-ADMIN_STAFF_TEAM_MEMBER_URLS = (
-    "/admin/main/staffteammember/",
-    "/admin/main/staffteammember/<path:object_id>/change/",
-    "/admin/main/staffteammember/<path:object_id>/delete/",
-    "/admin/main/staffteammember/<path:object_id>/history/",
-    "/admin/main/staffteammember/add/",
-)
+# AdminStaffTeamMember был исключен
+# ADMIN_STAFF_TEAM_MEMBER_URL_302 = (
+#     "/admin/main/staffteammember/<path:object_id>/",
+# )
+# ADMIN_STAFF_TEAM_MEMBER_URLS = (
+#     "/admin/main/staffteammember/",
+#     "/admin/main/staffteammember/<path:object_id>/change/",
+#     "/admin/main/staffteammember/<path:object_id>/delete/",
+#     "/admin/main/staffteammember/<path:object_id>/history/",
+#     "/admin/main/staffteammember/add/",
+# )
 ADMIN_TEAM_URL_302 = ("/admin/main/team/<path:object_id>/",)
 ADMIN_TEAM_URLS = (
     "/admin/main/team/",
@@ -239,14 +241,14 @@ ADMIN_SITE_ADMIN_OK = (
     + ADMIN_DIAGNOSIS_URLS
     + ADMIN_DISCIPLINE_LEVEL_URLS
     + ADMIN_DISCIPLINE_NAME_URLS
-    + ADMIN_DOCUMENT_URLS
     + ADMIN_NOSOLOGY_URLS
     + ADMIN_PASSWORD_URLS
     + ADMIN_PLAYER_URLS
     + ADMIN_PROXY_GROUP_URLS
     + ADMIN_SERVICE_PAGES
     + ADMIN_STAFF_MEMBER_URLS
-    + ADMIN_STAFF_TEAM_MEMBER_URLS
     + ADMIN_TEAM_URLS
     + ADMIN_USER_URLS
+    # + ADMIN_STAFF_TEAM_MEMBER_URLS
+    # + ADMIN_DOCUMENT_URLS
 )
