@@ -23,8 +23,10 @@
         {% if view_name == 'main:staffs' and perms.main.add_staffmember %}
           {% include "main/staffs/staff_button_create.html" %}
         {% endif %}
-        {% if view_name == 'main:teams_id' and request.user == team.curator or user.is_staff %}
-          {% include "main/teams_id/button_create_team_member.html" with name="+ Добавить" %}
+        {% if view_name == 'main:teams_id' %}
+          {% if request.user == team.curator or user.is_staff %}
+            {% include "main/teams_id/button_create_team_member.html" with name="+ Добавить" %}
+          {% endif %}
         {% endif %}
         {% if view_name == 'unloads:unloads' %}
           {% url 'unloads:data_unloads' page_name='unloads' as unloads_unload_url %}
