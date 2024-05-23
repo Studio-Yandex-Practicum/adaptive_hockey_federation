@@ -10,9 +10,13 @@ class GameTeamInline(admin.StackedInline):
 class GameAdmin(admin.ModelAdmin):
     """Админка для модели Выгрузки."""
     inlines = [GameTeamInline]
-    list_display = ("name", "video_link")
+    list_display = ("name", "video_link", "get_teams")
     search_fields = ("name",)
     ordering = ["name"]
+
+    def get_teams(self, obj):
+        return ", ".join([team.name for team in obj.teams.all()])
+    get_teams.short_description = 'Teams'
 
 
 admin.site.register(Game, GameAdmin)
