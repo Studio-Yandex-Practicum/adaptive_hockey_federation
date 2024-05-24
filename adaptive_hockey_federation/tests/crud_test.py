@@ -790,12 +790,14 @@ class PlayerCrudTest(ModelTestBaseClass):
 
     def test_player_create_via_http(self):
         """Тест на корректное создание через сайт."""
-        self.correct_create_tests(url="/players/create/", team=1, nosology=1)
+        self.correct_create_tests(
+            url="/players/create/", team=1, nosology=1, diagnosis=1
+        )
 
     def test_player_update_via_http(self):
         """Тест на корректное изменение через сайт."""
         url = f"/players/{self.future_obj_id}/edit/"
-        self.correct_update_tests(url=url, team=1, nosology=1)
+        self.correct_update_tests(url=url, team=1, nosology=1, diagnosis=1)
 
     def test_player_delete_via_http(self):
         """Тест на корректное удаление через сайт."""
@@ -822,6 +824,7 @@ class PlayerCrudTest(ModelTestBaseClass):
             **self.admin_inlines_no_team_no_docs,
             team=1,
             nosology=1,
+            diagnosis=1,
         )
 
     def test_player_correct_update_via_admin(self):
@@ -833,6 +836,7 @@ class PlayerCrudTest(ModelTestBaseClass):
             **self.admin_inlines_no_team_no_docs,
             team=1,
             nosology=1,
+            diagnosis=1,
         )
 
     # TODO: Раскомментировать после согласования объема валидаций и

@@ -476,14 +476,8 @@ class ModelTestBaseClass(BaseTestClass):
 
     def assert_object_exist(self, err_msg: str, **obj_kwargs):
         """Тестирует на существование объекта."""
-        for key in (
-            "diagnosis",
-            "discipline_name",
-            "discipline_level",
-            "password",
-        ):
-            if obj_kwargs.get(key, None):
-                obj_kwargs.pop(key)
+        if obj_kwargs.get("password", None):
+            obj_kwargs.pop("password")
         self.assertTrue(self.is_exists(**obj_kwargs), err_msg)
 
     def assert_object_not_exist(self, err_msg: str, **obj_kwargs):
@@ -510,6 +504,8 @@ class ModelTestBaseClass(BaseTestClass):
         initial_objects_count = self.get_model().objects.count()
         via_url = ""
         if url:
+            if additional_url_kwargs.get("diagnosis", None):
+                schema.pop("diagnosis")
             self.try_to_create_via_url(url, **schema, **additional_url_kwargs)
             via_url = f" через POST-запрос по адресу: {url}"
         else:
@@ -550,6 +546,8 @@ class ModelTestBaseClass(BaseTestClass):
         obj = self.try_to_create(**cr_schema)
         via_url = ""
         if url:
+            if additional_url_kwargs.get("diagnosis", None):
+                upd_schema.pop("diagnosis")
             self.try_to_update_via_url(
                 url, **upd_schema, **additional_url_kwargs
             )
