@@ -34,11 +34,6 @@ players_urlpatterns = [
         player_views.player_id_deleted,
         name="player_id_deleted",
     ),
-    path(
-        "ajax/load-discipline-levels/",
-        player_views.load_discipline_levels,
-        name="ajax_load_discipline_levels",
-    ),
 ]
 
 teams_urlpatterns = [
@@ -113,9 +108,18 @@ staffs_urlpatterns = [
     ),
 ]
 
+ajax_urlpatterns = [
+    path(
+        "load-discipline-levels/",
+        player_views.load_discipline_levels,
+        name="ajax_load_discipline_levels",
+    ),
+]
+
 urlpatterns = [
     path("", include(main_urlpatterns)),
     path("players/", include(players_urlpatterns)),
     path("teams/", include(teams_urlpatterns)),
     path("staffs/", include(staffs_urlpatterns)),
+    path("ajax/", include(ajax_urlpatterns)),
 ]
