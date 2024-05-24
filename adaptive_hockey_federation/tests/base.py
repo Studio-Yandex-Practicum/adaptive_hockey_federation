@@ -476,8 +476,14 @@ class ModelTestBaseClass(BaseTestClass):
 
     def assert_object_exist(self, err_msg: str, **obj_kwargs):
         """Тестирует на существование объекта."""
-        if obj_kwargs.get("password", None):
-            obj_kwargs.pop("password")
+        for key in (
+            "diagnosis",
+            "discipline_name",
+            "discipline_level",
+            "password",
+        ):
+            if obj_kwargs.get(key, None):
+                obj_kwargs.pop(key)
         self.assertTrue(self.is_exists(**obj_kwargs), err_msg)
 
     def assert_object_not_exist(self, err_msg: str, **obj_kwargs):

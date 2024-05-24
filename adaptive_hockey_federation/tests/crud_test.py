@@ -788,16 +788,14 @@ class PlayerCrudTest(ModelTestBaseClass):
         """Тест на удаление объекта напрямую через БД."""
         self.correct_delete_tests()
 
-    # TODO: Не работает, после добавления полей Нозологии в форме.
-    # def test_player_create_via_http(self):
-    #    """Тест на корректное создание через сайт."""
-    #    self.correct_create_tests(url="/players/create/", team=1)
+    def test_player_create_via_http(self):
+        """Тест на корректное создание через сайт."""
+        self.correct_create_tests(url="/players/create/", team=1, nosology=1)
 
-    # TODO: Не работает, после добавления полей Нозологии в форме.
-    # def test_player_update_via_http(self):
-    #    """Тест на корректное изменение через сайт."""
-    #    url = f"/players/{self.future_obj_id}/edit/"
-    #    self.correct_update_tests(url=url, team=1)
+    def test_player_update_via_http(self):
+        """Тест на корректное изменение через сайт."""
+        url = f"/players/{self.future_obj_id}/edit/"
+        self.correct_update_tests(url=url, team=1, nosology=1)
 
     def test_player_delete_via_http(self):
         """Тест на корректное удаление через сайт."""
