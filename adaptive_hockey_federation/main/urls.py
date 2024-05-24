@@ -34,6 +34,11 @@ players_urlpatterns = [
         player_views.player_id_deleted,
         name="player_id_deleted",
     ),
+    path(
+        "ajax/load-discipline-levels/",
+        player_views.load_discipline_levels,
+        name="ajax_load_discipline_levels",
+    ),
 ]
 
 teams_urlpatterns = [
