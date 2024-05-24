@@ -305,10 +305,18 @@ class PlayerIDDeleteView(
 
 
 def player_id_deleted(request):
-    return render(request, "main/player_id_deleted.html")
+    """
+    Представление для отображения информации об успешном удалении карточки
+    игрока.
+    """
+    return render(request, "main/player_id/player_id_deleted.html")
 
 
 def load_discipline_levels(request):
+    """
+    Представление для получения списка уровней дисциплин по ID
+    дисциплины. Используется в формах создания/редактирования данных игрока.
+    """
     discipline_level_id = request.GET.get("discipline_level_id")
     try:
         discipline_statuses = DisciplineLevel.objects.filter(
