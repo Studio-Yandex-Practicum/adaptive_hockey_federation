@@ -79,18 +79,6 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
 
 class PlayerForm(forms.ModelForm):
 
-    available_teams = ModelMultipleChoiceField(
-        queryset=Team.objects.all().order_by("name"),
-        required=False,
-        help_text=FORM_HELP_TEXTS["available_teams"],
-        label="Команды",
-    )
-
-    team = CustomMultipleChoiceField(
-        required=True,
-        help_text=FORM_HELP_TEXTS["player_teams"],
-        label="Команды",
-    )
     nosology = ModelChoiceField(
         queryset=Nosology.objects.all(),
         required=True,
@@ -110,18 +98,16 @@ class PlayerForm(forms.ModelForm):
             "patronymic",
             "gender",
             "birthday",
+            "identity_document",
             "discipline_name",
             "discipline_level",
             "nosology",
             "diagnosis",
             "level_revision",
-            "team",
-            "available_teams",
             "is_captain",
             "is_assistent",
             "position",
             "number",
-            "identity_document",
         ]
         widgets = {
             "surname": forms.TextInput(
@@ -141,7 +127,7 @@ class PlayerForm(forms.ModelForm):
                 attrs={"placeholder": "Введите игровую классификацию"}
             ),
             "birthday": forms.DateInput(
-                format=("%Y-%m-%d"),
+                format="%d-%m-%Y",
                 attrs={
                     "type": "date",
                     "placeholder": "Введите дату рождения",
@@ -162,9 +148,11 @@ class PlayerForm(forms.ModelForm):
         ).delete()
         self.instance.team.set(self.cleaned_data["team"])
 
-    def save(self, *args, **kwargs):
-        instance = super().save()
-        self.save_m2m()
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+            self.save_m2m()
         return instance
 
     def clean_identity_document(self):
