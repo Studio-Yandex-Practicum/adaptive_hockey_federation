@@ -1,0 +1,21 @@
+{% load static %}
+<table class="table-table">
+  <thead>
+    <tr>
+      {% for head_item in table_head.values %}
+        <th>{{ head_item }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for table_string in table_data %}
+    <tr>
+      {% for cell_name, cell_value in table_string.items %}
+        <td class="rounded-md">
+            {{ cell_value }}
+        </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
