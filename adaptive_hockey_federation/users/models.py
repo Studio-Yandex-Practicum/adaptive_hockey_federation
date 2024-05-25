@@ -138,7 +138,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def save(
         self,
-        force_insert: bool = False,
+        force_insert: bool = False,  # type: ignore[override]
         force_update: bool = False,
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
