@@ -16,7 +16,6 @@ from django.shortcuts import get_object_or_404
 from main.models import (
     City,
     Diagnosis,
-    DisciplineLevel,
     DisciplineName,
     Nosology,
     Player,
@@ -143,12 +142,6 @@ class PlayerForm(forms.ModelForm):
             "birthday": FORM_HELP_TEXTS["birthday"],
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["discipline_level"].queryset = (
-            DisciplineLevel.objects.none()
-        )
-
     def save_m2m(self):
         self.instance.team.through.objects.filter(
             team__in=self.cleaned_data["team"]
@@ -190,11 +183,6 @@ class PlayerUpdateForm(PlayerForm):
 
     def __init__(self, *args, **kwargs):
         super(PlayerForm, self).__init__(*args, **kwargs)
-        self.fields["discipline_level"].queryset = (
-            DisciplineLevel.objects.filter(
-                discipline_name_id=self.instance.discipline_name.id
-            )
-        )
         if queryset := self.instance.team.all():
             self.fields["team"] = CustomModelMultipleChoiceField(
                 queryset=queryset,
