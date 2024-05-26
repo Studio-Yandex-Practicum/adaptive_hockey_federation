@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -12,7 +13,7 @@ from django.views.generic.list import ListView
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
-from main.models import Diagnosis, Player
+from main.models import Diagnosis, DisciplineLevel, Player
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
     get_player_fields,
@@ -304,4 +305,26 @@ class PlayerIDDeleteView(
 
 
 def player_id_deleted(request):
-    return render(request, "main/player_id_deleted.html")
+    """
+    Представление для отображения информации об успешном удалении карточки
+    игрока.
+    """
+    return render(request, "main/player_id/player_id_deleted.html")
+
+
+def load_discipline_levels(request):
+    """
+    Представление для получения списка уровней дисциплин по ID
+    дисциплины. Используется в формах создания/редактирования данных игрока.
+    """
+    discipline_level_id = request.GET.get("discipline_level_id")
+    try:
+        discipline_statuses = DisciplineLevel.objects.filter(
+            discipline_name_id=discipline_level_id
+        ).all()
+    except ValueError:
+        return JsonResponse([], safe=False)
+    else:
+        return JsonResponse(
+            list(discipline_statuses.values("id", "name")), safe=False
+        )

@@ -788,16 +788,16 @@ class PlayerCrudTest(ModelTestBaseClass):
         """Тест на удаление объекта напрямую через БД."""
         self.correct_delete_tests()
 
-    # TODO: Не работает, после добавления полей Нозологии в форме.
-    # def test_player_create_via_http(self):
-    #    """Тест на корректное создание через сайт."""
-    #    self.correct_create_tests(url="/players/create/", team=1)
+    def test_player_create_via_http(self):
+        """Тест на корректное создание через сайт."""
+        self.correct_create_tests(
+            url="/players/create/", team=1, nosology=1, diagnosis=1
+        )
 
-    # TODO: Не работает, после добавления полей Нозологии в форме.
-    # def test_player_update_via_http(self):
-    #    """Тест на корректное изменение через сайт."""
-    #    url = f"/players/{self.future_obj_id}/edit/"
-    #    self.correct_update_tests(url=url, team=1)
+    def test_player_update_via_http(self):
+        """Тест на корректное изменение через сайт."""
+        url = f"/players/{self.future_obj_id}/edit/"
+        self.correct_update_tests(url=url, team=1, nosology=1, diagnosis=1)
 
     def test_player_delete_via_http(self):
         """Тест на корректное удаление через сайт."""
@@ -817,25 +817,27 @@ class PlayerCrudTest(ModelTestBaseClass):
     #     url = f"/players/{self.future_obj_id}/edit/"
     #     self.correct_field_tests(url=url, team=1)
 
-    # TODO: Не работает, после добавления полей Нозологии в форме.
-    # def test_player_correct_create_via_admin(self):
-    #    """Тест на корректное создание через административную часть."""
-    #    self.correct_create_tests(
-    #        url="/admin/main/player/add/",
-    #        **self.admin_inlines_no_team_no_docs,
-    #        team=1,
-    #    )
+    def test_player_correct_create_via_admin(self):
+        """Тест на корректное создание через административную часть."""
+        self.correct_create_tests(
+            url="/admin/main/player/add/",
+            **self.admin_inlines_no_team_no_docs,
+            team=1,
+            nosology=1,
+            diagnosis=1,
+        )
 
-    # TODO: Не работает, после добавления полей Нозологии в форме.
-    # def test_player_correct_update_via_admin(self):
-    #    """Тест на корректное изменение через административную часть."""
-    #    url = f"/admin/main/player/{self.future_obj_id}/change/"
-    #    self.correct_update_tests(
-    #        url=url,
-    #        _save="Сохранить",
-    #        **self.admin_inlines_no_team_no_docs,
-    #        team=1,
-    #    )
+    def test_player_correct_update_via_admin(self):
+        """Тест на корректное изменение через административную часть."""
+        url = f"/admin/main/player/{self.future_obj_id}/change/"
+        self.correct_update_tests(
+            url=url,
+            _save="Сохранить",
+            **self.admin_inlines_no_team_no_docs,
+            team=1,
+            nosology=1,
+            diagnosis=1,
+        )
 
     # TODO: Раскомментировать после согласования объема валидаций и
     #  доработки валидации полей модели.

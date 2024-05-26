@@ -504,6 +504,8 @@ class ModelTestBaseClass(BaseTestClass):
         initial_objects_count = self.get_model().objects.count()
         via_url = ""
         if url:
+            if additional_url_kwargs.get("diagnosis", None):
+                schema.pop("diagnosis")
             self.try_to_create_via_url(url, **schema, **additional_url_kwargs)
             via_url = f" через POST-запрос по адресу: {url}"
         else:
@@ -544,6 +546,8 @@ class ModelTestBaseClass(BaseTestClass):
         obj = self.try_to_create(**cr_schema)
         via_url = ""
         if url:
+            if additional_url_kwargs.get("diagnosis", None):
+                upd_schema.pop("diagnosis")
             self.try_to_update_via_url(
                 url, **upd_schema, **additional_url_kwargs
             )
