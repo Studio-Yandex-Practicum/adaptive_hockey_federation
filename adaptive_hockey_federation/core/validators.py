@@ -3,6 +3,7 @@ import datetime
 from core.constants import MAX_AGE_PlAYER, MIN_AGE_PlAYER
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.utils.timezone import now as django_now
 
 
 def fio_validator() -> RegexValidator:
@@ -28,3 +29,12 @@ def validate_date_birth(value: datetime.date):
         raise ValidationError(
             f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет",
         )
+
+
+def validate_game_date(date: datetime.date) -> datetime.date:
+    """
+    Проверка валидности даты проведения игры. Она не должна быть более текущей.
+    """
+    if date > django_now():
+        raise ValidationError("Игра не может проходить в будущем")
+    return date
