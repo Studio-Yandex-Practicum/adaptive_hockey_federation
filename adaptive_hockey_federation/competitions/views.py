@@ -72,6 +72,7 @@ class CompetitionListView(
             raise PermissionDenied(self.get_permission_denied_message())
 
     def get_queryset(self):
+        """Метод для получения QuerySet с заданными параметрами."""
         queryset = super().get_queryset()
         search_params = self.request.GET.dict()
         search_column = search_params.get("search_column")
@@ -133,6 +134,7 @@ class CompetitionListView(
         return queryset
 
     def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         competitions = context["competitions"]
         context["page_title"] = "Редактирование соревнование"
@@ -158,14 +160,17 @@ class UpdateCompetitionView(
     )
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
             "competitions:competition_id", kwargs={"pk": self.object.pk},
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или вызвать ошибку 404."""
         return get_object_or_404(Competition, id=self.kwargs["pk"])
 
     def get_initial(self):
+        """Вернуть словарь initial с указанными атрибутами объекта."""
         initial = {
             "city": self.object.city.name,
             "date_start": self.object.date_start.isoformat(),
@@ -174,6 +179,7 @@ class UpdateCompetitionView(
         return initial
 
     def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         context["page_title"] = "Редактирование соревнования"
@@ -194,6 +200,7 @@ class DeleteCompetitionView(
     )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или вызвать ошибку 404."""
         return get_object_or_404(Competition, id=self.kwargs["pk"])
 
 
@@ -202,6 +209,7 @@ class AddTeamToCompetition(
 ):
     """
     Представление добавления команды в соревнования.
+
     В данном виде не отображает какой-то отдельной страницы либо формы.
     Используется для обработки нажатия кнопки либо соответствующего
     post-запроса. Добавляет команду в соревнование, после чего делает
@@ -217,6 +225,7 @@ class AddTeamToCompetition(
     )
 
     def dispatch(self, request, *args, **kwargs):
+        """Обработать POST-запрос или вернуть на страницу соревнования."""
         if request.method.lower() == "post":
             competition = get_object_or_404(
                 Competition, id=kwargs["competition_id"],
@@ -251,6 +260,7 @@ class DeleteTeamFromCompetition(
     )
 
     def get_object(self, queryset=None):
+        """Получить объект по атрибутам или вызвать ошибку 404."""
         team_in_competition = get_object_or_404(
             Competition.teams.through,
             competition=self.kwargs["competition_id"],
@@ -259,6 +269,7 @@ class DeleteTeamFromCompetition(
         return team_in_competition
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
             "competitions:competition_id",
             kwargs={"pk": self.kwargs["competition_id"]},
@@ -276,28 +287,40 @@ class CreateCompetitionView(
     permission_required = "competitions.add_competition"
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
             "competitions:competition_id", kwargs={"pk": self.object.pk},
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или вызвать ошибку 404."""
         return get_object_or_404(Competition, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super(CreateCompetitionView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         context["page_title"] = "Создать соревнование"
         return context
 
     def post(self, request, *args, **kwargs):
+        """
+        Обработать POST-запрос.
+
+        1. Создать экземпляр формы с переданными атрибутами
+        2. Вызвать валидацию полей формы.
+        """
         self.disciplines = request.POST.get("disciplines", None)
         return super().post(request, *args, **kwargs)
 
 
 def check_permissions(user):
     """
-    Проверка, что пользователь является представителем команды
-    или администратором.
+    Проверка прав пользователя.
+
+    Доступ для:
+    1. Представителя команды
+    2. Администратора.
     """
     return user.is_authenticated and (
         user.is_agent or user.is_superuser or user.is_admin
@@ -311,6 +334,7 @@ def check_permissions(user):
 def competition_team_manage_view(request, pk):
     """
     Представление для управления соревнованием.
+
     -   Отображает команды, участвующие в соревновании, доступные команды
         (т.е. те, которые в соревновании не участвуют),
     -   Позволяет добавлять команды в соревнование и удалять их из него.

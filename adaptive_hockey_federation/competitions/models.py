@@ -49,6 +49,7 @@ class Competition(models.Model):
         ]
 
     def __str__(self):
+        """Метод, использующий поле title для строкового представления."""
         return self.title
 
     def period_duration(self):

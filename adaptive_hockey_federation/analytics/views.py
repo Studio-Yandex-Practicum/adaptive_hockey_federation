@@ -13,9 +13,12 @@ class AnalyticsListView(
     AdminRequiredMixin,
     PlayersListView,
 ):
+    """View-класс для отображения страницы с аналитикой."""
+
     template_name = "analytics/analytics.html"
 
     def get_queryset(self):
+        """Метод для получения QuerySet с заданными параметрами."""
         queryset = super().get_queryset()
         dict_param = dict(self.request.GET)
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
@@ -30,6 +33,7 @@ class AnalyticsListView(
         )
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         date_18_years_ago = datetime.now() - relativedelta(years=18)
         context["form"] = AnalyticsFilterForm(self.request.GET or None)
