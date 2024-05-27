@@ -13,6 +13,9 @@ repos:
       - id: ruff
         exclude: migrations/|config/|tests/|.*settings(\.py|/)?
         types_or: [ python ]
+      - id: ruff-format
+        exclude: migrations/|config/|tests/|.*settings(\.py|/)?
+        types_or: [ python ]
 
   - repo: local
     hooks:
