@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
             name="date",
             field=models.DateTimeField(
                 default=django.utils.timezone.now,
-                validators=[core.validators.validate_game_date],
+                validators=[core.validators.validate_game_date],  # type: ignore[list-item]
                 verbose_name="Дата игры",
             ),
             preserve_default=False,
