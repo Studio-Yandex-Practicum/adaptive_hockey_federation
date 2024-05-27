@@ -31,7 +31,7 @@ class CustomMultipleChoiceField(MultipleChoiceField):
     def validate(self, value):
         if self.required and not value:
             raise ValidationError(
-                self.error_messages["required"], code="required"
+                self.error_messages["required"], code="required",
             )
 
 
@@ -58,10 +58,10 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
                 attrs={
                     "list": "diagnosis",
                     "placeholder": "Введите название диагноза",
-                }
+                },
             ),
             error_messages={
-                "required": "Пожалуйста, выберите диагноз из списка."
+                "required": "Пожалуйста, выберите диагноз из списка.",
             },
             label=label or "Выберите диагноз",
         )
@@ -83,7 +83,7 @@ class PlayerForm(forms.ModelForm):
         queryset=Nosology.objects.all(),
         required=True,
         error_messages={
-            "required": "Пожалуйста, выберите нозологию из списка."
+            "required": "Пожалуйста, выберите нозологию из списка.",
         },
         label="Нозология",
     )
@@ -111,20 +111,20 @@ class PlayerForm(forms.ModelForm):
         ]
         widgets = {
             "surname": forms.TextInput(
-                attrs={"placeholder": "Введите фамилию"}
+                attrs={"placeholder": "Введите фамилию"},
             ),
             "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
             "patronymic": forms.TextInput(
-                attrs={"placeholder": "Введите отчество"}
+                attrs={"placeholder": "Введите отчество"},
             ),
             "identity_document": forms.TextInput(
-                attrs={"placeholder": "Введите название документа"}
+                attrs={"placeholder": "Введите название документа"},
             ),
             "number": forms.TextInput(
-                attrs={"placeholder": "Введите номер игрока"}
+                attrs={"placeholder": "Введите номер игрока"},
             ),
             "level_revision": forms.TextInput(
-                attrs={"placeholder": "Введите игровую классификацию"}
+                attrs={"placeholder": "Введите игровую классификацию"},
             ),
             "birthday": forms.DateInput(
                 format="%d-%m-%Y",
@@ -144,7 +144,7 @@ class PlayerForm(forms.ModelForm):
 
     def save_m2m(self):
         self.instance.team.through.objects.filter(
-            team__in=self.cleaned_data["team"]
+            team__in=self.cleaned_data["team"],
         ).delete()
         self.instance.team.set(self.cleaned_data["team"])
 
@@ -158,12 +158,12 @@ class PlayerForm(forms.ModelForm):
     def clean_identity_document(self):
         document = self.cleaned_data["identity_document"]
         if re.search(r"[П|п]аспорт", document) or re.search(
-            r"[С|с]видетельство о рождении", document
+            r"[С|с]видетельство о рождении", document,
         ):
             return document
         raise ValidationError(
             "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или"
-            "'Свидетельство о рождении X-XX XXXXXX'"
+            "'Свидетельство о рождении X-XX XXXXXX'",
         )
 
     def clean_diagnosis(self):
@@ -210,23 +210,24 @@ class CityChoiceField(ModelChoiceField):
                 attrs={
                     "list": "cities",
                     "placeholder": "Введите или выберите название города",
-                }
+                },
             ),
             required=True,
             error_messages={
-                "required": "Пожалуйста, выберите город из списка."
+                "required": "Пожалуйста, выберите город из списка.",
             },
             label=label or "Выберите город",
         )
 
     def clean(self, value: Any) -> Any:
-        """Переопределенный метод родительского класса.
+        """
+        Переопределенный метод родительского класса.
         Прежде, чем вызвать родительский метод, получает объект города (
         City) по введенному названию, проверяет наличие введенного
         наименования города в БД. Если такого города в БД нет, то создает
         соответствующий город (объект класса City) и возвращает его на
-        дальнейшую стандартную валидацию формы."""
-
+        дальнейшую стандартную валидацию формы.
+        """
         if not value:
             raise ValidationError(self.error_messages["required"])
 
@@ -247,22 +248,23 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
                 attrs={
                     "list": data_list,
                     "placeholder": "Начните ввод и выберите из списка",
-                }
+                },
             ),
             required=True,
             error_messages={
-                "required": "Пожалуйста, выберите сотрудника из списка."
+                "required": "Пожалуйста, выберите сотрудника из списка.",
             },
             label=label or "Выберите сотрудника",
         )
         self.team = team
 
     def clean(self, value: Any) -> Any:
-        """Переопределенный метод родительского класса.
+        """
+        Переопределенный метод родительского класса.
         Прежде, чем вызвать родительский метод, получает объект
         StaffTeamMember и возвращает его на
-        дальнейшую стандартную валидацию формы."""
-
+        дальнейшую стандартную валидацию формы.
+        """
         if not value:
             raise ValidationError(self.error_messages["required"])
 
@@ -274,7 +276,7 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
             raise ValidationError("Неверный формат введенных данных.")
         staff_team_member = get_object_or_404(StaffTeamMember, id=value)
         if StaffTeamMember.team.through.objects.filter(
-            staffteammember=staff_team_member, team=self.team
+            staffteammember=staff_team_member, team=self.team,
         ).exists():
             raise ValidationError("Этот сотрудник уже есть в команде.")
         return super().clean(value)
@@ -299,7 +301,7 @@ class TeamForm(forms.ModelForm):
         label="Куратор команды",
         empty_label="Выберите куратора",
         error_messages={
-            "required": "Пожалуйста, выберите куратора из списка."
+            "required": "Пожалуйста, выберите куратора из списка.",
         },
     )
     discipline_name = forms.ModelChoiceField(
@@ -309,7 +311,7 @@ class TeamForm(forms.ModelForm):
         label="Дисциплина команды",
         empty_label="Выберите дисциплину команды",
         error_messages={
-            "required": "Пожалуйста, выберите дисциплину из списка."
+            "required": "Пожалуйста, выберите дисциплину из списка.",
         },
     )
 
@@ -318,7 +320,7 @@ class TeamForm(forms.ModelForm):
         fields = ["name", "city", "discipline_name", "curator"]
         widgets = {
             "name": TextInput(
-                attrs={"placeholder": "Введите название команды"}
+                attrs={"placeholder": "Введите название команды"},
             ),
             "staff_team_member": Select(),
             "discipline_name": Select(),
@@ -445,14 +447,14 @@ class StaffMemberForm(forms.ModelForm):
         )
         widgets = {
             "surname": forms.TextInput(
-                attrs={"placeholder": "Введите фамилию"}
+                attrs={"placeholder": "Введите фамилию"},
             ),
             "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
             "patronymic": forms.TextInput(
-                attrs={"placeholder": "Введите отчество"}
+                attrs={"placeholder": "Введите отчество"},
             ),
             "phone": forms.TextInput(
-                attrs={"placeholder": "Введите номер телефона"}
+                attrs={"placeholder": "Введите номер телефона"},
             ),
         }
 
@@ -470,7 +472,7 @@ class StaffTeamMemberAddToTeamForm(forms.ModelForm):
         self.data_list_id = data_list_dict[self.position_filter]
         super(StaffTeamMemberAddToTeamForm, self).__init__(*args, **kwargs)
         self.fields["staffteammember"] = StaffTeamMemberChoiceField(
-            team=self.team, data_list=self.data_list_id
+            team=self.team, data_list=self.data_list_id,
         )
 
     class Meta:

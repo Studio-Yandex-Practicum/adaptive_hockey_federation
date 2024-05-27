@@ -6,7 +6,8 @@ from django.core.validators import RegexValidator
 
 
 def fio_validator() -> RegexValidator:
-    """Функция проверки поля на присутствие только
+    """
+    Функция проверки поля на присутствие только
     кирилических символов. Возможно использование дефиса.
     """
     return RegexValidator(
@@ -25,5 +26,5 @@ def validate_date_birth(value: datetime.date):
 
     if not (min_date <= value <= max_date):
         raise ValidationError(
-            f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет"
+            f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет",
         )

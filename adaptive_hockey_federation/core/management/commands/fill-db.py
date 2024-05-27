@@ -46,8 +46,8 @@ class Command(BaseCommand):
                 except Exception as e:
                     self.stdout.write(
                         self.style.ERROR(
-                            f"Ошибка удаления данных {e} -> " f"{file_name}"
-                        )
+                            f"Ошибка удаления данных {e} -> " f"{file_name}",
+                        ),
                     )
         items = list(FILE_MODEL_MAP.items())
         items.reverse()
@@ -59,14 +59,14 @@ class Command(BaseCommand):
                     self.stdout.write(
                         self.style.SUCCESS(
                             f"Фикстуры с файла {file_name} вставлены "
-                            "в таблицы!"
-                        )
+                            "в таблицы!",
+                        ),
                     )
                 except Exception as e:
                     return self.stdout.write(
                         self.style.ERROR_OUTPUT(
-                            f"Ошибка вставки данных {e} -> " f"{file_name}"
-                        )
+                            f"Ошибка вставки данных {e} -> " f"{file_name}",
+                        ),
                     )
         return None
 

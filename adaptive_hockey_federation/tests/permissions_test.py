@@ -21,8 +21,10 @@ from users.models import User
 
 
 class TestPermissions(BaseTestClass):
-    """Тесты урл-путей на возможность доступа к ним определенных категорий
-    пользователей."""
+    """
+    Тесты урл-путей на возможность доступа к ним определенных категорий
+    пользователей.
+    """
 
     staff_user: User
 
@@ -32,9 +34,11 @@ class TestPermissions(BaseTestClass):
         cls.staff_user = UserFactory.create(role=test_role_user, is_staff=True)
 
     def url_tests(self, url_to_test: UrlToTest):
-        """Прогоняет тесты урл-адреса на доступ различных пользователей.
+        """
+        Прогоняет тесты урл-адреса на доступ различных пользователей.
         Принимает в качестве параметра экземпляр класса UrlToTest (см.
-        docstring к классу UrlToTest)."""
+        docstring к классу UrlToTest).
+        """
         responses = url_to_test.execute_tests(self.client, self.user)
         for fact, estimated, message in responses:
             if isinstance(estimated, (str, int)):
@@ -49,8 +53,10 @@ class TestPermissions(BaseTestClass):
                 self.url_tests(url_to_test)
 
     def test_main_page(self):
-        """Главная страница доступна только авторизованному пользователю.
-        Для неавторизованного происходит переадресация."""
+        """
+        Главная страница доступна только авторизованному пользователю.
+        Для неавторизованного происходит переадресация.
+        """
         url_to_test = UrlToTest("/")
         self.url_tests(url_to_test)
 
@@ -66,28 +72,36 @@ class TestPermissions(BaseTestClass):
     #     self.batch_url_test(urls_to_test)
 
     def test_auth_login(self):
-        """Неавторизованному пользователю должна быть доступна страница
-        входа на сайт."""
+        """
+        Неавторизованному пользователю должна быть доступна страница
+        входа на сайт.
+        """
         url_to_test = UrlToTest("/auth/login/", authorized_only=False)
         self.url_tests(url_to_test)
 
     def test_auth_logout(self):
-        """POST-запрос авторизованного пользователя на страницы лог-аута
-        должен вернуть ответ с кодом 302."""
+        """
+        POST-запрос авторизованного пользователя на страницы лог-аута
+        должен вернуть ответ с кодом 302.
+        """
         url_to_test = UrlToTest(
-            "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True
+            "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True,
         )
         self.url_tests(url_to_test)
 
     def test_auth_password_change_url(self):
-        """Страница смены пароля должна быть доступна только авторизованному
-        пользователю."""
+        """
+        Страница смены пароля должна быть доступна только авторизованному
+        пользователю.
+        """
         url_to_test = UrlToTest("/auth/password_change/")
         self.url_tests(url_to_test)
 
     def test_auth_password_reset_url(self):
-        """Страница сброса пароля должна быть доступна неавторизованному
-        пользователю."""
+        """
+        Страница сброса пароля должна быть доступна неавторизованному
+        пользователю.
+        """
         url_to_test = UrlToTest("/auth/password_reset/", authorized_only=False)
         self.url_tests(url_to_test)
 
@@ -195,8 +209,10 @@ class TestPermissions(BaseTestClass):
 
 
 class TestSpecialPermissions(BaseTestClass):
-    """Тесты на наличие специальных разрешений на доступ отдельных групп
-    пользователей к отдельным объектам."""
+    """
+    Тесты на наличие специальных разрешений на доступ отдельных групп
+    пользователей к отдельным объектам.
+    """
 
     user_agent: User | Any = None
     team_2: Team | Any = None
@@ -216,7 +232,7 @@ class TestSpecialPermissions(BaseTestClass):
             name="Team 2",
             city=City.objects.create(name="cls_Test City_2"),
             discipline_name=DisciplineName.objects.create(
-                name="cls_Test DisciplineName_2"
+                name="cls_Test DisciplineName_2",
             ),
             curator=cls.user_agent,
         )

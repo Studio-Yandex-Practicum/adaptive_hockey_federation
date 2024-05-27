@@ -155,7 +155,7 @@ class TeamFactory(factory.django.DjangoModelFactory):
 class CompetitionFactory(factory.django.DjangoModelFactory):
     """
     Создание соревнований. Привязка к ним уже созданных городов, команд
-    создание локации, времени начала и окончания, активно или закончено
+    создание локации, времени начала и окончания, активно или закончено.
     """
 
     class Meta:
@@ -197,16 +197,16 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     patronymic = factory.Faker("middle_name", locale="ru_RU")
     birthday = factory.Faker("date_of_birth", minimum_age=12, maximum_age=18)
     addition_date = factory.Faker(
-        "date_time_this_decade", before_now=True, after_now=False
+        "date_time_this_decade", before_now=True, after_now=False,
     )
     gender = factory.LazyFunction(lambda: random.choice(GENDER_CHOICES)[1])
     level_revision = factory.Faker("sentence", nb_words=1, locale="ru_RU")
     position = factory.LazyFunction(
-        lambda: random.choice(PLAYER_POSITION_CHOICES)[1]
+        lambda: random.choice(PLAYER_POSITION_CHOICES)[1],
     )
     number = factory.Faker("random_number", digits=2)
     identity_document = factory.LazyFunction(
-        lambda: random.choice(["паспорт", "свидетельство"])
+        lambda: random.choice(["паспорт", "свидетельство"]),
     )
 
     @factory.lazy_attribute
@@ -221,7 +221,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     def team(self, create, extracted, **kwargs):
         if create:
             teams_with_player_count = Team.objects.annotate(
-                player_count=Count("team_players")
+                player_count=Count("team_players"),
             )
             if teams_with_player_count.filter(player_count__lt=10):
                 self.team.set([get_random_objects(Team)])
@@ -233,7 +233,7 @@ class DocumentFactory(factory.django.DjangoModelFactory):
         skip_postgeneration_save = True
 
     name = factory.LazyAttribute(
-        lambda obj: f"{obj.player.surname}-{random.randint(1000, 9999)}"
+        lambda obj: f"{obj.player.surname}-{random.randint(1000, 9999)}",
     )
 
     @factory.lazy_attribute

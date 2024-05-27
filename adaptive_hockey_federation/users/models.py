@@ -69,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 message="Используйте корректный адрес электронной почты. "
                 "Адрес должен быть не длиннее 150 символов. "
                 "Допускается использование латинских букв, "
-                "цифр и символов @/./+/-/_"
+                "цифр и символов @/./+/-/_",
             ),
         ),
         verbose_name=_("Электронная почта"),
@@ -119,8 +119,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.get_initials()
 
     def get_initials(self) -> str:
-        """Возвращает фамилию и инициалы пользователя.
-        При отсутствии отчества возвращается фамилия и инициал имени."""
+        """
+        Возвращает фамилию и инициалы пользователя.
+        При отсутствии отчества возвращается фамилия и инициал имени.
+        """
         name_i = self.first_name[:1].upper() + "."
         if patronymic_i := self.patronymic[:1]:
             patronymic_i = patronymic_i.upper() + "."
@@ -143,11 +145,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         using: str | None = None,
         update_fields: Iterable[str] | None = None,
     ) -> None:
-        """Переопределенный метод модели.
+        """
+        Переопределенный метод модели.
         При любом сохранении устанавливает группу пользователя в зависимости
-        от его роли."""
+        от его роли.
+        """
         super().save(
-            force_insert, force_update, using, update_fields
+            force_insert, force_update, using, update_fields,
         )  # type: ignore
         self.set_group()
 
@@ -171,16 +175,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_admin(self):
-        """
-        Администратор - имеет неограниченные права управления на проекте.
-        """
+        """Администратор - имеет неограниченные права управления на проекте."""
         return self.role == ROLE_ADMIN or self.is_staff
 
     def set_group(self):
         """Добавляет пользователя в группу в зависимости от его роли."""
         if not (group_name := GROUPS_BY_ROLE.get(self.role, None)):
             raise ValidationError(
-                f"Неизвестная роль пользователя: " f"{self.role}"
+                f"Неизвестная роль пользователя: " f"{self.role}",
             )
         if group := ProxyGroup.get_by_name(group_name):
             self.groups.clear()
@@ -190,8 +192,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class ProxyGroup(Group):
-    """Обычная группа django. Класс необходим для регистрации
-    модели в приложении "пользователи"."""
+    """
+    Обычная группа django. Класс необходим для регистрации
+    модели в приложении "пользователи".
+    """
 
     class Meta:
         proxy = True
@@ -203,10 +207,12 @@ class ProxyGroup(Group):
 
     @classmethod
     def get_by_name(cls, name: str) -> Group | None:
-        """Возвращает группу по полю "name".
+        """
+        Возвращает группу по полю "name".
         Предварительно проверяет наличие таковой группы.
         ВНИМАНИЕ!!! Метод не вызывает исключения при отсутствии в БД искомой
-        группы, а вместо исключения возвращает None."""
+        группы, а вместо исключения возвращает None.
+        """
         if (obj := cls.objects.filter(name=name)).exists():
             return obj.first()
         return None

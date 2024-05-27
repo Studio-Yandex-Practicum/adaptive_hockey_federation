@@ -40,7 +40,7 @@ class GroupAdminForm(forms.ModelForm):
 
     def save_m2m(self):
         self.instance.user_set.through.objects.filter(
-            user__in=self.cleaned_data["users"]
+            user__in=self.cleaned_data["users"],
         ).delete()
 
         self.instance.user_set.set(self.cleaned_data["users"])
@@ -127,19 +127,19 @@ class CustomUserCreateForm(forms.ModelForm):
         )
         widgets = {
             "first_name": forms.TextInput(
-                attrs={"placeholder": "Введите фамилию (обязательно)"}
+                attrs={"placeholder": "Введите фамилию (обязательно)"},
             ),
             "last_name": forms.TextInput(
-                attrs={"placeholder": "Введите Имя (обязательно)"}
+                attrs={"placeholder": "Введите Имя (обязательно)"},
             ),
             "patronymic": forms.TextInput(
-                attrs={"placeholder": "Введите отчество"}
+                attrs={"placeholder": "Введите отчество"},
             ),
             "email": forms.EmailInput(
-                attrs={"placeholder": "Введите email (обязательно)"}
+                attrs={"placeholder": "Введите email (обязательно)"},
             ),
             "phone": forms.TextInput(
-                attrs={"placeholder": "Введите номер игрока"}
+                attrs={"placeholder": "Введите номер игрока"},
             ),
         }
         help_texts = {
@@ -148,9 +148,7 @@ class CustomUserCreateForm(forms.ModelForm):
         }
 
     def clean_team(self):
-        """
-        Проверка команды при создании пользователя
-        """
+        """Проверка команды при создании пользователя."""
         busy_teams = None
         choice_team = None
         if choice_team := self.cleaned_data["team"]:
@@ -171,9 +169,7 @@ class CustomUserUpdateForm(CustomUserCreateForm):
             self.fields["team"].initial = self.instance.team.all()
 
     def clean_team(self):
-        """
-        Проверка команды при создании пользователя
-        """
+        """Проверка команды при создании пользователя."""
         busy_teams = None
         choice_teams = None
         current_teams = list(self.instance.team.all())

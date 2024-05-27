@@ -7,7 +7,8 @@ from main.models import Team
 
 
 class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):
-    """Миксин, объединяющий функционал миксинов-родителей.
+    """
+    Миксин, объединяющий функционал миксинов-родителей.
 
     PermissionRequiredMixin и UserPassesTestMixin имеют общего родителя
     AccessMixin и оба переопределяют родительский метод dispatch(), в связи с
@@ -21,7 +22,8 @@ class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):
     которые определяются в методе test_func().
 
     !!! Во вью-классе или миксине-наследнике необходимо переопределить метод
-        test_func() либо get_test_func()."""
+    test_func() либо get_test_func().
+    """
 
     def dispatch(self, request, *args, **kwargs):
         if not (
@@ -30,12 +32,13 @@ class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):
         ):
             return self.handle_no_permission()
         return super(PermissionRequiredMixin, self).dispatch(
-            request, *args, **kwargs
+            request, *args, **kwargs,
         )
 
 
 class PlayerIdPermissionsMixin(CustomPermissionMixin):
-    """Миксин настройки разрешений для вью-классов PlayerIdView.
+    """
+    Миксин настройки разрешений для вью-классов PlayerIdView.
     Ограничивает права представителя на доступ к представлениям игроков не
     своих команд.
 
@@ -49,7 +52,8 @@ class PlayerIdPermissionsMixin(CustomPermissionMixin):
 
     При создании игрока, когда request не содержит ключа "team", считается,
     что игрок добавляется в БД без связки с конкретной командой и
-    представителю будет отказано в доступе."""
+    представителю будет отказано в доступе.
+    """
 
     def test_func(self) -> bool | None:
         request = self.__getattribute__("request")
@@ -67,7 +71,8 @@ class PlayerIdPermissionsMixin(CustomPermissionMixin):
 
 
 class TeamEditPermissionsMixin(CustomPermissionMixin):
-    """Миксин настройки разрешений для вью-классов TeamIdView.
+    """
+    Миксин настройки разрешений для вью-классов TeamIdView.
     Ограничивает права представителя на доступ к представлениям не своих
     команд.
 
@@ -76,7 +81,8 @@ class TeamEditPermissionsMixin(CustomPermissionMixin):
     не разрешается для представителя в принципе.
 
     Работает аналогично PlayerIdPermissionsMixin, кроме функционала создания
-    объекта."""
+    объекта.
+    """
 
     def test_func(self) -> bool | None:
         user = self.__getattribute__("request").user

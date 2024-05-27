@@ -51,7 +51,7 @@ class UsersListView(
                 queryset = queryset.filter(
                     Q(first_name__icontains=search)
                     | Q(last_name__icontains=search)
-                    | Q(patronymic__icontains=search)
+                    | Q(patronymic__icontains=search),
                 )
             elif search_column == "date":
                 queryset = queryset.filter(
@@ -59,13 +59,13 @@ class UsersListView(
                     & Q(
                         date_joined__month__icontains=search_params[
                             "month"
-                        ].lstrip("0")
+                        ].lstrip("0"),
                     )
                     & Q(
                         date_joined__day__icontains=search_params[
                             "day"
-                        ].lstrip("0")
-                    )
+                        ].lstrip("0"),
+                    ),
                 )
             else:
                 search_fields = {
@@ -74,7 +74,7 @@ class UsersListView(
                     "phone": "phone",
                 }
                 queryset = queryset.filter(
-                    **{f"{search_fields[search_column]}__icontains": search}
+                    **{f"{search_fields[search_column]}__icontains": search},
                 )
         return queryset.order_by("last_name")
 
@@ -91,7 +91,7 @@ class UsersListView(
                     "email": user.email,
                     "phone": user.phone,
                     "id": user.pk,
-                }
+                },
             )
         context["table_head"] = {
             "name": "Имя",
@@ -105,9 +105,7 @@ class UsersListView(
 
 
 class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    """
-    Вьюха редактирования пользователя
-    """
+    """Вьюха редактирования пользователя."""
 
     model = User
     form_class = CustomUserUpdateForm
@@ -141,9 +139,7 @@ class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
 
 class DeleteUserView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    """
-    Вьюха удаления пользователя
-    """
+    """Вьюха удаления пользователя."""
 
     object = User
     model = User
@@ -155,9 +151,7 @@ class DeleteUserView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 
 class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    """
-    Вьюха создания пользователя
-    """
+    """Вьюха создания пользователя."""
 
     model = User
     form_class = CustomUserCreateForm
@@ -186,7 +180,7 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 
 class PasswordSetView(PasswordResetConfirmView):
-    """Вьюха изменения пароля пользователя"""
+    """Вьюха изменения пароля пользователя."""
 
     success_url = reverse_lazy("users:users")
 

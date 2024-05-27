@@ -23,20 +23,20 @@ class UnloadFactory(factory.django.DjangoModelFactory):
     unload_file_slug = factory.LazyAttribute(lambda o: "")
 
     @factory.post_generation
-    def create_excel_file(obj, create, extracted, **kwargs):
+    def create_excel_file(self, create, extracted, **kwargs):
         if not create:
             return
 
-        queryset_with_titles = get_queryset_for_unload(obj)
+        queryset_with_titles = get_queryset_for_unload(self)
 
         if queryset_with_titles:
             title = queryset_with_titles[1]
             queryset = queryset_with_titles[0]
-            filename = f"{title}_{obj.unload_name}.xlsx"
+            filename = f"{title}_{self.unload_name}.xlsx"
             filename = export_excel(queryset, filename, title)
             file_path = os.path.join("unloads_data", filename)
-            obj.unload_file_slug = file_path
-            obj.save()
+            self.unload_file_slug = file_path
+            self.save()
 
 
 def get_queryset_for_unload(unload_instance) -> Tuple[QuerySet, str]:

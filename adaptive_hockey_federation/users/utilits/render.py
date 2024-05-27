@@ -11,9 +11,7 @@ def render_email_message(
     to: List[str],
     template: str,
 ) -> EmailMultiAlternatives:
-    """
-    Функция визуализации электронного письма из html-шаблона.
-    """
+    """Функция визуализации электронного письма из html-шаблона."""
     html_body = render_to_string(template, context)
     email = EmailMultiAlternatives(
         subject=subject,

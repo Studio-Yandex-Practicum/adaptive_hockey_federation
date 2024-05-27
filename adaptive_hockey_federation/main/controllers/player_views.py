@@ -55,7 +55,7 @@ class PlayersListView(
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
         if len(dict_param) > 1 and "search_column" in dict_param:
             queryset = model_get_queryset(
-                "players", Player, dict_param, queryset
+                "players", Player, dict_param, queryset,
             )
 
         return (
@@ -114,7 +114,7 @@ class PlayerIDCreateView(
         self.delete_documents(
             player=player,
             deleted_files_paths=self.request.POST.getlist(
-                "deleted_file_path[]"
+                "deleted_file_path[]",
             ),
         )
         return super().form_valid(form)
@@ -132,7 +132,7 @@ class PlayerIDCreateView(
         context["page_title"] = "Создание профиля нового игрока"
         context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
-            ["." + res for res in FILE_RESOLUTION]
+            ["." + res for res in FILE_RESOLUTION],
         )
         return context
 
@@ -188,10 +188,6 @@ class PlayerIdView(
         "number",
         "document",
     ]
-    permission_required = "main.view_player"
-    permission_denied_message = (
-        "У Вас нет разрешения на просмотр персональных данных игрока."
-    )
 
     def get_object(self, queryset=None):
         return get_object_or_404(Player, id=self.kwargs["pk"])
@@ -245,7 +241,7 @@ class PlayerIDEditView(
         context["player_documents"] = player_documents
         context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
-            ["." + res for res in FILE_RESOLUTION]
+            ["." + res for res in FILE_RESOLUTION],
         )
         context["help_text_role"] = "Команды игрока"
         return context
@@ -262,7 +258,7 @@ class PlayerIDEditView(
         self.delete_documents(
             player=player,
             deleted_files_paths=self.request.POST.getlist(
-                "deleted_file_path[]"
+                "deleted_file_path[]",
             ),
         )
 
@@ -320,11 +316,11 @@ def load_discipline_levels(request):
     discipline_level_id = request.GET.get("discipline_level_id")
     try:
         discipline_statuses = DisciplineLevel.objects.filter(
-            discipline_name_id=discipline_level_id
+            discipline_name_id=discipline_level_id,
         ).all()
     except ValueError:
         return JsonResponse([], safe=False)
     else:
         return JsonResponse(
-            list(discipline_statuses.values("id", "name")), safe=False
+            list(discipline_statuses.values("id", "name")), safe=False,
         )

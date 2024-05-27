@@ -142,14 +142,14 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_competitions(self):
         """Тесты страниц с соревнованиями в админке."""
         self.url_get_test(
-            ADMIN_COMPETITIONS_URLS_302, status_code=HTTPStatus.FOUND
+            ADMIN_COMPETITIONS_URLS_302, status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_COMPETITIONS_URLS)
 
     def test_admin_diagnosis(self):
         """Тесты страниц с диагнозами в админке."""
         self.url_get_test(
-            ADMIN_DIAGNOSIS_URL_302, status_code=HTTPStatus.FOUND
+            ADMIN_DIAGNOSIS_URL_302, status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_DIAGNOSIS_URLS)
 
@@ -166,7 +166,7 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_discipline_name(self):
         """Тесты страниц с наименованиями дисциплин в админке."""
         self.url_get_test(
-            ADMIN_DISCIPLINE_NAME_URL_302, status_code=HTTPStatus.FOUND
+            ADMIN_DISCIPLINE_NAME_URL_302, status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_DISCIPLINE_NAME_URLS)
 
@@ -194,7 +194,7 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_staff_member(self):
         """Тесты страниц с сотрудником в админке."""
         self.url_get_test(
-            ADMIN_STAFF_MEMBER_URL_302, status_code=HTTPStatus.FOUND
+            ADMIN_STAFF_MEMBER_URL_302, status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_STAFF_MEMBER_URLS)
 
@@ -218,7 +218,7 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_proxy_group(self):
         """Тесты страниц с прокси-группами в админке."""
         self.url_get_test(
-            ADMIN_PROXY_GROUP_URL_302, status_code=HTTPStatus.FOUND
+            ADMIN_PROXY_GROUP_URL_302, status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_PROXY_GROUP_URLS)
 

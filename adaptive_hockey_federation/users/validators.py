@@ -11,5 +11,5 @@ def zone_code_without_seven_hundred(phone):
 
         raise ValidationError(
             "Выберете код в 8 (***) в из следующих вариантов:"
-            "3**, 4**, 8**, 9**."
+            "3**, 4**, 8**, 9**.",
         )

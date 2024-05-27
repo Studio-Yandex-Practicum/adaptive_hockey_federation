@@ -41,10 +41,12 @@ TEST_SETUP_ERROR = "Неверные настройки теста:"
 
 
 class BaseTestClass(TestCase):
-    """Базовый класс для тестирования.
+    """
+    Базовый класс для тестирования.
     При инициализации создает в тестовой БД по одному экземпляру каждой из
     задействованных в приложении моделей. Пользователей создается два:
-    суперпользователь и обычный пользователь."""
+    суперпользователь и обычный пользователь.
+    """
 
     superuser: User
     user: User
@@ -80,13 +82,17 @@ class BaseTestClass(TestCase):
 
 
 class UrlTestMixin:
-    """Миксин предоставляет унифицированный метод для тестирования
-    урл-адресов, с генерацией информативного сообщения."""
+    """
+    Миксин предоставляет унифицированный метод для тестирования
+    урл-адресов, с генерацией информативного сообщения.
+    """
 
     def get_default_client(self) -> Client:
-        """Переопределите этот метод для тестирования по умолчанию клиентом,
-        отличным от простого неавторизованного."""
-        return getattr(self, "client")
+        """
+        Переопределите этот метод для тестирования по умолчанию клиентом,
+        отличным от простого неавторизованного.
+        """
+        return self.client
 
     def url_get_test(
         self,
@@ -97,7 +103,8 @@ class UrlTestMixin:
         client: Client | None = None,
         message: str | None = None,
     ):
-        """Унифицированный метод для урл-тестов.
+        """
+        Унифицированный метод для урл-тестов.
         - urls: урл-адрес либо список или кортеж урл-адресов, подлежащих
           тестированию;
         - method: метод запроса (обычно "get" или "post", по умолчанию -
@@ -147,7 +154,8 @@ class UrlTestMixin:
 
 
 class ModelTestBaseClass(BaseTestClass):
-    """Класс для CRUD-тестирования. Инициализация класса задана предком
+    """
+    Класс для CRUD-тестирования. Инициализация класса задана предком
     (BaseTestClass), который создает для каждого внутреннего тестового
     метода все необходимые фикстуры.
 
@@ -259,32 +267,38 @@ class ModelTestBaseClass(BaseTestClass):
     model_factory: DjangoModelFactory | None = None
 
     def get_model(self):
-        """Возвращает класс тестовой модели. Переопределите этот метод,
-        если нужна другая логика."""
+        """
+        Возвращает класс тестовой модели. Переопределите этот метод,
+        если нужна другая логика.
+        """
         if self.model:
             return self.model
         raise Exception(
             f"{TEST_SETUP_ERROR} не определено поле model в "
-            f"классе {__class__}."
+            f"классе {__class__}.",
         )
 
     @property
     def future_obj_id(self):
-        """Предсказывает id будущего объекта (для использования в
-        тестировании CRUD через url, в котором указывается id записи."""
+        """
+        Предсказывает id будущего объекта (для использования в
+        тестировании CRUD через url, в котором указывается id записи.
+        """
         return self.get_model().objects.count() + 1
 
     def get_model_schema(self):
-        """Возвращает схему тестирования.
+        """
+        Возвращает схему тестирования.
         Переопределение данного метода не рекомендуется. Для динамического
         добавления какого-то поля в схему создания или изменения объекта
         переопределите методы "get_correct_create_schema()" или
-        "get_correct_update_schema"."""
+        "get_correct_update_schema".
+        """
         if self.model_schema:
             return self.model_schema
         raise Exception(
             f"{TEST_SETUP_ERROR} не определено поле model_schema в классе"
-            f" {self.__class__.__name__}."
+            f" {self.__class__.__name__}.",
         )
 
     def _get_schema_key_value(self, key_name: str, schema: dict | None = None):
@@ -294,38 +308,48 @@ class ModelTestBaseClass(BaseTestClass):
         raise Exception(
             f"{TEST_SETUP_ERROR} в предоставленной схеме '{self.get_model()}' "
             f"класса '{self.__class__.__name__} 'отсутствует ключ "
-            f"'{key_name}'."
+            f"'{key_name}'.",
         )
 
     def get_correct_create_schema(self):
-        """Возвращает значение ключа "correct_create" схемы тестирования.
+        """
+        Возвращает значение ключа "correct_create" схемы тестирования.
         Переопределите этот метод для изменения логики или динамического
-        добавления какого-то поля в схему создания объекта."""
+        добавления какого-то поля в схему создания объекта.
+        """
         schema = copy.copy(self._get_schema_key_value("correct_create"))
         self.fill_foreign_keys(schema)
         return schema
 
     def get_correct_update_schema(self):
-        """Возвращает значение ключа "correct_update" схемы тестирования.
+        """
+        Возвращает значение ключа "correct_update" схемы тестирования.
         Переопределите этот метод для изменения логики или динамического
-        добавления какого-то поля в схему изменения объекта."""
+        добавления какого-то поля в схему изменения объекта.
+        """
         schema = copy.copy(self._get_schema_key_value("correct_update"))
         self.fill_foreign_keys(schema)
         return schema
 
     def get_must_not_be_admitted_schemas(self):
-        """Возвращает значение ключа "must_not_be_admitted" схемы тестирования.
-        Переопределите, если нужна другая логика."""
+        """
+        Возвращает значение ключа "must_not_be_admitted" схемы тестирования.
+        Переопределите, если нужна другая логика.
+        """
         return self._get_schema_key_value("must_not_be_admitted")
 
     def get_must_be_admitted_schema(self):
-        """Возвращает значение ключа "must_be_admitted" схемы тестирования.
-        Переопределите, если нужна другая логика."""
+        """
+        Возвращает значение ключа "must_be_admitted" схемы тестирования.
+        Переопределите, если нужна другая логика.
+        """
         return self._get_schema_key_value("must_be_admitted")
 
     def create(self, **kwargs):
-        """Создает объект в БД.
-        Параметр kwargs - словарь с парами "поле-значение"."""
+        """
+        Создает объект в БД.
+        Параметр kwargs - словарь с парами "поле-значение".
+        """
         if self.model_factory:
             return self.model_factory.create(**kwargs)
         obj = self.model.objects.create(**kwargs)
@@ -338,9 +362,11 @@ class ModelTestBaseClass(BaseTestClass):
         return self.client.post(url, kwargs)
 
     def try_to_create_via_url(self, url, **kwargs):
-        """Пытается создать объект через url.
+        """
+        Пытается создать объект через url.
         Параметр kwargs - словарь с парами "поле-значение" для тела
-        POST-запроса."""
+        POST-запроса.
+        """
         self.replace_foreign_keys_and_bools(kwargs)
         try:
             return self._post(url, **kwargs)
@@ -350,34 +376,39 @@ class ModelTestBaseClass(BaseTestClass):
                 f" {self.get_model().__name__} "
                 f"путем пост-запроса на адрес '{url}' c "
                 f"корректными данными возникает исключение '{e}'. "
-                f"Использовались следующие данные: {kwargs}"
+                f"Использовались следующие данные: {kwargs}",
             )
 
     @staticmethod
     def replace_foreign_keys_and_bools(
-        fields_kwargs: dict, replace_bools: bool = True
+        fields_kwargs: dict, replace_bools: bool = True,
     ):
-        """При создании или изменении объектов через url меняет ссылки на
+        """
+        При создании или изменении объектов через url меняет ссылки на
         объекты БД на их id для корректного выполнения запроса. В этих же
         целях по умолчанию bool-значения полей меняются на строковые: True
-        на "on", False - на пустую строку."""
+        на "on", False - на пустую строку.
+        """
         for key, value in fields_kwargs.items():
             if isinstance(value, Model):
-                fields_kwargs[key] = getattr(value, "id")
+                fields_kwargs[key] = value.id
             elif replace_bools and isinstance(value, bool):
                 fields_kwargs[key] = ("", "on")[value]
 
     @staticmethod
     def fill_foreign_keys(fields_kwargs: dict):
-        """Заменяет в схеме тестирования ссылки на модели ссылками на
-        конкретные объекты модели в полях ForeignKey."""
+        """
+        Заменяет в схеме тестирования ссылки на модели ссылками на
+        конкретные объекты модели в полях ForeignKey.
+        """
         for key, value in fields_kwargs.items():
             if type(value) is type(Model):
                 fk_obj = value.objects.first()  # noqa
                 fields_kwargs[key] = fk_obj
 
     def try_to_update_via_url(self, url, **kwargs):
-        """Пытается изменить объект через url.
+        """
+        Пытается изменить объект через url.
         Параметр kwargs - словарь с парами "поле-значение" для тела
         POST-запроса.
         """
@@ -390,11 +421,12 @@ class ModelTestBaseClass(BaseTestClass):
                 f" {self.get_model().__name__} "
                 f"путем пост-запроса на адрес '{url}' "
                 f"возникает исключение '{e}'. "
-                f"Использовались следующие данные: {kwargs}"
+                f"Использовались следующие данные: {kwargs}",
             )
 
     def try_to_delete_via_url(self, url, **kwargs):
-        """Пытается удалить объект через url.
+        """
+        Пытается удалить объект через url.
         Параметр kwargs - словарь с парами "поле-значение" для тела
         POST-запроса.
         """
@@ -405,13 +437,15 @@ class ModelTestBaseClass(BaseTestClass):
                 f"При удалении объекта модели"
                 f" {self.get_model().__name__} "
                 f"путем пост-запроса на адрес '{url}' возникает исключение "
-                f"'{e}'."
+                f"'{e}'.",
             )
 
     @transaction.atomic()
     def try_to_create(self, **kwargs):
-        """Пытается создать объект непосредственно в БД.
-        Параметр kwargs - словарь с парами "поле-значение"."""
+        """
+        Пытается создать объект непосредственно в БД.
+        Параметр kwargs - словарь с парами "поле-значение".
+        """
         str_kwargs = f"{kwargs}"
         try:
             obj = self.create(**kwargs)
@@ -421,14 +455,16 @@ class ModelTestBaseClass(BaseTestClass):
             raise AssertionError(
                 f"При создании объекта модели {self.get_model().__name__} с "
                 f"корректными данными возникает исключение '{e}'. "
-                f"Использовались следующие данные: {str_kwargs}"
+                f"Использовались следующие данные: {str_kwargs}",
             )
 
     @transaction.atomic()
     def try_to_delete(self, obj_id):
-        """Пытается удалить объект с id "obj_id" непосредственно из БД.
+        """
+        Пытается удалить объект с id "obj_id" непосредственно из БД.
         Для объектов, идентифицируемых по другому полю, переопределите этот
-        метод."""
+        метод.
+        """
         model = self.get_model()
         try:
             obj = get_object_or_404(model, id=obj_id)
@@ -438,7 +474,7 @@ class ModelTestBaseClass(BaseTestClass):
                 f"При попытке удаления из БД записи о заведомо существующем "
                 f"объекте модели {self.get_model().__name__} "
                 f"возникает исключение '{e}'. "
-                f"Использовались следующие данные: id={obj_id}"
+                f"Использовались следующие данные: id={obj_id}",
             )
 
     @staticmethod
@@ -451,7 +487,8 @@ class ModelTestBaseClass(BaseTestClass):
         obj.save()
 
     def try_to_update(self, obj: Model, **kwargs):
-        """Пытается изменить объект obj непосредственно в БД.
+        """
+        Пытается изменить объект obj непосредственно в БД.
         Параметр kwargs - словарь с парами "поле-значение".
         """
         str_kwargs = f"{kwargs}"
@@ -462,7 +499,7 @@ class ModelTestBaseClass(BaseTestClass):
                 f"При обновлении объекта модели "
                 f"'{self.get_model().__name__}' с "
                 f"корректными данными возникает исключение '{e}'."
-                f"Использовались следующие данные: {str_kwargs}"
+                f"Использовались следующие данные: {str_kwargs}",
             )
 
     def objects_count_test(self, estimated_count: int, err_msg: str):
@@ -492,14 +529,16 @@ class ModelTestBaseClass(BaseTestClass):
         url: str | None = None,
         **additional_url_kwargs,
     ):
-        """Основной метод тестирования на корректное создание объекта.
+        """
+        Основной метод тестирования на корректное создание объекта.
         Для тестирования через url - передайте соответствующий параметр и
         (при необходимости) additional_url_kwargs - словарь с дополнительным
         контекстом для POST-запроса. Параметр model_correct_schema
         предусмотрен для случаев, если по каким-то причинам при вызове
         метода необходимо изменить схему "correct_create", использующуюся
         по умолчанию. Если параметр url не передать, будет тестироваться
-        изменение путем программного обращения к БД."""
+        изменение путем программного обращения к БД.
+        """
         schema = model_correct_schema or self.get_correct_create_schema()
         initial_objects_count = self.get_model().objects.count()
         via_url = ""
@@ -533,14 +572,16 @@ class ModelTestBaseClass(BaseTestClass):
         url: str | None = None,
         **additional_url_kwargs,
     ):
-        """Основной метод тестирования на корректное изменение объекта.
+        """
+        Основной метод тестирования на корректное изменение объекта.
         Для тестирования через url - передайте соответствующий параметр и
         (при необходимости) additional_url_kwargs - словарь с дополнительным
         контекстом для POST-запроса. Параметр model_correct_schema
         предусмотрен для случаев, если по каким-то причинам при вызове
         метода необходимо изменить схему "correct_update", использующуюся
         по умолчанию. Если параметр url не передать, будет тестироваться
-        изменение путем программного обращения к БД."""
+        изменение путем программного обращения к БД.
+        """
         cr_schema = self.get_correct_create_schema()
         upd_schema = model_upd_schema or self.get_correct_update_schema()
         obj = self.try_to_create(**cr_schema)
@@ -549,7 +590,7 @@ class ModelTestBaseClass(BaseTestClass):
             if additional_url_kwargs.get("diagnosis", None):
                 upd_schema.pop("diagnosis")
             self.try_to_update_via_url(
-                url, **upd_schema, **additional_url_kwargs
+                url, **upd_schema, **additional_url_kwargs,
             )
             via_url = f" через POST-запрос по адресу: {url}"
         else:
@@ -563,16 +604,18 @@ class ModelTestBaseClass(BaseTestClass):
         self.assert_object_exist(err_msg, **upd_schema)
 
     def correct_delete_tests(
-        self, url: str | None = None, **additional_url_kwargs
+        self, url: str | None = None, **additional_url_kwargs,
     ):
-        """Основной метод тестирования на корректное изменение объекта.
+        """
+        Основной метод тестирования на корректное изменение объекта.
         Для тестирования через url - передайте соответствующий параметр и
         (при необходимости) additional_url_kwargs - словарь с дополнительным
         контекстом для POST-запроса. Параметр model_correct_schema
         предусмотрен для случаев, если по каким-то причинам при вызове
         метода необходимо изменить схему "correct_update", использующуюся
         по умолчанию. Если параметр url не передать, будет тестироваться
-        изменение путем программного обращения к БД."""
+        изменение путем программного обращения к БД.
+        """
         cr_schema = self.get_correct_create_schema()
         obj = self.try_to_create(**cr_schema)
         initial_objects_count = self.get_model().objects.count()
@@ -600,9 +643,9 @@ class ModelTestBaseClass(BaseTestClass):
             self.update(obj, **field_kwargs)
 
     def _correct_field_test(
-        self, obj: Model, url: str | None = None, **kwargs
+        self, obj: Model, url: str | None = None, **kwargs,
     ):
-        """Обновляет одно поле (для теста валидных значений)"""
+        """Обновляет одно поле (для теста валидных значений)."""
         if url:
             self.try_to_update_via_url(url, **kwargs)
         else:
@@ -610,8 +653,10 @@ class ModelTestBaseClass(BaseTestClass):
 
     @staticmethod
     def _unpack_test_values(field, value):
-        """Распаковывает внутренние кортежи отдельного тестового значения
-        для поля."""
+        """
+        Распаковывает внутренние кортежи отдельного тестового значения
+        для поля.
+        """
         res = []
         value = list(value)
         msg = value.pop()
@@ -626,7 +671,7 @@ class ModelTestBaseClass(BaseTestClass):
                         "msg": msg,
                         "value": prior_val + item + post_val,
                         "field": field,
-                    }
+                    },
                 )
             res.append(batch_value)
         else:
@@ -634,8 +679,10 @@ class ModelTestBaseClass(BaseTestClass):
         return res
 
     def _unpack_field_tests(self, test_item: dict):
-        """Распаковывает и формирует списки для каждой пары поле - тестовое
-        значение."""
+        """
+        Распаковывает и формирует списки для каждой пары поле - тестовое
+        значение.
+        """
         fields = self._get_schema_key_value("fields", test_item)
         value_set = self._get_schema_key_value("test_values", test_item)
         if isinstance(fields, str):
@@ -649,14 +696,16 @@ class ModelTestBaseClass(BaseTestClass):
 
     @staticmethod
     def _alter_tested_value_info(value: Any, force_value: bool = True) -> str:
-        """Формирует часть информационного сообщения теста с
-        отображением какое конкретно значение тестировалось."""
+        """
+        Формирует часть информационного сообщения теста с
+        отображением какое конкретно значение тестировалось.
+        """
         if value or force_value:
             return f"Тестировавшееся значение: '{value}'"
         return ""
 
     def _incorrect_field_msg_compile(
-        self, field, msg, value=None, force_value=True
+        self, field, msg, value=None, force_value=True,
     ):
         """Формирует информационное сообщение теста НЕВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
@@ -668,7 +717,7 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _incorrect_field_via_url_msg_compile(
-        self, field, msg, url, value=None, force_value=True
+        self, field, msg, url, value=None, force_value=True,
     ):
         """Формирует информационное сообщение url-теста НЕВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
@@ -682,13 +731,13 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _correct_field_msg_compile(
-        self, field, msg, url, value=None, force_value=True
+        self, field, msg, url, value=None, force_value=True,
     ):
         """Формирует информационное сообщение теста ВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
         if url:
             return self._correct_field_via_url_msg_compile(
-                field, msg, url, value, force_value
+                field, msg, url, value, force_value,
             )
         return (
             f"Проверьте, что в поле '{field}' модели "
@@ -698,7 +747,7 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _correct_field_via_url_msg_compile(
-        self, field, msg, url, value=None, force_value=True
+        self, field, msg, url, value=None, force_value=True,
     ):
         """Формирует информационное сообщение url-теста ВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
@@ -711,16 +760,18 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _incorrect_field_sub_test_via_url(
-        self, url: str, test: dict, sub: bool = True, **additional_url_kwargs
+        self, url: str, test: dict, sub: bool = True, **additional_url_kwargs,
     ):
-        """Проводит отдельный тест поля через url.
+        """
+        Проводит отдельный тест поля через url.
         - Словарь test должен содержать ключи "field", "value", "msg".
         - Параметр sub определяет, будет ли тест запускаться с помощью
             subTest. В случае sub == True (по умолчанию) при падении одного
             теста, остальные за пределами данного метода - продолжатся.
             False - остановятся.
         - Параметр additional_url_kwargs - дополнительный контекст для
-            POST-запроса."""
+        POST-запроса.
+        """
         field, value, msg = test["field"], test["value"], test["msg"]
         field_kwargs = {field: value}
         schema = self.get_correct_update_schema()
@@ -733,10 +784,10 @@ class ModelTestBaseClass(BaseTestClass):
             f"{self._alter_tested_value_info(value, True)}"
         ).strip()
         response = self.try_to_update_via_url(
-            url, **schema, **additional_url_kwargs
+            url, **schema, **additional_url_kwargs,
         )
         self.assertIn(
-            response.status_code, [HTTPStatus.OK, HTTPStatus.FOUND], err_msg
+            response.status_code, [HTTPStatus.OK, HTTPStatus.FOUND], err_msg,
         )
         err_msg = (
             f"В результате POST-запроса по адресу '{url}'  "
@@ -752,7 +803,8 @@ class ModelTestBaseClass(BaseTestClass):
             self.assert_object_not_exist(err_msg, **schema)
 
     def _incorrect_field_sub_test(self, test, obj, sub):
-        """Проводит отдельный тест невалидного значения поля через
+        """
+        Проводит отдельный тест невалидного значения поля через
         попытку записи непосредственно в БД с помощью методов модели Django.
         - Словарь test должен содержать ключи "field", "value", "msg".
         - Параметр sub определяет, будет ли тест запускаться с помощью
@@ -760,7 +812,8 @@ class ModelTestBaseClass(BaseTestClass):
             теста, остальные за пределами данного метода - продолжатся.
             False - остановятся.
         - Параметр additional_url_kwargs - дополнительный контекст для
-            POST-запроса."""
+        POST-запроса.
+        """
         field = test["field"]
         msg = test["msg"]
         value = test["value"]
@@ -786,14 +839,16 @@ class ModelTestBaseClass(BaseTestClass):
         self.try_to_update(obj, **self.get_correct_update_schema())
 
     def _get_field_tests_set(
-        self, schemas: Iterable, create_obj: bool = True
+        self, schemas: Iterable, create_obj: bool = True,
     ) -> tuple | tuple[tuple, Model]:
-        """Возвращает коллекцию всех тестов всех полей, указанных в схеме.
+        """
+        Возвращает коллекцию всех тестов всех полей, указанных в схеме.
         - Параметр "schemas" - список всех тестов (т.е. значение ключа
         "must_not_be_admitted" или "must_be_admitted";
         - Параметр "create_obj" - если равен True (по умолчанию), то метод
         также создаст и вернет корректный объект, над которым впоследствии
-        можно проводить тесты поля."""
+        можно проводить тесты поля.
+        """
         tests_set = []
         for test_item in schemas:
             tests_set += self._unpack_field_tests(test_item)
@@ -803,22 +858,24 @@ class ModelTestBaseClass(BaseTestClass):
         return tuple(tests_set)
 
     def incorrect_field_tests_via_url(self, url: str, **additional_url_kwargs):
-        """Основной метод url-тестирования на некорректное значение поля.
+        """
+        Основной метод url-тестирования на некорректное значение поля.
         При необходимости передайте в параметре additional_url_kwargs -
-        словарь с дополнительным контекстом для POST-запроса."""
+        словарь с дополнительным контекстом для POST-запроса.
+        """
         schemas = self.get_must_not_be_admitted_schemas()
         tests_set, _ = self._get_field_tests_set(schemas, create_obj=True)
         for batch_test in tests_set:
             if isinstance(batch_test, dict):
                 self._incorrect_field_sub_test_via_url(
-                    url, batch_test, **additional_url_kwargs
+                    url, batch_test, **additional_url_kwargs,
                 )
             else:
                 for test in batch_test:
                     assertion_error = None
                     try:
                         self._incorrect_field_sub_test_via_url(
-                            url, test, sub=False, **additional_url_kwargs
+                            url, test, sub=False, **additional_url_kwargs,
                         )
                     except AssertionError as e:
                         err_msg = e.args[0]
@@ -830,26 +887,28 @@ class ModelTestBaseClass(BaseTestClass):
                             break
 
     def incorrect_field_tests(self):
-        """Основной метод тестирования на некорректное значение поля.
+        """
+        Основной метод тестирования на некорректное значение поля.
         В отличие от остальных "основных" методов тестирования, не имеет
         собственного параметра url. Для тестирования через url используйте
-        отдельный метод incorrect_field_tests_via_url()."""
+        отдельный метод incorrect_field_tests_via_url().
+        """
         schemas = self.get_must_not_be_admitted_schemas()
         tests_set, obj = self._get_field_tests_set(schemas, create_obj=True)
         for batch_test in tests_set:
             if isinstance(batch_test, dict):
                 self._incorrect_field_sub_test(
-                    test=batch_test, obj=obj, sub=True
+                    test=batch_test, obj=obj, sub=True,
                 )
             else:
                 for test in batch_test:
                     msg = self._incorrect_field_msg_compile(
-                        test["field"], test["msg"], test["value"]
+                        test["field"], test["msg"], test["value"],
                     )
                     exception = None
                     try:
                         self._incorrect_field_sub_test(
-                            test=test, obj=obj, sub=False
+                            test=test, obj=obj, sub=False,
                         )
                     except Exception as e:
                         exception = e
@@ -862,11 +921,13 @@ class ModelTestBaseClass(BaseTestClass):
                     break
 
     def correct_field_tests(self, url: str | None = None, **kwargs):
-        """Основной метод тестирования ВАЛИДНОГО значения поля.
+        """
+        Основной метод тестирования ВАЛИДНОГО значения поля.
         Для тестирования через url передайте путь в параметре url/
         В параметре kwargs передайте словарь с дополнительными
         преобразованиями для схемы модели и (или) дополнительным контентом для
-        POST-запроса."""
+        POST-запроса.
+        """
         schema = self.get_must_be_admitted_schema()
         correct_schema = self.get_correct_update_schema()
         obj = self.try_to_create(**correct_schema)

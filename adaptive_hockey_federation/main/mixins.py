@@ -9,7 +9,7 @@ class FileUploadMixin:
         for name, file in zip(new_files_names, new_files_paths):
             if is_uploaded_file_valid(file):
                 file.name = generate_file_name(
-                    file.name, str(player.id) + "-" + name
+                    file.name, str(player.id) + "-" + name,
                 )
                 Document.objects.create(player=player, file=file, name=name)
 

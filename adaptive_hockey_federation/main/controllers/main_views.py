@@ -32,7 +32,7 @@ class MainView(
         queryset = None
         if query:
             queryset = Player.objects.annotate(search=search_vector).filter(
-                search=query
+                search=query,
             )
             queryset = (
                 queryset.select_related("diagnosis")
@@ -50,7 +50,7 @@ class MainView(
             for field in self.fields:
                 if field != "id":
                     table_head[field] = Player._meta.get_field(
-                        field
+                        field,
                     ).verbose_name
             context["table_head"] = table_head
             context["table_data"] = get_main_table_data(context)

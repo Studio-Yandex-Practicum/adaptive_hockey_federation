@@ -27,16 +27,18 @@ class StaffTeamMemberListMixin:
 
     @staticmethod
     def get_staff(
-        position: str | None = None, team_to_exclude: Team | None = None
+        position: str | None = None, team_to_exclude: Team | None = None,
     ):
-        """Формирует кортеж из сотрудников команд (StaffTeamMember).
+        """
+        Формирует кортеж из сотрудников команд (StaffTeamMember).
         Формат элемента кортежа: "Фамилия Имя Отчество, должность (ID: id)",
         Если передан параметр position, то выбор фильтруется по полю
-        staff_position и значению этого параметра."""
+        staff_position и значению этого параметра.
+        """
         filters = {"staff_position": position} if position else {}
         exclude = {"team": team_to_exclude} if team_to_exclude else {}
         query_set = StaffTeamMember.objects.filter(**filters).exclude(
-            **exclude
+            **exclude,
         )
         staffs = query_set.annotate(
             fio=Concat(
@@ -45,7 +47,7 @@ class StaffTeamMemberListMixin:
                 "staff_member__name",
                 Value(" "),
                 "staff_member__patronymic",
-            )
+            ),
         ).values("fio", "staff_position", "id")
         return tuple(
             f"{i['fio']}, " f"{i['staff_position']} " f"(ID: {i['id']})"
@@ -60,10 +62,12 @@ class StaffTeamMemberListMixin:
 
 
 class TeamIdView(
-    PermissionRequiredMixin, DetailView, StaffTeamMemberListMixin
+    PermissionRequiredMixin, DetailView, StaffTeamMemberListMixin,
 ):
-    """Вид команды.
-    Детальный просмотр команды по игрокам и сотрудникам."""
+    """
+    Вид команды.
+    Детальный просмотр команды по игрокам и сотрудникам.
+    """
 
     model = Team
     form_class = TeamForm
@@ -86,7 +90,7 @@ class TeamIdView(
         data_list_id: str = "available_staffs",
     ):
         new_staff_form = StaffTeamMemberAddToTeamForm(
-            position_filter=position_filter, team=self.get_object()
+            position_filter=position_filter, team=self.get_object(),
         )
         update_data = {
             "add_staff_form": new_staff_form,
@@ -96,20 +100,21 @@ class TeamIdView(
         context["staff_table"][staff_table_index].update(update_data)
 
     def update_context_with_additional_forms(self, context):
-        """Добавляет в контекст формы добавления тренера и пушера в команду.
+        """
+        Добавляет в контекст формы добавления тренера и пушера в команду.
         Также добавляет соответствующие списки для инкрементного поиска в
         поле форм.
         - context: параметр по ссылке, т.е. данная переменная будет изменена в
-          вызывающей функции."""
-
+        вызывающей функции.
+        """
         data_list = self.get_coaches(team_to_exclude=self.object)
         self.update_context_with_staff_add_form(
-            context, TRAINER, 0, data_list, "available_coaches"
+            context, TRAINER, 0, data_list, "available_coaches",
         )
 
         data_list = self.get_pushers(team_to_exclude=self.object)
         self.update_context_with_staff_add_form(
-            context, OTHER, 1, data_list, "available_pushers"
+            context, OTHER, 1, data_list, "available_pushers",
         )
 
     def get_context_data(self, **kwargs):
@@ -170,7 +175,7 @@ class TeamListView(
     def get_queryset(self):
         queryset = super().get_queryset()
         return model_get_queryset(
-            "teams", Team, dict(self.request.GET), queryset
+            "teams", Team, dict(self.request.GET), queryset,
         )
 
     def get_context_data(self, **kwargs):
@@ -241,7 +246,7 @@ class DeleteTeamView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 
 class CreateTeamView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin,
 ):
     """Вид с формой создания новой спортивной команды."""
 

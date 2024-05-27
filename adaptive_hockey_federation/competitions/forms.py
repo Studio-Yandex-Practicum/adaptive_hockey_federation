@@ -60,21 +60,22 @@ class CompetitionForm(forms.ModelForm):
 
     date_start = forms.DateField(
         widget=forms.DateInput(
-            attrs={"type": "date", "class": "form-control"}
+            attrs={"type": "date", "class": "form-control"},
         ),
         label="Дата начала",
         error_messages={"required": "Пожалуйста, укажите дату начала."},
     )
     date_end = forms.DateField(
         widget=forms.DateInput(
-            attrs={"type": "date", "class": "form-control"}
+            attrs={"type": "date", "class": "form-control"},
         ),
         label="Дата завершения",
         error_messages={"required": "Пожалуйста, укажите дату завершения."},
     )
 
     def set_readonly(self, field: str, readonly_value: bool):
-        """Делает поле формы неактивным при соблюдении условия.
+        """
+        Делает поле формы неактивным при соблюдении условия.
         - field - название поля.
         - readonly_value - любое bool условие. Если условие не
         соблюдается, поле активируется.
@@ -95,7 +96,7 @@ class CompetitionForm(forms.ModelForm):
 
     def save_m2m(self):
         self.instance.disciplines.through.objects.filter(
-            disciplinename__in=self.cleaned_data["disciplines"]
+            disciplinename__in=self.cleaned_data["disciplines"],
         ).delete()
         self.instance.disciplines.set(self.cleaned_data["disciplines"])
 
@@ -114,19 +115,20 @@ class CompetitionForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Дата окончания соревнования должна "
                 "быть позже или совпадать с датой "
-                "начала."
+                "начала.",
             )
         return cleaned_data
 
 
 class TeamField(forms.ModelChoiceField):
-    """Заказное поле для выбора названия команды.
+    """
+    Заказное поле для выбора названия команды.
     Работает с виджетом TextInput.
     Для корректного отображения на вэб-странице должен быть элемент:
         <datalist id="available_teams">
             <option_value="Название команды"></option>
             ...и так для каждой команды в списке.
-        </datalist>
+        </datalist>.
     """
 
     def __init__(self, competition: Competition):
@@ -140,7 +142,7 @@ class TeamField(forms.ModelChoiceField):
                         "Начните вводить название команды "
                         "и выберите из списка"
                     ),
-                }
+                },
             ),
             label="Поиск команды для допуска",
         )
@@ -148,7 +150,6 @@ class TeamField(forms.ModelChoiceField):
 
     def clean(self, value: Any) -> Any:
         """Переопределенный метод родительского класса."""
-
         if not isinstance(value, str) or value in self.empty_values:
             raise ValidationError(self.error_messages["required"])
 
@@ -185,8 +186,10 @@ class CompetitionUpdateForm(CompetitionForm):
 
 
 class CompetitionTeamForm(forms.ModelForm):
-    """Форма для добавления команд в соревнование.
-    Работает с промежуточной моделью Competition_Team."""
+    """
+    Форма для добавления команд в соревнование.
+    Работает с промежуточной моделью Competition_Team.
+    """
 
     def __init__(self, *args, **kwargs):
         self.competition = kwargs.pop("competition")

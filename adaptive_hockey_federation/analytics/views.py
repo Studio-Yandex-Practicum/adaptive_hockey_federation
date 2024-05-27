@@ -21,7 +21,7 @@ class AnalyticsListView(
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
         if len(dict_param) > 0:
             queryset = model_get_queryset(
-                "analytics", Player, dict_param, queryset
+                "analytics", Player, dict_param, queryset,
             )
         return (
             queryset.select_related("diagnosis")
@@ -41,7 +41,7 @@ class AnalyticsListView(
                     teams_count := Team.objects.filter(
                         id__in=self.get_queryset()
                         .values_list("team", flat=True)
-                        .distinct()
+                        .distinct(),
                     ).count(),
                 ),
                 ("городов", teams_count),
@@ -83,8 +83,8 @@ class AnalyticsListView(
                     Nosology.objects.filter(
                         diagnosis__in=self.get_queryset()
                         .values_list("diagnosis", flat=True)
-                        .distinct()
-                    ).distinct()
+                        .distinct(),
+                    ).distinct(),
                 )
             ],
         }

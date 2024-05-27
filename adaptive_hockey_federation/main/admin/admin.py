@@ -169,7 +169,7 @@ class PlayerAdmin(admin.ModelAdmin):
     list_filter = ("addition_date",)
 
     @admin.display(
-        description="Нозология", ordering="diagnosis__nosology__name"
+        description="Нозология", ordering="diagnosis__nosology__name",
     )
     def get_nosology(self, obj):
         return obj.diagnosis.nosology.name
@@ -209,8 +209,8 @@ def get_app_list(
         if app_name in ADMIN_PAGE_ORDERING:
             app["models"].sort(
                 key=lambda model: ADMIN_PAGE_ORDERING[app_name].index(
-                    model["object_name"]
-                )
+                    model["object_name"],
+                ),
             )
         app_list.append(app)
 

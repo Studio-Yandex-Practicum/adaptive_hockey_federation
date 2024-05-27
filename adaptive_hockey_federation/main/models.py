@@ -9,7 +9,6 @@ from core.constants import (
 )
 from core.validators import fio_validator, validate_date_birth
 from django.db import models
-from django.db.models import QuerySet
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.utils import timezone
@@ -18,6 +17,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
 from users.models import User
 from users.validators import zone_code_without_seven_hundred
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
 
 
 class BaseUniqueName(models.Model):
@@ -46,9 +49,7 @@ class BaseUniqueName(models.Model):
 
 
 class City(BaseUniqueName):
-    """
-    Модель Город.
-    """
+    """Модель Город."""
 
     class Meta:
         verbose_name = "Город"
@@ -73,9 +74,7 @@ class DisciplineName(BaseUniqueName):
 
 
 class DisciplineLevel(BaseUniqueName):
-    """
-    Модель классификация, статусы дисциплин.
-    """
+    """Модель классификация, статусы дисциплин."""
 
     name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -100,9 +99,7 @@ class DisciplineLevel(BaseUniqueName):
 
 
 class Nosology(BaseUniqueName):
-    """
-    Модель Нозология.
-    """
+    """Модель Нозология."""
 
     class Meta:
         verbose_name = "Нозология"
@@ -113,9 +110,7 @@ class Nosology(BaseUniqueName):
 
 
 class Diagnosis(BaseUniqueName):
-    """
-    Модель Диагноз.
-    """
+    """Модель Диагноз."""
 
     nosology = models.ForeignKey(
         Nosology,
@@ -135,9 +130,7 @@ class Diagnosis(BaseUniqueName):
 
 
 class BasePerson(models.Model):
-    """
-    Абстрактная модель с базовой персональной информацией.
-    """
+    """Абстрактная модель с базовой персональной информацией."""
 
     surname = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -171,9 +164,7 @@ class BasePerson(models.Model):
 
 
 class StaffMember(BasePerson):
-    """
-    Модель сотрудник.
-    """
+    """Модель сотрудник."""
 
     phone = PhoneNumberField(
         blank=True,
@@ -204,9 +195,7 @@ class StaffMember(BasePerson):
 
 
 class Team(BaseUniqueName):
-    """
-    Модель команды.
-    """
+    """Модель команды."""
 
     city = models.ForeignKey(
         City,
@@ -237,7 +226,7 @@ class Team(BaseUniqueName):
             models.UniqueConstraint(
                 name="team_city_unique",
                 fields=["name", "city", "discipline_name"],
-            )
+            ),
         ]
         permissions = [
             ("list_view_team", "Can view list of Команда"),
@@ -250,9 +239,7 @@ class Team(BaseUniqueName):
 
 
 class StaffTeamMember(models.Model):
-    """
-    Модель сотрудник команды.
-    """
+    """Модель сотрудник команды."""
 
     staff_member = models.ForeignKey(
         StaffMember,
@@ -311,7 +298,7 @@ class StaffTeamMember(models.Model):
                 self.staff_member.surname,
                 self.staff_member.name,
                 self.staff_member.patronymic,
-            ]
+            ],
         )
 
     def get_name_and_staff_position(self):
@@ -435,9 +422,7 @@ class Player(BasePerson):
 
 
 class Document(BaseUniqueName):
-    """
-    Модель Документы для загрузки.
-    """
+    """Модель Документы для загрузки."""
 
     name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -467,7 +452,7 @@ class Document(BaseUniqueName):
             models.UniqueConstraint(
                 name="player_docume_unique",
                 fields=["file", "player"],
-            )
+            ),
         ]
 
     def __str__(self):

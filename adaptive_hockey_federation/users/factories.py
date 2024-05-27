@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    """Фабрика создания тестовых юзеров"""
+    """Фабрика создания тестовых юзеров."""
 
     class Meta:
         model = User

@@ -55,7 +55,7 @@ class UnloadListView(
                             f"{settings.MEDIA_URL}/{unload.unload_file_slug}"
                         ),
                     },
-                }
+                },
             )
         context["table_head"] = {
             "pk": "Nr.",
@@ -118,7 +118,7 @@ class DataExportView(LoginRequiredMixin, View):
                 excluded_fields = []
                 fields_order = []
             filename = export_excel(
-                queryset, filename, title, excluded_fields, fields_order
+                queryset, filename, title, excluded_fields, fields_order,
             )
             file_slug = f"unloads_data/{filename}"
 
@@ -130,7 +130,7 @@ class DataExportView(LoginRequiredMixin, View):
             unload_record.save()
 
             file_path = os.path.join(
-                settings.MEDIA_ROOT, "unloads_data", filename
+                settings.MEDIA_ROOT, "unloads_data", filename,
             )
             if os.path.exists(file_path):
                 file_unload = open(file_path, "rb")

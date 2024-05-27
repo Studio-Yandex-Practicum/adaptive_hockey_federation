@@ -36,7 +36,7 @@ def updates_for_players():
     for team in teams:
         player_in_team = Player.objects.filter(team__id=team.id)
         disciplines_names = DisciplineName.objects.filter(
-            id=team.discipline_name.id
+            id=team.discipline_name.id,
         )
         discipline_name = random.choice(disciplines_names)
         discipline_levels = DisciplineLevel.objects.filter(
@@ -50,5 +50,5 @@ def updates_for_players():
         captain.save()
         assistent.save()
         player_in_team.update(
-            discipline_name=discipline_name, discipline_level=discipline_level
+            discipline_name=discipline_name, discipline_level=discipline_level,
         )

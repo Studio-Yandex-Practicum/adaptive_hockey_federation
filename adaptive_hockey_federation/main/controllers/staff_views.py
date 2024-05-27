@@ -23,7 +23,7 @@ from main.schemas.staff_schema import (
 
 
 class StaffMemberListView(
-    LoginRequiredMixin, PermissionRequiredMixin, ListView
+    LoginRequiredMixin, PermissionRequiredMixin, ListView,
 ):
     """Представление для работы со списком сотрудников."""
 
@@ -69,7 +69,7 @@ class StaffMemberListView(
         for field in self.fields:
             if field != "id":
                 table_head[field] = self.model._meta.get_field(
-                    field
+                    field,
                 ).verbose_name
         context["table_head"] = table_head
         context["table_data"] = get_staff_table_data(context)
@@ -77,7 +77,7 @@ class StaffMemberListView(
 
 
 class StaffMemberIdView(
-    LoginRequiredMixin, PermissionRequiredMixin, DetailView
+    LoginRequiredMixin, PermissionRequiredMixin, DetailView,
 ):
     model = StaffMember
     template_name = "main/staffs/staff_id.html"
@@ -101,7 +101,7 @@ class StaffMemberIdView(
         context = super().get_context_data(**kwargs)
         staff = context["staff"]
         queryset = StaffTeamMember.objects.filter(
-            staff_member=self.kwargs["pk"]
+            staff_member=self.kwargs["pk"],
         )
         if queryset.exists():
             queryset_coach = queryset.filter(staff_position="тренер")
@@ -117,7 +117,7 @@ class StaffMemberIdView(
 
 
 class StaffMemberIdCreateView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView,
 ):
     """Представление создания сотрудника."""
 
@@ -138,7 +138,7 @@ class StaffMemberIdCreateView(
 
 
 class StaffMemberIdEditView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+    LoginRequiredMixin, PermissionRequiredMixin, UpdateView,
 ):
     """Представление редактирования сотрудника."""
 
@@ -163,7 +163,7 @@ class StaffMemberIdEditView(
 
 
 class StaffMemberIdDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, DeleteView
+    LoginRequiredMixin, PermissionRequiredMixin, DeleteView,
 ):
     """Представление для удаления сотрудника."""
 
@@ -178,9 +178,9 @@ class StaffMemberIdDeleteView(
 
 
 class StaffMemberIdTeamCreateView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView,
 ):
-    """Представление назначения сотрудника в команду"""
+    """Представление назначения сотрудника в команду."""
 
     model = StaffTeamMember
     form_class = StaffTeamMemberForm
@@ -191,7 +191,7 @@ class StaffMemberIdTeamCreateView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.kwargs["position"] == 'coach':
+        if self.kwargs["position"] == "coach":
             context["page_title"] = (
                 "Добавление сотрудника в команду тренером"
             )
@@ -215,20 +215,20 @@ class StaffMemberIdTeamCreateView(
 
     def form_valid(self, form):
         positions = {
-            'coach': 'тренер',
-            'pusher': 'пушер-тьютор'
+            "coach": "тренер",
+            "pusher": "пушер-тьютор",
         }
         position = positions[self.kwargs["position"]]
-        if form.cleaned_data.get('staff_posistion') is None:
+        if form.cleaned_data.get("staff_posistion") is None:
             form.instance.staff_member = self.get_object()
             form.instance.staff_position = position
         return super(StaffMemberIdTeamCreateView, self).form_valid(form)
 
 
 class StaffMemberIDTeamEditView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView
+    LoginRequiredMixin, PermissionRequiredMixin, UpdateView,
 ):
-    """Представление редактирования сотрудника находящегося в команде"""
+    """Представление редактирования сотрудника находящегося в команде."""
 
     model = StaffTeamMember
     form_class = StaffTeamMemberEditForm
@@ -260,9 +260,9 @@ class StaffMemberIDTeamEditView(
 
 
 class StaffMemberIdTeamDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, DeleteView
+    LoginRequiredMixin, PermissionRequiredMixin, DeleteView,
 ):
-    """Представление для удаления сотрудника из команды"""
+    """Представление для удаления сотрудника из команды."""
 
     model = StaffTeamMember
     object = StaffTeamMember

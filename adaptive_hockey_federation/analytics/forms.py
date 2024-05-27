@@ -8,7 +8,7 @@ from main.models import City, DisciplineName, Player
 class AnalyticsFilterForm(forms.Form):
     birthday = forms.ModelChoiceField(
         queryset=Player.objects.dates("birthday", "year").values_list(
-            ExtractYear("birthday"), flat=True
+            ExtractYear("birthday"), flat=True,
         ),
         required=False,
         label="Год рождения",
