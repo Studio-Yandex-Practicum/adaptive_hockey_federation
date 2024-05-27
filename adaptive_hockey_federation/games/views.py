@@ -45,7 +45,7 @@ class GamesListView(
                     "video_link": game.video_link,
                     "first_team": first_team["name"],
                     "second_team": second_team["name"],
-                }
+                },
             )
         context["table_head"] = {
             "pk": "Nr.",

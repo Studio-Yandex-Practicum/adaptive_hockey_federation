@@ -169,7 +169,8 @@ class PlayerAdmin(admin.ModelAdmin):
     list_filter = ("addition_date",)
 
     @admin.display(
-        description="Нозология", ordering="diagnosis__nosology__name",
+        description="Нозология",
+        ordering="diagnosis__nosology__name",
     )
     def get_nosology(self, obj):
         return obj.diagnosis.nosology.name
@@ -217,4 +218,4 @@ def get_app_list(
     return app_list
 
 
-setattr(AdminSite, "get_app_list", get_app_list)
+AdminSite.get_app_list = get_app_list

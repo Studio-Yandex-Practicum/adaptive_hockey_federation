@@ -151,7 +151,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         от его роли.
         """
         super().save(
-            force_insert, force_update, using, update_fields,
+            force_insert,
+            force_update,
+            using,
+            update_fields,
         )  # type: ignore
         self.set_group()
 
