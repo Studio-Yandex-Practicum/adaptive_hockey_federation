@@ -9,7 +9,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
-from main.models import Team
+from main.models import Player, Team
 
 
 class Game(models.Model):
@@ -31,7 +31,7 @@ class Game(models.Model):
     game_teams = models.ManyToManyField(
         Team,
         verbose_name=_("Команды"),
-        related_name="teams",
+        related_name="game_teams",
     )
     video_link = models.URLField(verbose_name=_("Ссылка на видео"), blank=True)
 
@@ -55,24 +55,21 @@ class GameTeam(models.Model):
 
     name = models.CharField(
         verbose_name=_("Название команды"),
-        help_text=_("Название команды"),
         max_length=NAME_MAX_LENGTH,
     )
     discipline_name = models.CharField(
         verbose_name=_("Дисциплина"),
-        help_text=_("Дисциплина"),
         max_length=NAME_MAX_LENGTH,
     )
     game_players = models.ManyToManyField(
-        Team,
+        Player,
         verbose_name=_("Игроки"),
-        help_text=_("Игроки, участвующие в игре"),
-        related_name="players",
+        related_name="game_players",
     )
 
     class Meta:
-        verbose_name = "Команда в игре"
-        verbose_name_plural = "Команды в игре"
+        verbose_name = "Команда, участвующая в игре"
+        verbose_name_plural = "Команды, участвующие в игре"
         ordering = ["name"]
 
     def __str__(self):
@@ -87,7 +84,6 @@ class GamePlayer(models.Model):
     )
     number = models.PositiveSmallIntegerField(
         verbose_name=_("Номер игрока"),
-        help_text=_("Номер игрока"),
         validators=[
             MinValueValidator(
                 MIN_PLAYER_NUMBER,
@@ -99,16 +95,17 @@ class GamePlayer(models.Model):
             ),
         ],
     )
-    game_team = models.CharField(
+    game_team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
         verbose_name=_("Команда"),
-        help_text=_("Команда"),
-        max_length=NAME_MAX_LENGTH,
+        related_name="game_team",
     )
 
     class Meta:
         unique_together = ("name", "number")
-        verbose_name = "Игрок в игре"
-        verbose_name_plural = "Игроки в игре"
+        verbose_name = "Игрок, участвующий в игре"
+        verbose_name_plural = "Игроки, участвующие в игре"
         constraints = [
             models.CheckConstraint(
                 check=models.Q(number__gte=MIN_PLAYER_NUMBER),
@@ -116,7 +113,7 @@ class GamePlayer(models.Model):
             ),
             models.CheckConstraint(
                 check=models.Q(number__lte=MAX_PLAYER_NUMBER),
-                name=f"player_number_be_{MAX_PLAYER_NUMBER}_or_less",
+                name=f"player_number_must_be_{MAX_PLAYER_NUMBER}_or_less",
             ),
         ]
 
