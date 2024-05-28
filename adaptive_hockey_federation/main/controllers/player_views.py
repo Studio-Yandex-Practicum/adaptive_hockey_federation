@@ -273,7 +273,6 @@ class PlayerIDEditView(
     def form_valid(self, form):
         """Запустить валидацию формы."""
         player = form.save()
-
         self.add_new_documents(
             player=player,
             new_files_names=self.request.POST.getlist("new_file_name[]"),
@@ -347,7 +346,8 @@ class PlayerGamesVideo(
     def get_queryset(self) -> Player | None:  # type: ignore[override]
         """Получить набор QuerySet с играми команды игрока."""
         teams_games = Prefetch(
-            "team", queryset=Team.objects.prefetch_related("game_teams"),
+            "team",
+            queryset=Team.objects.prefetch_related("game_teams"),
         )
         player = Player.objects.prefetch_related(teams_games).filter(
             id=self.kwargs["pk"],
