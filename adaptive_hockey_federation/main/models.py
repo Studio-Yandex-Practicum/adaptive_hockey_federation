@@ -9,7 +9,6 @@ from core.constants import (
 )
 from core.validators import fio_validator, validate_date_birth
 from django.db import models
-from django.db.models import QuerySet
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.utils import timezone
@@ -18,9 +17,15 @@ from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
 from users.models import User
 from users.validators import zone_code_without_seven_hundred
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
 
 
 class BaseUniqueName(models.Model):
+    """Базовый класс для других моделей с повторяющимся полем name."""
+
     name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
         verbose_name=_("Наименование"),
@@ -33,6 +38,7 @@ class BaseUniqueName(models.Model):
         abstract = True
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
     @classmethod
@@ -46,36 +52,31 @@ class BaseUniqueName(models.Model):
 
 
 class City(BaseUniqueName):
-    """
-    Модель Город.
-    """
+    """Модель Город."""
 
     class Meta:
         verbose_name = "Город"
         verbose_name_plural = "Города"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
 class DisciplineName(BaseUniqueName):
-    """
-    Модель название дисциплин
-    (следж-хоккей, хоккей для незрячих, спец. хоккей).
-    """
+    """Модель дисциплин (следж-хоккей, хоккей для незрячих, спец. хоккей)."""
 
     class Meta:
         verbose_name = "Название дисциплины"
         verbose_name_plural = "Названия дисциплин"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
 class DisciplineLevel(BaseUniqueName):
-    """
-    Модель классификация, статусы дисциплин.
-    """
+    """Модель классификация, статусы дисциплин."""
 
     name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -96,26 +97,24 @@ class DisciplineLevel(BaseUniqueName):
         verbose_name_plural = "Классификация/статусы дисциплин"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
 class Nosology(BaseUniqueName):
-    """
-    Модель Нозология.
-    """
+    """Модель Нозология."""
 
     class Meta:
         verbose_name = "Нозология"
         verbose_name_plural = "Нозология"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
 class Diagnosis(BaseUniqueName):
-    """
-    Модель Диагноз.
-    """
+    """Модель Диагноз."""
 
     nosology = models.ForeignKey(
         Nosology,
@@ -131,13 +130,12 @@ class Diagnosis(BaseUniqueName):
         verbose_name_plural = "Диагнозы"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
 class BasePerson(models.Model):
-    """
-    Абстрактная модель с базовой персональной информацией.
-    """
+    """Абстрактная модель с базовой персональной информацией."""
 
     surname = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -167,13 +165,12 @@ class BasePerson(models.Model):
         abstract = True
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join([self.surname, self.name, self.patronymic])
 
 
 class StaffMember(BasePerson):
-    """
-    Модель сотрудник.
-    """
+    """Модель сотрудник."""
 
     phone = PhoneNumberField(
         blank=True,
@@ -200,13 +197,12 @@ class StaffMember(BasePerson):
         ]
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join([self.surname, self.name, self.patronymic])
 
 
 class Team(BaseUniqueName):
-    """
-    Модель команды.
-    """
+    """Модель команды."""
 
     city = models.ForeignKey(
         City,
@@ -237,22 +233,21 @@ class Team(BaseUniqueName):
             models.UniqueConstraint(
                 name="team_city_unique",
                 fields=["name", "city", "discipline_name"],
-            )
+            ),
         ]
         permissions = [
             ("list_view_team", "Can view list of Команда"),
         ]
 
     def __str__(self):
+        """Метод, определяющий строковое представление объекта."""
         if self.city:
             return f"{self.name} - {self.city}"
         return self.name
 
 
 class StaffTeamMember(models.Model):
-    """
-    Модель сотрудник команды.
-    """
+    """Модель сотрудник команды."""
 
     staff_member = models.ForeignKey(
         StaffMember,
@@ -306,22 +301,26 @@ class StaffTeamMember(models.Model):
         ]
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join(
             [
                 self.staff_member.surname,
                 self.staff_member.name,
                 self.staff_member.patronymic,
-            ]
+            ],
         )
 
     def get_name_and_staff_position(self):
+        """Метод для получения строки с данными сотрудника команды."""
         return f"{self.__str__()} ({self.staff_position})"
 
 
 class Player(BasePerson):
     """
-    Модель игрока. Связь с командой "многие ко многим" на случай включения
-    игрока в сборную, помимо основного состава.
+    Модель игрока.
+
+    Связь с командой "многие ко многим" на случай включения игрока
+    в сборную, помимо основного состава.
     """
 
     diagnosis = models.ForeignKey(
@@ -428,16 +427,16 @@ class Player(BasePerson):
         ]
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join([self.surname, self.name, self.patronymic])
 
     def get_name_and_position(self):
+        """Метод для получения строки с данными игрока и его позицией."""
         return f"{self.__str__()} ({self.position})"
 
 
 class Document(BaseUniqueName):
-    """
-    Модель Документы для загрузки.
-    """
+    """Модель Документы для загрузки."""
 
     name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
@@ -467,10 +466,11 @@ class Document(BaseUniqueName):
             models.UniqueConstraint(
                 name="player_docume_unique",
                 fields=["file", "player"],
-            )
+            ),
         ]
 
     def __str__(self):
+        """Метод, определяющий строковое представление объекта."""
         return f"Документ игрока: {self.player}"
 
 

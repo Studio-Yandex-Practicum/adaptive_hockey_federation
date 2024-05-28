@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    """Фабрика создания тестовых юзеров"""
+    """Фабрика создания тестовых юзеров."""
 
     class Meta:
         model = User
@@ -24,10 +24,12 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
     def password(self):
+        """Метод для создания пароля."""
         return make_password("pass1234")
 
     @factory.post_generation
     def admin_create(self, create, extracted, **kwargs):
+        """Метод для присваивания роли админа или модератора."""
         if create:
             if self.role in ["admin", "moderator"]:
                 self.is_staff = True

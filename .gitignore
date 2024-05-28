@@ -138,10 +138,8 @@ venv.bak/
 # mkdocs documentation
 /site
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# ruff
+.ruff_cache/
 
 # Pyre type checker
 .pyre/

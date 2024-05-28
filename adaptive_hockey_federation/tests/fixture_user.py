@@ -29,7 +29,7 @@ def user_client(user, client):
 @pytest.fixture
 def adminuser(djangousermodel):
     admin = djangousermodel.objects.createsuperuser(
-        first_name="admin", email="admin@admin.com", password="admin"
+        first_name="admin", email="admin@admin.com", password="admin",
     )
     admin.isstaff = True
     admin.issuperuser = True

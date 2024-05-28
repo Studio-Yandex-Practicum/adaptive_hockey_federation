@@ -24,16 +24,16 @@ HEADERS_BORDER: Border = Border(
     top=BORDER_LINE,
     bottom=BORDER_LINE,
     left=BORDER_LINE,
-    right=BORDER_LINE
+    right=BORDER_LINE,
 )
 
 ALIGNMENT_CENTER: Alignment = Alignment(
-    horizontal='general',
-    vertical='center',
+    horizontal="general",
+    vertical="center",
     text_rotation=0,
     wrap_text=False,
     shrink_to_fit=False,
-    indent=0
+    indent=0,
 )
 
 ROWS_FILL: PatternFill = PatternFill(patternType="solid", fgColor="dee6ef")

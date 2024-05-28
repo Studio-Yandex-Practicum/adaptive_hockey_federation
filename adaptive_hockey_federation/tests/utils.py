@@ -9,7 +9,8 @@ from users.models import User
 
 
 class UrlToTest:
-    """Класс для использования в автоматизации тестирования урлов.
+    """
+    Класс для использования в автоматизации тестирования урлов.
 
     В настоящем виде, в зависимости от параметров, может проводить тесты (
     возвращать пару "фактический ответ - ожидаемый ответ" и сообщение) на:
@@ -92,6 +93,11 @@ class UrlToTest:
         use_post: bool = False,
         path_render_subs: str | tuple[str, ...] | list[str] = "1",
     ):
+        """
+        Метод инициализации экземпляра класса.
+
+        Присваивает необходимые атрибуты.
+        """
         self.path = url
         self.authorized_only = authorized_only
         self.code_estimated = code_estimated
@@ -100,13 +106,13 @@ class UrlToTest:
         if permission_required:
             try:
                 self.permission = Permission.objects.get(
-                    codename=permission_required
+                    codename=permission_required,
                 )
             except ObjectDoesNotExist:
                 raise AssertionError(
                     f"!!! Выполнить тесты для урл: {self.path} "
                     f"невозможно. Проверьте, что в базе данных предусмотрено "
-                    f"разрешение '{permission_required}'.!!!"
+                    f"разрешение '{permission_required}'.!!!",
                 )
 
         if self.authorized_only:
@@ -139,9 +145,12 @@ class UrlToTest:
         return self._get_response(client)
 
     def unauthorized_test(self, client: Client) -> tuple[int, Any, str]:
-        """Возвращает "ответ-ожидание" для неавторизованного пользователя.
+        """
+        Возвращает "ответ-ожидание" для неавторизованного пользователя.
+
         Последним значением возвращает сообщение, которое можно использовать
-        в тестах."""
+        в тестах.
+        """
         client.logout()
         response = self._get_response(client)
         message = (
@@ -152,10 +161,14 @@ class UrlToTest:
         return response.status_code, self.unauthorized_code, message
 
     def user_with_permission_test(self, client: Client, user: User):
-        """Возвращает "ответ-ожидание" для авторизованного пользователя,
-        обладающего разрешением с codename, сохраненным в self.permission.
+        """
+        Возвращает "ответ-ожидание" для авторизованного пользователя.
+
+        Для авторизованного пользователя, обладающего разрешением с codename,
+        сохраненным в self.permission.
         Последним значением возвращает сообщение, которое можно использовать
-        в тестах."""
+        в тестах.
+        """
         if isinstance(self.permission, Permission):
             user.user_permissions.add(self.permission)
         else:
@@ -170,8 +183,12 @@ class UrlToTest:
         return response.status_code, self.code_estimated, message
 
     def authorized_test(self, client: Client, user: User):
-        """Возвращает "ответ-ожидание" для авторизованного пользователя без
-        каких-либо специфических разрешений."""
+        """
+        Возвращает "ответ-ожидание" для авторизованного пользователя.
+
+        Для авторизованного пользователя без каких-либо специфических
+        разрешений.
+        """
         response = self._get_auth_response(client, user)
         message = (
             f"Для любого авторизованного пользователя, "
@@ -181,12 +198,16 @@ class UrlToTest:
         return response.status_code, self.code_estimated, message
 
     def user_without_permission_test(self, client: Client, user: User):
-        """Возвращает "ответ-ожидание" для авторизованного пользователя,
-        НЕ обладающего разрешением с codename, сохраненным в self.permission.
+        """
+        Возвращает "ответ-ожидание" для авторизованного пользователя.
+
+        Для авторизованного пользователя, НЕ обладающего разрешением с
+        codename, сохраненным в self.permission.
         Последним значением возвращает сообщение, которое можно использовать
-        в тестах."""
+        в тестах.
+        """
         response = self._get_auth_response(
-            client, user, clear_permissions=True
+            client, user, clear_permissions=True,
         )
         if isinstance(self.permission, Permission):
             codename = self.permission.codename
@@ -201,10 +222,14 @@ class UrlToTest:
         return response.status_code, HTTPStatus.FORBIDDEN, message
 
     def admin_test(self, client: Client, user: User):
-        """Возвращает "ответ-ожидание" для авторизованного пользователя,
-        обладающего полномочиями администратора (is_staff=true).
+        """
+        Возвращает "ответ-ожидание" для авторизованного пользователя.
+
+        Для авторизованного пользователя, обладающего полномочиями
+        администратора (is_staff=true).
         Последним значением возвращает сообщение, которое можно использовать
-        в тестах."""
+        в тестах.
+        """
         user.is_staff = True
         user.save()
         response = self._get_auth_response(client, user, clear_admin=False)
@@ -216,10 +241,14 @@ class UrlToTest:
         return response.status_code, self.code_estimated, message
 
     def non_admin_test(self, client: Client, user: User):
-        """Возвращает "ответ-ожидание" для авторизованного пользователя,
-        НЕ обладающего полномочиями администратора (is_staff=False).
+        """
+        Возвращает "ответ-ожидание" для авторизованного пользователя.
+
+        Для авторизованного пользователя, НЕ обладающего полномочиями
+        администратора (is_staff=False).
         Последним значением возвращает сообщение, которое можно использовать
-        в тестах."""
+        в тестах.
+        """
         response = self._get_auth_response(client, user)
         message = (
             f"Для пользователя, НЕ являющегося администратором ("
@@ -234,9 +263,12 @@ class UrlToTest:
         )
 
     def execute_tests(self, client: Client, user: User):
-        """Основной метод класса.
+        """
+        Основной метод класса.
+
         Возвращает список кортежей (ответ, ожидаемый ответ, сообщение)
-        для всех вариантов GET-запросов к конкретному url."""
+        для всех вариантов GET-запросов к конкретному url.
+        """
         res = [self.unauthorized_test(client)]
         if self.permission and isinstance(self.permission, Permission):
             res.append(self.user_with_permission_test(client, user))
@@ -258,7 +290,7 @@ def render_url(url: str, subs: tuple | str | list):
     if isinstance(subs, str):
         subs = (subs,)
     for sub in subs:
-        url = re.sub(pattern, sub, url, 1)
+        url = re.sub(pattern, sub, url, count=1)
     if re.search(pattern, url):
         url = re.sub(pattern, subs[-1], url)
     return url

@@ -27,16 +27,18 @@ class GamesListView(
     ordering = ["name"]
 
     def get_queryset(self) -> QuerySet[Any]:
-        return Game.objects.all().prefetch_related("game_teams")
+        """Метод для получения набора QuerySet."""
+        return Game.objects.all().prefetch_related("teams")
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         games = context["games"]
         table_data = []
         for game in games:
             first_team, second_team = (
-                game.game_teams.values().first(),
-                game.game_teams.values().last(),
+                game.teams.values().first(),
+                game.teams.values().last(),
             )
             table_data.append(
                 {
@@ -45,7 +47,7 @@ class GamesListView(
                     "video_link": game.video_link,
                     "first_team": first_team["name"],
                     "second_team": second_team["name"],
-                }
+                },
             )
         context["table_head"] = {
             "pk": "Nr.",
