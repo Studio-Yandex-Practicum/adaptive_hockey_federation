@@ -1,22 +1,12 @@
 from django.contrib import admin
-from games.models import Game, GameTeam
+from games.models import Game
 
 
-class GameTeamInline(admin.StackedInline):
-    model = GameTeam
-    extra = 2
-
-
+@admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
-    """Админка для модели Выгрузки."""
-    inlines = [GameTeamInline]
-    list_display = ("name", "video_link", "get_teams")
+    """Админка для модели игр."""
+
+    list_display = ("name", "date", "competition", "video_link")
+    list_filter = ("date", "competition")
     search_fields = ("name",)
     ordering = ["name"]
-
-    def get_teams(self, obj):
-        return ", ".join([team.name for team in obj.teams.all()])
-    get_teams.short_description = 'Teams'  # type: ignore[attr-defined]
-
-
-admin.site.register(Game, GameAdmin)
