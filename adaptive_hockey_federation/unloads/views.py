@@ -106,7 +106,7 @@ class DataExportView(LoginRequiredMixin, View):
                 queryset = model.objects.all()
                 filename = page_name + "_all.xlsx"
             if model_name == "User":
-                excluded_fields = ["id", "password", "is_active"]
+                excluded_fields = ["id", "password", "is_active", "is_staff"]
                 fields_order = [
                     "last_name",
                     "first_name",
@@ -114,7 +114,6 @@ class DataExportView(LoginRequiredMixin, View):
                     "email",
                     "phone",
                     "role",
-                    "is_staff",
                     "date_joined",
                 ]
             else:
@@ -127,6 +126,7 @@ class DataExportView(LoginRequiredMixin, View):
                 excluded_fields,
                 fields_order,
             )
+
             file_slug = f"unloads_data/{filename}"
 
             unload_record = Unload(

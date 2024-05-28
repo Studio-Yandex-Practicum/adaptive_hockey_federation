@@ -334,7 +334,7 @@ class PlayerGamesVideo(
     PlayerIdPermissionsMixin,
     ListView,
 ):
-    """Список видео игр с участием игрока"""
+    """Список видео игр с участием игрока."""
 
     model = Player
     template_name = "main/player_id/player_id_video_games.html"
@@ -345,18 +345,20 @@ class PlayerGamesVideo(
     context_object_name = "player"
 
     def get_queryset(self) -> Player | None:  # type: ignore[override]
+        """Получить набор QuerySet с играми команды игрока."""
         teams_games = Prefetch(
-            "team", queryset=Team.objects.prefetch_related("game_teams")
+            "team",
+            queryset=Team.objects.prefetch_related("game_teams"),
         )
         player = Player.objects.prefetch_related(teams_games).filter(
-            id=self.kwargs["pk"]
+            id=self.kwargs["pk"],
         )
         if not player.exists():
             raise Http404("Игрока не существует")
         return player.first()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
-
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         player = context["player"]
         data_key = ("pk", "name", "video_link")
@@ -366,7 +368,7 @@ class PlayerGamesVideo(
                 [
                     {key: getattr(game, key) for key in data_key}
                     for game in team.game_teams.all()
-                ]
+                ],
             )
 
         context["table_head"] = {

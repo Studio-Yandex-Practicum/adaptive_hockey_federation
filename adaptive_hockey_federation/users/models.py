@@ -88,7 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(
         default=timezone.now,
-        verbose_name=_("Дата регистрации."),
+        verbose_name=_("Дата регистрации"),
     )
     is_staff = models.BooleanField(
         default=False,
