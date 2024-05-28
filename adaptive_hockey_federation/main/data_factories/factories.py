@@ -54,8 +54,9 @@ class StaffMemberFactory(factory.django.DjangoModelFactory):
 
 class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
     """
-    Создание данных о сотрудниках привязаных к командам. Квалификация
-    может быть "Тренер" и "Другие сотрудники".
+    Создание данных о сотрудниках привязаных к командам.
+
+    Квалификация может быть "Тренер" и "Другие сотрудники".
     """
 
     class Meta:
@@ -72,6 +73,7 @@ class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
+        """Метод для проверки полей: qualification и notes."""
         qualification = self.qualification
         notes = self.notes
         if create:
@@ -80,6 +82,7 @@ class StaffTeamMemberFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def team(self, create, extracted, **kwargs):
+        """Метод для создания связи со случайными командами."""
         if create:
             self.team.set([get_random_objects(Team)])
 
@@ -103,6 +106,7 @@ class NosologyFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
+        """Метод для провеки поля name."""
         field = self.name
         if create:
             self.name = check_len(field, 5, 3)
@@ -110,8 +114,9 @@ class NosologyFactory(factory.django.DjangoModelFactory):
 
 class DiagnosisFactory(factory.django.DjangoModelFactory):
     """
-    Создание диагнозов, и связанных с ними нозологий.  Колонка "name"
-    является уникальной.
+    Создание диагнозов, и связанных с ними нозологий.
+
+    Колонка "name" является уникальной.
     """
 
     class Meta:
@@ -124,6 +129,7 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def check_field(self, create, extracted, **kwargs):
+        """Метод для провеки поля name."""
         field = self.name
         if create:
             self.name = check_len(field, 5, 3)
@@ -131,9 +137,10 @@ class DiagnosisFactory(factory.django.DjangoModelFactory):
 
 class TeamFactory(factory.django.DjangoModelFactory):
     """
-    Создание команд. Привязка к ним уже созданных городов,
-    сотрудников(тренеров), кураторов, дисциплин. Колонка
-    с названием команды является уникальной.
+    Создание команд.
+
+    Привязка к ним уже созданных городов, сотрудников(тренеров), кураторов,
+    дисциплин. Колонка с названием команды является уникальной.
     """
 
     class Meta:
@@ -145,17 +152,21 @@ class TeamFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
     def discipline_name(self):
+        """Получить случайный набор дисциплин."""
         return get_random_objects(DisciplineName)
 
     @factory.lazy_attribute
     def curator(self):
+        """Получить случайный набор кураторов."""
         return get_random_objects(User)
 
 
 class CompetitionFactory(factory.django.DjangoModelFactory):
     """
-    Создание соревнований. Привязка к ним уже созданных городов, команд
-    создание локации, времени начала и окончания, активно или закончено.
+    Создание соревнований.
+
+    Привязка к ним уже созданных городов, команд создание локации,
+    времени начала и окончания, активно или закончено.
     """
 
     class Meta:
@@ -171,6 +182,7 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def teams(self, create, extracted, **kwargs):
+        """Добавляет команды к объекту соревнования."""
         if create:
             teams = Team.objects.all()
             list_teams = random.choices(teams, k=8)
@@ -179,6 +191,7 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def disciplines(self, create, extracted, **kwargs):
+        """Добавляет дисциплины к объекту соревнования."""
         if create:
             disciplines = DisciplineName.objects.all()
             list_disciplines = random.choices(disciplines, k=4)
@@ -187,6 +200,8 @@ class CompetitionFactory(factory.django.DjangoModelFactory):
 
 
 class PlayerFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания игрока."""
+
     class Meta:
         model = Player
         django_get_or_create = ["birthday"]
@@ -197,7 +212,9 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     patronymic = factory.Faker("middle_name", locale="ru_RU")
     birthday = factory.Faker("date_of_birth", minimum_age=12, maximum_age=18)
     addition_date = factory.Faker(
-        "date_time_this_decade", before_now=True, after_now=False,
+        "date_time_this_decade",
+        before_now=True,
+        after_now=False,
     )
     gender = factory.LazyFunction(lambda: random.choice(GENDER_CHOICES)[1])
     level_revision = factory.Faker("sentence", nb_words=1, locale="ru_RU")
@@ -211,14 +228,17 @@ class PlayerFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
     def diagnosis(self):
+        """Получить случайный набор диагнозов."""
         return get_random_objects(Diagnosis)
 
     @factory.lazy_attribute
     def discipline_name(self):
+        """Получить случайный набор дисциплин."""
         return get_random_objects(DisciplineName)
 
     @factory.post_generation
     def team(self, create, extracted, **kwargs):
+        """Добавляет команды к объекту игрока."""
         if create:
             teams_with_player_count = Team.objects.annotate(
                 player_count=Count("team_players"),
@@ -228,6 +248,8 @@ class PlayerFactory(factory.django.DjangoModelFactory):
 
 
 class DocumentFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания документов."""
+
     class Meta:
         model = Document
         skip_postgeneration_save = True
@@ -238,10 +260,12 @@ class DocumentFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
     def player(self):
+        """Получить случайный набор игроков."""
         return get_random_objects(PlayerFactory)
 
     @factory.post_generation
     def file(self, create, extracted, **kwargs):
+        """Сохранить файл в документе."""
         if not create:
             return
         file_obj = BytesIO()

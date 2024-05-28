@@ -27,6 +27,7 @@ class MainView(
     ]
 
     def get_queryset(self):
+        """Получить набор QuerySet."""
         query = self.request.GET.get("search")
         search_vector = SearchVector("surname", "name")
         queryset = None
@@ -43,6 +44,7 @@ class MainView(
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         search = self.request.GET.get("search")
         if search:

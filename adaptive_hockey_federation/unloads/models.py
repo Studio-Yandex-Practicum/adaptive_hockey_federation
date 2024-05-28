@@ -24,7 +24,8 @@ class Unload(models.Model):
         on_delete=models.CASCADE,
     )
     unload_file_slug = models.FileField(
-        verbose_name=_("Ссылка на файл"), upload_to=UNLOAD_DIR + "/",
+        verbose_name=_("Ссылка на файл"),
+        upload_to=UNLOAD_DIR + "/",
     )
 
     class Meta:
@@ -36,6 +37,7 @@ class Unload(models.Model):
         ]
 
     def __str__(self) -> str:
+        """Метод, использующий unload_name для строкового представления."""
         return f"{self.unload_name}"
 
 

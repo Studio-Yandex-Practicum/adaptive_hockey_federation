@@ -24,6 +24,7 @@ class UnloadFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def create_excel_file(self, create, extracted, **kwargs):
+        """Метод для создания Excel-файла."""
         if not create:
             return
 

@@ -21,6 +21,8 @@ class UsersListView(
     PermissionRequiredMixin,
     ListView,
 ):
+    """Представление для получения списка пользователей."""
+
     model = User
     template_name = "main/users/list.html"
     permission_required = "users.list_view_user"
@@ -31,6 +33,7 @@ class UsersListView(
     paginate_by = 10
 
     def get_queryset(self):
+        """Получить набор QuerySet."""
         queryset = super().get_queryset().order_by("last_name")
         search_params = self.request.GET.dict()
         search_column = search_params.get("search_column")
@@ -79,6 +82,7 @@ class UsersListView(
         return queryset.order_by("last_name")
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         users = context["users"]
         table_data = []
@@ -105,7 +109,7 @@ class UsersListView(
 
 
 class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    """Вьюха редактирования пользователя."""
+    """Представление для обновления пользователя."""
 
     model = User
     form_class = CustomUserUpdateForm
@@ -116,17 +120,21 @@ class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     )
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse("users:users")
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(User, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Редактирование профиля пользователя"
         return context
 
     def form_valid(self, form):
+        """Запустить валидацию формы."""
         if form.is_valid():
             user = form.save()
             Team.objects.filter(curator=user).update(curator=None)
@@ -139,7 +147,7 @@ class UpdateUserView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
 
 class DeleteUserView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    """Вьюха удаления пользователя."""
+    """Представление для удаления пользователя."""
 
     object = User
     model = User
@@ -151,7 +159,7 @@ class DeleteUserView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 
 class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    """Вьюха создания пользователя."""
+    """Представление для создания пользователя."""
 
     model = User
     form_class = CustomUserCreateForm
@@ -163,11 +171,13 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     )
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Создание пользователя"
         return context
 
     def form_valid(self, form):
+        """Запустить валидацию формы."""
         if form.is_valid():
             user = form.save()
             choice_teams = form.cleaned_data["team"]
@@ -180,11 +190,12 @@ class CreateUserView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 
 class PasswordSetView(PasswordResetConfirmView):
-    """Вьюха изменения пароля пользователя."""
+    """Представление для изменения пароля пользователя."""
 
     success_url = reverse_lazy("users:users")
 
     def form_valid(self, form):
+        """Запустить валидацию формы."""
         response = super().form_valid(form)
         self.user.save()
         return response

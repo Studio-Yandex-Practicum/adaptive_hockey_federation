@@ -23,7 +23,9 @@ from main.schemas.staff_schema import (
 
 
 class StaffMemberListView(
-    LoginRequiredMixin, PermissionRequiredMixin, ListView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    ListView,
 ):
     """Представление для работы со списком сотрудников."""
 
@@ -44,6 +46,7 @@ class StaffMemberListView(
     )
 
     def get_queryset(self):
+        """Получить набор QuerySet."""
         queryset = super().get_queryset()
         search = self.request.GET.get("search")
         if search:
@@ -64,6 +67,7 @@ class StaffMemberListView(
         return queryset.order_by("surname", "name", "patronymic")
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         table_head = {}
         for field in self.fields:
@@ -77,8 +81,12 @@ class StaffMemberListView(
 
 
 class StaffMemberIdView(
-    LoginRequiredMixin, PermissionRequiredMixin, DetailView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DetailView,
 ):
+    """Представление для работы с отдельным сотрудником."""
+
     model = StaffMember
     template_name = "main/staffs/staff_id.html"
     context_object_name = "staff"
@@ -95,9 +103,11 @@ class StaffMemberIdView(
     )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         staff = context["staff"]
         queryset = StaffTeamMember.objects.filter(
@@ -106,18 +116,20 @@ class StaffMemberIdView(
         if queryset.exists():
             queryset_coach = queryset.filter(staff_position="тренер")
             queryset_pusher = queryset.difference(queryset_coach)
-            (context["coach"],
-                context["team_fields_coach"]) = add_pisition_in_context(
-                queryset_coach)
-            (context["pusher"],
-                context["team_fields_pusher"]) = add_pisition_in_context(
-                queryset_pusher)
+            (context["coach"], context["team_fields_coach"]) = (
+                add_pisition_in_context(queryset_coach)
+            )
+            (context["pusher"], context["team_fields_pusher"]) = (
+                add_pisition_in_context(queryset_pusher)
+            )
         context["staff_fields"] = get_staff_fields(staff)
         return context
 
 
 class StaffMemberIdCreateView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView,
 ):
     """Представление создания сотрудника."""
 
@@ -129,16 +141,20 @@ class StaffMemberIdCreateView(
     permission_denied_message = "У Вас нет разрешения на создание сотрудника."
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         context["page_title"] = "Создание профиля нового сотрудника"
         return context
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном создании."""
         return reverse("main:staffs")
 
 
 class StaffMemberIdEditView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView,
 ):
     """Представление редактирования сотрудника."""
 
@@ -151,6 +167,7 @@ class StaffMemberIdEditView(
     )
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse(
             "main:staff_id",
             kwargs={
@@ -159,11 +176,14 @@ class StaffMemberIdEditView(
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
 
 
 class StaffMemberIdDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, DeleteView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView,
 ):
     """Представление для удаления сотрудника."""
 
@@ -174,11 +194,14 @@ class StaffMemberIdDeleteView(
     permission_denied_message = "У Вас нет разрешения на удаление сотрудника."
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
 
 
 class StaffMemberIdTeamCreateView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView,
 ):
     """Представление назначения сотрудника в команду."""
 
@@ -190,11 +213,10 @@ class StaffMemberIdTeamCreateView(
     " редактирование сотрудника."
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         if self.kwargs["position"] == "coach":
-            context["page_title"] = (
-                "Добавление сотрудника в команду тренером"
-            )
+            context["page_title"] = "Добавление сотрудника в команду тренером"
         else:
             context["page_title"] = (
                 "Добавление сотрудника в команду пушер-тьютором"
@@ -203,6 +225,7 @@ class StaffMemberIdTeamCreateView(
         return context
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном создании."""
         return reverse(
             "main:staff_id",
             kwargs={
@@ -211,9 +234,11 @@ class StaffMemberIdTeamCreateView(
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(StaffMember, id=self.kwargs["pk"])
 
     def form_valid(self, form):
+        """Запустить валидацию формы."""
         positions = {
             "coach": "тренер",
             "pusher": "пушер-тьютор",
@@ -226,7 +251,9 @@ class StaffMemberIdTeamCreateView(
 
 
 class StaffMemberIDTeamEditView(
-    LoginRequiredMixin, PermissionRequiredMixin, UpdateView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UpdateView,
 ):
     """Представление редактирования сотрудника находящегося в команде."""
 
@@ -239,6 +266,7 @@ class StaffMemberIDTeamEditView(
     )
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse(
             "main:staff_id",
             kwargs={
@@ -247,20 +275,25 @@ class StaffMemberIDTeamEditView(
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(StaffTeamMember, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         context["page_title"] = (
             f"Редактирование данных {self.get_object().staff_position}а"
-            " команды")
+            " команды"
+        )
         context["on_team"] = True
         context["help_text_role"] = "Команды сотрудника"
         return context
 
 
 class StaffMemberIdTeamDeleteView(
-    LoginRequiredMixin, PermissionRequiredMixin, DeleteView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView,
 ):
     """Представление для удаления сотрудника из команды."""
 
@@ -270,10 +303,11 @@ class StaffMemberIdTeamDeleteView(
     permission_denied_message = "У Вас нет разрешения на удаление сотрудника."
 
     def get_object(self, queryset=None):
-        return get_object_or_404(
-            StaffTeamMember, id=self.kwargs["pk"])
+        """Получить объект по id или выбросить ошибку 404."""
+        return get_object_or_404(StaffTeamMember, id=self.kwargs["pk"])
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном удалении."""
         return reverse(
             "main:staff_id",
             kwargs={

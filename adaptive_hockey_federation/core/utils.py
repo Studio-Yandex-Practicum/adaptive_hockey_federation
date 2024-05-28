@@ -77,6 +77,7 @@ def export_excel(
 ) -> str:
     """
     Выгрузка данных в excel (формат xlsx).
+
     После создания файла возвращает его имя.
     """
     if excluded_fields is None:

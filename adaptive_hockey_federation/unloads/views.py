@@ -38,6 +38,7 @@ class UnloadListView(
     ordering = ["date"]
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         unloads = context["unloads"]
         table_data = []
@@ -81,6 +82,7 @@ class DeleteUnloadView(
     permission_denied_message = "Отсутствует разрешение на удаление выгрузки."
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Unload, id=self.kwargs["pk"])
 
 
@@ -88,6 +90,7 @@ class DataExportView(LoginRequiredMixin, View):
     """Выгрузка данных в Excel."""
 
     def get(self, request, *args, **kwargs):
+        """Обработчиков GET-запросов."""
         page_name = kwargs.get("page_name")
 
         if page_name in model_mapping:
@@ -118,7 +121,11 @@ class DataExportView(LoginRequiredMixin, View):
                 excluded_fields = []
                 fields_order = []
             filename = export_excel(
-                queryset, filename, title, excluded_fields, fields_order,
+                queryset,
+                filename,
+                title,
+                excluded_fields,
+                fields_order,
             )
             file_slug = f"unloads_data/{filename}"
 
@@ -130,7 +137,9 @@ class DataExportView(LoginRequiredMixin, View):
             unload_record.save()
 
             file_path = os.path.join(
-                settings.MEDIA_ROOT, "unloads_data", filename,
+                settings.MEDIA_ROOT,
+                "unloads_data",
+                filename,
             )
             if os.path.exists(file_path):
                 file_unload = open(file_path, "rb")

@@ -38,9 +38,12 @@ STAFF = {
 
 
 class Command(BaseCommand):
+    """Класс для наполнения базы данных тестовыми данными."""
+
     help = "Наполнение базы данных тестовыми данными."
 
     def add_arguments(self, parser):
+        """Добавляет новые аргументы для командной строки."""
         parser.add_argument(
             "-u",
             "--users",
@@ -98,6 +101,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):  # noqa: C901
+        """Метод для наполнения базы тестовыми данными."""
         test_users = options.get("users", False)
         diagnosis = options.get("diagnosis", False)
         staff_team = options.get("staffteam", False)
@@ -127,7 +131,8 @@ class Command(BaseCommand):
             staff_amount = sum(STAFF.values())
             for staff_position, amount in STAFF.items():
                 StaffTeamMemberFactory.create_batch(
-                    amount, staff_position=staff_position,
+                    amount,
+                    staff_position=staff_position,
                 )
             return self.stdout.write(
                 self.style.SUCCESS(

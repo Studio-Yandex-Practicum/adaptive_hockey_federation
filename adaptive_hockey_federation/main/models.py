@@ -24,6 +24,8 @@ if TYPE_CHECKING:
 
 
 class BaseUniqueName(models.Model):
+    """Базовый класс для других моделей с повторяющимся полем name."""
+
     name = models.CharField(
         max_length=CHAR_FIELD_LENGTH,
         verbose_name=_("Наименование"),
@@ -36,6 +38,7 @@ class BaseUniqueName(models.Model):
         abstract = True
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
     @classmethod
@@ -56,20 +59,19 @@ class City(BaseUniqueName):
         verbose_name_plural = "Города"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
 class DisciplineName(BaseUniqueName):
-    """
-    Модель название дисциплин
-    (следж-хоккей, хоккей для незрячих, спец. хоккей).
-    """
+    """Модель дисциплин (следж-хоккей, хоккей для незрячих, спец. хоккей)."""
 
     class Meta:
         verbose_name = "Название дисциплины"
         verbose_name_plural = "Названия дисциплин"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
@@ -95,6 +97,7 @@ class DisciplineLevel(BaseUniqueName):
         verbose_name_plural = "Классификация/статусы дисциплин"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
@@ -106,6 +109,7 @@ class Nosology(BaseUniqueName):
         verbose_name_plural = "Нозология"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
@@ -126,6 +130,7 @@ class Diagnosis(BaseUniqueName):
         verbose_name_plural = "Диагнозы"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
@@ -160,6 +165,7 @@ class BasePerson(models.Model):
         abstract = True
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join([self.surname, self.name, self.patronymic])
 
 
@@ -191,6 +197,7 @@ class StaffMember(BasePerson):
         ]
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join([self.surname, self.name, self.patronymic])
 
 
@@ -233,6 +240,7 @@ class Team(BaseUniqueName):
         ]
 
     def __str__(self):
+        """Метод, определяющий строковое представление объекта."""
         if self.city:
             return f"{self.name} - {self.city}"
         return self.name
@@ -293,6 +301,7 @@ class StaffTeamMember(models.Model):
         ]
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join(
             [
                 self.staff_member.surname,
@@ -302,13 +311,16 @@ class StaffTeamMember(models.Model):
         )
 
     def get_name_and_staff_position(self):
+        """Метод для получения строки с данными сотрудника команды."""
         return f"{self.__str__()} ({self.staff_position})"
 
 
 class Player(BasePerson):
     """
-    Модель игрока. Связь с командой "многие ко многим" на случай включения
-    игрока в сборную, помимо основного состава.
+    Модель игрока.
+
+    Связь с командой "многие ко многим" на случай включения игрока
+    в сборную, помимо основного состава.
     """
 
     diagnosis = models.ForeignKey(
@@ -415,9 +427,11 @@ class Player(BasePerson):
         ]
 
     def __str__(self):
+        """Метод, использующий полное ФИО для строкового представления."""
         return " ".join([self.surname, self.name, self.patronymic])
 
     def get_name_and_position(self):
+        """Метод для получения строки с данными игрока и его позицией."""
         return f"{self.__str__()} ({self.position})"
 
 
@@ -456,6 +470,7 @@ class Document(BaseUniqueName):
         ]
 
     def __str__(self):
+        """Метод, определяющий строковое представление объекта."""
         return f"Документ игрока: {self.player}"
 
 

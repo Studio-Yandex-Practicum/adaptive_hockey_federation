@@ -7,10 +7,7 @@ from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
 
 
 class TestUser(TestCase):
-    """
-    Тестирование CRUD игрока
-    с использованием фабрик.
-    """
+    """Тестирование CRUD игрока с использованием фабрик."""
 
     diagnosis: Diagnosis | Any = None
     player: Player | Any = None
@@ -26,7 +23,7 @@ class TestUser(TestCase):
         cls.player_test = cls.player
 
     def setUp(self):
-
+        """Метод для базовой настройки тестов класса."""
         self.player = Player.objects.create(
             surname=self.player_test.surname + "тест",
             name=self.player_test.name + "тест",
@@ -104,6 +101,7 @@ class TestUser(TestCase):
         )
 
     def delete_player(self, player_id):
+        """Метод для запуска удаления игрока."""
         try:
             player = Player.objects.get(id=player_id)
             player.delete()

@@ -53,13 +53,16 @@ class TestSiteUrlsSmoke(BaseTestClass, UrlTestMixin):
     """Тесты урл-путей клиентской части сайта."""
 
     def setUp(self) -> None:
+        """Метод для базовой настройки тестов класса."""
         self.super_client = Client()
         self.super_client.force_login(self.superuser)
 
     def get_default_client(self):
+        """Метод для получения клиента по умолчанию."""
         return self.super_client
 
     def test_main_page(self):
+        """Тест на проверку главной страницы."""
         self.url_get_test(INDEX_PAGE)
 
     def test_competitions_simple_access(self):
@@ -109,10 +112,12 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     """Тесты урл-путей административной части сайта."""
 
     def setUp(self) -> None:
+        """Метод для базовой настройки тестов класса."""
         self.super_client = Client()
         self.super_client.force_login(self.superuser)
 
     def get_default_client(self):
+        """Метод для получения клиента по умолчанию."""
         return self.super_client
 
     def test_admin_base(self):

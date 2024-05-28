@@ -31,8 +31,10 @@ from users.validators import zone_code_without_seven_hundred
 
 class User(AbstractBaseUser, PermissionsMixin):
     """
-    Кастомная модель пользователя, поле 'username' исключено,
-    идентификатором является поле с адресом электронной почты.
+    Кастомная модель пользователя.
+
+    1. Поле 'username' исключено
+    2. Идентификатором является поле с адресом электронной почты.
     """
 
     first_name = models.CharField(
@@ -112,15 +114,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         ]
 
     def clean(self):
+        """Метод валидации модели."""
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
 
     def __str__(self):
+        """Использует метод get_initials() для строкового представления."""
         return self.get_initials()
 
     def get_initials(self) -> str:
         """
         Возвращает фамилию и инициалы пользователя.
+
         При отсутствии отчества возвращается фамилия и инициал имени.
         """
         name_i = self.first_name[:1].upper() + "."
@@ -129,6 +134,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.last_name} {name_i} {patronymic_i}"
 
     def get_full_name(self) -> str:
+        """Получает полную строку с ФИО пользователя."""
         return (
             f"{self.last_name[:QUERY_SET_LENGTH]} "
             f"{self.first_name[:QUERY_SET_LENGTH]} "
@@ -136,6 +142,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         )
 
     def email_user(self, subject, message, from_email=None, **kwargs):
+        """Отправляет email пользователю с заданным сообщением."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def save(
@@ -147,6 +154,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ) -> None:
         """
         Переопределенный метод модели.
+
         При любом сохранении устанавливает группу пользователя в зависимости
         от его роли.
         """
@@ -161,6 +169,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_agent(self):
         """
+        Установка атрибута is_agent.
+
         Представитель команды - имеет возможность редактировать данные детей в
         своей команде. Просматривать некоторые данные по игрокам в других
         командах (ФИО, возраст, спортивный класс, тип заболевания).
@@ -171,6 +181,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_moderator(self):
         """
+        Установка атрибута is_moderator.
+
         Модератор - имеет возможности вносить данные по определенному ребенку,
         не может добавлять новых пользователей и удалять детей, команды.
         """
@@ -196,8 +208,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class ProxyGroup(Group):
     """
-    Обычная группа django. Класс необходим для регистрации
-    модели в приложении "пользователи".
+    Обычная группа django.
+
+    Класс необходим для регистрации модели в приложении "пользователи".
     """
 
     class Meta:
@@ -206,12 +219,14 @@ class ProxyGroup(Group):
         verbose_name_plural = "Группы"
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
     @classmethod
     def get_by_name(cls, name: str) -> Group | None:
         """
         Возвращает группу по полю "name".
+
         Предварительно проверяет наличие таковой группы.
         ВНИМАНИЕ!!! Метод не вызывает исключения при отсутствии в БД искомой
         группы, а вместо исключения возвращает None.

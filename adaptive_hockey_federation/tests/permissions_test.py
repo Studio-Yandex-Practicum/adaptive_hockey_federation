@@ -22,20 +22,23 @@ from users.models import User
 
 class TestPermissions(BaseTestClass):
     """
-    Тесты урл-путей на возможность доступа к ним определенных категорий
-    пользователей.
+    Тесты url-путей.
+
+    На возможность доступа к ним определенных категорий пользователей.
     """
 
     staff_user: User
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Классовый метод для базовой настройки всех тестов класса."""
         super().setUpClass()
         cls.staff_user = UserFactory.create(role=test_role_user, is_staff=True)
 
     def url_tests(self, url_to_test: UrlToTest):
         """
         Прогоняет тесты урл-адреса на доступ различных пользователей.
+
         Принимает в качестве параметра экземпляр класса UrlToTest (см.
         docstring к классу UrlToTest).
         """
@@ -55,6 +58,7 @@ class TestPermissions(BaseTestClass):
     def test_main_page(self):
         """
         Главная страница доступна только авторизованному пользователю.
+
         Для неавторизованного происходит переадресация.
         """
         url_to_test = UrlToTest("/")
@@ -73,14 +77,17 @@ class TestPermissions(BaseTestClass):
 
     def test_auth_login(self):
         """
-        Неавторизованному пользователю должна быть доступна страница
-        входа на сайт.
+        Для неавторизованного пользователя.
+
+        Должна быть доступна страница входа на сайт.
         """
         url_to_test = UrlToTest("/auth/login/", authorized_only=False)
         self.url_tests(url_to_test)
 
     def test_auth_logout(self):
         """
+        Для авторизованного пользователя.
+
         POST-запрос авторизованного пользователя на страницы лог-аута
         должен вернуть ответ с кодом 302.
         """
@@ -91,6 +98,8 @@ class TestPermissions(BaseTestClass):
 
     def test_auth_password_change_url(self):
         """
+        Для авторизованного пользователя.
+
         Страница смены пароля должна быть доступна только авторизованному
         пользователю.
         """
@@ -99,6 +108,8 @@ class TestPermissions(BaseTestClass):
 
     def test_auth_password_reset_url(self):
         """
+        Для неавторизованного пользователя.
+
         Страница сброса пароля должна быть доступна неавторизованному
         пользователю.
         """
@@ -210,8 +221,9 @@ class TestPermissions(BaseTestClass):
 
 class TestSpecialPermissions(BaseTestClass):
     """
-    Тесты на наличие специальных разрешений на доступ отдельных групп
-    пользователей к отдельным объектам.
+    Тесты на наличие специальных разрешений.
+
+    На доступ отдельных групп пользователей к отдельным объектам.
     """
 
     user_agent: User | Any = None
@@ -220,6 +232,7 @@ class TestSpecialPermissions(BaseTestClass):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Классовый метод для базовой настройки всех тестов класса."""
         super().setUpClass()
         cls.user_agent = User.objects.create_user(
             password=test_password,

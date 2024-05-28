@@ -7,7 +7,10 @@ from users.constants import REGEX_AREA_CODE_IS_SEVEN_HUNDRED
 
 
 class CustomPhoneProvider(Provider):
+    """Класс провайдера для телефона."""
+
     def phone_number(self):
+        """Получить номер телефона."""
         while True:
             phone_number = self.numerify(self.random_element(self.formats))
             parsed_number = phonenumbers.parse(

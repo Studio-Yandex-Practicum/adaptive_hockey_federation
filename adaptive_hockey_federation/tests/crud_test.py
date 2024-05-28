@@ -162,8 +162,9 @@ class GroupCrudTest(ModelTestBaseClass):
 
     def test_group_fields_validation_via_admin(self):
         """
-        Тест на валидацию некорректных значений через административную
-        часть.
+        Тест на валидацию некорректных значений.
+
+        Через административную часть.
         """
         url = f"/admin/auth/group/{self.future_obj_id}/change/"
         self.incorrect_field_tests_via_url(url=url, _save="Сохранить")
@@ -291,8 +292,9 @@ class DiagnosisCrudTest(ModelTestBaseClass):
 
     def test_diagnosis_fields_admit_values_via_admin(self):
         """
-        Тест на допуск корректных значений полей через административную
-        часть.
+        Тест на допуск корректных значений полей.
+
+        Через административную часть.
         """
         url = f"/admin/main/diagnosis/{self.future_obj_id}/change/"
         self.correct_field_tests(url=url)
@@ -352,8 +354,9 @@ class NosologyCrudTest(ModelTestBaseClass):
 
     def test_nosology_fields_admit_values_via_admin(self):
         """
-        Тест на допуск корректных значений полей через административную
-        часть.
+        Тест на допуск корректных значений полей.
+
+        Через административную часть.
         """
         url = f"/admin/main/nosology/{self.future_obj_id}/change/"
         self.correct_field_tests(url=url)
@@ -413,8 +416,9 @@ class DisciplineNameCrudTest(ModelTestBaseClass):
 
     def test_discipline_name_fields_admit_values_via_admin(self):
         """
-        Тест на допуск корректных значений полей через административную
-        часть.
+        Тест на допуск корректных значений полей.
+
+        Через административную часть.
         """
         url = f"/admin/main/disciplinename/{self.future_obj_id}/change/"
         self.correct_field_tests(url=url)
@@ -474,8 +478,9 @@ class DisciplineLevelCrudTest(ModelTestBaseClass):
 
     def test_discipline_level_fields_admit_values_via_admin(self):
         """
-        Тест на допуск корректных значений полей через административную
-        часть.
+        Тест на допуск корректных значений полей.
+
+        Через административную часть.
         """
         url = f"/admin/main/disciplinelevel/{self.future_obj_id}/change/"
         self.correct_field_tests(url=url)
@@ -585,8 +590,9 @@ class StaffTeamMemberCrudTest(ModelTestBaseClass):
 
     def test_staff_team_member_fields_validation_via_admin(self):
         """
-        Тест на валидацию некорректных значений полей через
-        административную часть.
+        Тест на валидацию некорректных значений полей.
+
+        Через административную часть.
         """
         url = f"/admin/main/staffteammember/{self.future_obj_id}/change/"
         self.incorrect_field_tests_via_url(url=url, _save="Сохранить", team=1)
@@ -598,8 +604,9 @@ class StaffTeamMemberCrudTest(ModelTestBaseClass):
 
     def test_staff_team_member_fields_admit_values_via_admin(self):
         """
-        Тест на допуск корректных значений полей через административную
-        часть.
+        Тест на допуск корректных значений полей.
+
+        Через административную часть.
         """
         url = f"/admin/main/staffteammember/{self.future_obj_id}/change/"
         self.correct_field_tests(url=url, team=1)
@@ -659,15 +666,18 @@ class TeamCrudTest(ModelTestBaseClass):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Классовый метод для базовой настройки всех тестов класса."""
         super().setUpClass()
         cls.user_agent = UserFactory.create(role=ROLE_AGENT)
 
     def get_correct_create_schema(self):
+        """Метод на формирование корректной схемы создания объектов."""
         schema = super(TeamCrudTest, self).get_correct_create_schema()
         schema["curator"] = self.user_agent
         return schema
 
     def get_correct_update_schema(self):
+        """Метод на формирование корректной схемы обновления объектов."""
         schema = super().get_correct_update_schema()
         schema["curator"] = self.user_agent
         return schema
@@ -758,8 +768,9 @@ class TeamCrudTest(ModelTestBaseClass):
 
     def test_team_fields_admit_values_via_admin(self):
         """
-        Тест на допуск корректных значений полей через административную
-        часть.
+        Тест на допуск корректных значений полей.
+
+        Через административную часть.
         """
         url = f"/admin/main/team/{self.future_obj_id}/change/"
         self.correct_field_tests(

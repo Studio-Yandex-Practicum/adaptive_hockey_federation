@@ -28,9 +28,11 @@ TEST_GROUP_NAME = "no_permission_group"
 
 
 class TestAuthUrls:
+    """Тесты авторизации пользователей."""
 
     @pytest.mark.django_db(transaction=True)
     def test_auth_urls(self, client):
+        """Тесты на логин и логаут пользователя."""
         urls = {"/auth/login/": 200, "/auth/logout/": 302}
         for url, status in urls.items():
             try:
@@ -50,6 +52,8 @@ class TestAuthUrls:
 
 
 class TestUrls(TestCase):
+    """Тесты на проверку url-путей."""
+
     user: User | Any = None
     user_agent: User | Any = None
     team: Team | Any = None
@@ -63,6 +67,7 @@ class TestUrls(TestCase):
     def setUpClass(cls) -> None:
         """
         Создает необходимые сущности (объекты моделей БД).
+
         Запускается только один раз (в отличие от метода setUp),
         не сбрасывается после каждого теста, что помогает
         избежать многократного создания сущностей и, как следствие, смены id
@@ -114,6 +119,7 @@ class TestUrls(TestCase):
         cls.player_2.team.add(cls.team_2)
 
     def setUp(self):
+        """Метод для базовой настройки тестов класса."""
         self.client = Client()
         self.user = User.objects.create_user(
             password=test_password,
@@ -127,6 +133,7 @@ class TestUrls(TestCase):
         }
 
     def delete_user(self, user_id):
+        """Метод для запуска удаления пользователя."""
         try:
             user = User.objects.get(id=user_id)
             user.delete()
@@ -168,6 +175,7 @@ class TestUrls(TestCase):
     def test_main_urls(self):
         """
         Тесты основных урл.
+
         Для тестирования нового урл - добавить соответствующий объект класса
         UrlToTest в список urls (см. документацию к классу UrlToTest).
         """

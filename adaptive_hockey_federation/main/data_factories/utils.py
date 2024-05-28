@@ -5,8 +5,9 @@ from main.models import DisciplineLevel, DisciplineName, Player, Team
 
 def check_len(field, max, min):
     """
-    Функция проверяет количество созданны фабрикой слов,
-    и при необходимости коректирует их число до требуемого.
+    Функция проверяет количество созданных фабрикой слов.
+
+    При необходимости коректирует их число до требуемого.
     """
     words = field.split()
     count = min - len(words)
@@ -27,10 +28,12 @@ def get_random_objects(model):
 
 def updates_for_players():
     """
-    Обновления записей игроков в базе данных. Функция проходит по всем
-    существующим командам, присваивает должности капитанов и помощников,
-    в каждой команде по одному капитану и помощнику. Затем к каждому игроку
-    в команде присваевается дисциплина которая соответствует его команде.
+    Обновления записей игроков в базе данных.
+
+    Функция проходит по всем существующим командам, присваивает должности
+    капитанов и помощников, в каждой команде по одному капитану и помощнику.
+    Затем к каждому игроку в команде присваивается дисциплина,
+    которая соответствует его команде.
     """
     teams = Team.objects.all()
     for team in teams:
@@ -50,5 +53,6 @@ def updates_for_players():
         captain.save()
         assistent.save()
         player_in_team.update(
-            discipline_name=discipline_name, discipline_level=discipline_level,
+            discipline_name=discipline_name,
+            discipline_level=discipline_level,
         )

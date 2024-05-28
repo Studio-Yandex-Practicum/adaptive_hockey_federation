@@ -26,19 +26,23 @@ class CustomPermissionMixin(PermissionRequiredMixin, UserPassesTestMixin):
     """
 
     def dispatch(self, request, *args, **kwargs):
+        """Метод, обрабатывающий запрос и определяющий разрешение на доступ."""
         if not (
             PermissionRequiredMixin.has_permission(self)
             and UserPassesTestMixin.get_test_func(self)()
         ):
             return self.handle_no_permission()
         return super(PermissionRequiredMixin, self).dispatch(
-            request, *args, **kwargs,
+            request,
+            *args,
+            **kwargs,
         )
 
 
 class PlayerIdPermissionsMixin(CustomPermissionMixin):
     """
     Миксин настройки разрешений для вью-классов PlayerIdView.
+
     Ограничивает права представителя на доступ к представлениям игроков не
     своих команд.
 
@@ -56,6 +60,7 @@ class PlayerIdPermissionsMixin(CustomPermissionMixin):
     """
 
     def test_func(self) -> bool | None:
+        """Метод определяет разрешение на доступ к представлениям игроков."""
         request = self.__getattribute__("request")
         if not (user := request.user).is_agent:
             return True
@@ -73,6 +78,7 @@ class PlayerIdPermissionsMixin(CustomPermissionMixin):
 class TeamEditPermissionsMixin(CustomPermissionMixin):
     """
     Миксин настройки разрешений для вью-классов TeamIdView.
+
     Ограничивает права представителя на доступ к представлениям не своих
     команд.
 
@@ -85,6 +91,7 @@ class TeamEditPermissionsMixin(CustomPermissionMixin):
     """
 
     def test_func(self) -> bool | None:
+        """Метод определяет разрешение на доступ к представлениям команд."""
         user = self.__getattribute__("request").user
         team = self.__getattribute__("get_object")()
         return not user.is_agent or team.curator == user
