@@ -27,6 +27,8 @@ DEFAULT_APPS = [
 
 EXTERNAL_APPS = [
     'phonenumber_field',
+    'rest_framework',
+    'drf_yasg',
 ]
 
 LOCAL_APPS = [
@@ -36,7 +38,8 @@ LOCAL_APPS = [
     'competitions.apps.CompetitionsConfig',
     'analytics.apps.AnalyticsConfig',
     'unloads.apps.UnloadsConfig',
-    'games.apps.GamesConfig'
+    'games.apps.GamesConfig',
+    'video_api.apps.VideoApiConfig',
 ]
 
 INSTALLED_APPS = EXTERNAL_APPS + DEFAULT_APPS + LOCAL_APPS
@@ -128,3 +131,33 @@ PHONENUMBER_DEFAULT_FORMAT = 'INTERNATIONAL'
 #LOGIN_REDIRECT_URL = '/players/'
 
 LOGOUT_REDIRECT_URL = 'login'
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'name': 'X-API-KEY',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    'DEFAULT_API_URL': 'http://127.0.0.1:8000/api/'
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'video_api.permissions.HasAPIDocsKey',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ),
+}
+
+API_DOCS_KEY = env('API_DOCS_KEY', default='8f2d9e1b2c4e6f')
