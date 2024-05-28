@@ -11,6 +11,7 @@ from main.models import DisciplineName, Team
 
 
 class CustomDisciplineMultipleChoiceField(ModelMultipleChoiceField):
+    """Множественное поле выбора для дисциплин."""
 
     def _check_values(self, value):
         try:
@@ -26,6 +27,13 @@ class CompetitionForm(forms.ModelForm):
     """Форма для соревнований."""
 
     def __init__(self, *args, **kwargs):
+        """
+        Метод инициализации экземпляра класса.
+
+        1. Вызывает метод, делающий поля неактивными при соблюдении
+        условия
+        2. Включает валидацию полей, если они активны.
+        """
         super(CompetitionForm, self).__init__(*args, **kwargs)
         if self.instance and self.instance.id:
             self.set_readonly("date_start", self.instance.is_started)
@@ -60,21 +68,23 @@ class CompetitionForm(forms.ModelForm):
 
     date_start = forms.DateField(
         widget=forms.DateInput(
-            attrs={"type": "date", "class": "form-control"}
+            attrs={"type": "date", "class": "form-control"},
         ),
         label="Дата начала",
         error_messages={"required": "Пожалуйста, укажите дату начала."},
     )
     date_end = forms.DateField(
         widget=forms.DateInput(
-            attrs={"type": "date", "class": "form-control"}
+            attrs={"type": "date", "class": "form-control"},
         ),
         label="Дата завершения",
         error_messages={"required": "Пожалуйста, укажите дату завершения."},
     )
 
     def set_readonly(self, field: str, readonly_value: bool):
-        """Делает поле формы неактивным при соблюдении условия.
+        """
+        Делает поле формы неактивным при соблюдении условия.
+
         - field - название поля.
         - readonly_value - любое bool условие. Если условие не
         соблюдается, поле активируется.
@@ -94,12 +104,14 @@ class CompetitionForm(forms.ModelForm):
         ]
 
     def save_m2m(self):
+        """Метод сохраняет M2M связи между соревнованиями и дисциплинами."""
         self.instance.disciplines.through.objects.filter(
-            disciplinename__in=self.cleaned_data["disciplines"]
+            disciplinename__in=self.cleaned_data["disciplines"],
         ).delete()
         self.instance.disciplines.set(self.cleaned_data["disciplines"])
 
     def save(self, commit=True):
+        """Метод создает и сохраняет объект соревнования в базе данных."""
         instance = super(CompetitionForm, self).save(commit=True)
         if commit:
             instance.save()
@@ -107,6 +119,7 @@ class CompetitionForm(forms.ModelForm):
         return instance
 
     def clean(self):
+        """Метод, выполняющий валидацию полей формы."""
         cleaned_data = super().clean()
         date_start = cleaned_data.get("date_start")
         date_end = cleaned_data.get("date_end")
@@ -114,22 +127,30 @@ class CompetitionForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Дата окончания соревнования должна "
                 "быть позже или совпадать с датой "
-                "начала."
+                "начала.",
             )
         return cleaned_data
 
 
 class TeamField(forms.ModelChoiceField):
-    """Заказное поле для выбора названия команды.
+    """
+    Заказное поле для выбора названия команды.
+
     Работает с виджетом TextInput.
     Для корректного отображения на вэб-странице должен быть элемент:
         <datalist id="available_teams">
             <option_value="Название команды"></option>
             ...и так для каждой команды в списке.
-        </datalist>
+        </datalist>.
     """
 
     def __init__(self, competition: Competition):
+        """
+        Метод инициализации экземпляра класса.
+
+        1. Добавляет виджет для поиска команды по названию
+        2. Добавляет атрибут competition.
+        """
         super(TeamField, self).__init__(
             queryset=Team.objects.all(),
             widget=forms.TextInput(
@@ -140,7 +161,7 @@ class TeamField(forms.ModelChoiceField):
                         "Начните вводить название команды "
                         "и выберите из списка"
                     ),
-                }
+                },
             ),
             label="Поиск команды для допуска",
         )
@@ -148,7 +169,6 @@ class TeamField(forms.ModelChoiceField):
 
     def clean(self, value: Any) -> Any:
         """Переопределенный метод родительского класса."""
-
         if not isinstance(value, str) or value in self.empty_values:
             raise ValidationError(self.error_messages["required"])
 
@@ -163,8 +183,15 @@ class TeamField(forms.ModelChoiceField):
 
 
 class CompetitionUpdateForm(CompetitionForm):
+    """Форма для обновления соревнований."""
 
     def __init__(self, *args, **kwargs):
+        """
+        Метод инициализации экземпляра класса.
+
+        1. Добавляет множественное поле выбора для disciplines
+        2. Добавляет множественное поле выбора для available_disciplines.
+        """
         super(CompetitionForm, self).__init__(*args, **kwargs)
         if queryset := self.instance.disciplines.all():
             self.fields["disciplines"] = CustomDisciplineMultipleChoiceField(
@@ -185,10 +212,19 @@ class CompetitionUpdateForm(CompetitionForm):
 
 
 class CompetitionTeamForm(forms.ModelForm):
-    """Форма для добавления команд в соревнование.
-    Работает с промежуточной моделью Competition_Team."""
+    """
+    Форма для добавления команд в соревнование.
+
+    Работает с промежуточной моделью Competition_Team.
+    """
 
     def __init__(self, *args, **kwargs):
+        """
+        Метод инициализации экземпляра класса.
+
+        1. Добавляет атрибут competition
+        2. Добавляет поле выбора team.
+        """
         self.competition = kwargs.pop("competition")
         super(CompetitionTeamForm, self).__init__(*args, **kwargs)
         self.fields["team"] = TeamField(competition=self.competition)
@@ -198,6 +234,7 @@ class CompetitionTeamForm(forms.ModelForm):
         fields = ["team"]
 
     def save(self, commit=True):
+        """Метод создает и сохраняет объект в базе данных."""
         instance = super(CompetitionTeamForm, self).save(commit=False)
         if commit:
             instance.save()

@@ -7,9 +7,7 @@ CHAR_FIELD_LENGTH = 250
 
 
 class Competition(models.Model):
-    """
-    Модель соревнований.
-    """
+    """Модель соревнований."""
 
     title = models.CharField(max_length=CHAR_FIELD_LENGTH)
     date_start = models.DateField()
@@ -51,12 +49,11 @@ class Competition(models.Model):
         ]
 
     def __str__(self):
+        """Метод, использующий поле title для строкового представления."""
         return self.title
 
     def period_duration(self):
-        """
-        Функция рассчитывает длительность турнира.
-        """
+        """Функция рассчитывает длительность турнира."""
         duration = self.date_end - self.date_start
         return pluralize_days(duration.days + 1)
 

@@ -4,7 +4,7 @@ CORRECT_UPDATE = "correct_update"
 
 def get_range_string(start_symbol: str, end_symbol: str) -> str:
     return "".join(
-        [chr(i) for i in range(ord(start_symbol), ord(end_symbol) + 1)]
+        [chr(i) for i in range(ord(start_symbol), ord(end_symbol) + 1)],
     )
 
 

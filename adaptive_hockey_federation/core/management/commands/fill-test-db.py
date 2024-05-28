@@ -38,9 +38,12 @@ STAFF = {
 
 
 class Command(BaseCommand):
+    """Класс для наполнения базы данных тестовыми данными."""
+
     help = "Наполнение базы данных тестовыми данными."
 
     def add_arguments(self, parser):
+        """Добавляет новые аргументы для командной строки."""
         parser.add_argument(
             "-u",
             "--users",
@@ -98,6 +101,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):  # noqa: C901
+        """Метод для наполнения базы тестовыми данными."""
         test_users = options.get("users", False)
         diagnosis = options.get("diagnosis", False)
         staff_team = options.get("staffteam", False)
@@ -113,42 +117,43 @@ class Command(BaseCommand):
                 UserFactory.create_batch(amount, role=role)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{users_amount} фикстур для таблицы User создано!"
-                )
+                    f"{users_amount} фикстур для таблицы User создано!",
+                ),
             )
         if diagnosis:
             DiagnosisFactory.create_batch(amount)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Diagnosis создано!"
-                )
+                    f"{amount} фикстур для таблицы Diagnosis создано!",
+                ),
             )
         if staff_team:
             staff_amount = sum(STAFF.values())
             for staff_position, amount in STAFF.items():
                 StaffTeamMemberFactory.create_batch(
-                    amount, staff_position=staff_position
+                    amount,
+                    staff_position=staff_position,
                 )
             return self.stdout.write(
                 self.style.SUCCESS(
                     f"{staff_amount} фикстур для таблицы "
-                    "StaffTeamMember создано!"
-                )
+                    "StaffTeamMember создано!",
+                ),
             )
         if team:
             TeamFactory.create_batch(amount)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Team созданы!"
-                )
+                    f"{amount} фикстур для таблицы Team созданы!",
+                ),
             )
         if player:
             PlayerFactory.create_batch(amount)
             updates_for_players()
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Player созданы!"
-                )
+                    f"{amount} фикстур для таблицы Player созданы!",
+                ),
             )
         if document:
             players = Player.objects.all()
@@ -157,20 +162,20 @@ class Command(BaseCommand):
                 DocumentFactory.create_batch(num_docs, player=player)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{num_docs} фикстур для таблицы Document созданы!"
-                )
+                    f"{num_docs} фикстур для таблицы Document созданы!",
+                ),
             )
         if competition:
             CompetitionFactory.create_batch(amount)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Competition созданы!"
-                )
+                    f"{amount} фикстур для таблицы Competition созданы!",
+                ),
             )
         if unload:
             UnloadFactory.create_batch(AMOUNT_UNLOADS)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{AMOUNT_UNLOADS} фикстуры для Unloads созданы."
-                )
+                    f"{AMOUNT_UNLOADS} фикстуры для Unloads созданы.",
+                ),
             )

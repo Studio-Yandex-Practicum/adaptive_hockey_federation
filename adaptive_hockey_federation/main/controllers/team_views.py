@@ -27,16 +27,20 @@ class StaffTeamMemberListMixin:
 
     @staticmethod
     def get_staff(
-        position: str | None = None, team_to_exclude: Team | None = None
+        position: str | None = None,
+        team_to_exclude: Team | None = None,
     ):
-        """Формирует кортеж из сотрудников команд (StaffTeamMember).
+        """
+        Формирует кортеж из сотрудников команд (StaffTeamMember).
+
         Формат элемента кортежа: "Фамилия Имя Отчество, должность (ID: id)",
         Если передан параметр position, то выбор фильтруется по полю
-        staff_position и значению этого параметра."""
+        staff_position и значению этого параметра.
+        """
         filters = {"staff_position": position} if position else {}
         exclude = {"team": team_to_exclude} if team_to_exclude else {}
         query_set = StaffTeamMember.objects.filter(**filters).exclude(
-            **exclude
+            **exclude,
         )
         staffs = query_set.annotate(
             fio=Concat(
@@ -45,7 +49,7 @@ class StaffTeamMemberListMixin:
                 "staff_member__name",
                 Value(" "),
                 "staff_member__patronymic",
-            )
+            ),
         ).values("fio", "staff_position", "id")
         return tuple(
             f"{i['fio']}, " f"{i['staff_position']} " f"(ID: {i['id']})"
@@ -53,17 +57,24 @@ class StaffTeamMemberListMixin:
         )
 
     def get_coaches(self, team_to_exclude: Team | None = None):
+        """Получить сотрудника команды с позицией тренер."""
         return self.get_staff("тренер", team_to_exclude=team_to_exclude)
 
     def get_pushers(self, team_to_exclude: Team | None = None):
+        """Получить сотрудника команды с позицией пушер-тьютор."""
         return self.get_staff("пушер-тьютор", team_to_exclude=team_to_exclude)
 
 
 class TeamIdView(
-    PermissionRequiredMixin, DetailView, StaffTeamMemberListMixin
+    PermissionRequiredMixin,
+    DetailView,
+    StaffTeamMemberListMixin,
 ):
-    """Вид команды.
-    Детальный просмотр команды по игрокам и сотрудникам."""
+    """
+    Вид команды.
+
+    Детальный просмотр команды по игрокам и сотрудникам.
+    """
 
     model = Team
     form_class = TeamForm
@@ -75,6 +86,7 @@ class TeamIdView(
     )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Team, id=self.kwargs["team_id"])
 
     def update_context_with_staff_add_form(
@@ -85,8 +97,10 @@ class TeamIdView(
         data_list: tuple[str, ...] = ("",),
         data_list_id: str = "available_staffs",
     ):
+        """Обновить словарь context с помощью StaffTeamMemberAddToTeamForm."""
         new_staff_form = StaffTeamMemberAddToTeamForm(
-            position_filter=position_filter, team=self.get_object()
+            position_filter=position_filter,
+            team=self.get_object(),
         )
         update_data = {
             "add_staff_form": new_staff_form,
@@ -96,23 +110,34 @@ class TeamIdView(
         context["staff_table"][staff_table_index].update(update_data)
 
     def update_context_with_additional_forms(self, context):
-        """Добавляет в контекст формы добавления тренера и пушера в команду.
+        """
+        Добавляет в контекст формы добавления тренера и пушера в команду.
+
         Также добавляет соответствующие списки для инкрементного поиска в
         поле форм.
         - context: параметр по ссылке, т.е. данная переменная будет изменена в
-          вызывающей функции."""
-
+        вызывающей функции.
+        """
         data_list = self.get_coaches(team_to_exclude=self.object)
         self.update_context_with_staff_add_form(
-            context, TRAINER, 0, data_list, "available_coaches"
+            context,
+            TRAINER,
+            0,
+            data_list,
+            "available_coaches",
         )
 
         data_list = self.get_pushers(team_to_exclude=self.object)
         self.update_context_with_staff_add_form(
-            context, OTHER, 1, data_list, "available_pushers"
+            context,
+            OTHER,
+            1,
+            data_list,
+            "available_pushers",
         )
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         team = self.object
         players = (
@@ -168,12 +193,17 @@ class TeamListView(
     ordering = ["name"]
 
     def get_queryset(self):
+        """Получить набор QuerySet."""
         queryset = super().get_queryset()
         return model_get_queryset(
-            "teams", Team, dict(self.request.GET), queryset
+            "teams",
+            Team,
+            dict(self.request.GET),
+            queryset,
         )
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         teams = context["teams"]
         user = self.request.user
@@ -208,10 +238,12 @@ class UpdateTeamView(
     permission_denied_message = "Отсутствует разрешение на изменение команд."
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         team_id = self.kwargs.get("team_id")
         return get_object_or_404(Team, pk=team_id)
 
     def get_form_kwargs(self):
+        """Получить аргументы для формы."""
         kwargs = super(UpdateTeamView, self).get_form_kwargs()
         kwargs.update(
             initial={"city": self.object.city.name},
@@ -220,6 +252,7 @@ class UpdateTeamView(
         return kwargs
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super(UpdateTeamView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         context["page_title"] = "Редактирование данных команды"
@@ -236,12 +269,16 @@ class DeleteTeamView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     permission_denied_message = "Отсутствует разрешение на удаление команд."
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         team_id = self.kwargs.get("team_id")
         return get_object_or_404(Team, pk=team_id)
 
 
 class CreateTeamView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView,
+    CityListMixin,
 ):
     """Вид с формой создания новой спортивной команды."""
 
@@ -253,10 +290,12 @@ class CreateTeamView(
     permission_denied_message = "Отсутствует разрешение на создание команд."
 
     def form_valid(self, form):
+        """Запустить валидацию формы."""
         form.save()
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super(CreateTeamView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         context["page_title"] = "Создание команды"
@@ -275,10 +314,12 @@ class FireStaffFromTeam(
     object = StaffTeamMember.team.through
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном удалении."""
         team_id = self.kwargs["team_id"]
         return reverse("main:teams_id", args=[team_id])
 
     def get_object(self):
+        """Получить объект по id team и staff или выбросить ошибку 404."""
         team_id = self.kwargs["team_id"]
         staff_team_member_id = self.kwargs["staff_team_member_id"]
         return get_object_or_404(
@@ -288,6 +329,7 @@ class FireStaffFromTeam(
         )
 
     def test_func(self):
+        """Выполнить проверку разрешения на доступ к объекту."""
         team = get_object_or_404(Team, id=self.kwargs["team_id"])
         user = self.request.user
         return not user.is_agent or team.curator == user
