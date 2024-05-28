@@ -315,7 +315,7 @@ class PlayerGamesVideo(
     """Список видео игр с участием игрока"""
 
     model = Player
-    template_name = "main/games/games.html"
+    template_name = "main/player_id/player_id_video_games.html"
     permission_required = "main.view_player"
     permission_denied_message = (
         "У Вас нет разрешения на просмотр видео игр с участием игрока."
