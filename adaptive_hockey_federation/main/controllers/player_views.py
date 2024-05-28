@@ -345,10 +345,9 @@ class PlayerGamesVideo(
     context_object_name = "player"
 
     def get_queryset(self) -> Player | None:  # type: ignore[override]
-        """Метод для получения набора QuerySet."""
+        """Получить набор QuerySet с играми команды игрока."""
         teams_games = Prefetch(
-            "team",
-            queryset=Team.objects.prefetch_related("game_teams"),
+            "team", queryset=Team.objects.prefetch_related("game_teams"),
         )
         player = Player.objects.prefetch_related(teams_games).filter(
             id=self.kwargs["pk"],
@@ -358,7 +357,7 @@ class PlayerGamesVideo(
         return player.first()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
-        """Метод для получения словаря context в шаблоне страницы."""
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         player = context["player"]
         data_key = ("pk", "name", "video_link")
