@@ -27,7 +27,7 @@ class GamesListView(
     ordering = ["name"]
 
     def get_queryset(self) -> QuerySet[Any]:
-        return Game.objects.all().prefetch_related("teams")
+        return Game.objects.all().prefetch_related("game_teams")
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -35,8 +35,8 @@ class GamesListView(
         table_data = []
         for game in games:
             first_team, second_team = (
-                game.teams.values().first(),
-                game.teams.values().last(),
+                game.game_teams.values().first(),
+                game.game_teams.values().last(),
             )
             table_data.append(
                 {
