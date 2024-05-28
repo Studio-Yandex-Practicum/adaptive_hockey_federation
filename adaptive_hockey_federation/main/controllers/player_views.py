@@ -1,10 +1,13 @@
+from typing import Any
+
 from core.constants import FILE_RESOLUTION
 from core.utils import is_uploaded_file_valid
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.http import JsonResponse
+from django.db.models import Prefetch
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -13,7 +16,7 @@ from django.views.generic.list import ListView
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
-from main.models import Diagnosis, DisciplineLevel, Player
+from main.models import Diagnosis, DisciplineLevel, Player, Team
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
     get_player_fields,
@@ -324,6 +327,55 @@ class PlayerIDDeleteView(
     def get_object(self, queryset=None):
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
+
+
+class PlayerGamesVideo(
+    LoginRequiredMixin,
+    PlayerIdPermissionsMixin,
+    ListView,
+):
+    """Список видео игр с участием игрока"""
+
+    model = Player
+    template_name = "main/player_id/player_id_video_games.html"
+    permission_required = "main.view_player"
+    permission_denied_message = (
+        "У Вас нет разрешения на просмотр видео игр с участием игрока."
+    )
+    context_object_name = "player"
+
+    def get_queryset(self) -> Player | None:  # type: ignore[override]
+        teams_games = Prefetch(
+            "team", queryset=Team.objects.prefetch_related("game_teams")
+        )
+        player = Player.objects.prefetch_related(teams_games).filter(
+            id=self.kwargs["pk"]
+        )
+        if not player.exists():
+            raise Http404("Игрока не существует")
+        return player.first()
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+
+        context = super().get_context_data(**kwargs)
+        player = context["player"]
+        data_key = ("pk", "name", "video_link")
+        table_data = []
+        for team in player.team.all():
+            table_data.extend(
+                [
+                    {key: getattr(game, key) for key in data_key}
+                    for game in team.game_teams.all()
+                ]
+            )
+
+        context["table_head"] = {
+            "pk": "Nr.",
+            "name": "Название",
+            "video_link": "Ссылка на видео",
+        }
+        context["table_data"] = table_data
+        return context
 
 
 def player_id_deleted(request):
