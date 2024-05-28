@@ -9,7 +9,7 @@ from rest_framework import permissions
 schema_view = get_schema_view(
     openapi.Info(
         title="API",
-        default_version='v1',
+        default_version="v1",
         description="API для управления данными игроков и игр",
     ),
     public=True,
@@ -18,11 +18,11 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('api/', include('video_api.urls')),
-    path('api/docs/', schema_view.with_ui(
-        'swagger',
+    path("api/", include("video_api.urls")),
+    path("api/docs/", schema_view.with_ui(
+        "swagger",
         cache_timeout=0),
-        name='schema-swagger-ui'),
+        name="schema-swagger-ui"),
     path("", include("main.urls", namespace="main")),
     path("", include("users.urls", namespace="users")),
     path("", include("competitions.urls", namespace="competitions")),
