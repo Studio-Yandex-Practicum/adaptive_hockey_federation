@@ -4,8 +4,7 @@ from main.models import Player
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
-from .serializers import GameSerializer, PlayerSerializer
+from video_api.serializers import GameSerializer, PlayerSerializer
 
 
 @swagger_auto_schema(method='post', request_body=PlayerSerializer)
