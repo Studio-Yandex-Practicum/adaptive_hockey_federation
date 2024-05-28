@@ -146,7 +146,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Переопределенный метод модели.
         При любом сохранении устанавливает группу пользователя в зависимости
         от его роли."""
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(
+            force_insert, force_update, using, update_fields
+        )  # type: ignore
         self.set_group()
 
     @property
