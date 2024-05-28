@@ -34,9 +34,6 @@ const disciplineNamePicker = new OptionsPicker(
 fetch('/ajax/filter-discipline-search/')
     .then(response => response.json())
     .then(data => {
-        // Очистка текущих опций в optionsPicker
-        disciplineNamePicker.clearOptions();
-
         // Добавление новых опций из полученных данных
         data.forEach(discipline => {
             disciplineNamePicker.addOption(discipline.id, discipline.name);
