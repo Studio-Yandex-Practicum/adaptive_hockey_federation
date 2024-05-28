@@ -7,28 +7,28 @@ from users.views import (
     UsersListView,
 )
 
-app_name = 'users'
+app_name = "users"
 
 users_urlpatterns = [
     path(
-        '',
+        "",
         UsersListView.as_view(),
-        name='users'
+        name="users",
     ),
     path(
-        'create/',
+        "create/",
         CreateUserView.as_view(),
-        name='user_create'
+        name="user_create",
     ),
     path(
-        '<int:pk>/edit/',
+        "<int:pk>/edit/",
         UpdateUserView.as_view(),
-        name='user_update'
+        name="user_update",
     ),
     path(
-        '<int:pk>/delete/',
+        "<int:pk>/delete/",
         DeleteUserView.as_view(),
-        name='user_delete'
+        name="user_delete",
     ),
     path(
         "set_password/<uidb64>/<token>/",
@@ -38,5 +38,5 @@ users_urlpatterns = [
 ]
 
 urlpatterns = [
-    path('users/', include(users_urlpatterns))
+    path("users/", include(users_urlpatterns)),
 ]

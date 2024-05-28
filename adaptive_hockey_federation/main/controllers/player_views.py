@@ -28,6 +28,8 @@ class PlayersListView(
     PermissionRequiredMixin,
     ListView,
 ):
+    """Представление для работы со списком игроков."""
+
     model = Player
     template_name = "main/players/players.html"
     permission_required = "main.list_view_player"
@@ -49,13 +51,16 @@ class PlayersListView(
     ]
 
     def get_queryset(self):
-
+        """Получить набор QuerySet."""
         queryset = super().get_queryset()
         dict_param = dict(self.request.GET)
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
         if len(dict_param) > 1 and "search_column" in dict_param:
             queryset = model_get_queryset(
-                "players", Player, dict_param, queryset
+                "players",
+                Player,
+                dict_param,
+                queryset,
             )
 
         return (
@@ -65,6 +70,7 @@ class PlayersListView(
         )
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         table_head = {}
         for field in self.fields:
@@ -103,6 +109,7 @@ class PlayerIDCreateView(
     team_id: int | None = None
 
     def form_valid(self, form):
+        """Запустить валидацию формы."""
         player = form.save()
 
         self.add_new_documents(
@@ -114,35 +121,39 @@ class PlayerIDCreateView(
         self.delete_documents(
             player=player,
             deleted_files_paths=self.request.POST.getlist(
-                "deleted_file_path[]"
+                "deleted_file_path[]",
             ),
         )
         return super().form_valid(form)
 
     def get(self, request, *args, **kwargs):
+        """Обработчик GET-запроса."""
         self.team_id = request.GET.get("team", None)
         if self.team_id is not None:
             self.initial = {"team": self.team_id}
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         if self.team_id is not None:
             context["team_id"] = self.team_id
         context["page_title"] = "Создание профиля нового игрока"
         context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
-            ["." + res for res in FILE_RESOLUTION]
+            ["." + res for res in FILE_RESOLUTION],
         )
         return context
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном создании."""
         if self.team_id is None:
             return reverse("main:players")
         else:
             return reverse("main:teams_id", kwargs={"team_id": self.team_id})
 
     def post(self, request, *args, **kwargs):
+        """Обработчик POST-запроса."""
         new_files_paths = self.request.FILES.getlist("new_file_path[]")
         for file in new_files_paths:
             if not is_uploaded_file_valid(file):
@@ -162,6 +173,8 @@ class PlayerIdView(
     PlayerIdPermissionsMixin,
     DetailView,
 ):
+    """Представление для отображения отдельного игрока."""
+
     model = Player
     template_name = "main/player_id/player_id.html"
     permission_required = "main.view_player"
@@ -188,15 +201,13 @@ class PlayerIdView(
         "number",
         "document",
     ]
-    permission_required = "main.view_player"
-    permission_denied_message = (
-        "У Вас нет разрешения на просмотр персональных данных игрока."
-    )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         player = context["player"]
         player_documents = self.get_object().player_documemts.all()
@@ -213,6 +224,8 @@ class PlayerIDEditView(
     DiagnosisListMixin,
     UpdateView,
 ):
+    """Представление для обновления игрока."""
+
     model = Player
     template_name = "main/player_id/player_id_create_edit.html"
     form_class = PlayerUpdateForm
@@ -222,6 +235,7 @@ class PlayerIDEditView(
     )
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse(
             "main:player_id",
             kwargs={
@@ -230,27 +244,31 @@ class PlayerIDEditView(
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
     def get_initial(self):
+        """Добавить в словарь initial объект диагноза."""
         initial = {
             "diagnosis": self.object.diagnosis.name,
         }
         return initial
 
     def get_context_data(self, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         player_documents = self.get_object().player_documemts.all()
         context["page_title"] = "Редактирование профиля игрока"
         context["player_documents"] = player_documents
         context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
-            ["." + res for res in FILE_RESOLUTION]
+            ["." + res for res in FILE_RESOLUTION],
         )
         context["help_text_role"] = "Команды игрока"
         return context
 
     def form_valid(self, form):
+        """Запустить валидацию формы."""
         player = form.save()
 
         self.add_new_documents(
@@ -262,13 +280,14 @@ class PlayerIDEditView(
         self.delete_documents(
             player=player,
             deleted_files_paths=self.request.POST.getlist(
-                "deleted_file_path[]"
+                "deleted_file_path[]",
             ),
         )
 
         return super().form_valid(form)
 
     def post(self, request, *args, **kwargs):
+        """Обработчик POST-запросов."""
         new_files_paths = self.request.FILES.getlist("new_file_path[]")
         player_documents = self.get_object().player_documemts.all()
         for file in new_files_paths:
@@ -292,6 +311,8 @@ class PlayerIDDeleteView(
     PermissionRequiredMixin,
     DeleteView,
 ):
+    """Представление для удаления игрока."""
+
     model = Player
     object = Player
     success_url = reverse_lazy("main:players")
@@ -301,30 +322,30 @@ class PlayerIDDeleteView(
     )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
 
 def player_id_deleted(request):
-    """
-    Представление для отображения информации об успешном удалении карточки
-    игрока.
-    """
+    """View для отображения информации об успешном удалении игрока."""
     return render(request, "main/player_id/player_id_deleted.html")
 
 
 def load_discipline_levels(request):
     """
-    Представление для получения списка уровней дисциплин по ID
-    дисциплины. Используется в формах создания/редактирования данных игрока.
+    Представление для получения списка уровней дисциплин по ID дисциплины.
+
+    Используется в формах создания/редактирования данных игрока.
     """
     discipline_level_id = request.GET.get("discipline_level_id")
     try:
         discipline_statuses = DisciplineLevel.objects.filter(
-            discipline_name_id=discipline_level_id
+            discipline_name_id=discipline_level_id,
         ).all()
     except ValueError:
         return JsonResponse([], safe=False)
     else:
         return JsonResponse(
-            list(discipline_statuses.values("id", "name")), safe=False
+            list(discipline_statuses.values("id", "name")),
+            safe=False,
         )

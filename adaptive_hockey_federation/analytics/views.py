@@ -13,15 +13,18 @@ class AnalyticsListView(
     AdminRequiredMixin,
     PlayersListView,
 ):
+    """View-класс для отображения страницы с аналитикой."""
+
     template_name = "analytics/analytics.html"
 
     def get_queryset(self):
+        """Метод для получения QuerySet с заданными параметрами."""
         queryset = super().get_queryset()
         dict_param = dict(self.request.GET)
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
         if len(dict_param) > 0:
             queryset = model_get_queryset(
-                "analytics", Player, dict_param, queryset
+                "analytics", Player, dict_param, queryset,
             )
         return (
             queryset.select_related("diagnosis")
@@ -30,6 +33,7 @@ class AnalyticsListView(
         )
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         date_18_years_ago = datetime.now() - relativedelta(years=18)
         context["form"] = AnalyticsFilterForm(self.request.GET or None)
@@ -41,7 +45,7 @@ class AnalyticsListView(
                     teams_count := Team.objects.filter(
                         id__in=self.get_queryset()
                         .values_list("team", flat=True)
-                        .distinct()
+                        .distinct(),
                     ).count(),
                 ),
                 ("городов", teams_count),
@@ -83,8 +87,8 @@ class AnalyticsListView(
                     Nosology.objects.filter(
                         diagnosis__in=self.get_queryset()
                         .values_list("diagnosis", flat=True)
-                        .distinct()
-                    ).distinct()
+                        .distinct(),
+                    ).distinct(),
                 )
             ],
         }

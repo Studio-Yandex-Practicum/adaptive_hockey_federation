@@ -34,9 +34,7 @@ def get_staff_fields(staff):
 
 
 def add_pisition_in_context(queryset=None):
-    """
-    Функция добавления формы staff_member по позициям в context
-    """
+    """Функция добавления формы staff_member по позициям в context."""
     team_fields = []
     if queryset.exists():
         for staff_team in queryset:
@@ -44,7 +42,7 @@ def add_pisition_in_context(queryset=None):
                 "Команда",
                 ", ".join(
                     [team.name for team in staff_team.team.all()]
-                    if staff_team.team.all().exists() else ['Свободный агент']
+                    if staff_team.team.all().exists() else ["Свободный агент"],
                 ),
             ))
             team_fields.append(

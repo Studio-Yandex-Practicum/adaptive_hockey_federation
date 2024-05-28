@@ -72,6 +72,7 @@ class CompetitionListView(
             raise PermissionDenied(self.get_permission_denied_message())
 
     def get_queryset(self):
+        """Метод для получения QuerySet с заданными параметрами."""
         queryset = super().get_queryset()
         search_params = self.request.GET.dict()
         search_column = search_params.get("search_column")
@@ -83,7 +84,7 @@ class CompetitionListView(
                     | Q(city__name__icontains=search)
                     | Q(date_start__icontains=search)
                     | Q(date_end__icontains=search)
-                    | Q(pk__icontains=search)
+                    | Q(pk__icontains=search),
                 )
             elif search_column == "title":
                 queryset = queryset.filter(title__icontains=search)
@@ -98,7 +99,7 @@ class CompetitionListView(
                             then=Value("true"),
                         ),
                         default=Value("false"),
-                    )
+                    ),
                 ).filter(is_active_view__icontains=search_params["active"])
             elif search_column == "teams":
                 queryset = queryset.filter(teams__name__icontains=search)
@@ -108,13 +109,13 @@ class CompetitionListView(
                     & Q(
                         date_start__month__icontains=search_params[
                             "month"
-                        ].lstrip("0")
+                        ].lstrip("0"),
                     )
                     & Q(
                         date_start__day__icontains=search_params["day"].lstrip(
-                            "0"
-                        )
-                    )
+                            "0",
+                        ),
+                    ),
                 )
             elif search_column == "date_end":
                 queryset = queryset.filter(
@@ -122,17 +123,18 @@ class CompetitionListView(
                     & Q(
                         date_end__month__icontains=search_params[
                             "month"
-                        ].lstrip("0")
+                        ].lstrip("0"),
                     )
                     & Q(
                         date_end__day__icontains=search_params["day"].lstrip(
-                            "0"
-                        )
-                    )
+                            "0",
+                        ),
+                    ),
                 )
         return queryset
 
     def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         competitions = context["competitions"]
         context["page_title"] = "Редактирование соревнование"
@@ -158,14 +160,17 @@ class UpdateCompetitionView(
     )
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
-            "competitions:competition_id", kwargs={"pk": self.object.pk}
+            "competitions:competition_id", kwargs={"pk": self.object.pk},
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или вызвать ошибку 404."""
         return get_object_or_404(Competition, id=self.kwargs["pk"])
 
     def get_initial(self):
+        """Вернуть словарь initial с указанными атрибутами объекта."""
         initial = {
             "city": self.object.city.name,
             "date_start": self.object.date_start.isoformat(),
@@ -174,6 +179,7 @@ class UpdateCompetitionView(
         return initial
 
     def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         context["page_title"] = "Редактирование соревнования"
@@ -181,7 +187,7 @@ class UpdateCompetitionView(
 
 
 class DeleteCompetitionView(
-    LoginRequiredMixin, PermissionRequiredMixin, DeleteView
+    LoginRequiredMixin, PermissionRequiredMixin, DeleteView,
 ):
     """Удаление соревнований."""
 
@@ -194,18 +200,22 @@ class DeleteCompetitionView(
     )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или вызвать ошибку 404."""
         return get_object_or_404(Competition, id=self.kwargs["pk"])
 
 
 class AddTeamToCompetition(
-    LoginRequiredMixin, PermissionRequiredMixin, RedirectView
+    LoginRequiredMixin, PermissionRequiredMixin, RedirectView,
 ):
-    """Представление добавления команды в соревнования.
+    """
+    Представление добавления команды в соревнования.
+
     В данном виде не отображает какой-то отдельной страницы либо формы.
     Используется для обработки нажатия кнопки либо соответствующего
     post-запроса. Добавляет команду в соревнование, после чего делает
     редирект на страницу управления соответствующим
-    соревнованием."""
+    соревнованием.
+    """
 
     pattern_name = "competitions:competition_id"
     http_method_names = ("post",)
@@ -215,9 +225,10 @@ class AddTeamToCompetition(
     )
 
     def dispatch(self, request, *args, **kwargs):
+        """Обработать POST-запрос или вернуть на страницу соревнования."""
         if request.method.lower() == "post":
             competition = get_object_or_404(
-                Competition, id=kwargs["competition_id"]
+                Competition, id=kwargs["competition_id"],
             )
             team = get_object_or_404(Team, id=kwargs["pk"])
             competition.teams.add(team)
@@ -228,7 +239,7 @@ class AddTeamToCompetition(
                     curator_email=team.curator.email,
                 )
         return super(AddTeamToCompetition, self).dispatch(
-            request, kwargs["competition_id"]
+            request, kwargs["competition_id"],
         )
 
 
@@ -249,6 +260,7 @@ class DeleteTeamFromCompetition(
     )
 
     def get_object(self, queryset=None):
+        """Получить объект по атрибутам или вызвать ошибку 404."""
         team_in_competition = get_object_or_404(
             Competition.teams.through,
             competition=self.kwargs["competition_id"],
@@ -257,6 +269,7 @@ class DeleteTeamFromCompetition(
         return team_in_competition
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
             "competitions:competition_id",
             kwargs={"pk": self.kwargs["competition_id"]},
@@ -264,7 +277,7 @@ class DeleteTeamFromCompetition(
 
 
 class CreateCompetitionView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin
+    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin,
 ):
     """Представление создания соревнования."""
 
@@ -274,27 +287,41 @@ class CreateCompetitionView(
     permission_required = "competitions.add_competition"
 
     def get_success_url(self):
+        """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
-            "competitions:competition_id", kwargs={"pk": self.object.pk}
+            "competitions:competition_id", kwargs={"pk": self.object.pk},
         )
 
     def get_object(self, queryset=None):
+        """Получить объект по id или вызвать ошибку 404."""
         return get_object_or_404(Competition, id=self.kwargs["pk"])
 
     def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
         context = super(CreateCompetitionView, self).get_context_data(**kwargs)
         context["cities"] = self.get_cities()
         context["page_title"] = "Создать соревнование"
         return context
 
     def post(self, request, *args, **kwargs):
+        """
+        Обработать POST-запрос.
+
+        1. Создать экземпляр формы с переданными атрибутами
+        2. Вызвать валидацию полей формы.
+        """
         self.disciplines = request.POST.get("disciplines", None)
         return super().post(request, *args, **kwargs)
 
 
 def check_permissions(user):
-    """Проверка, что пользователь является представителем команды
-    или администратором."""
+    """
+    Проверка прав пользователя.
+
+    Доступ для:
+    1. Представителя команды
+    2. Администратора.
+    """
     return user.is_authenticated and (
         user.is_agent or user.is_superuser or user.is_admin
     )
@@ -302,10 +329,12 @@ def check_permissions(user):
 
 @login_required()
 @user_passes_test(
-    check_permissions, login_url="login", redirect_field_name=None
+    check_permissions, login_url="login", redirect_field_name=None,
 )
 def competition_team_manage_view(request, pk):
-    """Представление для управления соревнованием.
+    """
+    Представление для управления соревнованием.
+
     -   Отображает команды, участвующие в соревновании, доступные команды
         (т.е. те, которые в соревновании не участвуют),
     -   Позволяет добавлять команды в соревнование и удалять их из него.
@@ -313,9 +342,8 @@ def competition_team_manage_view(request, pk):
     Использована вью-функция вместо вью-класса в связи с необходимостью
     более тонкой настройки формы для работы с промежуточной моделью.
     """
-
     competition = get_object_or_404(
-        Competition.objects.prefetch_related("teams"), id=pk
+        Competition.objects.prefetch_related("teams"), id=pk,
     )
 
     def _get_table_data(
@@ -368,7 +396,7 @@ def competition_team_manage_view(request, pk):
             "table_data": teams_table_data,
             "available_table_data": available_teams_table_data,
             "available_teams_list": list(
-                available_teams.values_list("name", flat=True)
+                available_teams.values_list("name", flat=True),
             ),
             "object": competition,
         }
@@ -379,7 +407,7 @@ def competition_team_manage_view(request, pk):
     if request.method != "POST":
         context["form"] = CompetitionTeamForm(competition=competition)
         return render(
-            request, "main/competitions_id/competitions_id.html", context
+            request, "main/competitions_id/competitions_id.html", context,
         )
 
     form = CompetitionTeamForm(request.POST, competition=competition)
@@ -387,7 +415,7 @@ def competition_team_manage_view(request, pk):
 
     if not form.is_valid():
         return render(
-            request, "main/competitions_id/competitions_id.html", context
+            request, "main/competitions_id/competitions_id.html", context,
         )
 
     competition_team = form.save(commit=False)

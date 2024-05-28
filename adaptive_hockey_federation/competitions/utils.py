@@ -2,9 +2,7 @@ import datetime as dt
 
 
 def pluralize_days(days: int) -> str:
-    """
-    Вспомогательная функция для коректного отображения дней.
-    """
+    """Вспомогательная функция для коректного отображения дней."""
     if days % 10 == 1 and days % 100 != 11:
         return f"{days} день"
     elif (

@@ -8,5 +8,5 @@ analytics_urlpatterns = [
 ]
 
 urlpatterns = [
-    path('analytics/', include(analytics_urlpatterns))
+    path("analytics/", include(analytics_urlpatterns)),
 ]
