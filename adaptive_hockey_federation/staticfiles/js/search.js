@@ -2,6 +2,7 @@ const searchFieldElement = document.getElementById("search_form_input")
 const datePickerContainer = document.getElementById("date-picker")
 const activePickerContainer = document.getElementById("active-picker-select")
 const genderPickerContainer = document.getElementById("gender-picker-select")
+const disciplineNamePickerContainer = document.getElementById("discipline-name-picker-select")
 
 const searchColumnSelect = document.getElementById("search_column")
 const searchColumnOptions = document.querySelectorAll("#search_column option")
@@ -24,6 +25,27 @@ const genderPicker = new OptionsPicker(
     [["женский", "женский"], ["мужской", "мужской"]],
 )
 
+const disciplineNamePicker = new OptionsPicker(
+    document.getElementById('discipline-name-picker-select'),
+    []
+);
+
+// Отправка AJAX запроса для получения списка дисциплин
+fetch('/ajax/filter-discipline-search/')
+    .then(response => response.json())
+    .then(data => {
+        // Очистка текущих опций в optionsPicker
+        disciplineNamePicker.clearOptions();
+
+        // Добавление новых опций из полученных данных
+        data.forEach(discipline => {
+            disciplineNamePicker.addOption(discipline.id, discipline.name);
+        });
+    })
+    .catch(error => {
+        console.error('Ошибка получения списка дисциплин:', error);
+    });
+
 function toggleInputDisplay() {
     const selectedOption = searchColumnOptions[searchColumnSelect.selectedIndex]
     const searchKey = selectedOption.id
@@ -35,21 +57,35 @@ function toggleInputDisplay() {
         datePickerContainer.style.display = "flex"
         activePickerContainer.style.display = "none"
         genderPickerContainer.style.display = "none"
+        disciplineNamePickerContainer.style.display = "none"
+
     } else if (searchKey === "search_is_active") {
         searchFieldElement.style.display = "none"
         datePickerContainer.style.display = "none"
         activePickerContainer.style.display = "flex"
         genderPickerContainer.style.display = "none"
+        disciplineNamePickerContainer.style.display = "none"
+
     } else if (searchKey === "search_gender") {
         searchFieldElement.style.display = "none"
         datePickerContainer.style.display = "none"
         activePickerContainer.style.display = "none"
         genderPickerContainer.style.display = "flex"
-    } else {
+        disciplineNamePickerContainer.style.display = "none"
+
+    } else if (searchKey === "search_discipline_name"){
+        searchFieldElement.style.display = "none"
+        datePickerContainer.style.display = "none"
+        activePickerContainer.style.display = "none"
+        genderPickerContainer.style.display = "none"
+        disciplineNamePickerContainer.style.display = "flex"
+    }
+     else {
         searchFieldElement.style.display = "flex"
         datePickerContainer.style.display = "none"
         activePickerContainer.style.display = "none"
         genderPickerContainer.style.display = "none"
+        disciplineNamePickerContainer.style.display = "none"
     }
 }
 searchColumnSelect.addEventListener("change", toggleInputDisplay)
