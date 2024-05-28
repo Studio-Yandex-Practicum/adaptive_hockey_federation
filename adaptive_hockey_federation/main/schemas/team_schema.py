@@ -41,13 +41,13 @@ def get_staff_table(team):
                     "name": staff.staff_member.name,
                     "position": staff.qualification,
                     "staff_position_slug": get_staff_position_slug(
-                        staff.staff_position
+                        staff.staff_position,
                     ),
                     "note": staff.notes,
                     "id": staff.id,
                 }
                 for i, staff in enumerate(
-                    team.team_members.filter(staff_position=staff_position[1])
+                    team.team_members.filter(staff_position=staff_position[1]),
                 )
             ],
         }

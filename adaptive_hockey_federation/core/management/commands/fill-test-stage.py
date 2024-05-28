@@ -16,12 +16,13 @@ commands = (
 
 
 class Command(BaseCommand):
+    """Класс для запуска наполнения базы данных тестовыми данными."""
 
     help = "Наполнение базы данных тестовыми данными."
 
     def handle(self, *args, **options):
+        """Выполняет запуск наполнения базы данных со всеми аргументами."""
         for argument in commands:
-
             result = subprocess.run(
                 base_commands + argument,
                 shell=True,

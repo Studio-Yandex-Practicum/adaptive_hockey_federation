@@ -75,8 +75,11 @@ def export_excel(
     excluded_fields: Optional[List[str]] = None,
     fields_order: Optional[List[str]] = None,
 ) -> str:
-    """Выгрузка данных в excel (формат xlsx).
-    После создания файла возвращает его имя."""
+    """
+    Выгрузка данных в excel (формат xlsx).
+
+    После создания файла возвращает его имя.
+    """
     if excluded_fields is None:
         excluded_fields = []
 

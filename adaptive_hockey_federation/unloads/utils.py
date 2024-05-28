@@ -4,14 +4,14 @@ from main.schemas.player_schema import SEARCH_FIELDS
 
 
 def checking_value(input_value: str) -> str:
-    """Функция проверки значения. Если цифровое - уберем нули слева"""
+    """Функция проверки значения. Если цифровое - уберем нули слева."""
     if input_value.isdigit():
         return str(int(input_value))
     return input_value
 
 
 def create_lookup_all(dict_param) -> Q:
-    """Функция создания запроса по всем полям"""
+    """Функция создания запроса по всем полям."""
     or_lookup_all: Q = Q()
     search = dict_param["search"][0]
     for key, value in SEARCH_FIELDS.items():
@@ -25,7 +25,7 @@ def create_lookup_all(dict_param) -> Q:
 
 
 def players_get_queryset(model, dict_param, queryset):
-    """Функция создания запроса для игроков"""
+    """Функция создания запроса для игроков."""
     or_lookup: Q = Q()
     search_column_name: str = dict_param["search_column"][0]
     if search_column_name.lower() in ["все", "all"]:
@@ -34,7 +34,7 @@ def players_get_queryset(model, dict_param, queryset):
         for choice in SEARCH_FIELDS["birthday"]:
             if choice in dict_param:
                 or_lookup &= Q(
-                    (f"birthday__{choice}__exact", int(dict_param[choice][0]))
+                    (f"birthday__{choice}__exact", int(dict_param[choice][0])),
                 )
     elif search_column_name == "gender":
         if "gender" in dict_param:
@@ -42,7 +42,7 @@ def players_get_queryset(model, dict_param, queryset):
     else:
         search = dict_param["search"][0]
         or_lookup |= Q(
-            (f"{SEARCH_FIELDS[search_column_name]}__icontains", search)
+            (f"{SEARCH_FIELDS[search_column_name]}__icontains", search),
         )
 
     if queryset:
@@ -52,7 +52,7 @@ def players_get_queryset(model, dict_param, queryset):
 
 
 def analytics_get_queryset(model, dict_param, queryset):
-    """Функция создания запроса для аналитики"""
+    """Функция создания запроса для аналитики."""
     or_lookup: Q = Q()
     for key, value in ANALYTICS_SEARCH_FIELDS.items():
         if key in dict_param:

@@ -4,6 +4,8 @@ from main.models import Document, Player, StaffTeamMember
 
 
 class PlayerInline(admin.StackedInline):
+    """Inline-класс для отображения игрока в админке."""
+
     model = Player.team.through
     form = PlayerTeamForm
     insert_after = "position"
@@ -15,6 +17,8 @@ class PlayerInline(admin.StackedInline):
 
 
 class PlayerTeamInline(PlayerInline):
+    """Inline-класс для отображения игрока команды в админке."""
+
     insert_after = ""
     verbose_name = "Игрок"
     verbose_name_plural = "Игроки команды"
@@ -22,6 +26,8 @@ class PlayerTeamInline(PlayerInline):
 
 
 class DocumentInline(admin.TabularInline):
+    """Inline-класс для отображения документа в админке."""
+
     model = Document
     verbose_name = "Документ"
     verbose_name_plural = "Документы"
@@ -30,6 +36,8 @@ class DocumentInline(admin.TabularInline):
 
 
 class StaffTeamMemberTeamInline(admin.StackedInline):
+    """Inline-класс для отображения сотрудника команды в админке."""
+
     model = StaffTeamMember.team.through
     form = StaffTeamMemberTeamForm
     verbose_name = "Сотрудник"

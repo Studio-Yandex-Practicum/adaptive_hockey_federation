@@ -7,8 +7,11 @@ from django.utils.timezone import now as django_now
 
 
 def fio_validator() -> RegexValidator:
-    """Функция проверки поля на присутствие только
-    кирилических символов. Возможно использование дефиса.
+    """
+    Функция проверки поля.
+
+    1. Присутствие только кирилических символов
+    2. Возможно использование дефиса.
     """
     return RegexValidator(
         r"^[А-Яа-яё -]+$",
@@ -26,14 +29,12 @@ def validate_date_birth(value: datetime.date):
 
     if not (min_date <= value <= max_date):
         raise ValidationError(
-            f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет"
+            f"Возраст должен быть от {MIN_AGE_PlAYER} до {MAX_AGE_PlAYER} лет",
         )
 
 
 def validate_game_date(date: datetime.date) -> datetime.date:
-    """
-    Проверка валидности даты проведения игры. Она не должна быть более текущей.
-    """
+    """Проверка валидности даты игры. Дата не должна быть больше текущей."""
     if date > django_now():
         raise ValidationError("Игра не может проходить в будущем")
     return date

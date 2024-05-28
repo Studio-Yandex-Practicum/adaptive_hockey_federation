@@ -20,4 +20,4 @@ def get_team_href(team: Team) -> dict[str, str]:
 def errormessage() -> str:
     return (
         "Максимальный размер файла " + MAX_UPLOAD_SIZE_MB
-        + ", допустимые разрешения " + ', '.join(FILE_RESOLUTION))
+        + ", допустимые разрешения " + ", ".join(FILE_RESOLUTION))

@@ -16,7 +16,8 @@ class Game(models.Model):
     """Модель игры."""
 
     name = models.CharField(
-        verbose_name=_("Название игры"), max_length=NAME_MAX_LENGTH
+        verbose_name=_("Название игры"),
+        max_length=NAME_MAX_LENGTH,
     )
     date = models.DateTimeField(
         verbose_name=_("Дата игры"),
@@ -47,6 +48,7 @@ class Game(models.Model):
         ]
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
@@ -73,6 +75,7 @@ class GameTeam(models.Model):
         ordering = ["name"]
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
 
 
@@ -80,7 +83,8 @@ class GamePlayer(models.Model):
     """Модель игрока, участвующего в игре."""
 
     name = models.CharField(
-        verbose_name=_("Игрок"), max_length=NAME_MAX_LENGTH
+        verbose_name=_("Игрок"),
+        max_length=NAME_MAX_LENGTH,
     )
     number = models.PositiveSmallIntegerField(
         verbose_name=_("Номер игрока"),
@@ -118,4 +122,5 @@ class GamePlayer(models.Model):
         ]
 
     def __str__(self):
+        """Метод, использующий поле name для строкового представления."""
         return self.name
