@@ -334,6 +334,5 @@ def filter_duscipline_search(request):
     """
     Представления для поиска, получения списка дисциплин.
     """
-    print(DisciplineName.objects.all().values("id", "name"))
-    disciplines = DisciplineName.objects.all().values("id", "name")
+    disciplines = DisciplineName.objects.all().values("name")
     return JsonResponse(list(disciplines), safe=False)

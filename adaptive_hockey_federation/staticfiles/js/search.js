@@ -25,23 +25,9 @@ const genderPicker = new OptionsPicker(
     [["женский", "женский"], ["мужской", "мужской"]],
 )
 
-const disciplineNamePicker = new OptionsPicker(
-    document.getElementById('discipline-name-picker-select'),
-    []
-);
-
-// Отправка AJAX запроса для получения списка дисциплин
-fetch('/ajax/filter-discipline-search/')
-    .then(response => response.json())
-    .then(data => {
-        // Добавление новых опций из полученных данных
-        data.forEach(discipline => {
-            disciplineNamePicker.addOption(discipline.id, discipline.name);
-        });
-    })
-    .catch(error => {
-        console.error('Ошибка получения списка дисциплин:', error);
-    });
+const disciplinePicker = new DisciplineNamePicker(
+    document.getElementById("discipline-name-picker-select"),
+)
 
 function toggleInputDisplay() {
     const selectedOption = searchColumnOptions[searchColumnSelect.selectedIndex]

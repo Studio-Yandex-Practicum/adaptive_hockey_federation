@@ -5,16 +5,6 @@ class OptionsPicker {
     this._populateSelect(this.selectActive, this.optionsArray, '----');
   }
 
-  clearOptions() {
-    this.optionsArray = [];
-    this._populateSelect(this.selectActive, this.optionsArray, '----');
-  }
-
-  addOption(value, text) {
-    this.optionsArray.push([text, value]);
-    this._populateSelect(this.selectActive, this.optionsArray, '----');
-  }
-
   _populateSelect(selectElement, optionsArray, defaultValue) {
     selectElement.innerHTML = '';
     const defaultOption = document.createElement('option');

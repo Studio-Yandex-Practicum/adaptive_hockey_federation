@@ -117,7 +117,7 @@ ajax_urlpatterns = [
     path(
         "filter-discipline-search/",
         player_views.filter_duscipline_search,
-        name="ajax_filter_discipline_search"
+        name="ajax_filter_discipline_search",
     )
 ]
 
