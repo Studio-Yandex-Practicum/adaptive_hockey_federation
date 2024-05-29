@@ -140,7 +140,7 @@ class PlayerForm(forms.ModelForm):
                 attrs={"placeholder": "Введите игровую классификацию"},
             ),
             "birthday": forms.DateInput(
-                format="%d-%m-%Y",
+                format="%Y-%m-%d",
                 attrs={
                     "type": "date",
                     "placeholder": "Введите дату рождения",

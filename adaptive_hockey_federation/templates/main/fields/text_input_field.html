@@ -10,11 +10,7 @@
         {{ field |addclass:'base-input-errors'}}
         {{ field.errors }}
       {% else %}
-        {% if field.name == 'birthday' %}
-          <input type="text" name="{{ field.html_name }}" value="{{ field.value|date:'d.m.Y' }}" class="{{ field.field_classes|default_if_none:'' }} base-input" placeholder="{{ field.field_placeholder|default_if_none:'' }}">
-        {% else %}
-          {{ field |addclass:'base-input'}}
-        {% endif %}
+        {{ field |addclass:'base-input'}}
       {% endif %}
     </td>
 <tr>
