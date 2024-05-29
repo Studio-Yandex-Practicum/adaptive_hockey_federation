@@ -1,6 +1,0 @@
-      PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
-      513       1     513      26468  ?         197609 16:40:08 /usr/bin/mintty
-      302       1     302      24732  cons0     197609 16:21:44 /usr/bin/bash
-      321       1     321      22972  cons1     197609 16:21:44 /usr/bin/bash
-      514     513     514      25976  pty0      197609 16:40:08 /usr/bin/bash
-      557     302     557      26808  cons0     197609 16:46:21 /usr/bin/PS
