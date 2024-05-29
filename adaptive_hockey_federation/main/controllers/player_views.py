@@ -16,7 +16,13 @@ from django.views.generic.list import ListView
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
-from main.models import Diagnosis, DisciplineLevel, Player, Team
+from main.models import (
+    Diagnosis,
+    DisciplineLevel,
+    DisciplineName,
+    Player,
+    Team,
+)
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
     get_player_fields,
@@ -402,3 +408,9 @@ def load_discipline_levels(request):
             list(discipline_statuses.values("id", "name")),
             safe=False,
         )
+
+
+def filter_duscipline_search(request):
+    """Представления для поиска, получения списка дисциплин."""
+    disciplines = DisciplineName.objects.all().values("name")
+    return JsonResponse(list(disciplines), safe=False)

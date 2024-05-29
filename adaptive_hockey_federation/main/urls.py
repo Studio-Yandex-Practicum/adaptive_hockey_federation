@@ -119,6 +119,11 @@ ajax_urlpatterns = [
         player_views.load_discipline_levels,
         name="ajax_load_discipline_levels",
     ),
+    path(
+        "filter-discipline-search/",
+        player_views.filter_duscipline_search,
+        name="ajax_filter_discipline_search",
+    ),
 ]
 
 urlpatterns = [
