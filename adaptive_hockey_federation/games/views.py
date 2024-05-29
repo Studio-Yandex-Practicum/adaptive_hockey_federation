@@ -5,7 +5,11 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.db.models.query import QuerySet
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
+
+from games.forms import GameForm
 from games.models import Game
 
 
@@ -28,7 +32,7 @@ class GamesListView(
 
     def get_queryset(self) -> QuerySet[Any]:
         """Метод для получения набора QuerySet."""
-        return Game.objects.all().prefetch_related("teams")
+        return Game.objects.all().prefetch_related("game_teams")
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Метод для получения словаря context в шаблоне страницы."""
@@ -37,8 +41,8 @@ class GamesListView(
         table_data = []
         for game in games:
             first_team, second_team = (
-                game.teams.values().first(),
-                game.teams.values().last(),
+                game.game_teams.values().first(),
+                game.game_teams.values().last(),
             )
             table_data.append(
                 {
@@ -58,3 +62,39 @@ class GamesListView(
         }
         context["table_data"] = table_data
         return context
+
+
+class GameCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """Представление для создания объекта игры."""
+
+    model = Game
+    form_class = GameForm
+    template_name = "main/games/game_create_edit.html"
+    permission_required = "games.add_game"
+    permission_denied_message = "Отсутствует разрешение на создание игры."
+    success_url = reverse_lazy("games:games")
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """Метод для получения словаря context в шаблоне страницы."""
+        context = super(GameCreateView, self).get_context_data(**kwargs)
+        return dict(
+            **context,
+            page_title="Создание игры",
+            help_text_role="Выбранные команды",
+        )
+
+    # def get_success_url(self) -> str:
+    #     """
+    #     Метод для получения URL-адреса для перенаправления по
+    #     успешному заполнению формы.
+    #     """
+    #     return reverse(
+    #         "games:game_id", kwargs={"pk": self.object.pk}
+    #     )
+    # TODO: раскомментировать, когда появится представление для просмотра/
+    #  редактирования игры
+
+    def post(self, request, *args, **kwargs) -> Any:
+        """Метод для обработки POST-запроса."""
+        self.game_teams = request.POST.get("game_teams", None)
+        return super().post(request, *args, **kwargs)

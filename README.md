@@ -21,7 +21,7 @@
 
 
 
-1.2. [ER - диаграмма сущностей](docs/ER_Diagram.jpg)
+1.2. [ER - диаграмма сущностей](docs/ER_Diagram.drawio.png)
 
 
 
