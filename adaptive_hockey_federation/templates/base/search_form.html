@@ -21,6 +21,8 @@
       {% elif request.resolver_match.url_name in "teams_id" %}Игрок
       {% elif request.resolver_match.url_name == "competitions" %}Соревнование
       {% elif request.resolver_match.url_name == "analytics" %}Аналитика
+      {% elif request.resolver_match.url_name == "games" %}Игры
+      {% elif request.resolver_match.url_name == "player_id_games_video" %}Видео игр
       {% else %}Выгрузка
       {% endif %}"
       style="border-top-left-radius: 0; border-bottom-left-radius: 0;"

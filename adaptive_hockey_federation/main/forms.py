@@ -27,17 +27,22 @@ from users.models import User
 
 
 class CustomMultipleChoiceField(MultipleChoiceField):
+    """Класс для расширения множественного поля выбора."""
 
     def validate(self, value):
+        """Метод для валидации обязательного значения."""
         if self.required and not value:
             raise ValidationError(
-                self.error_messages["required"], code="required"
+                self.error_messages["required"],
+                code="required",
             )
 
 
 class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
+    """Класс для расширения множественного поля выбора модели."""
 
     def _check_values(self, value):
+        """Метод, проверяющий правильно ли указан список команд."""
         try:
             value = frozenset(value)
         except TypeError:
@@ -51,6 +56,11 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
     """Самодельное поле для ввода диагноза."""
 
     def __init__(self, label: str | None = None):
+        """
+        Метод инициализации экземпляра класса.
+
+        Добавляет виджет к полю выбора для поиска диагноза по названию.
+        """
         super().__init__(
             queryset=Diagnosis.objects.all(),
             required=True,
@@ -58,16 +68,18 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
                 attrs={
                     "list": "diagnosis",
                     "placeholder": "Введите название диагноза",
-                }
+                },
             ),
             error_messages={
-                "required": "Пожалуйста, выберите диагноз из списка."
+                "required": "Пожалуйста, выберите диагноз из списка.",
             },
             label=label or "Выберите диагноз",
         )
 
     def clean(self, value: Any) -> Any:
         """
+        Метод валидации поля.
+
         Прежде, чем вызвать родительский метод, получает объект диагноза
         (Diagnosis) по введенному названию, проверяет наличие введенного
         наименования диагноза в БД.
@@ -78,12 +90,13 @@ class CustomDiagnosisChoiceField(ModelChoiceField):
 
 
 class PlayerForm(forms.ModelForm):
+    """Форма для игрока."""
 
     nosology = ModelChoiceField(
         queryset=Nosology.objects.all(),
         required=True,
         error_messages={
-            "required": "Пожалуйста, выберите нозологию из списка."
+            "required": "Пожалуйста, выберите нозологию из списка.",
         },
         label="Нозология",
     )
@@ -111,20 +124,20 @@ class PlayerForm(forms.ModelForm):
         ]
         widgets = {
             "surname": forms.TextInput(
-                attrs={"placeholder": "Введите фамилию"}
+                attrs={"placeholder": "Введите фамилию"},
             ),
             "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
             "patronymic": forms.TextInput(
-                attrs={"placeholder": "Введите отчество"}
+                attrs={"placeholder": "Введите отчество"},
             ),
             "identity_document": forms.TextInput(
-                attrs={"placeholder": "Введите название документа"}
+                attrs={"placeholder": "Введите название документа"},
             ),
             "number": forms.TextInput(
-                attrs={"placeholder": "Введите номер игрока"}
+                attrs={"placeholder": "Введите номер игрока"},
             ),
             "level_revision": forms.TextInput(
-                attrs={"placeholder": "Введите игровую классификацию"}
+                attrs={"placeholder": "Введите игровую классификацию"},
             ),
             "birthday": forms.DateInput(
                 format="%d-%m-%Y",
@@ -143,12 +156,14 @@ class PlayerForm(forms.ModelForm):
         }
 
     def save_m2m(self):
+        """Метод, сохраняющий M2M связи между игроком и командами."""
         self.instance.team.through.objects.filter(
-            team__in=self.cleaned_data["team"]
+            team__in=self.cleaned_data["team"],
         ).delete()
         self.instance.team.set(self.cleaned_data["team"])
 
     def save(self, commit=True):
+        """Метод создает и сохраняет объект игрока в базе данных."""
         instance = super().save(commit=False)
         if commit:
             instance.save()
@@ -156,17 +171,20 @@ class PlayerForm(forms.ModelForm):
         return instance
 
     def clean_identity_document(self):
+        """Метод, выполняющий валидацию документа, удостоверяющего личность."""
         document = self.cleaned_data["identity_document"]
         if re.search(r"[П|п]аспорт", document) or re.search(
-            r"[С|с]видетельство о рождении", document
+            r"[С|с]видетельство о рождении",
+            document,
         ):
             return document
         raise ValidationError(
             "Введите данные в формате 'Паспорт ХХХХ ХХХХХХ' или"
-            "'Свидетельство о рождении X-XX XXXXXX'"
+            "'Свидетельство о рождении X-XX XXXXXX'",
         )
 
     def clean_diagnosis(self):
+        """Метод, выполняющий валидацию поля с диагнозом."""
         nosology = self.cleaned_data.get("nosology")
         diagnosis = self.cleaned_data.get("diagnosis")
         if Diagnosis.objects.filter(name=diagnosis).exists():
@@ -180,8 +198,14 @@ class PlayerForm(forms.ModelForm):
 
 
 class PlayerUpdateForm(PlayerForm):
+    """Форма для обновления игрока."""
 
     def __init__(self, *args, **kwargs):
+        """
+        Метод инициализации экземпляра класса.
+
+        Расширяет team и available_teams кастомными полями выбора.
+        """
         super(PlayerForm, self).__init__(*args, **kwargs)
         if queryset := self.instance.team.all():
             self.fields["team"] = CustomModelMultipleChoiceField(
@@ -204,29 +228,36 @@ class CityChoiceField(ModelChoiceField):
     """Самодельное поле для выбора города."""
 
     def __init__(self, label: str | None = None):
+        """
+        Метод инициализации экземпляра класса.
+
+        Добавляет виджет к полю выбора для поиска города по названию.
+        """
         super().__init__(
             queryset=City.objects.all(),
             widget=TextInput(
                 attrs={
                     "list": "cities",
                     "placeholder": "Введите или выберите название города",
-                }
+                },
             ),
             required=True,
             error_messages={
-                "required": "Пожалуйста, выберите город из списка."
+                "required": "Пожалуйста, выберите город из списка.",
             },
             label=label or "Выберите город",
         )
 
     def clean(self, value: Any) -> Any:
-        """Переопределенный метод родительского класса.
+        """
+        Переопределенный метод родительского класса.
+
         Прежде, чем вызвать родительский метод, получает объект города (
         City) по введенному названию, проверяет наличие введенного
         наименования города в БД. Если такого города в БД нет, то создает
         соответствующий город (объект класса City) и возвращает его на
-        дальнейшую стандартную валидацию формы."""
-
+        дальнейшую стандартную валидацию формы.
+        """
         if not value:
             raise ValidationError(self.error_messages["required"])
 
@@ -241,28 +272,35 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
     """Самодельное поле выбора сотрудника команды."""
 
     def __init__(self, team: Team, data_list: str, label: str | None = None):
+        """
+        Метод инициализации экземпляра класса.
+
+        Добавляет виджет к полю выбора для поиска сотрудника команды.
+        """
         super().__init__(
             queryset=StaffTeamMember.objects.all(),
             widget=TextInput(
                 attrs={
                     "list": data_list,
                     "placeholder": "Начните ввод и выберите из списка",
-                }
+                },
             ),
             required=True,
             error_messages={
-                "required": "Пожалуйста, выберите сотрудника из списка."
+                "required": "Пожалуйста, выберите сотрудника из списка.",
             },
             label=label or "Выберите сотрудника",
         )
         self.team = team
 
     def clean(self, value: Any) -> Any:
-        """Переопределенный метод родительского класса.
+        """
+        Переопределенный метод родительского класса.
+
         Прежде, чем вызвать родительский метод, получает объект
         StaffTeamMember и возвращает его на
-        дальнейшую стандартную валидацию формы."""
-
+        дальнейшую стандартную валидацию формы.
+        """
         if not value:
             raise ValidationError(self.error_messages["required"])
 
@@ -274,14 +312,18 @@ class StaffTeamMemberChoiceField(ModelChoiceField):
             raise ValidationError("Неверный формат введенных данных.")
         staff_team_member = get_object_or_404(StaffTeamMember, id=value)
         if StaffTeamMember.team.through.objects.filter(
-            staffteammember=staff_team_member, team=self.team
+            staffteammember=staff_team_member,
+            team=self.team,
         ).exists():
             raise ValidationError("Этот сотрудник уже есть в команде.")
         return super().clean(value)
 
 
 class TeamForm(forms.ModelForm):
+    """Форма для команды."""
+
     def __init__(self, *args, **kwargs):
+        """Метод инициализации экземпляра класса."""
         self.user: User | None = kwargs.pop("user", None)
         super(TeamForm, self).__init__(*args, **kwargs)
         self.fields["curator"].label_from_instance = (
@@ -299,7 +341,7 @@ class TeamForm(forms.ModelForm):
         label="Куратор команды",
         empty_label="Выберите куратора",
         error_messages={
-            "required": "Пожалуйста, выберите куратора из списка."
+            "required": "Пожалуйста, выберите куратора из списка.",
         },
     )
     discipline_name = forms.ModelChoiceField(
@@ -309,7 +351,7 @@ class TeamForm(forms.ModelForm):
         label="Дисциплина команды",
         empty_label="Выберите дисциплину команды",
         error_messages={
-            "required": "Пожалуйста, выберите дисциплину из списка."
+            "required": "Пожалуйста, выберите дисциплину из списка.",
         },
     )
 
@@ -318,7 +360,7 @@ class TeamForm(forms.ModelForm):
         fields = ["name", "city", "discipline_name", "curator"]
         widgets = {
             "name": TextInput(
-                attrs={"placeholder": "Введите название команды"}
+                attrs={"placeholder": "Введите название команды"},
             ),
             "staff_team_member": Select(),
             "discipline_name": Select(),
@@ -326,6 +368,7 @@ class TeamForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
+        """Метод создает и сохраняет объект команды в базе данных."""
         instance = super(TeamForm, self).save(commit=False)
         if commit:
             instance.save()
@@ -333,6 +376,8 @@ class TeamForm(forms.ModelForm):
 
 
 class TeamFilterForm(forms.Form):
+    """Форма для фильтрации команд."""
+
     name = forms.CharField(
         required=False,
         label="Команда",
@@ -358,7 +403,10 @@ class TeamFilterForm(forms.Form):
 
 
 class PlayerTeamForm(forms.ModelForm):
+    """Форма для игроков и команд."""
+
     def __init__(self, *args, **kwargs):
+        """Метод инициализации экземпляра класса."""
         super(PlayerTeamForm, self).__init__(*args, **kwargs)
         self.fields["player"].label_from_instance = (
             lambda obj: obj.get_name_and_position()
@@ -372,8 +420,10 @@ class PlayerTeamForm(forms.ModelForm):
 
 
 class StaffTeamMemberTeamForm(forms.ModelForm):
+    """Форма для сотрудников и команд."""
 
     def __init__(self, *args, **kwargs):
+        """Метод инициализации экземпляра класса."""
         super(StaffTeamMemberTeamForm, self).__init__(*args, **kwargs)
         self.fields["staffteammember"].label_from_instance = (
             lambda obj: obj.get_name_and_staff_position()
@@ -387,6 +437,7 @@ class StaffTeamMemberTeamForm(forms.ModelForm):
 
 
 class StaffTeamMemberForm(forms.ModelForm):
+    """Форма для сотрудников команд."""
 
     available_teams = ModelMultipleChoiceField(
         queryset=Team.objects.all().order_by("name"),
@@ -415,8 +466,14 @@ class StaffTeamMemberForm(forms.ModelForm):
 
 
 class StaffTeamMemberEditForm(StaffTeamMemberForm):
+    """Форма для обновления сотрудников команд."""
 
     def __init__(self, *args, **kwargs):
+        """
+        Метод инициализации экземпляра класса.
+
+        Расширяет team и available_teams кастомными полями выбора.
+        """
         super(StaffTeamMemberForm, self).__init__(*args, **kwargs)
         if queryset := self.instance.team.all():
             self.fields["team"] = CustomModelMultipleChoiceField(
@@ -435,6 +492,8 @@ class StaffTeamMemberEditForm(StaffTeamMemberForm):
 
 
 class StaffMemberForm(forms.ModelForm):
+    """Форма для сотрудников."""
+
     class Meta:
         model = StaffMember
         fields = (
@@ -445,21 +504,23 @@ class StaffMemberForm(forms.ModelForm):
         )
         widgets = {
             "surname": forms.TextInput(
-                attrs={"placeholder": "Введите фамилию"}
+                attrs={"placeholder": "Введите фамилию"},
             ),
             "name": forms.TextInput(attrs={"placeholder": "Введите Имя"}),
             "patronymic": forms.TextInput(
-                attrs={"placeholder": "Введите отчество"}
+                attrs={"placeholder": "Введите отчество"},
             ),
             "phone": forms.TextInput(
-                attrs={"placeholder": "Введите номер телефона"}
+                attrs={"placeholder": "Введите номер телефона"},
             ),
         }
 
 
 class StaffTeamMemberAddToTeamForm(forms.ModelForm):
+    """Форма для добавления сотрудника в команду."""
 
     def __init__(self, position_filter: str | None = None, *args, **kwargs):
+        """Метод инициализации экземпляра класса."""
         self.team = kwargs.pop("team")
         data_list_dict = {
             TRAINER: "available_coaches",
@@ -470,7 +531,8 @@ class StaffTeamMemberAddToTeamForm(forms.ModelForm):
         self.data_list_id = data_list_dict[self.position_filter]
         super(StaffTeamMemberAddToTeamForm, self).__init__(*args, **kwargs)
         self.fields["staffteammember"] = StaffTeamMemberChoiceField(
-            team=self.team, data_list=self.data_list_id
+            team=self.team,
+            data_list=self.data_list_id,
         )
 
     class Meta:
@@ -478,6 +540,7 @@ class StaffTeamMemberAddToTeamForm(forms.ModelForm):
         fields = ("staffteammember",)
 
     def save(self, commit=True):
+        """Метод создает и сохраняет объект в базе данных."""
         instance = super(StaffTeamMemberAddToTeamForm, self).save(commit=False)
         if commit:
             instance.save()

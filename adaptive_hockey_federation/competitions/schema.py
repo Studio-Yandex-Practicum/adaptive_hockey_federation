@@ -8,7 +8,7 @@ def get_competitions_table_data(competitions):
             {
                 "pk": competition.pk,
                 "disciplines": ", ".join(
-                    competition.disciplines.values_list("name", flat=True)
+                    competition.disciplines.values_list("name", flat=True),
                 ),
                 "data": competition.date_start,
                 "data_end": competition.date_end,
@@ -24,7 +24,7 @@ def get_competitions_table_data(competitions):
                         args=[competition.pk],
                     ),
                 },
-            }
+            },
         )
     return table_data
 

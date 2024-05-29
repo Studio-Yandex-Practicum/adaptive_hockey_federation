@@ -12,18 +12,24 @@ from main.forms import PlayerForm, TeamForm
 
 
 class CityAdmin(admin.ModelAdmin):
+    """Модель городов для административной панели Django."""
+
     list_display = ("pk", "name")
     search_fields = ("name",)
     ordering = ["name"]
 
 
 class NosologyAdmin(admin.ModelAdmin):
+    """Модель нозологий для административной панели Django."""
+
     list_display = ("pk", "name")
     search_fields = ("name",)
     ordering = ["name"]
 
 
 class DiagnosisAdmin(admin.ModelAdmin):
+    """Модель диагнозов для административной панели Django."""
+
     list_display = ("pk", "name", "nosology")
     search_fields = (
         "pk",
@@ -34,18 +40,24 @@ class DiagnosisAdmin(admin.ModelAdmin):
 
 
 class DisciplineNameAdmin(admin.ModelAdmin):
+    """Модель дисциплин для административной панели Django."""
+
     list_display = ("pk", "name")
     search_fields = ("name",)
     ordering = ["name"]
 
 
 class DisciplineLevelAdmin(admin.ModelAdmin):
+    """Модель уровня дисциплин для административной панели Django."""
+
     list_display = ("pk", "name")
     search_fields = ("name",)
     ordering = ["name"]
 
 
 class DocumentAdmin(admin.ModelAdmin):
+    """Модель документов для административной панели Django."""
+
     list_display = ("pk", "name", "file")
     search_fields = (
         "name",
@@ -55,6 +67,8 @@ class DocumentAdmin(admin.ModelAdmin):
 
 
 class StaffMemberAdmin(admin.ModelAdmin):
+    """Модель сотрудников для административной панели Django."""
+
     list_display = ("pk", "surname", "name", "patronymic", "phone")
     search_fields = (
         "pk",
@@ -66,6 +80,8 @@ class StaffMemberAdmin(admin.ModelAdmin):
 
 
 class StaffTeamMemberAdmin(admin.ModelAdmin):
+    """Модель сотрудников команд для административной панели Django."""
+
     list_display = (
         "pk",
         "staff_member",
@@ -85,6 +101,8 @@ class StaffTeamMemberAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
+    """Модель игрока для административной панели Django."""
+
     change_form_template = "admin/custom_change_form.html"
     form = PlayerForm
     list_display = (
@@ -169,13 +187,17 @@ class PlayerAdmin(admin.ModelAdmin):
     list_filter = ("addition_date",)
 
     @admin.display(
-        description="Нозология", ordering="diagnosis__nosology__name"
+        description="Нозология",
+        ordering="diagnosis__nosology__name",
     )
     def get_nosology(self, obj):
+        """Получить название нозологии."""
         return obj.diagnosis.nosology.name
 
 
 class TeamAdmin(admin.ModelAdmin):
+    """Модель команд для административной панели Django."""
+
     form = TeamForm
     change_form_template = "admin/custom_change_form.html"
     list_display = (
@@ -209,12 +231,12 @@ def get_app_list(
         if app_name in ADMIN_PAGE_ORDERING:
             app["models"].sort(
                 key=lambda model: ADMIN_PAGE_ORDERING[app_name].index(
-                    model["object_name"]
-                )
+                    model["object_name"],
+                ),
             )
         app_list.append(app)
 
     return app_list
 
 
-setattr(AdminSite, "get_app_list", get_app_list)
+AdminSite.get_app_list = get_app_list

@@ -28,17 +28,19 @@ TEST_GROUP_NAME = "no_permission_group"
 
 
 class TestAuthUrls:
+    """Тесты авторизации пользователей."""
 
     @pytest.mark.django_db(transaction=True)
     def test_auth_urls(self, client):
+        """Тесты на логин и логаут пользователя."""
         urls = {"/auth/login/": 200, "/auth/logout/": 302}
         for url, status in urls.items():
             try:
                 response = client.post(url)
             except Exception as e:
-                assert (
-                    False
-                ), f"Страница {url} работает неправильно. Ошибка: {e}"
+                raise AssertionError(
+                    f"Страница {url} работает неправильно. Ошибка: {e}",
+                )
             assert response.status_code != 404, (
                 f"Страница {url} не найдена, проверьте этот адрес в "
                 f"*urls.py*"
@@ -50,6 +52,8 @@ class TestAuthUrls:
 
 
 class TestUrls(TestCase):
+    """Тесты на проверку url-путей."""
+
     user: User | Any = None
     user_agent: User | Any = None
     team: Team | Any = None
@@ -61,11 +65,14 @@ class TestUrls(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        """Создает необходимые сущности (объекты моделей БД).
+        """
+        Создает необходимые сущности (объекты моделей БД).
+
         Запускается только один раз (в отличие от метода setUp),
         не сбрасывается после каждого теста, что помогает
         избежать многократного создания сущностей и, как следствие, смены id
-        каждой сущности после каждого теста."""
+        каждой сущности после каждого теста.
+        """
         super().setUpClass()
         ProxyGroup.objects.create(name=TEST_GROUP_NAME).save()
         constants.GROUPS_BY_ROLE[test_role_user] = TEST_GROUP_NAME
@@ -89,7 +96,7 @@ class TestUrls(TestCase):
             name="cls_Test Team",
             city=City.objects.create(name="cls_Test City"),
             discipline_name=DisciplineName.objects.create(
-                name="cls_Test DisciplineName"
+                name="cls_Test DisciplineName",
             ),
             curator=cls.user,
         )
@@ -98,7 +105,7 @@ class TestUrls(TestCase):
             name="Team 2",
             city=City.objects.create(name="cls_Test City_2"),
             discipline_name=DisciplineName.objects.create(
-                name="cls_Test DisciplineName_2"
+                name="cls_Test DisciplineName_2",
             ),
             curator=cls.user_agent,
         )
@@ -112,6 +119,7 @@ class TestUrls(TestCase):
         cls.player_2.team.add(cls.team_2)
 
     def setUp(self):
+        """Метод для базовой настройки тестов класса."""
         self.client = Client()
         self.user = User.objects.create_user(
             password=test_password,
@@ -121,10 +129,11 @@ class TestUrls(TestCase):
             email=test_email,
         )
         self.permissions = {
-            "view_team": Permission.objects.get(codename="view_team")
+            "view_team": Permission.objects.get(codename="view_team"),
         }
 
     def delete_user(self, user_id):
+        """Метод для запуска удаления пользователя."""
         try:
             user = User.objects.get(id=user_id)
             user.delete()
@@ -164,9 +173,12 @@ class TestUrls(TestCase):
         self.assertTrue(delete_result, "Ошибка при удалении пользователя")
 
     def test_main_urls(self):
-        """Тесты основных урл.
+        """
+        Тесты основных урл.
+
         Для тестирования нового урл - добавить соответствующий объект класса
-        UrlToTest в список urls (см. документацию к классу UrlToTest)."""
+        UrlToTest в список urls (см. документацию к классу UrlToTest).
+        """
         urls = [
             UrlToTest("/"),
             UrlToTest(
@@ -176,7 +188,9 @@ class TestUrls(TestCase):
             ),
             UrlToTest("/auth/login/", authorized_only=False),
             UrlToTest(
-                "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True
+                "/auth/logout/",
+                code_estimated=HTTPStatus.FOUND,
+                use_post=True,
             ),
             UrlToTest("/auth/password_change/"),
             UrlToTest("/auth/password_reset/", authorized_only=False),

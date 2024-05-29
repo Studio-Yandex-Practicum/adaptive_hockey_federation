@@ -115,3 +115,8 @@ SEARCH_ALIAS = {
 }
 
 UNLOAD_DIR = "unloads_data"
+
+# constants for games/models.py
+
+MIN_PLAYER_NUMBER = 0
+MAX_PLAYER_NUMBER = 99

@@ -27,12 +27,13 @@ class MainView(
     ]
 
     def get_queryset(self):
+        """Получить набор QuerySet."""
         query = self.request.GET.get("search")
         search_vector = SearchVector("surname", "name")
         queryset = None
         if query:
             queryset = Player.objects.annotate(search=search_vector).filter(
-                search=query
+                search=query,
             )
             queryset = (
                 queryset.select_related("diagnosis")
@@ -43,6 +44,7 @@ class MainView(
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         search = self.request.GET.get("search")
         if search:
@@ -50,7 +52,7 @@ class MainView(
             for field in self.fields:
                 if field != "id":
                     table_head[field] = Player._meta.get_field(
-                        field
+                        field,
                     ).verbose_name
             context["table_head"] = table_head
             context["table_data"] = get_main_table_data(context)

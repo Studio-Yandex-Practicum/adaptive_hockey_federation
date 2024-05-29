@@ -18,9 +18,7 @@ def send_password_reset_email(
     message: str | None = None,
     template: str | None = None,
 ) -> None:
-    """
-    Отправка письма с ссылкой восстановления пароля
-    """
+    """Отправка письма с ссылкой восстановления пароля."""
     if template is None:
         template = "emailing/password_reset_email.html"
     reset_link = get_password_reset_link(instance)
@@ -41,9 +39,7 @@ def send_password_reset_email(
 
 
 def get_password_reset_link(instance: User) -> str:
-    """
-    Функция генерации ссылки для смены пароля
-    """
+    """Функция генерации ссылки для смены пароля."""
     uid = urlsafe_base64_encode(force_bytes(instance.pk))
     token = default_token_generator.make_token(instance)
     reset_url = reverse("users:password_set", args=[uid, token])
@@ -60,7 +56,7 @@ console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 console_handler.setFormatter(formatter)
 
@@ -72,12 +68,10 @@ def send_welcome_mail(
     competition: Competition,
     curator_email: str,
 ) -> None:
-    """
-    Отправка пригласительного письма
-    """
+    """Отправка пригласительного письма."""
     template = "emailing/welcome_letter.html"
     link = reverse(
-        "competitions:competition_id", kwargs={"pk": competition.pk}
+        "competitions:competition_id", kwargs={"pk": competition.pk},
     )
     try:
         email = render_email_message(
@@ -96,10 +90,10 @@ def send_welcome_mail(
         )
         email.send(fail_silently=False)
         logger.info(
-            f"Электронное письмо успешно отправлено на адрес {curator_email}"
+            f"Электронное письмо успешно отправлено на адрес {curator_email}",
         )
     except Exception as e:
         logger.error(
             "Произошла ошибка при отправке электронного письма"
-            f" на {curator_email}: {e}"
+            f" на {curator_email}: {e}",
         )
