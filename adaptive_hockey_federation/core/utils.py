@@ -89,61 +89,86 @@ def export_excel(
     ws.append(["", title])
 
     if queryset:
-        model_fields = queryset.model._meta.fields
-        fields_dict = {
-            field.name: str(field.verbose_name)
-            for field in model_fields
-            if field.name not in excluded_fields
-        }
-
-        if fields_order:
-            headers = [
-                fields_dict[field]
-                for field in fields_order
-                if field in fields_dict
-            ]
-            fields = [field for field in fields_order if field in fields_dict]
-        else:
-            headers = list(fields_dict.values())
-            fields = list(fields_dict.keys())
-
+        headers, fields = get_fields_and_headers(
+            queryset,
+            excluded_fields,
+            fields_order,
+        )
         ws.append(headers)
+        add_data_to_worksheet(ws, queryset, fields)
 
-        for obj in queryset:
-            row: List[Any] = []
-            for field in fields:
-                value = getattr(obj, field)
-                if isinstance(value, bool):
-                    value = "Да" if value else "Нет"
-                else:
-                    if hasattr(value, "__str__"):
-                        value = value.__str__()
+        apply_styles(ws)
 
-                row.append(value)
+    file_path = save_workbook(wb, filename)
+    return file_path
 
-            ws.append(row)
 
-        column_width(ws)
+def get_fields_and_headers(queryset, excluded_fields, fields_order):
+    model_fields = queryset.model._meta.fields
+    fields_dict = {
+        field.name: str(field.verbose_name)
+        for field in model_fields
+        if field.name not in excluded_fields
+    }
 
-        ws.row_dimensions[1].fill = TITLE_FILL  # type: ignore
-        ws.row_dimensions[1].height = TITLE_HEIGHT  # type: ignore
-        ws.row_dimensions[1].font = TITLE_FONT  # type: ignore
-        ws.row_dimensions[1].alignment = ALIGNMENT_CENTER  # type: ignore
+    if fields_order:
+        headers = [
+            fields_dict[field]
+            for field in fields_order
+            if field in fields_dict
+        ]
+        fields = [field for field in fields_order if field in fields_dict]
+    else:
+        headers = list(fields_dict.values())
+        fields = list(fields_dict.keys())
 
-        ws.row_dimensions[2].fill = HEADERS_FILL  # type: ignore
-        ws.row_dimensions[2].height = HEADERS_HEIGHT  # type: ignore
-        ws.row_dimensions[2].font = HEADERS_FONT  # type: ignore
-        ws.row_dimensions[2].alignment = ALIGNMENT_CENTER  # type: ignore
-        ws.row_dimensions[2].border = HEADERS_BORDER  # type: ignore
+    return headers, fields
 
-        number_rows = int(ws.dimensions.split(":")[1][1:])
-        for i in range(3, number_rows, 2):
-            ws.row_dimensions[i].fill = ROWS_FILL  # type: ignore
 
+def add_data_to_worksheet(ws, queryset, fields):
+    for obj in queryset:
+        row: List[Any] = []
+        for field in fields:
+            value = getattr(obj, field)
+            if isinstance(value, datetime):
+                value = value.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                if hasattr(value, "__str__"):
+                    value = value.__str__()
+
+            row.append(value)
+
+        ws.append(row)
+
+
+def apply_styles(ws):
+    column_width(ws)
+
+    ws.row_dimensions[1].height = TITLE_HEIGHT
+    ws.row_dimensions[2].height = HEADERS_HEIGHT
+
+    for cell in ws[1]:
+        cell.fill = TITLE_FILL
+        cell.font = TITLE_FONT
+        cell.alignment = ALIGNMENT_CENTER
+
+    for cell in ws[2]:
+        cell.fill = HEADERS_FILL
+        cell.font = HEADERS_FONT
+        cell.alignment = ALIGNMENT_CENTER
+        cell.border = HEADERS_BORDER
+
+    number_rows = int(ws.dimensions.split(":")[1][1:])
+    for i in range(3, number_rows + 1, 2):
+        for cell in ws[i]:
+            cell.fill = ROWS_FILL
+
+
+def save_workbook(wb, filename):
     media_data_path = os.path.join(settings.MEDIA_ROOT, "unloads_data")
     os.makedirs(media_data_path, exist_ok=True)
 
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    timestamp = datetime.now().strftime("%Y.%m.%d_%H%M%S")
     base_filename, file_extension = os.path.splitext(filename)
     filename_with_timestamp = f"{base_filename}_{timestamp}{file_extension}"
     file_path = os.path.join(media_data_path, filename_with_timestamp)
