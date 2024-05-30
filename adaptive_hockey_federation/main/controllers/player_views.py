@@ -279,7 +279,6 @@ class PlayerIDEditView(
     def form_valid(self, form):
         """Запустить валидацию формы."""
         player = form.save()
-
         self.add_new_documents(
             player=player,
             new_files_names=self.request.POST.getlist("new_file_name[]"),
