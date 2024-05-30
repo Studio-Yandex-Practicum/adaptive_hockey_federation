@@ -1,15 +1,18 @@
-from typing import Any
+from typing import Any, Union
 
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
 from django.db.models.query import QuerySet
-from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
+from django.http import HttpResponseRedirect, HttpResponse, HttpRequest
+from django.shortcuts import get_object_or_404
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
-from games.forms import GameForm
+from games.constants import Errors, Literals, NumericalValues
+from games.forms import GameForm, GameUpdateForm
+from games.mixins import GameCreateUpdateMixin
 from games.models import Game
 
 
@@ -23,11 +26,11 @@ class GamesListView(
     model = Game
     template_name = "main/games/games.html"
     permission_required = "unloads.list_view_unload"
-    permission_denied_message = (
-        "Отсутствует разрешение на просмотр списка игр."
+    permission_denied_message = Errors.PERMISSION_MISSING.format(
+        action=Errors.LIST_VIEW,
     )
     context_object_name = "games"
-    paginate_by = 10
+    paginate_by = NumericalValues.PAGINATION_BASE_VALUE
     ordering = ["name"]
 
     def get_queryset(self) -> QuerySet[Any]:
@@ -54,47 +57,45 @@ class GamesListView(
                 },
             )
         context["table_head"] = {
-            "pk": "Nr.",
-            "name": "Название",
-            "video_link": "Ссылка на видео",
-            "first_team": "Команда 1",
-            "second_team": "Команда 2",
+            "pk": Literals.GAME_NUMBER,
+            "name": Literals.GAME_NAME,
+            "video_link": Literals.VIDEO_LINK,
+            "first_team": Literals.FIRST_TEAM,
+            "second_team": Literals.SECOND_TEAM,
         }
         context["table_data"] = table_data
         return context
 
 
-class GameCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class GameCreateView(GameCreateUpdateMixin, CreateView):
     """Представление для создания объекта игры."""
 
-    model = Game
     form_class = GameForm
-    template_name = "main/games/game_create_edit.html"
     permission_required = "games.add_game"
-    permission_denied_message = "Отсутствует разрешение на создание игры."
-    success_url = reverse_lazy("games:games")
+    permission_denied_message = Errors.PERMISSION_MISSING.format(
+        action=Errors.CREATE_GAME,
+    )
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """Метод для получения словаря context в шаблоне страницы."""
-        context = super(GameCreateView, self).get_context_data(**kwargs)
-        return dict(
-            **context,
-            page_title="Создание игры",
-            help_text_role="Выбранные команды",
-        )
-
-    # def get_success_url(self) -> str:
-    #     """
-    #     Метод для получения URL-адреса для перенаправления по
-    #     успешному заполнению формы.
-    #     """
-    #     return reverse(
-    #         "games:game_id", kwargs={"pk": self.object.pk}
-    #     )
-    # TODO: раскомментировать, когда появится представление для просмотра/
-    #  редактирования игры
-
-    def post(self, request, *args, **kwargs) -> Any:
+    def post(
+        self,
+        request: HttpRequest,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Union[HttpResponseRedirect, HttpResponse]:
         """Метод для обработки POST-запроса."""
-        self.game_teams = request.POST.get("game_teams", None)
+        self.game_teams = request.POST.get("game_teams")
         return super().post(request, *args, **kwargs)
+
+
+class GameEditView(GameCreateUpdateMixin, UpdateView):
+    """Представление для редактирования объекта игры."""
+
+    form_class = GameUpdateForm
+    permission_required = "games.edit_game"
+    permission_denied_message = Errors.PERMISSION_MISSING.format(
+        action=Errors.EDIT_GAME,
+    )
+
+    def get_object(self, queryset: QuerySet = None) -> Game:
+        """Получить объект по id или выбросить ошибку 404."""
+        return get_object_or_404(Game, id=self.kwargs["game_id"])
