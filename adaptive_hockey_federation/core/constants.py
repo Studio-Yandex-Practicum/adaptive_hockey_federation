@@ -115,17 +115,3 @@ SEARCH_ALIAS = {
 }
 
 UNLOAD_DIR = "unloads_data"
-
-# constants for games/models.py
-
-MIN_PLAYER_NUMBER = 0
-MAX_PLAYER_NUMBER = 99
-
-# constants for games/forms.py
-
-MAX_TEAMS_IN_GAME = 2
-NO_MORE_THAN_TWO_TEAMS_IN_GAME = (
-    "В игре может участвовать не более двух команд!"
-)
-MUST_BE_TWO_TEAMS_IN_A_GAME = "В игре должны участвовать две команды!"
-CANNOT_PLAY_AGAINST_SELF = "Команда не может играть с самой собой!"

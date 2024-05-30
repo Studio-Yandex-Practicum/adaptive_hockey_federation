@@ -1,14 +1,12 @@
-from competitions.models import Competition
-from core.constants import (
-    MAX_PLAYER_NUMBER,
-    MIN_PLAYER_NUMBER,
-    NAME_MAX_LENGTH,
-)
-from core.validators import validate_game_date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
+
+from competitions.models import Competition
+from core.constants import NAME_MAX_LENGTH
+from core.validators import validate_game_date
+from games.constants import Values
 from main.models import Player, Team
 
 
@@ -90,11 +88,11 @@ class GamePlayer(models.Model):
         verbose_name=_("Номер игрока"),
         validators=[
             MinValueValidator(
-                MIN_PLAYER_NUMBER,
+                Values.MIN_PLAYER_NUMBER,
                 _("Номер игрока должен быть больше или равен нулю"),
             ),
             MaxValueValidator(
-                MAX_PLAYER_NUMBER,
+                Values.MAX_PLAYER_NUMBER,
                 _("Номер игрока должен быть меньше или равен 99"),
             ),
         ],
@@ -112,12 +110,13 @@ class GamePlayer(models.Model):
         verbose_name_plural = "Игроки, участвующие в игре"
         constraints = [
             models.CheckConstraint(
-                check=models.Q(number__gte=MIN_PLAYER_NUMBER),
+                check=models.Q(number__gte=Values.MIN_PLAYER_NUMBER),
                 name="player_number_must_be_positive",
             ),
             models.CheckConstraint(
-                check=models.Q(number__lte=MAX_PLAYER_NUMBER),
-                name=f"player_number_must_be_{MAX_PLAYER_NUMBER}_or_less",
+                check=models.Q(number__lte=Values.MAX_PLAYER_NUMBER),
+                name=f"player_number_must_"
+                f"be_{Values.MAX_PLAYER_NUMBER}_or_less",
             ),
         ]
 
