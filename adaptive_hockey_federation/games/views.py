@@ -27,7 +27,7 @@ class GamesListView(
     template_name = "main/games/games.html"
     permission_required = "unloads.list_view_unload"
     permission_denied_message = Errors.PERMISSION_MISSING.format(
-        action=Errors.LIST_VIEW,
+        action=Errors.GAME_LIST_VIEW,
     )
     context_object_name = "games"
     paginate_by = NumericalValues.PAGINATION_BASE_VALUE
@@ -59,9 +59,9 @@ class GamesListView(
         context["table_head"] = {
             "pk": Literals.GAME_NUMBER,
             "name": Literals.GAME_NAME,
-            "video_link": Literals.VIDEO_LINK,
-            "first_team": Literals.FIRST_TEAM,
-            "second_team": Literals.SECOND_TEAM,
+            "video_link": Literals.GAME_VIDEO_LINK,
+            "first_team": Literals.GAME_FIRST_TEAM,
+            "second_team": Literals.GAME_SECOND_TEAM,
         }
         context["table_data"] = table_data
         return context

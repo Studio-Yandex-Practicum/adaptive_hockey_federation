@@ -33,14 +33,14 @@ class GameForm(forms.ModelForm):
     """Форма, используемая при создании нового объекта игры."""
 
     game_teams = CustomMultipleChoiceField(
-        label=Literals.TEAMS,
+        label=Literals.GAME_TEAMS,
         required=True,
-        help_text=Literals.PARTICIPATING_TEAMS,
+        help_text=Literals.GAME_PARTICIPATING_TEAMS,
     )
     available_teams = forms.ModelMultipleChoiceField(
         queryset=Team.objects.all().order_by("name"),
         required=False,
-        help_text=Literals.AVAILABLE_TEAMS,
+        help_text=Literals.GAME_AVAILABLE_TEAMS,
     )
 
     class Meta:
@@ -58,7 +58,7 @@ class GameForm(forms.ModelForm):
                 format="%Y-%m-%d %H:%M",
                 attrs={
                     "type": "datetime-local",
-                    "placeholder": Literals.FORM_DATETIME_PLACEHOLDER,
+                    "placeholder": Literals.GAME_FORM_DATETIME_PLACEHOLDER,
                     "class": "form-control",
                 },
             ),
@@ -80,7 +80,7 @@ class GameForm(forms.ModelForm):
             self.cleaned_data["game_teams"][0]
             == self.cleaned_data["game_teams"][1]
         ):
-            raise forms.ValidationError(Errors.CANNOT_PLAY_AGAINST_SELF)
+            raise forms.ValidationError(Errors.CANNOT_PLAY_GAME_AGAINST_SELF)
         return self.cleaned_data["game_teams"]
 
 
@@ -101,8 +101,8 @@ class GameUpdateForm(GameForm):
             self.fields["game_teams"] = CustomGameMultipleChoiceField(
                 queryset=queryset,
                 required=True,
-                help_text=Literals.PARTICIPATING_TEAMS,
-                label=Literals.TEAMS,
+                help_text=Literals.GAME_PARTICIPATING_TEAMS,
+                label=Literals.GAME_TEAMS,
             )
         available_teams_qs = (
             Team.objects.all().difference(queryset).order_by("name")
@@ -110,5 +110,5 @@ class GameUpdateForm(GameForm):
         self.fields["available_teams"] = CustomGameMultipleChoiceField(
             queryset=available_teams_qs,
             required=False,
-            help_text=Literals.AVAILABLE_TEAMS,
+            help_text=Literals.GAME_AVAILABLE_TEAMS,
         )

@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import (
 )
 from django.urls import reverse_lazy
 
-from games.constants import Literals, TITLE_MAPPING
+from games.constants import Literals, GAME_TITLE_MAPPING
 from games.models import Game
 
 
@@ -22,8 +22,8 @@ class GameCreateUpdateMixin(LoginRequiredMixin, PermissionRequiredMixin):
         context = super(GameCreateUpdateMixin, self).get_context_data(**kwargs)
         return dict(
             **context,
-            page_title=TITLE_MAPPING[type(self).__name__],
-            help_text_role=Literals.CHOSEN_TEAMS,
+            page_title=GAME_TITLE_MAPPING[type(self).__name__],
+            help_text_role=Literals.GAME_CHOSEN_TEAMS,
         )
 
     # def get_success_url(self) -> str:

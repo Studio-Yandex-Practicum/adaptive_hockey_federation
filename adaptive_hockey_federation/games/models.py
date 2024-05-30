@@ -88,11 +88,11 @@ class GamePlayer(models.Model):
         verbose_name=_("Номер игрока"),
         validators=[
             MinValueValidator(
-                NumericalValues.MIN_PLAYER_NUMBER,
+                NumericalValues.GAME_MIN_PLAYER_NUMBER,
                 _("Номер игрока должен быть больше или равен нулю"),
             ),
             MaxValueValidator(
-                NumericalValues.MAX_PLAYER_NUMBER,
+                NumericalValues.GAME_MAX_PLAYER_NUMBER,
                 _("Номер игрока должен быть меньше или равен 99"),
             ),
         ],
@@ -110,13 +110,17 @@ class GamePlayer(models.Model):
         verbose_name_plural = "Игроки, участвующие в игре"
         constraints = [
             models.CheckConstraint(
-                check=models.Q(number__gte=NumericalValues.MIN_PLAYER_NUMBER),
+                check=models.Q(
+                    number__gte=NumericalValues.GAME_MIN_PLAYER_NUMBER,
+                ),
                 name="player_number_must_be_positive",
             ),
             models.CheckConstraint(
-                check=models.Q(number__lte=NumericalValues.MAX_PLAYER_NUMBER),
+                check=models.Q(
+                    number__lte=NumericalValues.GAME_MAX_PLAYER_NUMBER,
+                ),
                 name=f"player_number_must_"
-                f"be_{NumericalValues.MAX_PLAYER_NUMBER}_or_less",
+                f"be_{NumericalValues.GAME_MAX_PLAYER_NUMBER}_or_less",
             ),
         ]
 
