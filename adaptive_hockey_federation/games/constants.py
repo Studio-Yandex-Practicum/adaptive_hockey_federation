@@ -38,7 +38,7 @@ class Literals(StrEnum):
     SECOND_TEAM = "Команда 2"
 
 
-class Values(IntEnum):
+class NumericalValues(IntEnum):
     """Константы для цифровых значений."""
 
     MIN_PLAYER_NUMBER = 0

@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from competitions.models import Competition
 from core.constants import NAME_MAX_LENGTH
 from core.validators import validate_game_date
-from games.constants import Values
+from games.constants import NumericalValues
 from main.models import Player, Team
 
 
@@ -88,11 +88,11 @@ class GamePlayer(models.Model):
         verbose_name=_("Номер игрока"),
         validators=[
             MinValueValidator(
-                Values.MIN_PLAYER_NUMBER,
+                NumericalValues.MIN_PLAYER_NUMBER,
                 _("Номер игрока должен быть больше или равен нулю"),
             ),
             MaxValueValidator(
-                Values.MAX_PLAYER_NUMBER,
+                NumericalValues.MAX_PLAYER_NUMBER,
                 _("Номер игрока должен быть меньше или равен 99"),
             ),
         ],
@@ -110,13 +110,13 @@ class GamePlayer(models.Model):
         verbose_name_plural = "Игроки, участвующие в игре"
         constraints = [
             models.CheckConstraint(
-                check=models.Q(number__gte=Values.MIN_PLAYER_NUMBER),
+                check=models.Q(number__gte=NumericalValues.MIN_PLAYER_NUMBER),
                 name="player_number_must_be_positive",
             ),
             models.CheckConstraint(
-                check=models.Q(number__lte=Values.MAX_PLAYER_NUMBER),
+                check=models.Q(number__lte=NumericalValues.MAX_PLAYER_NUMBER),
                 name=f"player_number_must_"
-                f"be_{Values.MAX_PLAYER_NUMBER}_or_less",
+                f"be_{NumericalValues.MAX_PLAYER_NUMBER}_or_less",
             ),
         ]
 
