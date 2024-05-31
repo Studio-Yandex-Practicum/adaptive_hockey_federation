@@ -6,12 +6,24 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('competitions', '0001_initial'),
+        ("competitions", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='competition',
-            options={'ordering': ('date_start',), 'permissions': [('list_view_competition', 'Can view list of Соревнование'), ('list_team_competition', 'Can view list of Команда on Соревнование'), ('delete_team_competition', 'Can delete Команда from Соревнование')], 'verbose_name': 'Соревнование', 'verbose_name_plural': 'Соревнования'},
+            name="competition",
+            options={
+                "ordering": ("date_start",),
+                "permissions": [
+                    ("list_view_competition", "Can view list of Соревнование"),
+                    (
+                        "list_team_competition",
+                        "Can view list of Команда on Соревнование",
+                    ),
+                    ("delete_team_competition", "Can delete Команда from Соревнование"),
+                ],
+                "verbose_name": "Соревнование",
+                "verbose_name_plural": "Соревнования",
+            },
         ),
     ]

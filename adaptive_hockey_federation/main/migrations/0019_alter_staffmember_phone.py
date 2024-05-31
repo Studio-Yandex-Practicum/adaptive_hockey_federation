@@ -2,8 +2,9 @@
 
 import phonenumber_field.modelfields
 import phonenumber_field.validators
-import users.validators
 from django.db import migrations
+
+import users.validators
 
 
 class Migration(migrations.Migration):

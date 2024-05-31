@@ -4,7 +4,7 @@ from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
 
 from competitions.models import Competition
-from core.constants import NAME_MAX_LENGTH
+from core.constants import UserConstans
 from core.validators import validate_game_date
 from games.constants import NumericalValues
 from main.models import Player, Team
@@ -15,7 +15,7 @@ class Game(models.Model):
 
     name = models.CharField(
         verbose_name=_("Название игры"),
-        max_length=NAME_MAX_LENGTH,
+        max_length=UserConstans.NAME_MAX_LENGTH,
     )
     date = models.DateTimeField(
         verbose_name=_("Дата игры"),
@@ -55,11 +55,11 @@ class GameTeam(models.Model):
 
     name = models.CharField(
         verbose_name=_("Название команды"),
-        max_length=NAME_MAX_LENGTH,
+        max_length=UserConstans.NAME_MAX_LENGTH,
     )
     discipline_name = models.CharField(
         verbose_name=_("Дисциплина"),
-        max_length=NAME_MAX_LENGTH,
+        max_length=UserConstans.NAME_MAX_LENGTH,
     )
     game_players = models.ManyToManyField(
         Player,
@@ -82,7 +82,7 @@ class GamePlayer(models.Model):
 
     name = models.CharField(
         verbose_name=_("Игрок"),
-        max_length=NAME_MAX_LENGTH,
+        max_length=UserConstans.NAME_MAX_LENGTH,
     )
     number = models.PositiveSmallIntegerField(
         verbose_name=_("Номер игрока"),

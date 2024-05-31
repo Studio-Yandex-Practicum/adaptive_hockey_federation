@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.db.models.query import QuerySet
-from django.http import HttpResponseRedirect, HttpResponse, HttpRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView

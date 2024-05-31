@@ -1,20 +1,14 @@
 from http import HTTPStatus
 from typing import Any, Iterable
 
-from core.constants import ROLE_AGENT
+from core.constants import Role
 from main.data_factories.factories import PlayerFactory
 from main.models import City, DisciplineName, Player, Team
 from tests.base import BaseTestClass
 from tests.fixture_user import test_email, test_password, test_role_user
-from tests.url_schema import (
-    PLAYER_GET_URLS,
-    PLAYER_POST_URLS,
-    TEAM_GET_URLS,
-    TEAM_POST_URLS,
-    UNLOAD_URLS,
-    USER_GET_URLS,
-    USER_POST_URLS,
-)
+from tests.url_schema import (PLAYER_GET_URLS, PLAYER_POST_URLS, TEAM_GET_URLS,
+                              TEAM_POST_URLS, UNLOAD_URLS, USER_GET_URLS,
+                              USER_POST_URLS)
 from tests.utils import UrlToTest
 from users.factories import UserFactory
 from users.models import User
@@ -92,7 +86,9 @@ class TestPermissions(BaseTestClass):
         должен вернуть ответ с кодом 302.
         """
         url_to_test = UrlToTest(
-            "/auth/logout/", code_estimated=HTTPStatus.FOUND, use_post=True,
+            "/auth/logout/",
+            code_estimated=HTTPStatus.FOUND,
+            use_post=True,
         )
         self.url_tests(url_to_test)
 
@@ -238,7 +234,7 @@ class TestSpecialPermissions(BaseTestClass):
             password=test_password,
             first_name="Иван",
             last_name="Агент",
-            role=ROLE_AGENT,
+            role=Role.AGENT,
             email="agent_" + test_email,
         )
         cls.team_2 = Team.objects.create(
@@ -290,10 +286,8 @@ class TestSpecialPermissions(BaseTestClass):
                 self.assertEqual(
                     response.status_code,
                     HTTPStatus.OK,
-                    msg=(
-                        "Представителю команды должна "
-                        "быть доступна " + message
-                    ),
+                    msg=(f"Представителю команды должна "
+                         f"быть доступна {message}"),
                 )
 
     def test_agent_has_no_access(self):
@@ -334,8 +328,6 @@ class TestSpecialPermissions(BaseTestClass):
                 self.assertEqual(
                     response.status_code,
                     HTTPStatus.FORBIDDEN,
-                    msg=(
-                        "Представителю команды НЕ должна "
-                        "быть доступна " + message
-                    ),
+                    msg=(f"Представителю команды НЕ должна "
+                         f"быть доступна {message}"),
                 )

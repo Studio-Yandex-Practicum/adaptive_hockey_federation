@@ -7,20 +7,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0024_delete_discipline'),
+        ("main", "0024_delete_discipline"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='disciplinelevel',
-            name='discipline_name',
-            field=models.ForeignKey(help_text='Дисциплина', on_delete=django.db.models.deletion.CASCADE, related_name='levels', to='main.disciplinename', verbose_name='Дисциплина'),
+            model_name="disciplinelevel",
+            name="discipline_name",
+            field=models.ForeignKey(
+                help_text="Дисциплина",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="levels",
+                to="main.disciplinename",
+                verbose_name="Дисциплина",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='disciplinelevel',
-            name='name',
-            field=models.CharField(help_text='Наименование', max_length=256,
-                                   verbose_name='Наименование'),
+            model_name="disciplinelevel",
+            name="name",
+            field=models.CharField(
+                help_text="Наименование", max_length=256, verbose_name="Наименование"
+            ),
         ),
     ]

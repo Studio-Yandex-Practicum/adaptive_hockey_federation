@@ -1,6 +1,6 @@
 """Константы, используемые в модуле games."""
 
-from enum import StrEnum, IntEnum
+from enum import IntEnum, StrEnum
 
 GAME_TITLE_MAPPING = dict(
     GameCreateView="Создание игры",

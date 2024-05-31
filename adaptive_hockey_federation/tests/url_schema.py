@@ -226,8 +226,7 @@ USER_GET_URLS = (
     },
 )
 USER_POST_URLS = (
-    {URL: "/users/<int:pk>/delete/", PERMISSION_REQUIRED: "delete_user"},
-)
+    {URL: "/users/<int:pk>/delete/", PERMISSION_REQUIRED: "delete_user"},)
 UNLOAD_URLS = ({URL: "/unloads/", PERMISSION_REQUIRED: "list_view_unload"},)
 
 # Страницы админки, которые должны возвращать 200(ОК) для пользователя,

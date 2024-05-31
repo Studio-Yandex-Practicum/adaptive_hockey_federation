@@ -6,13 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0011_remove_team_staff_team_member_staffteammember_team'),
+        ("main", "0011_remove_team_staff_team_member_staffteammember_team"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='staffteammember',
-            name='staff_position',
-            field=models.CharField(choices=[('trainer', 'Тренер'), ('other', 'Другой')], default='', help_text='Статус сотрудника', max_length=256, verbose_name='Статус сотрудника'),
+            model_name="staffteammember",
+            name="staff_position",
+            field=models.CharField(
+                choices=[("trainer", "Тренер"), ("other", "Другой")],
+                default="",
+                help_text="Статус сотрудника",
+                max_length=256,
+                verbose_name="Статус сотрудника",
+            ),
         ),
     ]

@@ -5,6 +5,7 @@ from typing import Any
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import Client
+
 from users.models import User
 
 
@@ -207,7 +208,9 @@ class UrlToTest:
         в тестах.
         """
         response = self._get_auth_response(
-            client, user, clear_permissions=True,
+            client,
+            user,
+            clear_permissions=True,
         )
         if isinstance(self.permission, Permission):
             codename = self.permission.codename

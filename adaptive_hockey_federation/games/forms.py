@@ -3,7 +3,7 @@ from typing import Any
 from django import forms
 from django.db.models import QuerySet
 
-from games.constants import Errors, NumericalValues, Literals
+from games.constants import Errors, Literals, NumericalValues
 from games.models import Game
 from main.forms import CustomMultipleChoiceField
 from main.models import Team

@@ -1,12 +1,8 @@
 from random import randint
 
-from core.constants import (
-    ROLE_ADMIN,
-    ROLE_AGENT,
-    ROLE_MODERATOR,
-    STAFF_POSITION_CHOICES,
-)
 from django.core.management.base import BaseCommand
+
+from core.constants import STAFF_POSITION_CHOICES, Role
 from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,
@@ -27,9 +23,9 @@ AMOUNT_COACH = 15
 AMOUNT_UNLOADS = 4
 AMOUNT_OTHERS = 10
 USERS = {
-    ROLE_ADMIN: AMOUNT_ADMIN,
-    ROLE_MODERATOR: AMOUNT_MODERATOR,
-    ROLE_AGENT: AMOUNT_AGENT,
+    Role.ROLE_ADMIN: AMOUNT_ADMIN,
+    Role.ROLE_MODERATOR: AMOUNT_MODERATOR,
+    Role.ROLE_AGENT: AMOUNT_AGENT,
 }
 STAFF = {
     STAFF_POSITION_CHOICES[0][1]: AMOUNT_COACH,

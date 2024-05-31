@@ -1,9 +1,10 @@
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
+
 from analytics.forms import AnalyticsFilterForm
 from core.constants import GENDER_CHOICES
 from core.permissions import AdminRequiredMixin
-from dateutil.relativedelta import relativedelta
 from main.controllers.player_views import PlayersListView
 from main.models import Nosology, Player, Team
 from unloads.utils import model_get_queryset
@@ -24,7 +25,10 @@ class AnalyticsListView(
         dict_param = {k: v for k, v in dict_param.items() if v != [""]}
         if len(dict_param) > 0:
             queryset = model_get_queryset(
-                "analytics", Player, dict_param, queryset,
+                "analytics",
+                Player,
+                dict_param,
+                queryset,
             )
         return (
             queryset.select_related("diagnosis")

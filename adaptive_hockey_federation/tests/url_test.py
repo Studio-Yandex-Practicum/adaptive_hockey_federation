@@ -2,25 +2,17 @@ from http import HTTPStatus
 from typing import Any
 
 import pytest
-from competitions.models import Competition
-from core import constants
-from core.constants import ROLE_AGENT
 from django.contrib.auth.models import Permission
 from django.test import Client, TestCase
-from main.data_factories.factories import (
-    CompetitionFactory,
-    DiagnosisFactory,
-    PlayerFactory,
-)
+
+from competitions.models import Competition
+from core import constants
+from core.constants import Role
+from main.data_factories.factories import (CompetitionFactory,
+                                           DiagnosisFactory, PlayerFactory)
 from main.models import City, Diagnosis, DisciplineName, Player, Team
-from tests.fixture_user import (
-    test_email,
-    test_lastname,
-    test_name,
-    test_password,
-    test_role_admin,
-    test_role_user,
-)
+from tests.fixture_user import (test_email, test_lastname, test_name,
+                                test_password, test_role_admin, test_role_user)
 from tests.utils import UrlToTest
 from users.models import ProxyGroup, User
 
@@ -88,7 +80,7 @@ class TestUrls(TestCase):
             password=test_password,
             first_name="Иван",
             last_name="Агент",
-            role=ROLE_AGENT,
+            role=Role.AGENT,
             email="agent_" + test_email,
         )
 
@@ -268,10 +260,8 @@ class TestUrls(TestCase):
                 self.assertEqual(
                     response.status_code,
                     HTTPStatus.OK,
-                    msg=(
-                        "Представителю команды должна "
-                        "быть доступна " + message
-                    ),
+                    msg=(f"Представителю команды должна"
+                         f"быть доступна {message}"),
                 )
 
     def test_agent_has_no_access(self):
@@ -312,8 +302,6 @@ class TestUrls(TestCase):
                 self.assertEqual(
                     response.status_code,
                     HTTPStatus.FORBIDDEN,
-                    msg=(
-                        "Представителю команды НЕ должна "
-                        "быть доступна " + message
-                    ),
+                    msg=(f"Представителю команды НЕ должна "
+                         f"быть доступна {message}"),
                 )

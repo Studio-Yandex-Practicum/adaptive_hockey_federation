@@ -1,13 +1,3 @@
-from competitions.forms import (
-    CompetitionForm,
-    CompetitionTeamForm,
-    CompetitionUpdateForm,
-)
-from competitions.models import Competition, Team
-from competitions.schema import (
-    get_competitions_table_data,
-    get_competitions_table_head,
-)
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -31,6 +21,17 @@ from django.views.generic.edit import (
     UpdateView,
 )
 from django.views.generic.list import ListView
+
+from competitions.forms import (
+    CompetitionForm,
+    CompetitionTeamForm,
+    CompetitionUpdateForm,
+)
+from competitions.models import Competition, Team
+from competitions.schema import (
+    get_competitions_table_data,
+    get_competitions_table_head,
+)
 from main.controllers.team_views import CityListMixin
 from main.controllers.utils import get_team_href
 from users.utilits.send_mails import send_welcome_mail
@@ -162,7 +163,8 @@ class UpdateCompetitionView(
     def get_success_url(self):
         """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
-            "competitions:competition_id", kwargs={"pk": self.object.pk},
+            "competitions:competition_id",
+            kwargs={"pk": self.object.pk},
         )
 
     def get_object(self, queryset=None):
@@ -187,7 +189,9 @@ class UpdateCompetitionView(
 
 
 class DeleteCompetitionView(
-    LoginRequiredMixin, PermissionRequiredMixin, DeleteView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DeleteView,
 ):
     """Удаление соревнований."""
 
@@ -205,7 +209,9 @@ class DeleteCompetitionView(
 
 
 class AddTeamToCompetition(
-    LoginRequiredMixin, PermissionRequiredMixin, RedirectView,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    RedirectView,
 ):
     """
     Представление добавления команды в соревнования.
@@ -228,7 +234,8 @@ class AddTeamToCompetition(
         """Обработать POST-запрос или вернуть на страницу соревнования."""
         if request.method.lower() == "post":
             competition = get_object_or_404(
-                Competition, id=kwargs["competition_id"],
+                Competition,
+                id=kwargs["competition_id"],
             )
             team = get_object_or_404(Team, id=kwargs["pk"])
             competition.teams.add(team)
@@ -239,7 +246,8 @@ class AddTeamToCompetition(
                     curator_email=team.curator.email,
                 )
         return super(AddTeamToCompetition, self).dispatch(
-            request, kwargs["competition_id"],
+            request,
+            kwargs["competition_id"],
         )
 
 
@@ -277,7 +285,10 @@ class DeleteTeamFromCompetition(
 
 
 class CreateCompetitionView(
-    LoginRequiredMixin, PermissionRequiredMixin, CreateView, CityListMixin,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    CreateView,
+    CityListMixin,
 ):
     """Представление создания соревнования."""
 
@@ -289,7 +300,8 @@ class CreateCompetitionView(
     def get_success_url(self):
         """Перенаправить на указанный адрес при успешном обновлении."""
         return reverse_lazy(
-            "competitions:competition_id", kwargs={"pk": self.object.pk},
+            "competitions:competition_id",
+            kwargs={"pk": self.object.pk},
         )
 
     def get_object(self, queryset=None):
@@ -329,7 +341,9 @@ def check_permissions(user):
 
 @login_required()
 @user_passes_test(
-    check_permissions, login_url="login", redirect_field_name=None,
+    check_permissions,
+    login_url="login",
+    redirect_field_name=None,
 )
 def competition_team_manage_view(request, pk):
     """
@@ -343,7 +357,8 @@ def competition_team_manage_view(request, pk):
     более тонкой настройки формы для работы с промежуточной моделью.
     """
     competition = get_object_or_404(
-        Competition.objects.prefetch_related("teams"), id=pk,
+        Competition.objects.prefetch_related("teams"),
+        id=pk,
     )
 
     def _get_table_data(
@@ -407,7 +422,9 @@ def competition_team_manage_view(request, pk):
     if request.method != "POST":
         context["form"] = CompetitionTeamForm(competition=competition)
         return render(
-            request, "main/competitions_id/competitions_id.html", context,
+            request,
+            "main/competitions_id/competitions_id.html",
+            context,
         )
 
     form = CompetitionTeamForm(request.POST, competition=competition)
@@ -415,7 +432,9 @@ def competition_team_manage_view(request, pk):
 
     if not form.is_valid():
         return render(
-            request, "main/competitions_id/competitions_id.html", context,
+            request,
+            "main/competitions_id/competitions_id.html",
+            context,
         )
 
     competition_team = form.save(commit=False)

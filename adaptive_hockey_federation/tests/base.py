@@ -2,31 +2,22 @@ import copy
 from http import HTTPStatus
 from typing import Any, Iterable
 
-from competitions.models import Competition
-from core import constants
-from core.constants import ROLE_SUPERUSER
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Model
 from django.shortcuts import get_object_or_404
 from django.test import Client, TestCase
 from factory.django import DjangoModelFactory  # type: ignore
-from main.data_factories.factories import (
-    CompetitionFactory,
-    DiagnosisFactory,
-    DocumentFactory,
-    PlayerFactory,
-    StaffTeamMemberFactory,
-    TeamFactory,
-)
-from main.models import (
-    Diagnosis,
-    DisciplineName,
-    Document,
-    Player,
-    StaffTeamMember,
-    Team,
-)
+
+from competitions.models import Competition
+from core import constants
+from core.constants import Role
+from main.data_factories.factories import (CompetitionFactory,
+                                           DiagnosisFactory, DocumentFactory,
+                                           PlayerFactory,
+                                           StaffTeamMemberFactory, TeamFactory)
+from main.models import (Diagnosis, DisciplineName, Document, Player,
+                         StaffTeamMember, Team)
 from tests.fixture_user import test_role_user
 from tests.url_test import TEST_GROUP_NAME
 from tests.utils import render_url
@@ -69,7 +60,7 @@ class BaseTestClass(TestCase):
             password="super1234",
             first_name="Супер",
             last_name="Пользователь",
-            role=ROLE_SUPERUSER,
+            role=Role.SUPERUSER,
             email="superuser@fake.fake",
             is_staff=True,
             is_superuser=True,
@@ -398,7 +389,8 @@ class ModelTestBaseClass(BaseTestClass):
 
     @staticmethod
     def replace_foreign_keys_and_bools(
-        fields_kwargs: dict, replace_bools: bool = True,
+        fields_kwargs: dict,
+        replace_bools: bool = True,
     ):
         """
         Выполняет замену foreign keys и булевых переменных.
@@ -618,7 +610,9 @@ class ModelTestBaseClass(BaseTestClass):
             if additional_url_kwargs.get("diagnosis", None):
                 upd_schema.pop("diagnosis")
             self.try_to_update_via_url(
-                url, **upd_schema, **additional_url_kwargs,
+                url,
+                **upd_schema,
+                **additional_url_kwargs,
             )
             via_url = f" через POST-запрос по адресу: {url}"
         else:
@@ -632,7 +626,9 @@ class ModelTestBaseClass(BaseTestClass):
         self.assert_object_exist(err_msg, **upd_schema)
 
     def correct_delete_tests(
-        self, url: str | None = None, **additional_url_kwargs,
+        self,
+        url: str | None = None,
+        **additional_url_kwargs,
     ):
         """
         Основной метод тестирования на корректное удаление объекта.
@@ -672,7 +668,10 @@ class ModelTestBaseClass(BaseTestClass):
             self.update(obj, **field_kwargs)
 
     def _correct_field_test(
-        self, obj: Model, url: str | None = None, **kwargs,
+        self,
+        obj: Model,
+        url: str | None = None,
+        **kwargs,
     ):
         """Обновляет одно поле (для теста валидных значений)."""
         if url:
@@ -729,7 +728,11 @@ class ModelTestBaseClass(BaseTestClass):
         return ""
 
     def _incorrect_field_msg_compile(
-        self, field, msg, value=None, force_value=True,
+        self,
+        field,
+        msg,
+        value=None,
+        force_value=True,
     ):
         """Формирует информационное сообщение теста НЕВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
@@ -741,7 +744,12 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _incorrect_field_via_url_msg_compile(
-        self, field, msg, url, value=None, force_value=True,
+        self,
+        field,
+        msg,
+        url,
+        value=None,
+        force_value=True,
     ):
         """Формирует информационное сообщение url-теста НЕВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
@@ -755,13 +763,22 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _correct_field_msg_compile(
-        self, field, msg, url, value=None, force_value=True,
+        self,
+        field,
+        msg,
+        url,
+        value=None,
+        force_value=True,
     ):
         """Формирует информационное сообщение теста ВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
         if url:
             return self._correct_field_via_url_msg_compile(
-                field, msg, url, value, force_value,
+                field,
+                msg,
+                url,
+                value,
+                force_value,
             )
         return (
             f"Проверьте, что в поле '{field}' модели "
@@ -771,7 +788,12 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _correct_field_via_url_msg_compile(
-        self, field, msg, url, value=None, force_value=True,
+        self,
+        field,
+        msg,
+        url,
+        value=None,
+        force_value=True,
     ):
         """Формирует информационное сообщение url-теста ВАЛИДНОГО поля."""
         tested_value_info = self._alter_tested_value_info(value, force_value)
@@ -784,7 +806,11 @@ class ModelTestBaseClass(BaseTestClass):
         ).strip()
 
     def _incorrect_field_sub_test_via_url(
-        self, url: str, test: dict, sub: bool = True, **additional_url_kwargs,
+        self,
+        url: str,
+        test: dict,
+        sub: bool = True,
+        **additional_url_kwargs,
     ):
         """
         Проводит отдельный тест поля через url.
@@ -809,10 +835,14 @@ class ModelTestBaseClass(BaseTestClass):
             f"{self._alter_tested_value_info(value, True)}"
         ).strip()
         response = self.try_to_update_via_url(
-            url, **schema, **additional_url_kwargs,
+            url,
+            **schema,
+            **additional_url_kwargs,
         )
         self.assertIn(
-            response.status_code, [HTTPStatus.OK, HTTPStatus.FOUND], err_msg,
+            response.status_code,
+            [HTTPStatus.OK, HTTPStatus.FOUND],
+            err_msg,
         )
         err_msg = (
             f"В результате POST-запроса по адресу '{url}'  "
@@ -866,7 +896,9 @@ class ModelTestBaseClass(BaseTestClass):
         self.try_to_update(obj, **self.get_correct_update_schema())
 
     def _get_field_tests_set(
-        self, schemas: Iterable, create_obj: bool = True,
+        self,
+        schemas: Iterable,
+        create_obj: bool = True,
     ) -> tuple | tuple[tuple, Model]:
         """
         Возвращает коллекцию всех тестов всех полей, указанных в схеме.
@@ -897,14 +929,19 @@ class ModelTestBaseClass(BaseTestClass):
         for batch_test in tests_set:
             if isinstance(batch_test, dict):
                 self._incorrect_field_sub_test_via_url(
-                    url, batch_test, **additional_url_kwargs,
+                    url,
+                    batch_test,
+                    **additional_url_kwargs,
                 )
             else:
                 for test in batch_test:
                     assertion_error = None
                     try:
                         self._incorrect_field_sub_test_via_url(
-                            url, test, sub=False, **additional_url_kwargs,
+                            url,
+                            test,
+                            sub=False,
+                            **additional_url_kwargs,
                         )
                     except AssertionError as e:
                         err_msg = e.args[0]
@@ -928,17 +965,23 @@ class ModelTestBaseClass(BaseTestClass):
         for batch_test in tests_set:
             if isinstance(batch_test, dict):
                 self._incorrect_field_sub_test(
-                    test=batch_test, obj=obj, sub=True,
+                    test=batch_test,
+                    obj=obj,
+                    sub=True,
                 )
             else:
                 for test in batch_test:
                     msg = self._incorrect_field_msg_compile(
-                        test["field"], test["msg"], test["value"],
+                        test["field"],
+                        test["msg"],
+                        test["value"],
                     )
                     exception = None
                     try:
                         self._incorrect_field_sub_test(
-                            test=test, obj=obj, sub=False,
+                            test=test,
+                            obj=obj,
+                            sub=False,
                         )
                     except Exception as e:
                         exception = e

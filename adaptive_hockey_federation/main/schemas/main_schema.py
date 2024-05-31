@@ -34,6 +34,7 @@ show_return_button = [
     "competition_add",
     "competition_update",
     "competition_id",
+    "game_create",
 ]
 
 

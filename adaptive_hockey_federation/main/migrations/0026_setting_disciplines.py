@@ -1,5 +1,6 @@
-from core.constants import DISCIPLINE_LEVELS
 from django.db import migrations
+
+from core.constants import DISCIPLINE_LEVELS
 
 
 def set_default_disciplines(apps, schema_editor):

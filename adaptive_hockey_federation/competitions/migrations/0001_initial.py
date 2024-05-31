@@ -9,26 +9,50 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('main', '0008_alter_team_curator_alter_team_staff_team_member'),
+        ("main", "0008_alter_team_curator_alter_team_staff_team_member"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Competition',
+            name="Competition",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=250)),
-                ('date_start', models.DateField()),
-                ('date_end', models.DateField()),
-                ('location', models.CharField(max_length=250)),
-                ('is_active', models.BooleanField(default=True)),
-                ('city', models.ForeignKey(help_text='Город проведения соревнований', on_delete=django.db.models.deletion.CASCADE, to='main.city', verbose_name='Город проведения соревнований')),
-                ('teams', models.ManyToManyField(help_text='Состав команд участников', related_name='competition_teams', to='main.team', verbose_name='Состав команд участников')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=250)),
+                ("date_start", models.DateField()),
+                ("date_end", models.DateField()),
+                ("location", models.CharField(max_length=250)),
+                ("is_active", models.BooleanField(default=True)),
+                (
+                    "city",
+                    models.ForeignKey(
+                        help_text="Город проведения соревнований",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="main.city",
+                        verbose_name="Город проведения соревнований",
+                    ),
+                ),
+                (
+                    "teams",
+                    models.ManyToManyField(
+                        help_text="Состав команд участников",
+                        related_name="competition_teams",
+                        to="main.team",
+                        verbose_name="Состав команд участников",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Соревнование',
-                'verbose_name_plural': 'Соревнования',
-                'ordering': ('date_start',),
+                "verbose_name": "Соревнование",
+                "verbose_name_plural": "Соревнования",
+                "ordering": ("date_start",),
             },
         ),
     ]

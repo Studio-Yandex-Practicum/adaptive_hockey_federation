@@ -1,4 +1,3 @@
-from core.constants import OTHER, TRAINER
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -10,6 +9,8 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+
+from core.constants import StaffPosition
 from main.forms import StaffTeamMemberAddToTeamForm, TeamFilterForm, TeamForm
 from main.models import City, Player, StaffTeamMember, Team
 from main.permissions import CustomPermissionMixin, TeamEditPermissionsMixin
@@ -121,7 +122,7 @@ class TeamIdView(
         data_list = self.get_coaches(team_to_exclude=self.object)
         self.update_context_with_staff_add_form(
             context,
-            TRAINER,
+            StaffPosition.TRAINER,
             0,
             data_list,
             "available_coaches",
@@ -130,7 +131,7 @@ class TeamIdView(
         data_list = self.get_pushers(team_to_exclude=self.object)
         self.update_context_with_staff_add_form(
             context,
-            OTHER,
+            StaffPosition.OTHER,
             1,
             data_list,
             "available_pushers",
@@ -155,7 +156,9 @@ class TeamIdView(
     def post(self, request, *args, **kwargs):
         """Обработка POST-запроса от форм добавления тренера или пушера."""
         form_index = int(request.POST["btn_add_staff"])
-        position_filter = (TRAINER, OTHER)[form_index]
+        position_filter = (StaffPosition.TRAINER, StaffPosition.OTHER)[
+            form_index
+        ]
         new_staff_form = StaffTeamMemberAddToTeamForm(
             data=request.POST,
             team=self.get_object(),

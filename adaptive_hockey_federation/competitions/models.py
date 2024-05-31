@@ -1,6 +1,7 @@
-from competitions.utils import get_now_day, pluralize_days
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from competitions.utils import get_now_day, pluralize_days
 from main.models import City, DisciplineName, Team
 
 CHAR_FIELD_LENGTH = 250
