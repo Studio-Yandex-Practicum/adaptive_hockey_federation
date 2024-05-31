@@ -24,7 +24,7 @@ def set_discipline_levels_to_discipline_name(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("main", "0025_disciplinelevel_discipline_name"),
+        ("main", "0002_initial"),
     ]
 
     operations = [
