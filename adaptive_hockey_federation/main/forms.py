@@ -51,31 +51,6 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
         qs = Team.objects.filter(pk__in=value)
         return qs
 
-
-class CustomDiagnosisChoiceField(ModelChoiceField):
-    """Самодельное поле для ввода диагноза."""
-
-    def __init__(self, label: str | None = None):
-        """
-        Метод инициализации экземпляра класса.
-
-        Добавляет виджет к полю выбора для поиска диагноза по названию.
-        """
-        super().__init__(
-            queryset=Diagnosis.objects.all(),
-            required=True,
-            widget=TextInput(
-                attrs={
-                    "list": "diagnosis",
-                    "placeholder": "Введите название диагноза",
-                },
-            ),
-            error_messages={
-                "required": "Пожалуйста, выберите диагноз из списка.",
-            },
-            label=label or "Выберите диагноз",
-        )
-
     def clean(self, value: Any) -> Any:
         """
         Метод валидации поля.
@@ -101,7 +76,14 @@ class PlayerForm(forms.ModelForm):
         label="Нозология",
     )
 
-    diagnosis = CustomDiagnosisChoiceField()
+    diagnosis = ModelChoiceField(
+        queryset=Diagnosis.objects.all(),
+        required=True,
+        error_messages={
+            "required": "Пожалуйста, выберите диагноз из списка.",
+        },
+        label="Диагноз",
+    )
 
     class Meta:
         model = Player
@@ -154,6 +136,12 @@ class PlayerForm(forms.ModelForm):
             "identity_document": FORM_HELP_TEXTS["identity_document"],
             "birthday": FORM_HELP_TEXTS["birthday"],
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields["nosology"].initial = self.instance.diagnosis.nosology
+            self.fields["diagnosis"].initial = self.instance.diagnosis
 
     def save_m2m(self):
         """Метод, сохраняющий M2M связи между игроком и командами."""
