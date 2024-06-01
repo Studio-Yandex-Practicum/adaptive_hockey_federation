@@ -51,6 +51,31 @@ class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
         qs = Team.objects.filter(pk__in=value)
         return qs
 
+
+class CustomDiagnosisChoiceField(ModelChoiceField):
+    """Самодельное поле для ввода диагноза."""
+
+    def __init__(self, label: str | None = None):
+        """
+        Метод инициализации экземпляра класса.
+
+        Добавляет виджет к полю выбора для поиска диагноза по названию.
+        """
+        super().__init__(
+            queryset=Diagnosis.objects.all(),
+            required=True,
+            widget=TextInput(
+                attrs={
+                    "list": "diagnosis",
+                    "placeholder": "Введите название диагноза",
+                },
+            ),
+            error_messages={
+                "required": "Пожалуйста, выберите диагноз из списка.",
+            },
+            label=label or "Выберите диагноз",
+        )
+
     def clean(self, value: Any) -> Any:
         """
         Метод валидации поля.
@@ -82,7 +107,7 @@ class PlayerForm(forms.ModelForm):
         error_messages={
             "required": "Пожалуйста, выберите диагноз из списка.",
         },
-        label="Диагноз",
+        label="Выберите диагноз",
     )
 
     class Meta:
@@ -195,7 +220,7 @@ class PlayerUpdateForm(PlayerForm):
 
         Расширяет team и available_teams кастомными полями выбора.
         """
-        super(PlayerForm, self).__init__(*args, **kwargs)
+        super(PlayerUpdateForm, self).__init__(*args, **kwargs)
         if queryset := self.instance.team.all():
             self.fields["team"] = CustomModelMultipleChoiceField(
                 queryset=queryset,
@@ -210,7 +235,9 @@ class PlayerUpdateForm(PlayerForm):
             help_text=FORM_HELP_TEXTS["available_teams"],
             label="Команды",
         )
-        self.fields["nosology"].initial = self.instance.diagnosis.nosology
+        if self.instance.pk:
+            self.fields["nosology"].initial = self.instance.diagnosis.nosology
+            self.fields["diagnosis"].initial = self.instance.diagnosis
 
 
 class CityChoiceField(ModelChoiceField):
