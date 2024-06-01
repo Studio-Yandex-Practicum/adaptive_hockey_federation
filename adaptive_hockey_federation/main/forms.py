@@ -138,6 +138,7 @@ class PlayerForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """Инициализация формы для игрока."""
         super().__init__(*args, **kwargs)
         if self.instance.pk:
             self.fields["nosology"].initial = self.instance.diagnosis.nosology
