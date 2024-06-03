@@ -1,7 +1,6 @@
+from core.constants import GROUPS_BY_ROLE
 from django.contrib.auth.management import create_permissions
 from django.db import migrations
-
-from core.constants import GROUPS_BY_ROLE
 from users.constants import GroupPermission
 
 
@@ -34,7 +33,7 @@ def set_permissions_to_groups(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("users", "0002_proxygroup_alter_user_email"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
