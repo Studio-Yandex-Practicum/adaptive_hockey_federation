@@ -7,7 +7,6 @@ from competitions.models import Competition
 from core.constants import NAME_MAX_LENGTH
 from core.validators import validate_game_date
 from games.constants import NumericalValues
-from main.models import Player, Team
 
 
 class Game(models.Model):
@@ -25,19 +24,14 @@ class Game(models.Model):
         Competition,
         on_delete=models.CASCADE,
         verbose_name=_("Соревнование"),
-        related_name="games",
-    )
-    game_teams = models.ManyToManyField(
-        Team,
-        verbose_name=_("Команды"),
-        related_name="game_teams",
     )
     video_link = models.URLField(verbose_name=_("Ссылка на видео"), blank=True)
 
     class Meta:
+        default_related_name = "games"
         verbose_name = "Игра"
         verbose_name_plural = "Игры"
-        ordering = ["name"]
+        ordering = ("name",)
         constraints = [
             models.CheckConstraint(
                 check=models.Q(date__lte=Now()),
@@ -54,23 +48,24 @@ class GameTeam(models.Model):
     """Модель команды, участвующей в игре."""
 
     name = models.CharField(
-        verbose_name=_("Название команды"),
         max_length=NAME_MAX_LENGTH,
+        verbose_name=_("Название команды"),
     )
     discipline_name = models.CharField(
-        verbose_name=_("Дисциплина"),
         max_length=NAME_MAX_LENGTH,
+        verbose_name=_("Дисциплина"),
     )
-    game_players = models.ManyToManyField(
-        Player,
-        verbose_name=_("Игроки"),
-        related_name="game_players",
+    game = models.ForeignKey(
+        Game,
+        on_delete=models.CASCADE,
+        verbose_name=_("Игра"),
     )
 
     class Meta:
+        default_related_name = "game_teams"
         verbose_name = "Команда, участвующая в игре"
         verbose_name_plural = "Команды, участвующие в игре"
-        ordering = ["name"]
+        ordering = ("name",)
 
     def __str__(self):
         """Метод, использующий поле name для строкового представления."""
@@ -98,13 +93,13 @@ class GamePlayer(models.Model):
         ],
     )
     game_team = models.ForeignKey(
-        Team,
+        GameTeam,
         on_delete=models.CASCADE,
         verbose_name=_("Команда"),
-        related_name="game_team",
     )
 
     class Meta:
+        default_related_name = "game_players"
         unique_together = ("name", "number")
         verbose_name = "Игрок, участвующий в игре"
         verbose_name_plural = "Игроки, участвующие в игре"
