@@ -4,10 +4,11 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from django.urls import reverse_lazy
 from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect, HttpResponse, HttpRequest
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
 from games.constants import Errors, Literals, NumericalValues
@@ -94,6 +95,23 @@ class GameEditView(GameCreateUpdateMixin, UpdateView):
     permission_required = "games.edit_game"
     permission_denied_message = Errors.PERMISSION_MISSING.format(
         action=Errors.EDIT_GAME,
+    )
+
+    def get_object(self, queryset: QuerySet = None) -> Game:
+        """Получить объект по id или выбросить ошибку 404."""
+        return get_object_or_404(Game, id=self.kwargs["game_id"])
+
+
+class GameDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    """Представление для удаления объекта игры."""
+
+    model = Game
+    success_url = reverse_lazy("games:games")
+    template_name = "main/games/game_edit_delete_buttons.html"
+
+    permission_required = "games.delete_game"
+    permission_denied_message = Errors.PERMISSION_MISSING.format(
+        action=Errors.DELETE_GAME,
     )
 
     def get_object(self, queryset: QuerySet = None) -> Game:

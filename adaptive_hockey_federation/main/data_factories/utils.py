@@ -45,6 +45,14 @@ def updates_for_players():
         discipline_levels = DisciplineLevel.objects.filter(
             discipline_name=discipline_name,
         )
+
+        if not discipline_levels:
+            print(
+                "Не найдено уровней дисциплины для названия дисциплины "
+                f"{discipline_name}",
+            )
+            continue
+
         discipline_level = random.choice(discipline_levels)
         captain = random.choice(player_in_team)
         assistent = random.choice(player_in_team)
