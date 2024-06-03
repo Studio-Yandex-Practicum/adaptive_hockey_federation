@@ -1,7 +1,8 @@
-from core.config.dev_settings import ADMIN_PAGE_ORDERING
 from django.contrib import admin
 from django.contrib.admin.sites import AdminSite
 from django.http import HttpRequest
+
+from core.config.dev_settings import ADMIN_PAGE_ORDERING
 from main.admin.inlines import (
     DocumentInline,
     PlayerInline,

@@ -8,30 +8,39 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
-        ('users', '0001_initial'),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProxyGroup',
-            fields=[
-            ],
+            name="ProxyGroup",
+            fields=[],
             options={
-                'verbose_name': 'Группа',
-                'verbose_name_plural': 'Группы',
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "verbose_name": "Группа",
+                "verbose_name_plural": "Группы",
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('auth.group',),
+            bases=("auth.group",),
             managers=[
-                ('objects', django.contrib.auth.models.GroupManager()),
+                ("objects", django.contrib.auth.models.GroupManager()),
             ],
         ),
         migrations.AlterField(
-            model_name='user',
-            name='email',
-            field=models.EmailField(help_text='Электронная почта', max_length=256, unique=True, validators=[django.core.validators.EmailValidator(message='Используйте корректный адрес электронной почты. Адрес должен быть не длиннее 150 символов. Допускается использование латинских букв, цифр и символов @/./+/-/_')], verbose_name='Электронная почта'),
+            model_name="user",
+            name="email",
+            field=models.EmailField(
+                help_text="Электронная почта",
+                max_length=256,
+                unique=True,
+                validators=[
+                    django.core.validators.EmailValidator(
+                        message="Используйте корректный адрес электронной почты. Адрес должен быть не длиннее 150 символов. Допускается использование латинских букв, цифр и символов @/./+/-/_"
+                    )
+                ],
+                verbose_name="Электронная почта",
+            ),
         ),
     ]

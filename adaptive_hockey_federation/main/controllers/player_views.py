@@ -1,7 +1,5 @@
 from typing import Any
 
-from core.constants import FILE_RESOLUTION
-from core.utils import is_uploaded_file_valid
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -13,6 +11,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+
+from core.constants import FileConstants
+from core.utils import is_uploaded_file_valid
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
@@ -150,7 +151,7 @@ class PlayerIDCreateView(
         context["page_title"] = "Создание профиля нового игрока"
         context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
-            ["." + res for res in FILE_RESOLUTION],
+            ["." + res for res in FileConstants.FILE_RESOLUTION],
         )
         return context
 
@@ -271,7 +272,7 @@ class PlayerIDEditView(
         context["player_documents"] = player_documents
         context["diagnosis"] = self.get_diagnosis()
         context["file_resolution"] = ", ".join(
-            ["." + res for res in FILE_RESOLUTION],
+            ["." + res for res in FileConstants.FILE_RESOLUTION],
         )
         context["help_text_role"] = "Команды игрока"
         return context

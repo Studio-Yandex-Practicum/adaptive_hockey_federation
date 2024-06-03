@@ -38,13 +38,18 @@ def add_pisition_in_context(queryset=None):
     team_fields = []
     if queryset.exists():
         for staff_team in queryset:
-            team_fields.append((
-                "Команда",
-                ", ".join(
-                    [team.name for team in staff_team.team.all()]
-                    if staff_team.team.all().exists() else ["Свободный агент"],
+            team_fields.append(
+                (
+                    "Команда",
+                    ", ".join(
+                        (
+                            [team.name for team in staff_team.team.all()]
+                            if staff_team.team.all().exists()
+                            else ["Свободный агент"]
+                        ),
+                    ),
                 ),
-            ))
+            )
             team_fields.append(
                 ("Квалификация", staff_team.qualification),
             )

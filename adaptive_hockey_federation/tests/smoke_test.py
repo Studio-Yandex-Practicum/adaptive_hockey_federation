@@ -2,51 +2,30 @@ from http import HTTPStatus
 
 import pytest
 from django.test import Client
+
 from tests.base import BaseTestClass, UrlTestMixin
-from tests.url_schema import (
-    ADMIN_APP_LABELS_URLS,
-    ADMIN_AUTH_GROUP_302,
-    ADMIN_AUTH_URLS,
-    ADMIN_CITY_URL_302,
-    ADMIN_CITY_URLS,
-    ADMIN_COMPETITIONS_URLS,
-    ADMIN_COMPETITIONS_URLS_302,
-    ADMIN_DIAGNOSIS_URL_302,
-    ADMIN_DIAGNOSIS_URLS,
-    ADMIN_DISCIPLINE_NAME_URL_302,
-    ADMIN_DISCIPLINE_NAME_URLS,
-    ADMIN_LOGIN,
-    ADMIN_LOGOUT,
-    ADMIN_MAIN_URL,
-    ADMIN_NOSOLOGY_URL_302,
-    ADMIN_NOSOLOGY_URLS,
-    ADMIN_PASSWORD_URLS,
-    ADMIN_PLAYER_URL_302,
-    ADMIN_PROXY_GROUP_URL_302,
-    ADMIN_PROXY_GROUP_URLS,
-    ADMIN_STAFF_MEMBER_URL_302,
-    ADMIN_STAFF_MEMBER_URLS,
-    ADMIN_TEAM_URL_302,
-    ADMIN_TEAM_URLS,
-    ADMIN_USER_URL_302,
-    ADMIN_USER_URLS,
-    AUTH_RESET_URLS,
-    COMPETITION_GET_URLS,
-    COMPETITION_POST_URLS,
-    INDEX_PAGE,
-    LOG_IN_URL,
-    LOG_OUT_URL,
-    PASSWORD_URLS,
-    PLAYER_GET_URLS,
-    PLAYER_POST_URLS,
-    STAFF_GET_URLS,
-    STAFF_POST_URLS,
-    TEAM_GET_URLS,
-    TEAM_POST_URLS,
-    UNLOAD_URLS,
-    USER_GET_URLS,
-    USER_POST_URLS,
-)
+from tests.url_schema import (ADMIN_APP_LABELS_URLS, ADMIN_AUTH_GROUP_302,
+                              ADMIN_AUTH_URLS, ADMIN_CITY_URL_302,
+                              ADMIN_CITY_URLS, ADMIN_COMPETITIONS_URLS,
+                              ADMIN_COMPETITIONS_URLS_302,
+                              ADMIN_DIAGNOSIS_URL_302, ADMIN_DIAGNOSIS_URLS,
+                              ADMIN_DISCIPLINE_NAME_URL_302,
+                              ADMIN_DISCIPLINE_NAME_URLS, ADMIN_LOGIN,
+                              ADMIN_LOGOUT, ADMIN_MAIN_URL,
+                              ADMIN_NOSOLOGY_URL_302, ADMIN_NOSOLOGY_URLS,
+                              ADMIN_PASSWORD_URLS, ADMIN_PLAYER_URL_302,
+                              ADMIN_PROXY_GROUP_URL_302,
+                              ADMIN_PROXY_GROUP_URLS,
+                              ADMIN_STAFF_MEMBER_URL_302,
+                              ADMIN_STAFF_MEMBER_URLS, ADMIN_TEAM_URL_302,
+                              ADMIN_TEAM_URLS, ADMIN_USER_URL_302,
+                              ADMIN_USER_URLS, AUTH_RESET_URLS,
+                              COMPETITION_GET_URLS, COMPETITION_POST_URLS,
+                              INDEX_PAGE, LOG_IN_URL, LOG_OUT_URL,
+                              PASSWORD_URLS, PLAYER_GET_URLS, PLAYER_POST_URLS,
+                              STAFF_GET_URLS, STAFF_POST_URLS, TEAM_GET_URLS,
+                              TEAM_POST_URLS, UNLOAD_URLS, USER_GET_URLS,
+                              USER_POST_URLS)
 
 
 class TestSiteUrlsSmoke(BaseTestClass, UrlTestMixin):
@@ -147,14 +126,16 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_competitions(self):
         """Тесты страниц с соревнованиями в админке."""
         self.url_get_test(
-            ADMIN_COMPETITIONS_URLS_302, status_code=HTTPStatus.FOUND,
+            ADMIN_COMPETITIONS_URLS_302,
+            status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_COMPETITIONS_URLS)
 
     def test_admin_diagnosis(self):
         """Тесты страниц с диагнозами в админке."""
         self.url_get_test(
-            ADMIN_DIAGNOSIS_URL_302, status_code=HTTPStatus.FOUND,
+            ADMIN_DIAGNOSIS_URL_302,
+            status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_DIAGNOSIS_URLS)
 
@@ -171,7 +152,8 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_discipline_name(self):
         """Тесты страниц с наименованиями дисциплин в админке."""
         self.url_get_test(
-            ADMIN_DISCIPLINE_NAME_URL_302, status_code=HTTPStatus.FOUND,
+            ADMIN_DISCIPLINE_NAME_URL_302,
+            status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_DISCIPLINE_NAME_URLS)
 
@@ -199,7 +181,8 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_staff_member(self):
         """Тесты страниц с сотрудником в админке."""
         self.url_get_test(
-            ADMIN_STAFF_MEMBER_URL_302, status_code=HTTPStatus.FOUND,
+            ADMIN_STAFF_MEMBER_URL_302,
+            status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_STAFF_MEMBER_URLS)
 
@@ -223,7 +206,8 @@ class TestAdminUrlsSmoke(BaseTestClass, UrlTestMixin):
     def test_admin_proxy_group(self):
         """Тесты страниц с прокси-группами в админке."""
         self.url_get_test(
-            ADMIN_PROXY_GROUP_URL_302, status_code=HTTPStatus.FOUND,
+            ADMIN_PROXY_GROUP_URL_302,
+            status_code=HTTPStatus.FOUND,
         )
         self.url_get_test(ADMIN_PROXY_GROUP_URLS)
 

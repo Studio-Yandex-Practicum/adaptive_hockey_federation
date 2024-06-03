@@ -1,13 +1,5 @@
-from core.constants import (
-    CHAR_FIELD_LENGTH,
-    CLASS_FIELD_LENGTH,
-    DEFAULT_VALUE,
-    EMPTY_VALUE_DISPLAY,
-    GENDER_CHOICES,
-    PLAYER_POSITION_CHOICES,
-    STAFF_POSITION_CHOICES,
-)
-from core.validators import fio_validator, validate_date_birth
+from typing import TYPE_CHECKING
+
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -15,9 +7,17 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
+
+from core.constants import (
+    GENDER_CHOICES,
+    PLAYER_POSITION_CHOICES,
+    STAFF_POSITION_CHOICES,
+    MainConstantsInt,
+    MainConstantsStr,
+)
+from core.validators import fio_validator, validate_date_birth
 from users.models import User
 from users.validators import zone_code_without_seven_hundred
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from django.db.models import QuerySet
@@ -27,7 +27,7 @@ class BaseUniqueName(models.Model):
     """Базовый класс для других моделей с повторяющимся полем name."""
 
     name = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         verbose_name=_("Наименование"),
         help_text=_("Наименование"),
         unique=True,
@@ -79,7 +79,7 @@ class DisciplineLevel(BaseUniqueName):
     """Модель классификация, статусы дисциплин."""
 
     name = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         verbose_name=_("Наименование"),
         help_text=_("Наименование"),
     )
@@ -119,7 +119,7 @@ class Diagnosis(BaseUniqueName):
     nosology = models.ForeignKey(
         Nosology,
         on_delete=models.CASCADE,
-        max_length=CLASS_FIELD_LENGTH,
+        max_length=MainConstantsInt.CLASS_FIELD_LENGTH,
         verbose_name=_("Нозология"),
         help_text=_("Нозология"),
         related_name="diagnosis",
@@ -138,25 +138,25 @@ class BasePerson(models.Model):
     """Абстрактная модель с базовой персональной информацией."""
 
     surname = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         verbose_name=_("Фамилия"),
         help_text=_("Фамилия"),
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         validators=[fio_validator()],
     )
     name = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         verbose_name=_("Имя"),
         help_text=_("Имя"),
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         validators=[fio_validator()],
     )
     patronymic = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         blank=True,
         verbose_name=_("Отчество"),
         help_text=_("Отчество"),
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         validators=[fio_validator()],
     )
 
@@ -256,9 +256,9 @@ class StaffTeamMember(models.Model):
         help_text=_("Сотрудник"),
     )
     staff_position = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         choices=STAFF_POSITION_CHOICES,
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         verbose_name=_("Статус сотрудника"),
         help_text=_("Статус сотрудника"),
     )
@@ -271,14 +271,14 @@ class StaffTeamMember(models.Model):
         blank=True,
     )
     qualification = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
-        default=EMPTY_VALUE_DISPLAY,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         blank=True,
         verbose_name=_("Квалификация"),
         help_text=_("Квалификация"),
     )
     notes = models.TextField(
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         verbose_name=_("Описание"),
         help_text=_("Описание"),
         blank=True,
@@ -364,27 +364,27 @@ class Player(BasePerson):
         help_text=_("Дата добавления в базу данных"),
     )
     gender = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         choices=GENDER_CHOICES,
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         verbose_name=_("Пол"),
         help_text=_("Пол"),
     )
     level_revision = models.TextField(
         verbose_name=_("Игровая классификация"),
         help_text=_("Игровая классификация"),
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         blank=True,
     )
     position = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         choices=PLAYER_POSITION_CHOICES,
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         verbose_name=_("Игровая позиция"),
         help_text=_("Игровая позиция"),
     )
     number = models.IntegerField(
-        default=DEFAULT_VALUE,
+        default=MainConstantsInt.DEFAULT_VALUE,
         verbose_name=_("Номер игрока"),
         help_text=_("Номер игрока"),
     )
@@ -399,7 +399,7 @@ class Player(BasePerson):
     identity_document = models.TextField(
         verbose_name=_("Удостоверение личности"),
         help_text=_("Удостоверение личности"),
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         blank=True,
     )
 
@@ -439,13 +439,13 @@ class Document(BaseUniqueName):
     """Модель Документы для загрузки."""
 
     name = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         verbose_name=_("Наименование"),
         help_text=_("Наименование"),
     )
     file = models.FileField(
         upload_to="players_documents",
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         unique=True,
     )
     player = models.ForeignKey(
@@ -454,7 +454,7 @@ class Document(BaseUniqueName):
         related_name="player_documemts",
         verbose_name=_("Игрок"),
         help_text=_("Игрок"),
-        default=EMPTY_VALUE_DISPLAY,
+        default=MainConstantsStr.EMPTY_VALUE_DISPLAY,
         blank=True,
         null=True,
     )

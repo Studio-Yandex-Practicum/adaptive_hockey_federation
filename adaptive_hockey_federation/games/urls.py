@@ -1,4 +1,5 @@
 from django.urls import include, path
+
 from games import views
 
 app_name = "games"

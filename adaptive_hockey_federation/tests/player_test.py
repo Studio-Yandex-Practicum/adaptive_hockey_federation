@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Any
 
 from django.test import TestCase
+
 from main.data_factories.factories import DiagnosisFactory, PlayerFactory
 from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
 
@@ -41,11 +42,13 @@ class TestUser(TestCase):
     def test_player_create(self):
         """Тест - создание игрока."""
         self.assertEqual(
-            self.player.surname, self.player_test.surname + "тест",
+            self.player.surname,
+            self.player_test.surname + "тест",
         )
         self.assertEqual(self.player.name, self.player_test.name + "тест")
         self.assertEqual(
-            self.player.patronymic, self.player_test.patronymic + "тест",
+            self.player.patronymic,
+            self.player_test.patronymic + "тест",
         )
         self.assertEqual(self.player.gender, self.player_test.gender)
         self.assertEqual(self.player.birthday, self.player_test.birthday)
@@ -53,12 +56,14 @@ class TestUser(TestCase):
         self.assertEqual(self.player.discipline_level, self.discipline_level)
         self.assertEqual(self.player.diagnosis, self.diagnosis)
         self.assertEqual(
-            self.player.level_revision, self.player_test.level_revision,
+            self.player.level_revision,
+            self.player_test.level_revision,
         )
         self.assertEqual(self.player.position, self.player_test.position)
         self.assertEqual(self.player.number, self.player_test.number)
         self.assertEqual(
-            self.player.identity_document, self.player_test.identity_document,
+            self.player.identity_document,
+            self.player_test.identity_document,
         )
 
     def test_player_edit(self):
@@ -97,7 +102,8 @@ class TestUser(TestCase):
         self.assertEqual(edited_player.position, new_position)
         self.assertEqual(edited_player.number, new_number)
         self.assertEqual(
-            edited_player.identity_document, new_identity_document,
+            edited_player.identity_document,
+            new_identity_document,
         )
 
     def delete_player(self, player_id):

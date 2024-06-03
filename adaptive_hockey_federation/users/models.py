@@ -1,16 +1,5 @@
 from typing import Iterable
 
-from core.constants import (
-    EMAIL_MAX_LENGTH,
-    GROUPS_BY_ROLE,
-    NAME_MAX_LENGTH,
-    QUERY_SET_LENGTH,
-    ROLE_ADMIN,
-    ROLE_AGENT,
-    ROLE_MODERATOR,
-    ROLES_CHOICES,
-)
-from core.validators import fio_validator
 from django.contrib.auth.models import (
     AbstractBaseUser,
     Group,
@@ -25,6 +14,9 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
+
+from core.constants import GROUPS_BY_ROLE, ROLES_CHOICES, Role, UserConstans
+from core.validators import fio_validator
 from users.managers import CustomUserManager
 from users.validators import zone_code_without_seven_hundred
 
@@ -38,33 +30,33 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
 
     first_name = models.CharField(
-        max_length=NAME_MAX_LENGTH,
+        max_length=UserConstans.NAME_MAX_LENGTH,
         verbose_name=_("Имя"),
         help_text=_("Имя"),
         validators=[fio_validator()],
     )
     last_name = models.CharField(
-        max_length=NAME_MAX_LENGTH,
+        max_length=UserConstans.NAME_MAX_LENGTH,
         verbose_name=_("Фамилия"),
         help_text=_("Фамилия"),
         validators=[fio_validator()],
     )
     patronymic = models.CharField(
         blank=True,
-        max_length=NAME_MAX_LENGTH,
+        max_length=UserConstans.NAME_MAX_LENGTH,
         verbose_name=_("Отчество"),
         help_text=_("Отчество"),
         validators=[fio_validator()],
     )
     role = models.CharField(
         choices=ROLES_CHOICES,
-        default=ROLE_AGENT,
+        default=Role.AGENT,
         max_length=max(len(role) for role, _ in ROLES_CHOICES),
         verbose_name=_("Роль"),
         help_text=_("Уровень прав доступа"),
     )
     email = models.EmailField(
-        max_length=EMAIL_MAX_LENGTH,
+        max_length=UserConstans.EMAIL_MAX_LENGTH,
         unique=True,
         validators=(
             EmailValidator(
@@ -136,9 +128,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self) -> str:
         """Получает полную строку с ФИО пользователя."""
         return (
-            f"{self.last_name[:QUERY_SET_LENGTH]} "
-            f"{self.first_name[:QUERY_SET_LENGTH]} "
-            f"{self.patronymic[:QUERY_SET_LENGTH]}"
+            f"{self.last_name[:UserConstans.QUERY_SET_LENGTH]} "
+            f"{self.first_name[:UserConstans.QUERY_SET_LENGTH]} "
+            f"{self.patronymic[:UserConstans.QUERY_SET_LENGTH]}"
         )
 
     def email_user(self, subject, message, from_email=None, **kwargs):
@@ -176,7 +168,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         командах (ФИО, возраст, спортивный класс, тип заболевания).
         Выгружать формы по своей команде. Загружать сканы справок.
         """
-        return self.role == ROLE_AGENT
+        return self.role == Role.AGENT
 
     @property
     def is_moderator(self):
@@ -186,12 +178,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         Модератор - имеет возможности вносить данные по определенному ребенку,
         не может добавлять новых пользователей и удалять детей, команды.
         """
-        return self.role == ROLE_MODERATOR
+        return self.role == Role.MODERATOR
 
     @property
     def is_admin(self):
         """Администратор - имеет неограниченные права управления на проекте."""
-        return self.role == ROLE_ADMIN or self.is_staff
+        return self.role == Role.ADMIN or self.is_staff
 
     def set_group(self):
         """Добавляет пользователя в группу в зависимости от его роли."""

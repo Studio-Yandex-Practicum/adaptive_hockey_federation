@@ -1,8 +1,6 @@
 import re
 from typing import Any
 
-from core.constants import FORM_HELP_TEXTS, OTHER, ROLE_AGENT, TRAINER
-from core.utils import max_date, min_date
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import (
@@ -13,6 +11,9 @@ from django.forms import (
     TextInput,
 )
 from django.shortcuts import get_object_or_404
+
+from core.constants import FORM_HELP_TEXTS, Role, StaffPosition
+from core.utils import max_date, min_date
 from main.models import (
     City,
     Diagnosis,
@@ -335,7 +336,7 @@ class TeamForm(forms.ModelForm):
     city = CityChoiceField()
 
     curator = ModelChoiceField(
-        queryset=User.objects.filter(role=ROLE_AGENT),
+        queryset=User.objects.filter(role=Role.AGENT),
         required=True,
         widget=forms.Select(attrs={"class": "form-control"}),
         label="Куратор команды",
@@ -523,8 +524,8 @@ class StaffTeamMemberAddToTeamForm(forms.ModelForm):
         """Метод инициализации экземпляра класса."""
         self.team = kwargs.pop("team")
         data_list_dict = {
-            TRAINER: "available_coaches",
-            OTHER: "available_pushers",
+            StaffPosition.TRAINER: "available_coaches",
+            StaffPosition.OTHER: "available_pushers",
             "None": "available_staffs",
         }
         self.position_filter = position_filter or "None"

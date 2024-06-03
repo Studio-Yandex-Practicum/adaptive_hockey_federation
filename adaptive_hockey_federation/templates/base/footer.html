@@ -53,7 +53,6 @@
       {% endwith %}
       {% if request.resolver_match.url_name in show_return_button %}
         {% include "base/return_button.html" %}
-        {% include "base/button.html" with url_name=user_unload_url name="Выгрузить" %}
       {% endif %}
     </ul>
   </nav>

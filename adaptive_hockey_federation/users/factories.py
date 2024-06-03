@@ -2,6 +2,7 @@ import factory  # type: ignore
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from faker import Faker
+
 from users.provaders import CustomPhoneProvider
 
 fake = Faker(locale="ru_RU")

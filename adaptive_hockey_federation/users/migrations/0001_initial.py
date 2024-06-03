@@ -3,8 +3,9 @@
 import django.utils.timezone
 import phonenumber_field.modelfields
 import phonenumber_field.validators
-import users.managers
 from django.db import migrations, models
+
+import users.managers
 
 
 class Migration(migrations.Migration):

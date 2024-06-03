@@ -6,12 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0005_remove_player_player_unique'),
+        ("main", "0005_remove_player_player_unique"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='player',
-            constraint=models.UniqueConstraint(fields=('name', 'surname', 'patronymic', 'birthday'), name='player_unique'),
+            model_name="player",
+            constraint=models.UniqueConstraint(
+                fields=("name", "surname", "patronymic", "birthday"),
+                name="player_unique",
+            ),
         ),
     ]
