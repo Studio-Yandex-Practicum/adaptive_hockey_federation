@@ -156,6 +156,13 @@ class PlayerForm(forms.ModelForm):
             "birthday": FORM_HELP_TEXTS["birthday"],
         }
 
+    def __init__(self, *args, **kwargs):
+        """Инициализация формы для игрока."""
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields["nosology"].initial = self.instance.diagnosis.nosology
+            self.fields["diagnosis"].initial = self.instance.diagnosis
+
     def save_m2m(self):
         """Метод, сохраняющий M2M связи между игроком и командами."""
         self.instance.team.through.objects.filter(
@@ -207,7 +214,7 @@ class PlayerUpdateForm(PlayerForm):
 
         Расширяет team и available_teams кастомными полями выбора.
         """
-        super(PlayerForm, self).__init__(*args, **kwargs)
+        super(PlayerUpdateForm, self).__init__(*args, **kwargs)
         if queryset := self.instance.team.all():
             self.fields["team"] = CustomModelMultipleChoiceField(
                 queryset=queryset,
@@ -222,7 +229,9 @@ class PlayerUpdateForm(PlayerForm):
             help_text=FORM_HELP_TEXTS["available_teams"],
             label="Команды",
         )
-        self.fields["nosology"].initial = self.instance.diagnosis.nosology
+        if self.instance.pk:
+            self.fields["nosology"].initial = self.instance.diagnosis.nosology
+            self.fields["diagnosis"].initial = self.instance.diagnosis
 
 
 class CityChoiceField(ModelChoiceField):
