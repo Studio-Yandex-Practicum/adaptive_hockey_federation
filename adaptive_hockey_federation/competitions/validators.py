@@ -11,5 +11,6 @@ def date_not_before_today(value):
     """
     if value < datetime.date(datetime.now()):
         raise ValidationError(
-            "Введите дату не раньше сегодняшней.", code="past_is_forbidden",
+            "Введите дату не раньше сегодняшней.",
+            code="past_is_forbidden",
         )

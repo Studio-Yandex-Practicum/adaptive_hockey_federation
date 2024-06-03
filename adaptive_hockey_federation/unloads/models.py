@@ -1,8 +1,9 @@
-from core.constants import CHAR_FIELD_LENGTH, UNLOAD_DIR
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.utils.translation import gettext_lazy as _
+
+from core.constants import Directory, MainConstantsInt
 from users.models import User
 
 
@@ -10,7 +11,7 @@ class Unload(models.Model):
     """Выгрузка."""
 
     unload_name = models.CharField(
-        max_length=CHAR_FIELD_LENGTH,
+        max_length=MainConstantsInt.CHAR_FIELD_LENGTH,
         verbose_name=_("Имя выгрузки"),
         default="Выгрузка",
     )
@@ -25,7 +26,7 @@ class Unload(models.Model):
     )
     unload_file_slug = models.FileField(
         verbose_name=_("Ссылка на файл"),
-        upload_to=UNLOAD_DIR + "/",
+        upload_to=Directory.UNLOAD_DIR + "/",
     )
 
     class Meta:

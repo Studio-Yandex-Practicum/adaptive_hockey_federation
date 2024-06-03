@@ -1,6 +1,5 @@
 import unicodedata
 
-from core.constants import FORM_HELP_TEXTS
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
@@ -8,6 +7,8 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
+
+from core.constants import FORM_HELP_TEXTS
 from main.models import Team
 
 User = get_user_model()

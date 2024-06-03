@@ -5,8 +5,8 @@ from typing import Union
 
 @dataclass
 class BaseUserInfo:
-    """Основной класс с обязательными полями.
-    """
+    """Основной класс с обязательными полями."""
+
     name: Union[str, None]
     surname: Union[str, None]
     date_of_birth: Union[date, None]
@@ -23,9 +23,7 @@ class BaseUserInfo:
     is_captain: bool = False
 
     def __eq__(self, other):
-        return all(
-            getattr(self, attr) == getattr(other, attr) for attr in vars(self)
-        )
+        return all(getattr(self, attr) == getattr(other, attr) for attr in vars(self))
 
     def __hash__(self):
         return hash(
@@ -44,6 +42,5 @@ class BaseUserInfo:
                 self.revision,
                 self.is_assistant,
                 self.is_captain,
-
             )
         )

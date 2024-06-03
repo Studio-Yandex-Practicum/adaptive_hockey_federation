@@ -1,5 +1,6 @@
-from competitions import views
 from django.urls import include, path
+
+from competitions import views
 
 app_name = "competitions"
 

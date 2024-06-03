@@ -1,33 +1,17 @@
-from core.constants import ROLE_AGENT
+from core.constants import Role
 from tests.model_schemas.fields_validation_schemas import (
-    ALL_CAPS,
-    ALL_LOWER,
-    CORRECT_CREATE,
-    CORRECT_PHONE,
-    CORRECT_UPDATE,
-    DOUBLE_LAST_NAME,
-    DOUBLE_PATRONYMIC,
-    FIGURES_AND_LETTERS,
-    INCORRECT_EMAIL,
-    INCORRECT_PHONE,
-    LONGER_THEN_256,
-    LOWER_SECOND_LAST_NAME,
-    MIDDLE_CAP,
-    NOT_CYR,
-    NULL,
-    PUNCTUATION_MARKS_EXCEPT_HYPHEN,
-    SPACES,
-    THE_ONLY_CYR_LETTER,
-    TWO_OR_MORE_SPACES,
-    UNFORESEEN_ROLE,
-)
+    ALL_CAPS, ALL_LOWER, CORRECT_CREATE, CORRECT_PHONE, CORRECT_UPDATE,
+    DOUBLE_LAST_NAME, DOUBLE_PATRONYMIC, FIGURES_AND_LETTERS, INCORRECT_EMAIL,
+    INCORRECT_PHONE, LONGER_THEN_256, LOWER_SECOND_LAST_NAME, MIDDLE_CAP,
+    NOT_CYR, NULL, PUNCTUATION_MARKS_EXCEPT_HYPHEN, SPACES,
+    THE_ONLY_CYR_LETTER, TWO_OR_MORE_SPACES, UNFORESEEN_ROLE)
 
 USER_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {
         "first_name": "Василий",
         "last_name": "Иванович",
         "patronymic": "Петров",
-        "role": ROLE_AGENT,
+        "role": Role.AGENT,
         "email": "fake@fake.com",
         "phone": "+7 990 060-45-71",
         "is_staff": False,
@@ -37,7 +21,7 @@ USER_MODEL_TEST_SCHEMA = {
         "first_name": "Бурямглоюнебокроетвихриснежныекрутятокакзверьоназавоет",
         "last_name": "Съешьещеэтихмягкихфранцузскихбулочекдавыпейчаюев",
         "patronymic": "Кракозябробормоглототроглодитобрандашмыгович",
-        "role": ROLE_AGENT,
+        "role": Role.AGENT,
         "email": "fake@fake.com",
         "phone": "+7 990 060-45-72",
         "is_staff": False,

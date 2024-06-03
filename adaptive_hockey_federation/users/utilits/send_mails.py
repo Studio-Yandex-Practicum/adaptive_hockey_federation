@@ -2,12 +2,13 @@ import logging
 import os
 import sys
 
-from competitions.models import Competition
-from core.config import dev_settings
 from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+
+from competitions.models import Competition
+from core.config import dev_settings
 from main.models import Team
 from users.models import User
 from users.utilits.render import render_email_message
@@ -71,7 +72,8 @@ def send_welcome_mail(
     """Отправка пригласительного письма."""
     template = "emailing/welcome_letter.html"
     link = reverse(
-        "competitions:competition_id", kwargs={"pk": competition.pk},
+        "competitions:competition_id",
+        kwargs={"pk": competition.pk},
     )
     try:
         email = render_email_message(

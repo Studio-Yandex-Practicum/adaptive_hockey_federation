@@ -1,11 +1,9 @@
 from main.models import StaffMember
-from tests.model_schemas.fields_validation_schemas import (
-    CORRECT_CREATE,
-    CORRECT_UPDATE,
-    LONGER_THEN_256,
-    NULL,
-    THE_ONLY_LETTER,
-)
+from tests.model_schemas.fields_validation_schemas import (CORRECT_CREATE,
+                                                           CORRECT_UPDATE,
+                                                           LONGER_THEN_256,
+                                                           NULL,
+                                                           THE_ONLY_LETTER)
 
 STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {

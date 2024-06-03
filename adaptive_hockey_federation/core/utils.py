@@ -2,13 +2,13 @@ import os
 from datetime import datetime
 from typing import Any, List, Optional
 
-from core.constants import (
-    FILE_RESOLUTION,
-    MAX_UPLOAD_SIZE,
-    TIME_FORMAT,
-    MAX_AGE_PlAYER,
-    MIN_AGE_PlAYER,
-)
+from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db.models import QuerySet
+from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+
+from core.constants import AgeLimits, FileConstants, TimeFormat
 from core.settings.openpyxl_settings import (
     ALIGNMENT_CENTER,
     HEADERS_BORDER,
@@ -20,17 +20,13 @@ from core.settings.openpyxl_settings import (
     TITLE_FONT,
     TITLE_HEIGHT,
 )
-from django.conf import settings
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db.models import QuerySet
-from openpyxl import Workbook
-from openpyxl.worksheet.worksheet import Worksheet
 
 
 def generate_file_name(filename: str, prefix: str) -> str:
     filename, file_extension = os.path.splitext(filename)
     return (
-        f"{prefix}-{datetime.now().strftime(TIME_FORMAT)}" f"{file_extension}"
+        f"{prefix}-{datetime.now().strftime(TimeFormat.TIME_FORMAT)}"
+        f"{file_extension}"
     )
 
 
@@ -38,8 +34,8 @@ def is_uploaded_file_valid(file: InMemoryUploadedFile) -> bool:
     if (
         file.content_type
         and file.size
-        and file.content_type.split("/")[1] in FILE_RESOLUTION
-        and file.size <= MAX_UPLOAD_SIZE
+        and file.content_type.split("/")[1] in FileConstants.FILE_RESOLUTION
+        and file.size <= FileConstants.MAX_UPLOAD_SIZE
     ):
         return True
     return False
@@ -48,13 +44,13 @@ def is_uploaded_file_valid(file: InMemoryUploadedFile) -> bool:
 def min_date():
     now = datetime.now()
     month_day = format(now.strftime("%m-%d"))
-    return f"{str(now.year - MAX_AGE_PlAYER)}-{month_day}"
+    return f"{str(now.year - AgeLimits.MAX_AGE_PLAYER)}-{month_day}"
 
 
 def max_date():
     now = datetime.now()
     month_day = format(now.strftime("%m-%d"))
-    return f"{str(now.year - MIN_AGE_PlAYER)}-{month_day}"
+    return f"{str(now.year - AgeLimits.MIN_AGE_PLAYER)}-{month_day}"
 
 
 def column_width(workbook: Worksheet) -> None:

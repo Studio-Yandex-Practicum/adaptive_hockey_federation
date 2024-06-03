@@ -1,9 +1,10 @@
 from typing import Any
 
 from django import forms
+from django.db import transaction
 from django.db.models import QuerySet
 
-from games.constants import Errors, NumericalValues, Literals
+from games.constants import Errors, Literals, NumericalValues
 from games.models import Game
 from main.forms import CustomMultipleChoiceField
 from main.models import Team
@@ -82,6 +83,22 @@ class GameForm(forms.ModelForm):
         ):
             raise forms.ValidationError(Errors.CANNOT_PLAY_GAME_AGAINST_SELF)
         return self.cleaned_data["game_teams"]
+
+    @transaction.atomic
+    def save(self, commit=True):
+        """
+        Метод создает и сохраняет объект игры в базе данных.
+
+        Поле game_teams удаляется из обработки, поскольку сохранение нужно
+        произвести не по модели Team, а по модели GameTeam. Для этой цели
+        id указанных Team передаются в списке через атрибут в сигналы, где
+        и происходит дальнейшая обработка.
+        """
+        teams = self.cleaned_data.pop("game_teams")
+        del self.fields["game_teams"]
+        self.instance.teams = list(map(int, teams))
+        instance = super(GameForm, self).save(commit)
+        return instance
 
 
 class GameUpdateForm(GameForm):

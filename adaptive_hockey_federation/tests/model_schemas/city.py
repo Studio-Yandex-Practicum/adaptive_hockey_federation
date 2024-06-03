@@ -1,14 +1,11 @@
-from tests.model_schemas.fields_validation_schemas import (
-    CORRECT_CITY_NAMES,
-    CORRECT_CREATE,
-    CORRECT_UPDATE,
-    FIGURES_AND_LETTERS,
-    FIGURES_ONLY,
-    LONG_256,
-    LONGER_THEN_256,
-    NOT_CYR,
-    NULL,
-)
+from tests.model_schemas.fields_validation_schemas import (CORRECT_CITY_NAMES,
+                                                           CORRECT_CREATE,
+                                                           CORRECT_UPDATE,
+                                                           FIGURES_AND_LETTERS,
+                                                           FIGURES_ONLY,
+                                                           LONG_256,
+                                                           LONGER_THEN_256,
+                                                           NOT_CYR, NULL)
 
 CITY_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {
