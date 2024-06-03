@@ -101,14 +101,7 @@ class PlayerForm(forms.ModelForm):
         label="Нозология",
     )
 
-    diagnosis = ModelChoiceField(
-        queryset=Diagnosis.objects.all(),
-        required=True,
-        error_messages={
-            "required": "Пожалуйста, выберите диагноз из списка.",
-        },
-        label="Выберите диагноз",
-    )
+    diagnosis = CustomDiagnosisChoiceField()
 
     class Meta:
         model = Player
