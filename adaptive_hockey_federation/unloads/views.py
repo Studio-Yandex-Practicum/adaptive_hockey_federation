@@ -93,14 +93,13 @@ class DataExportView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """Обработчиков GET-запросов."""
         page_name = kwargs.get("page_name")
-
         if page_name in model_mapping:
             app_label, model_name, title = model_mapping[page_name]
             model = apps.get_model(app_label, model_name)
             last_url = request.META.get("HTTP_REFERER")
             parsed = urlparse(last_url)
             params = parse_qs(parsed.query)
-            if len(params) > 1:
+            if len(params) >= 1:
                 queryset = model_get_queryset(page_name, model, params, None)
                 filename = page_name + "_search.xlsx"
             else:
