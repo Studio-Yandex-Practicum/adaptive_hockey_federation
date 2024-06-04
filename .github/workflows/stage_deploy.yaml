@@ -55,7 +55,7 @@ jobs:
           ref: dev
 
       - name: Set up SSH
-        uses: appleboy/ssh-action@dev
+        uses: appleboy/ssh-action@develop
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
