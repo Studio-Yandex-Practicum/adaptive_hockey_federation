@@ -55,15 +55,18 @@ jobs:
           ref: dev
 
       - name: Set up SSH
-        uses: appleboy/ssh-action@develop
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            mkdir -p ${{ env.DEPLOY_PATH }}/infra
-      # - name: Create folder for deploy
-      #   run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          if [! -f ~/.ssh/id_rsa ]; then
+           touch ~/.ssh/id_rsa
+          fi
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      - name: Create folder for deploy
+        run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
         run: |
