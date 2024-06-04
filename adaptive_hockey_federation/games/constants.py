@@ -1,6 +1,6 @@
 """Константы, используемые в модуле games."""
 
-from enum import StrEnum, IntEnum
+from enum import IntEnum, StrEnum
 
 GAME_TITLE_MAPPING = dict(
     GameCreateView="Создание игры",
@@ -20,6 +20,7 @@ class Errors(StrEnum):
     PERMISSION_MISSING = "Отсутствует разрешение на {action}."
     EDIT_GAME = "редактирование игры"
     CREATE_GAME = "создание игры"
+    DELETE_GAME = "удаление игры"
     GAME_LIST_VIEW = "просмотр списка игр"
 
 

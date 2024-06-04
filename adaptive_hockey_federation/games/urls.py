@@ -1,4 +1,5 @@
 from django.urls import include, path
+
 from games import views
 
 app_name = "games"
@@ -10,6 +11,11 @@ games_urlpattern = [
         "<int:game_id>/edit/",
         views.GameEditView.as_view(),
         name="game_edit",
+    ),
+    path(
+        "<int:game_id>/delete/",
+        views.GameDeleteView.as_view(),
+        name="game_delete",
     ),
 ]
 

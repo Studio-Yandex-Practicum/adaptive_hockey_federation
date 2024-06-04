@@ -1,5 +1,6 @@
-from core.constants import FILE_RESOLUTION, MAX_UPLOAD_SIZE_MB
 from django.urls import reverse
+
+from core.constants import FileConstants
 from main.models import Player, Team
 
 
@@ -19,5 +20,8 @@ def get_team_href(team: Team) -> dict[str, str]:
 
 def errormessage() -> str:
     return (
-        "Максимальный размер файла " + MAX_UPLOAD_SIZE_MB
-        + ", допустимые разрешения " + ", ".join(FILE_RESOLUTION))
+        "Максимальный размер файла "
+        + FileConstants.MAX_UPLOAD_SIZE_MB
+        + ", допустимые разрешения "
+        + ", ".join(FileConstants.FILE_RESOLUTION)
+    )

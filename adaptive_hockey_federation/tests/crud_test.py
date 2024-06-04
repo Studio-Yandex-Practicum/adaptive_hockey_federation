@@ -1,34 +1,23 @@
 from typing import Any
 
 import pytest
-from core.constants import ROLE_AGENT
-from main.models import (
-    City,
-    Diagnosis,
-    DisciplineLevel,
-    DisciplineName,
-    Nosology,
-    Player,
-    StaffMember,
-    StaffTeamMember,
-    Team,
-)
+
+from core.constants import Role
+from main.models import (City, Diagnosis, DisciplineLevel, DisciplineName,
+                         Nosology, Player, StaffMember, StaffTeamMember, Team)
 from tests.base import ModelTestBaseClass
 from tests.model_schemas.city import CITY_MODEL_TEST_SCHEMA
 from tests.model_schemas.diagnosis import DIAGNOSIS_MODEL_TEST_SCHEMA
-from tests.model_schemas.discipline_level import (
-    DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA,
-)
-from tests.model_schemas.discipline_name import (
-    DISCIPLINE_NAME_MODEL_TEST_SCHEMA,
-)
+from tests.model_schemas.discipline_level import \
+    DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA
+from tests.model_schemas.discipline_name import \
+    DISCIPLINE_NAME_MODEL_TEST_SCHEMA
 from tests.model_schemas.group import GROUP_MODEL_TEST_SCHEMA
 from tests.model_schemas.nosology import NOSOLOGY_MODEL_TEST_SCHEMA
 from tests.model_schemas.player import PLAYER_MODEL_TEST_SCHEMA
 from tests.model_schemas.staff_member import STAFF_MEMBER_MODEL_TEST_SCHEMA
-from tests.model_schemas.staff_team_member import (
-    STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA,
-)
+from tests.model_schemas.staff_team_member import \
+    STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA
 from tests.model_schemas.team import TEAM_MODEL_TEST_SCHEMA
 from tests.model_schemas.user import USER_MODEL_TEST_SCHEMA
 from users.factories import UserFactory
@@ -580,7 +569,8 @@ class StaffTeamMemberCrudTest(ModelTestBaseClass):
         schema = self.get_correct_create_schema()
         schema["team"] = "1"
         self.correct_create_tests(
-            schema, url="/admin/main/staffteammember/add/",
+            schema,
+            url="/admin/main/staffteammember/add/",
         )
 
     def test_staff_team_member_correct_update_via_admin(self):
@@ -668,7 +658,7 @@ class TeamCrudTest(ModelTestBaseClass):
     def setUpClass(cls) -> None:
         """Классовый метод для базовой настройки всех тестов класса."""
         super().setUpClass()
-        cls.user_agent = UserFactory.create(role=ROLE_AGENT)
+        cls.user_agent = UserFactory.create(role=Role.AGENT)
 
     def get_correct_create_schema(self):
         """Метод на формирование корректной схемы создания объектов."""
@@ -774,7 +764,8 @@ class TeamCrudTest(ModelTestBaseClass):
         """
         url = f"/admin/main/team/{self.future_obj_id}/change/"
         self.correct_field_tests(
-            url=url, **self.admin_inlines_no_player_no_staff,
+            url=url,
+            **self.admin_inlines_no_player_no_staff,
         )
 
 
@@ -818,7 +809,10 @@ class PlayerCrudTest(ModelTestBaseClass):
     def test_player_create_via_http(self):
         """Тест на корректное создание через сайт."""
         self.correct_create_tests(
-            url="/players/create/", team=1, nosology=1, diagnosis=1,
+            url="/players/create/",
+            team=1,
+            nosology=1,
+            diagnosis=1,
         )
 
     def test_player_update_via_http(self):

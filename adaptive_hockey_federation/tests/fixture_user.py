@@ -1,10 +1,11 @@
 import pytest
-from core.constants import ROLE_SUPERUSER
+
+from core.constants import Role
 
 test_password = "admin"
 test_name = "admin"
 test_lastname = "admin"
-test_role_admin = ROLE_SUPERUSER
+test_role_admin = Role.SUPERUSER
 test_role_user = "user"
 test_email = "admin@admin.ru"
 
@@ -29,7 +30,9 @@ def user_client(user, client):
 @pytest.fixture
 def adminuser(djangousermodel):
     admin = djangousermodel.objects.createsuperuser(
-        first_name="admin", email="admin@admin.com", password="admin",
+        first_name="admin",
+        email="admin@admin.com",
+        password="admin",
     )
     admin.isstaff = True
     admin.issuperuser = True

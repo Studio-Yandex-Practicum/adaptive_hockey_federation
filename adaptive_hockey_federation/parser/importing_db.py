@@ -2,21 +2,13 @@ import json
 import subprocess
 
 from django.db import connection
-from main import models
-from main.models import (
-    DisciplineLevel,
-    DisciplineName,
-    Player,
-    StaffMember,
-    StaffTeamMember,
-    Team,
-)
 
 from adaptive_hockey_federation.core.config.dev_settings import (
-    FILE_MODEL_MAP,
-    RESOURSES_ROOT,
-)
+    FILE_MODEL_MAP, RESOURSES_ROOT)
 from adaptive_hockey_federation.parser.user_card import BaseUserInfo
+from main import models
+from main.models import (DisciplineLevel, DisciplineName, Player, StaffMember,
+                         StaffTeamMember, Team)
 
 MODELS_ONE_FIELD_NAME = ["main_city", "main_disciplinename", "main_nosology"]
 
@@ -123,9 +115,7 @@ def importing_parser_data_db(FIXSTURES_FILE: str) -> None:
                 item[key] = 0
         for i in PLAYER_POSITIONS:
             if i in item["position"]:
-                create_players(
-                    item, get_discipline_name(item["classification"])
-                )
+                create_players(item, get_discipline_name(item["classification"]))
         for i in STAFF_POSITIONS:
             if i in item["position"]:
                 create_staff_member(item)
@@ -144,13 +134,9 @@ def clear_data_db(file_name: str) -> None:
 
 
 def parse_disciplines(FIXSTURES_DIR) -> dict:
-    with open(
-        FIXSTURES_DIR / "main_discipline.json", "r", encoding="utf-8"
-    ) as file:
+    with open(FIXSTURES_DIR / "main_discipline.json", "r", encoding="utf-8") as file:
         data = json.load(file)
-    disciplines = {
-        None: {"discipline_level_id": None, "discipline_name_id": None}
-    }
+    disciplines = {None: {"discipline_level_id": None, "discipline_name_id": None}}
     for item in data:
         disciplines[item["id"]] = {
             "discipline_level_id": item["discipline_level_id"],

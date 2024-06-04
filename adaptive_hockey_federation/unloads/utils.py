@@ -1,5 +1,6 @@
-from analytics.schema import ANALYTICS_SEARCH_FIELDS
 from django.db.models import Q
+
+from analytics.schema import ANALYTICS_SEARCH_FIELDS
 from main.schemas.player_schema import SEARCH_FIELDS
 
 
@@ -41,8 +42,9 @@ def players_get_queryset(model, dict_param, queryset):
             or_lookup |= Q(("gender__icontains", dict_param["gender"][0]))
     elif search_column_name == "discipline_name":
         if "discipline_name" in dict_param:
-            or_lookup |= Q(("discipline_name__name",
-                            dict_param["discipline_name"][0]))
+            or_lookup |= Q(
+                ("discipline_name__name", dict_param["discipline_name"][0]),
+            )
     else:
         search = dict_param["search"][0]
         or_lookup |= Q(
