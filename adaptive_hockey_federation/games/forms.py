@@ -5,7 +5,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 
 from games.constants import Errors, Literals, NumericalValues
-from games.models import Game
+from games.models import Game, GameTeam
 from main.forms import CustomMultipleChoiceField
 from main.models import Team
 
@@ -26,8 +26,11 @@ class CustomGameMultipleChoiceField(forms.ModelMultipleChoiceField):
         except TypeError:
             raise forms.ValidationError(Errors.INCORRECT_GAME_TEAMS)
         value = list(value)
-        qs = Team.objects.filter(pk__in=value)
-        return qs
+        game_teams = GameTeam.objects.filter(pk__in=value).values_list(
+            "name",
+            flat=True,
+        )
+        return Team.objects.filter(name__in=game_teams)
 
 
 class GameForm(forms.ModelForm):
@@ -72,16 +75,17 @@ class GameForm(forms.ModelForm):
             > NumericalValues.MAX_TEAMS_IN_GAME
         ):
             raise forms.ValidationError(Errors.NO_MORE_THAN_TWO_TEAMS_IN_GAME)
-        elif (
-            len(self.cleaned_data["game_teams"])
-            < NumericalValues.MAX_TEAMS_IN_GAME
-        ):
-            raise forms.ValidationError(Errors.MUST_BE_TWO_TEAMS_IN_A_GAME)
-        if (
-            self.cleaned_data["game_teams"][0]
-            == self.cleaned_data["game_teams"][1]
-        ):
-            raise forms.ValidationError(Errors.CANNOT_PLAY_GAME_AGAINST_SELF)
+        # elif (
+        #         len(self.cleaned_data["game_teams"])
+        #         < NumericalValues.MAX_TEAMS_IN_GAME
+        # ):
+        #     raise forms.ValidationError(Errors.MUST_BE_TWO_TEAMS_IN_A_GAME)
+        # if (
+        #         self.cleaned_data["game_teams"][0]
+        #         == self.cleaned_data["game_teams"][1]
+        # ):
+        #     raise forms.ValidationError(Errors.CANNOT_PLAY_GAME_AGAINST_SELF)
+        #  TODO: раскомментировать, когда до конца починится форма
         return self.cleaned_data["game_teams"]
 
     @transaction.atomic
@@ -94,7 +98,13 @@ class GameForm(forms.ModelForm):
         id указанных Team передаются в списке через атрибут в сигналы, где
         и происходит дальнейшая обработка.
         """
-        teams = self.cleaned_data.pop("game_teams")
+        if isinstance(self.cleaned_data["game_teams"], list):
+            teams = self.cleaned_data.pop("game_teams")
+        else:
+            teams = self.cleaned_data["game_teams"].values_list(
+                "id",
+                flat=True,
+            )
         del self.fields["game_teams"]
         self.instance.teams = list(map(int, teams))
         instance = super(GameForm, self).save(commit)
@@ -114,16 +124,16 @@ class GameUpdateForm(GameForm):
         участвующих в игре.
         """
         super(GameForm, self).__init__(*args, **kwargs)
-        if queryset := self.instance.game_teams.all():
+        if queryset := GameTeam.objects.filter(game=self.instance):
             self.fields["game_teams"] = CustomGameMultipleChoiceField(
-                queryset=queryset,
+                queryset=queryset.order_by("name"),
                 required=True,
                 help_text=Literals.GAME_PARTICIPATING_TEAMS,
                 label=Literals.GAME_TEAMS,
             )
-        available_teams_qs = (
-            Team.objects.all().difference(queryset).order_by("name")
-        )
+        available_teams_qs = Team.objects.exclude(
+            name__in=queryset.values_list("name", flat=True),
+        ).order_by("name")
         self.fields["available_teams"] = CustomGameMultipleChoiceField(
             queryset=available_teams_qs,
             required=False,
