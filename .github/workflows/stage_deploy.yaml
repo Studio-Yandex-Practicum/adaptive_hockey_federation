@@ -55,16 +55,15 @@ jobs:
           ref: dev
 
       - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          ssh-keyscan -H ${{ secrets.TEST_HOST }} > ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-          echo "${{ secrets.TEST_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          tr -d '\r' < ~/.ssh/id_ed25519 > cleaned_key && mv cleaned_key ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-      - name: Create folder for deploy
-        run: ssh ${{ secrets.TEST_USERNAME }}@${{ secrets.TEST_HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p ${{ env.DEPLOY_PATH }}/infra
+      # - name: Create folder for deploy
+      #   run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
         run: |
