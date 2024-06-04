@@ -60,10 +60,10 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-      - name: Create folder for deploy
-        run: ssh -vvv -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+          echo "${{ secrets.TEST_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed
+      # - name: Create folder for deploy
+      #   run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
         run: |
