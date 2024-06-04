@@ -60,9 +60,6 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          if [! -f ~/.ssh/id_rsa ]; then
-           touch ~/.ssh/id_rsa
-          fi
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
       - name: Create folder for deploy
