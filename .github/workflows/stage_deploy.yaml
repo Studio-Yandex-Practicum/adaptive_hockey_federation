@@ -62,8 +62,9 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-      - name: Create folder for deploy
-        run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+          ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+      # - name: Create folder for deploy
+      #   run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
         run: |
