@@ -75,7 +75,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.TEST_RSA_SECRET_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
             rm .env
