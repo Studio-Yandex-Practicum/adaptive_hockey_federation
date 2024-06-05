@@ -2,7 +2,7 @@ from typing import Any
 
 from django import forms
 from django.db import transaction
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 
 from games.constants import Errors, Literals, NumericalValues
 from games.models import Game, GameTeam
@@ -125,7 +125,13 @@ class GameUpdateForm(GameForm):
         if queryset := GameTeam.objects.filter(game=self.instance):
             self.fields["game_teams"] = CustomGameMultipleChoiceField(
                 queryset=Team.objects.filter(
-                    name__in=queryset.values_list("name", flat=True),
+                    Q(
+                        discipline_name__name__in=queryset.values_list(
+                            "discipline_name",
+                            flat=True,
+                        ),
+                    )
+                    & Q(name__in=queryset.values_list("name", flat=True)),
                 ),
                 required=True,
                 help_text=Literals.GAME_PARTICIPATING_TEAMS,
