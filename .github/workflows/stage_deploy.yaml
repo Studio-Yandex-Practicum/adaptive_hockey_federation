@@ -55,22 +55,20 @@ jobs:
           ref: dev
 
       - name: Set up SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.TEST_SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.TEST_PASSHARE }}
-          script: |
-            mkdir -p ${{ env.DEPLOY_PATH }}/infra
-            sp -r $GITHUB_WORKSPACE/infra/. ${{ env.DEPLOY_PATH }}/infra/
-      # - name: Create folder for deploy
-      #   run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      - name: Create folder for deploy
+        run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
-      # - name: Copy dev folder to VPS
-      #   run: |
-      #     scp -r $GITHUB_WORKSPACE/infra/stage/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
-      #     scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+      - name: Copy dev folder to VPS
+        run: |
+          scp -r $GITHUB_WORKSPACE/infra/stage/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
 
       - name: Execute commands on VPS
         uses: appleboy/ssh-action@master
@@ -78,7 +76,6 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.TEST_PASSHARE }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
             rm .env
