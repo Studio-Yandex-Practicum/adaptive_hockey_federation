@@ -17,6 +17,11 @@ games_urlpattern = [
         views.GameDeleteView.as_view(),
         name="game_delete",
     ),
+    path(
+        "<int:game_id>/info-about-game/",
+        views.GamesInfoView.as_view(),
+        name="game_info",
+    ),
 ]
 
 urlpatterns = [
