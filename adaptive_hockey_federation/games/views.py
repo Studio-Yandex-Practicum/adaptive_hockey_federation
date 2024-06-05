@@ -10,11 +10,12 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from django.views.generic import DetailView
 
 from games.constants import Errors, Literals, NumericalValues
 from games.forms import GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
-from games.models import Game
+from games.models import Game, GameTeam, GamePlayer
 
 
 class GamesListView(
@@ -41,20 +42,21 @@ class GamesListView(
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
+        context["games"] = self.get_queryset()
         games = context["games"]
         table_data = []
         for game in games:
             first_team, second_team = (
-                game.game_teams.values().first(),
-                game.game_teams.values().last(),
+                game.game_teams.first(),
+                game.game_teams.last(),
             )
             table_data.append(
                 {
                     "pk": game.pk,
                     "name": game.name,
                     "video_link": game.video_link,
-                    "first_team": first_team["name"],
-                    "second_team": second_team["name"],
+                    "first_team": first_team.name,
+                    "second_team": second_team.name,
                 },
             )
         context["table_head"] = {
@@ -117,3 +119,41 @@ class GameDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     def get_object(self, queryset: QuerySet = None) -> Game:
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Game, id=self.kwargs["game_id"])
+
+
+class GamesInfoView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    DetailView,
+):
+    """Представление для получения деталей игры."""
+
+    model = Game
+    form_class = GameForm
+    template_name = "main/games/game_detail.html"
+    permission_required = "games.delete_game"
+    permission_denied_message = Errors.PERMISSION_MISSING.format(
+        action=Errors.DELETE_GAME,
+    )
+
+    def get_object(self, queryset: QuerySet = None) -> Game:
+        """Получить объект по id или выбросить ошибку 404."""
+        return get_object_or_404(Game, id=self.kwargs["game_id"])
+
+    def get_teams(self, queryset: QuerySet = None) -> Game:
+        """Получить список объектов команд, связанных с игрой."""
+        return GameTeam.objects.filter(game=self.kwargs["game_id"]).all()
+
+    def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
+        context = super().get_context_data(**kwargs)
+
+        teams = self.get_teams()
+
+        for team in teams:
+            players = GamePlayer.objects.filter(game_team=team)
+            team.players = players
+
+        context["teams"] = teams
+        print(context["teams"])
+        return context
