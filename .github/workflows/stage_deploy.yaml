@@ -63,8 +63,7 @@ jobs:
           passphrase: ${{ secrets.TEST_PASSHARE }}
           script: |
             mkdir -p ${{ env.DEPLOY_PATH }}/infra
-            scp -r $GITHUB_WORKSPACE/infra/stage/. ${{ env.DEPLOY_PATH }}/infra/
-            scp -r $GITHUB_WORKSPACE/infra/nginx/. ${{ env.DEPLOY_PATH }}/infra/
+            sp -r $GITHUB_WORKSPACE/infra/. ${{ env.DEPLOY_PATH }}/infra/
       # - name: Create folder for deploy
       #   run: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
