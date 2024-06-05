@@ -12,7 +12,6 @@ def create_game_teams(sender, instance, created, **kwargs):
     Для последующего использования сигнала при обновлении объекта Game
     реализовано удаление старых GameTeam, которые ссылались на этот Game.
     """
-    # if created:
     teams = instance.teams
     queryset_teams = list(
         map(lambda x: Team.objects.get(id=x), teams),
