@@ -130,6 +130,7 @@ jobs:
                 exit 1
               fi
               CONTAINER_STATUS=$(docker ps | grep adaptive_hockey_federation)
+              STATUS_OUTPUT=$(sudo systemctl status adaptive_hockey_federation.service)
             done
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
             docker exec adaptive_hockey_federation python manage.py makemigrations
