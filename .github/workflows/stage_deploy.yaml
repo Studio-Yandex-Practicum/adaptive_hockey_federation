@@ -60,7 +60,7 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
       - name: Create folder for deploy
         run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
@@ -75,7 +75,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.TEST_RSA_SECRET_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
             rm .env
