@@ -26,7 +26,10 @@ ExecStart=docker compose -f docker-compose.stage.yaml --env-file /home/developer
 # ExecStop=
 
 # Call when daemon already start
-# ExecStartPost=
+ExecStartPost=docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+ExecStartPost=docker exec adaptive_hockey_federation python manage.py makemigrations
+ExecStartPost=docker exec adaptive_hockey_federation python manage.py migrate
+
 
 [Install]
 
