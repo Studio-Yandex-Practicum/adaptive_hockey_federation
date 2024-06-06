@@ -60,7 +60,7 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
       - name: Create folder for deploy
         run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
@@ -75,7 +75,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.TEST_RSA_SECRET_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
             rm .env
@@ -114,7 +114,7 @@ jobs:
             sudo systemctl daemon-reload
             sudo systemctl start adaptive_hockey_federation.service
 
-            sleep 60
+            sleep 60 (здесь нужно заменить sleep на проверку готовности сервиса)
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
             docker exec adaptive_hockey_federation python manage.py makemigrations
             docker exec adaptive_hockey_federation python manage.py migrate
@@ -142,28 +142,3 @@ jobs:
           # docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
           # docker exec adaptive_hockey_federation python manage.py makemigrations
           # docker exec adaptive_hockey_federation python manage.py migrate
-
-
-
-      # docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-      # docker exec adaptive_hockey_federation python manage.py makemigrations
-      # docker exec adaptive_hockey_federation python manage.py migrate
-
-      # - name: Wait for container to start
-      #   run: |
-      #     max_attempts=60
-      #     attempt=1
-      #     CONTAINER_STATUS=$(docker ps | grep adaptive_hockey_federation)
-      #     until [! -z "$CONTAINER_STATUS" ]; do
-      #       echo "Waiting for container to start... Attempt $attempt/$max_attempts"
-      #       sleep 1
-      #       attempt=$((attempt+1))
-      #       if [ $attempt -gt $max_attempts ]; then
-      #         echo "Container 'adaptive_hockey_federation' did not start within expected time frame."
-      #         exit 1
-      #       fi
-      #       CONTAINER_STATUS=$(docker ps | grep adaptive_hockey_federation)
-      #     done
-      #     docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-      #     docker exec adaptive_hockey_federation python manage.py makemigrations
-      #     docker exec adaptive_hockey_federation python manage.py migrate
