@@ -12,22 +12,21 @@ def create_game_teams(sender, instance, created, **kwargs):
     Для последующего использования сигнала при обновлении объекта Game
     реализовано удаление старых GameTeam, которые ссылались на этот Game.
     """
-    if created:
-        teams = instance.teams
-        queryset_teams = list(
-            map(lambda x: Team.objects.get(id=x), teams),
+    teams = instance.teams
+    queryset_teams = list(
+        map(lambda x: Team.objects.get(id=x), teams),
+    )
+    GameTeam.objects.filter(game=instance).delete()
+    for team in queryset_teams:
+        game_team = GameTeam(
+            name=team.name,
+            discipline_name=team.discipline_name.name,
+            game=instance,
         )
-        GameTeam.objects.filter(game=instance).delete()
-        for team in queryset_teams:
-            game_team = GameTeam(
-                name=team.name,
-                discipline_name=team.discipline_name.name,
-                game=instance,
-            )
-            game_team.players = Player.objects.filter(
-                team=team,
-            )
-            game_team.save()
+        game_team.players = Player.objects.filter(
+            team=team,
+        )
+        game_team.save()
 
 
 @receiver(post_save, sender=GameTeam, dispatch_uid="unique_signal")

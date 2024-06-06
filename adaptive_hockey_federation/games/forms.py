@@ -2,10 +2,10 @@ from typing import Any
 
 from django import forms
 from django.db import transaction
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 
 from games.constants import Errors, Literals, NumericalValues
-from games.models import Game
+from games.models import Game, GameTeam
 from main.forms import CustomMultipleChoiceField
 from main.models import Team
 
@@ -26,8 +26,7 @@ class CustomGameMultipleChoiceField(forms.ModelMultipleChoiceField):
         except TypeError:
             raise forms.ValidationError(Errors.INCORRECT_GAME_TEAMS)
         value = list(value)
-        qs = Team.objects.filter(pk__in=value)
-        return qs
+        return Team.objects.filter(id__in=value)
 
 
 class GameForm(forms.ModelForm):
@@ -94,7 +93,16 @@ class GameForm(forms.ModelForm):
         id указанных Team передаются в списке через атрибут в сигналы, где
         и происходит дальнейшая обработка.
         """
-        teams = self.cleaned_data.pop("game_teams")
+        if isinstance(self.cleaned_data["game_teams"], list):
+            teams = self.cleaned_data.pop("game_teams")
+        else:
+            teams = self.cleaned_data["game_teams"].values_list(
+                "id",
+                flat=True,
+            )
+            # Тут берём ID для того, чтобы передать их в сигнал,
+            # иначе всё сломается двумя строчками ниже, т.к. в случае
+            # редактирования формы передаётся QuerySet, а не простой список
         del self.fields["game_teams"]
         self.instance.teams = list(map(int, teams))
         instance = super(GameForm, self).save(commit)
@@ -114,16 +122,24 @@ class GameUpdateForm(GameForm):
         участвующих в игре.
         """
         super(GameForm, self).__init__(*args, **kwargs)
-        if queryset := self.instance.game_teams.all():
+        if queryset := GameTeam.objects.filter(game=self.instance):
             self.fields["game_teams"] = CustomGameMultipleChoiceField(
-                queryset=queryset,
+                queryset=Team.objects.filter(
+                    Q(
+                        discipline_name__name__in=queryset.values_list(
+                            "discipline_name",
+                            flat=True,
+                        ),
+                    )
+                    & Q(name__in=queryset.values_list("name", flat=True)),
+                ),
                 required=True,
                 help_text=Literals.GAME_PARTICIPATING_TEAMS,
                 label=Literals.GAME_TEAMS,
             )
-        available_teams_qs = (
-            Team.objects.all().difference(queryset).order_by("name")
-        )
+        available_teams_qs = Team.objects.exclude(
+            name__in=queryset.values_list("name", flat=True),
+        ).order_by("name")
         self.fields["available_teams"] = CustomGameMultipleChoiceField(
             queryset=available_teams_qs,
             required=False,

@@ -103,7 +103,11 @@ class GamePlayer(models.Model):
 
     class Meta:
         default_related_name = "game_players"
-
+        unique_together = (
+            "name",
+            "number",
+            "game_team",
+        )
         verbose_name = "Игрок, участвующий в игре"
         verbose_name_plural = "Игроки, участвующие в игре"
         constraints = [
