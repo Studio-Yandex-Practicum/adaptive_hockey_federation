@@ -75,7 +75,11 @@ class GamePlayer(models.Model):
     """Модель игрока, участвующего в игре."""
 
     name = models.CharField(
-        verbose_name=_("Игрок"),
+        verbose_name=_("Имя игрока"),
+        max_length=UserConstans.NAME_MAX_LENGTH,
+    )
+    last_name = models.CharField(
+        verbose_name=_("Фамилия игрока"),
         max_length=UserConstans.NAME_MAX_LENGTH,
     )
     number = models.PositiveSmallIntegerField(
@@ -99,6 +103,11 @@ class GamePlayer(models.Model):
 
     class Meta:
         default_related_name = "game_players"
+        unique_together = (
+            "name",
+            "number",
+            "game_team",
+        )
         verbose_name = "Игрок, участвующий в игре"
         verbose_name_plural = "Игроки, участвующие в игре"
         constraints = [

@@ -38,6 +38,7 @@ def create_game_players(sender, instance, created, **kwargs):
         for player in queryset_players:
             game_player = GamePlayer(
                 name=player.name,
+                last_name=player.surname,
                 number=player.number,
                 game_team=instance,
             )
