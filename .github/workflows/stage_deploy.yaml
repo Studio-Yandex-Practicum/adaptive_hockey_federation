@@ -118,11 +118,11 @@ jobs:
             max_attempts=60
             attempt=1
             CONTAINER_STATUS=$(docker ps | grep adaptive_hockey_federation)
-            until [! -z "$CONTAINER_STATUS" ]; do
+            until [[! -z "$CONTAINER_STATUS" ]]; do
               echo "Waiting for container to start... Attempt $attempt/$max_attempts"
               sleep 5
               attempt=$((attempt+1))
-              if [ $attempt -gt $max_attempts ]; then
+              if [[ $attempt -gt $max_attempts ]]; then
                 echo "Container 'adaptive_hockey_federation' did not start within expected time frame."
                 exit 1
               fi
