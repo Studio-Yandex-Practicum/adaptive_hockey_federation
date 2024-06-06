@@ -120,19 +120,18 @@ jobs:
             attempt=1
             CONTAINER_STATUS=$(docker ps | grep adaptive_hockey_federation)
             until [ -n "$CONTAINER_STATUS" ]; do
-              echo "Waiting for container to start... Attempt $attempt/$max_attempts"
+              echo "Waiting for container $CONTAINER_STATUS to start... Attempt $attempt/$max_attempts"
               sleep 1
               attempt=$((attempt+1))
               if [[ $attempt -gt $max_attempts ]]; then
                 echo "Container 'adaptive_hockey_federation' did not start within expected time frame."
                 exit 1
-              else
-                docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-                docker exec adaptive_hockey_federation python manage.py makemigrations
-                docker exec adaptive_hockey_federation python manage.py migrate
               fi
               CONTAINER_STATUS=$(docker ps | grep adaptive_hockey_federation)
             done
+            docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+            docker exec adaptive_hockey_federation python manage.py makemigrations
+            docker exec adaptive_hockey_federation python manage.py migrate
 
 
 
