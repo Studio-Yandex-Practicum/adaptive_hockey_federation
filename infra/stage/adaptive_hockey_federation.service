@@ -22,11 +22,11 @@ ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/develo
 # compose up
 ExecStart=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env up
 
-# compose down
-# ExecStop=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env down
+# Call when daemon allready stop
+# ExecStop=
 
-# Remove all unused containers, networks, images
-ExecStartPost=docker system prune --force
+# Call when daemon already start
+# ExecStartPost=
 
 [Install]
 
