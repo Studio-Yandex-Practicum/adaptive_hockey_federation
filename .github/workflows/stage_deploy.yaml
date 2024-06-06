@@ -114,7 +114,8 @@ jobs:
             sudo systemctl daemon-reload
             sudo systemctl start adaptive_hockey_federation.service
 
-            sleep 60 (здесь нужно заменить sleep на проверку готовности сервиса)
+            # (здесь нужно заменить sleep на проверку готовности сервиса)
+            sleep 60
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
             docker exec adaptive_hockey_federation python manage.py makemigrations
             docker exec adaptive_hockey_federation python manage.py migrate
