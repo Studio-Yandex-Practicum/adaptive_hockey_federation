@@ -119,7 +119,9 @@ jobs:
             max_attempts=60
             attempt=1
             CONTAINER_STATUS=$(docker ps | grep adaptive_hockey_federation)
+            STATUS_OUTPUT=$(sudo systemctl status adaptive_hockey_federation.service)
             until [ -n "$CONTAINER_STATUS" ]; do
+              echo Status deamon $STATUS_OUTPUT
               echo "Waiting for container $CONTAINER_STATUS to start... Attempt $attempt/$max_attempts"
               sleep 1
               attempt=$((attempt+1))
