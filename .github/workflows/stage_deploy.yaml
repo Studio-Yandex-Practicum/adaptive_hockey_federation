@@ -114,6 +114,7 @@ jobs:
             sudo systemctl daemon-reload
             sudo systemctl start adaptive_hockey_federation.service
 
+            # улечить timout?
             sleep 20
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
             docker exec adaptive_hockey_federation python manage.py makemigrations
