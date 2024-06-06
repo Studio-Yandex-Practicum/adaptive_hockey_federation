@@ -114,6 +114,15 @@ jobs:
             sudo systemctl daemon-reload
             sudo systemctl start adaptive_hockey_federation.service
 
+
+
+
+
+
+            sleep 40
+            docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+            docker exec adaptive_hockey_federation python manage.py makemigrations
+            docker exec adaptive_hockey_federation python manage.py migrate
           # # Wait for container to start/makemigrations/migrate
           # # Max waiting time 60sec. If you need degrees time frame, correct max_attempts and sleep
           # max_attempts=60
