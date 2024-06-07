@@ -5,6 +5,7 @@ DJANGO_DIR := $(PROJECT_DIR)/adaptive_hockey_federation
 POETRY_RUN := poetry run python
 DJANGO_RUN := $(POETRY_RUN) $(MANAGE_DIR)
 DEV_DOCK_FILE := $(PROJECT_DIR)/infra/dev/docker-compose.dev.yaml
+DS_DOCK_FILE := $(PROJECT_DIR)/a_hockey-main/app/
 SHELL_GREEN = \033[32m
 SHELL_YELLOW = \033[33m
 SHELL_NC := \e[0m
@@ -118,3 +119,13 @@ pytest:
 
 
 .PHONY: help
+
+# Сборка Docker образа сервера DS
+create_image_video_ds:
+	cd $(DS_DOCK_FILE)
+	docker build --tag hockey .
+
+# Запуск контейнера сервера DS
+start_video_ds:
+	cd $(DS_DOCK_FILE)
+	docker run --rm -p 8010:8000 --name video hockey
