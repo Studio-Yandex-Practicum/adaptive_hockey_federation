@@ -45,6 +45,7 @@ FILE_MODEL_MAP = {
     "main_staffteammember": "StaffTeamMember",
     "main_staffmember": "StaffMember",
     "main_city": "City",
+    "main_diagnosis": "Diagnosis",
     "main_nosology": "Nosology",
     "main_disciplinelevel": "DisciplineLevel",
     "main_disciplinename": "DisciplineName",
