@@ -12,7 +12,7 @@ def create_game_teams(sender, instance, created, **kwargs):
     Для последующего использования сигнала при обновлении объекта Game
     реализовано удаление старых GameTeam, которые ссылались на этот Game.
     """
-    teams = instance.teams
+    teams = instance.game_teams.all()
     queryset_teams = list(
         map(lambda x: Team.objects.get(id=x), teams),
     )
@@ -33,7 +33,7 @@ def create_game_teams(sender, instance, created, **kwargs):
 def create_game_players(sender, instance, created, **kwargs):
     """Сигнал для автоматического создания GamePlayer при создании GameTeam."""
     if created:
-        queryset_players = instance.players
+        queryset_players = instance.game_players.all()
         all_players = []
         for player in queryset_players:
             game_player = GamePlayer(
