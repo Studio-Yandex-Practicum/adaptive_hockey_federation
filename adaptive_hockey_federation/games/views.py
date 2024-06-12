@@ -142,7 +142,7 @@ class GamesInfoView(
 
     def get_teams(self, queryset: QuerySet = None) -> Game:
         """Получить список объектов команд, связанных с игрой."""
-        return GameTeam.objects.filter(game=self.kwargs["game_id"]).all()
+        return GameTeam.objects.filter(game=self.kwargs["game_id"])
 
     def get_context_data(self, **kwargs):
         """Метод для получения словаря context в шаблоне страницы."""
@@ -155,5 +155,4 @@ class GamesInfoView(
             team.players = players
 
         context["teams"] = teams
-        print(context["teams"])
         return context
