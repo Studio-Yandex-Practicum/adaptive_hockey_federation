@@ -1,10 +1,11 @@
-from competitions.models import Competition
-from core.constants import UserConstans
-from core.validators import validate_game_date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
+
+from competitions.models import Competition
+from core.constants import UserConstans
+from core.validators import validate_game_date
 from games.constants import NumericalValues
 
 
@@ -44,8 +45,16 @@ class Game(models.Model):
 
 
 class GameTeam(models.Model):
-    """Модель команды, участвующей в игре."""
+    """
+    Модель команды, участвующей в игре.
 
+    В данной модели переопределено стандартное поле ID — оно заменено на
+    IntegerField для синхронизации ID сущностей данной модели и модели Team.
+    В качестве Primary Key выступает поле gameteam_id.
+    """
+
+    gameteam_id = models.BigAutoField(primary_key=True)
+    id = models.IntegerField()
     name = models.CharField(
         verbose_name=_("Название команды"),
         max_length=UserConstans.NAME_MAX_LENGTH,
@@ -72,8 +81,16 @@ class GameTeam(models.Model):
 
 
 class GamePlayer(models.Model):
-    """Модель игрока, участвующего в игре."""
+    """
+    Модель игрока, участвующего в игре.
 
+    В данной модели переопределено стандартное поле ID — оно заменено на
+    IntegerField для синхронизации ID сущностей данной модели и модели Team.
+    В качестве Primary Key выступает поле gameplayer_id.
+    """
+
+    gameplayer_id = models.BigAutoField(primary_key=True)
+    id = models.IntegerField()
     name = models.CharField(
         verbose_name=_("Имя игрока"),
         max_length=UserConstans.NAME_MAX_LENGTH,
