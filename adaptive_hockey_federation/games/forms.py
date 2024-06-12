@@ -2,12 +2,13 @@ from typing import Any
 
 from django import forms
 from django.db import transaction
-from django.db.models import QuerySet, Q
-
-from games.constants import Errors, Literals, NumericalValues
-from games.models import Game, GameTeam
+from django.db.models import Q, QuerySet
+from django.forms import modelformset_factory
 from main.forms import CustomMultipleChoiceField
 from main.models import Team
+
+from games.constants import Errors, Literals, NumericalValues
+from games.models import Game, GamePlayer, GameTeam
 
 
 class CustomGameMultipleChoiceField(forms.ModelMultipleChoiceField):
@@ -145,3 +146,67 @@ class GameUpdateForm(GameForm):
             required=False,
             help_text=Literals.GAME_AVAILABLE_TEAMS,
         )
+
+
+class GamePlayerNumberForm(forms.ModelForm):
+    """Форма для редактирования номера игрока."""
+
+    class Meta:
+        model = GamePlayer
+        fields = ['number']
+
+
+EditTeamPlayersNumbersFormSet = modelformset_factory(
+    GamePlayer,
+    form=GamePlayerNumberForm,
+    extra=0,
+    can_delete=True
+)
+
+
+class EditTeamPlayersNumbersForm(forms.Form):
+    """Форма для редактирования номеров игроков команды."""
+
+    def __init__(self, *args, **kwargs):
+        self.game_team = kwargs.pop('game_team')
+        data = kwargs.pop('data', None)
+        super().__init__(*args, **kwargs)
+        self.formset = EditTeamPlayersNumbersFormSet(
+            queryset=GamePlayer.objects.filter(game_team=self.game_team),
+            data=data if self.is_bound else None,
+        )
+
+    def is_valid(self):
+        """Проверка валидности формы и формсета."""
+        return super().is_valid() and self.formset.is_valid()
+
+    def save(self):
+        """Сохранение изменений формсета."""
+        self.formset.save()
+
+
+# class GameTeamUpdateForm(forms.ModelForm):
+#     """Форма, используемая при обновлении существующего объекта команды."""
+
+#     class Meta:
+#         model = GamePlayer
+#         fields = ['number']  # Укажите поля, которые вы хотите редактировать,
+        # например, 'name' и 'discipline_name'
+
+#     def __init__(self, *args, **kwargs):
+#         """
+#         Метод инициализации экземпляра класса.
+
+#         При инициализации переопределяем queryset
+#         для полей формы game_players со значениями,
+#         полученными из текущей команды для корректного отображения игроков,
+#         уже участвующих в команде.
+#         """
+#         super(GameTeamUpdateForm, self).__init__(*args, **kwargs)
+#         queryset = GamePlayer.objects.filter(game_team=self.instance)
+#         self.fields["game_players"] = forms.ModelMultipleChoiceField(
+#             queryset=queryset,
+#             required=False,
+#             help_text="Выберите игроков",
+#             label="Игроки",
+#         )

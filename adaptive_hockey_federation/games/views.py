@@ -1,21 +1,20 @@
 from typing import Any, Union
 
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
-from django.urls import reverse_lazy
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.list import ListView
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import DetailView
+from django.views.generic.edit import (CreateView, DeleteView, FormView,
+                                       UpdateView)
+from django.views.generic.list import ListView
 
 from games.constants import Errors, Literals, NumericalValues
-from games.forms import GameForm, GameUpdateForm
+from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
-from games.models import Game, GameTeam, GamePlayer
+from games.models import Game, GamePlayer, GameTeam
 
 
 class GamesListView(
@@ -156,4 +155,44 @@ class GamesInfoView(
 
         context["teams"] = teams
         print(context["teams"])
+        return context
+
+
+class EditTeamPlayersNumbersView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    FormView,
+):
+    """Представление для редактирования номеров команды, участвующей в игре."""
+    template_name = 'main/games/player_number_edit.html'
+    form_class = EditTeamPlayersNumbersForm
+    permission_required = 'games.edit_player_number'
+    permission_denied_message = Errors.PERMISSION_MISSING.format(
+        action=Errors.CREATE_GAME,
+    )
+
+    def get_form_kwargs(self):
+        """Передача дополнительных аргументов в форму."""
+        kwargs = super().get_form_kwargs()
+        game_team = get_object_or_404(GameTeam, id=self.kwargs['game_team'])
+        kwargs['game_team'] = game_team
+        if self.request.method == 'POST':
+            kwargs['data'] = self.request.POST
+        return kwargs
+
+    def form_valid(self, form):
+        """Обработка валидной формы."""
+        form.save()
+        game_id = form.game_team.game.id
+        return redirect(reverse_lazy(
+            'games:game_info', kwargs={'game_id': game_id}
+        ))
+
+    def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
+        context = super().get_context_data(**kwargs)
+        context['game_team'] = get_object_or_404(
+            GameTeam, id=self.kwargs['game_team']
+        )
+        context['page_title'] = "Редактирование номеров игроков команды"
         return context
