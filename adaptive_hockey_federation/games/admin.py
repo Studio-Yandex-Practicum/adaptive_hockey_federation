@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from games.models import Game, GameTeam, GamePlayer
+from games.models import Game, GamePlayer, GameTeam
 
 
 class GameTeamsInLine(admin.StackedInline):

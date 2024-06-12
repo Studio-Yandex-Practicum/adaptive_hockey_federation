@@ -40,6 +40,10 @@
                 {% endfor %}
             </tbody>
         </table>
+        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.0.id %}" 
+           class="btn btn-secondary text-white" style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px;">
+           Редактировать номера игроков
+        </a>
         {% else %}
         <p>К сожалению, информация о первой команде недоступна.</p>
         {% endif %}
@@ -68,6 +72,10 @@
                 {% endfor %}
             </tbody>
         </table>
+        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.1.id %}" 
+           class="btn btn-secondary text-white" style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px;">
+           Редактировать номера игроков
+        </a>
         {% else %}
         <p>К сожалению, информация о второй команде недоступна.</p>
         {% endif %}

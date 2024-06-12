@@ -19,6 +19,7 @@ class Errors(StrEnum):
     INCORRECT_GAME_TEAMS = "Неверный список команд!"
     PERMISSION_MISSING = "Отсутствует разрешение на {action}."
     EDIT_GAME = "редактирование игры"
+    EDIT_PLAYER_NUMBER = "редактирование номеров игроков"
     CREATE_GAME = "создание игры"
     DELETE_GAME = "удаление игры"
     GAME_LIST_VIEW = "просмотр списка игр"
