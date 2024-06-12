@@ -153,14 +153,13 @@ class GamePlayerNumberForm(forms.ModelForm):
 
     class Meta:
         model = GamePlayer
-        fields = ['number']
+        fields = ["number"]
 
 
 EditTeamPlayersNumbersFormSet = modelformset_factory(
     GamePlayer,
     form=GamePlayerNumberForm,
     extra=0,
-    can_delete=True
 )
 
 
@@ -168,8 +167,17 @@ class EditTeamPlayersNumbersForm(forms.Form):
     """Форма для редактирования номеров игроков команды."""
 
     def __init__(self, *args, **kwargs):
-        self.game_team = kwargs.pop('game_team')
-        data = kwargs.pop('data', None)
+        """
+        Инициализирует форму для редактирования номеров игроков команды.
+
+        Описание:
+        - Извлекает объект game_team из именованных аргументов.
+        - Извлекает данные для заполнения формы, если они переданы.
+        - Инициализирует форму и формсет EditTeamPlayersNumbersFormSet
+        для игроков из указанной команды.
+        """
+        self.game_team = kwargs.pop("game_team")
+        data = kwargs.pop("data", None)
         super().__init__(*args, **kwargs)
         self.formset = EditTeamPlayersNumbersFormSet(
             queryset=GamePlayer.objects.filter(game_team=self.game_team),
