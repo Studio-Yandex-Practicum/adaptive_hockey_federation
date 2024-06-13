@@ -13,7 +13,7 @@ User=developer
 
 WorkingDirectory=/home/developer/adaptive_hockey_federation/infra/stage/
 
-ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env down --rmi all --volumes
+ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env down
 ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull site
 ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull db
 ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull swag
