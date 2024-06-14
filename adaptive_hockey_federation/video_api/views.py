@@ -88,11 +88,9 @@ def video_recognition(request, pk=None):
     game = get_object_or_404(Game, pk=pk)
     serializer = VideoSerializer(game)
 
-    server_ip = os.getenv("SERVER_IP")
-    url = f"http://{server_ip}:8010/process"
-    headers = {"Content-Type": "application/json"}
+    url = os.getenv("URL")
+    headers = exec(os.getenv("HEADERS"))
     responce = requests.post(url, json=serializer.data, headers=headers)
 
     print(responce.status_code)
-
     return Response(serializer.data)
