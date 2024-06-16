@@ -46,3 +46,4 @@ class NumericalValues(IntEnum):
     GAME_MAX_PLAYER_NUMBER = 99
     MAX_TEAMS_IN_GAME = 2
     PAGINATION_BASE_VALUE = 10
+    ADMIN_EXTRA_TEAMS = 0
