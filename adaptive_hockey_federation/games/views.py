@@ -4,18 +4,17 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.urls import reverse_lazy
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.list import ListView
+from django.urls import reverse_lazy
 from django.views.generic import DetailView
-
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
 from games.constants import Errors, Literals, NumericalValues
 from games.forms import GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
-from games.models import Game, GameTeam, GamePlayer
+from games.models import Game, GamePlayer, GameTeam
 
 
 class GamesListView(
@@ -37,7 +36,16 @@ class GamesListView(
 
     def get_queryset(self) -> QuerySet[Any]:
         """Метод для получения набора QuerySet."""
-        return Game.objects.all().prefetch_related("game_teams")
+        queryset = super().get_queryset().prefetch_related("game_teams")
+        search_params = self.request.GET.dict()
+        search_column = search_params.get("search_column")
+        search = search_params.get("search")
+        if search_column and search:
+            if search_column == "name":
+                queryset = queryset.filter(name__icontains=search)
+            elif search_column == "team":
+                queryset = queryset.filter(game_teams__name__icontains=search)
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Метод для получения словаря context в шаблоне страницы."""
@@ -155,5 +163,4 @@ class GamesInfoView(
             team.players = players
 
         context["teams"] = teams
-        print(context["teams"])
         return context

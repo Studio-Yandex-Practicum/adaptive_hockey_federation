@@ -27,9 +27,9 @@ def get_player_table_data(context):
                 player.discipline_level if player.discipline_level else None
             ),
             "team": (
-                [team.name for team in player.team.all()]
+                ", ".join([team.name for team in player.team.all()])
                 if player.team.exists()
-                else ["Отсуствует"]
+                else "Отсутствует"
             ),
             "url": reverse("main:player_id", args=[player.id]),
             "id": player.pk,
