@@ -1,16 +1,21 @@
 from typing import Any, Union
 
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
-from django.views.generic.edit import (CreateView, DeleteView, FormView,
-                                       UpdateView)
+from django.views.generic.edit import (
+    CreateView,
+    DeleteView,
+    FormView,
+    UpdateView,
+)
 from django.views.generic.list import ListView
-
 from games.constants import Errors, Literals, NumericalValues
 from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
@@ -36,7 +41,16 @@ class GamesListView(
 
     def get_queryset(self) -> QuerySet[Any]:
         """Метод для получения набора QuerySet."""
-        return Game.objects.all().prefetch_related("game_teams")
+        queryset = super().get_queryset().prefetch_related("game_teams")
+        search_params = self.request.GET.dict()
+        search_column = search_params.get("search_column")
+        search = search_params.get("search")
+        if search_column and search:
+            if search_column == "name":
+                queryset = queryset.filter(name__icontains=search)
+            elif search_column == "team":
+                queryset = queryset.filter(game_teams__name__icontains=search)
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Метод для получения словаря context в шаблоне страницы."""
@@ -154,7 +168,6 @@ class GamesInfoView(
             team.players = players
 
         context["teams"] = teams
-        print(context["teams"])
         return context
 
 
@@ -184,15 +197,19 @@ class EditTeamPlayersNumbersView(
     def form_valid(self, form):
         """Обработка валидной формы."""
         form.save()
-        return redirect(reverse_lazy(
-            "games:game_info", kwargs={"game_id": form.game_team.game.id},
-        ))
+        return redirect(
+            reverse_lazy(
+                "games:game_info",
+                kwargs={"game_id": form.game_team.game.id},
+            ),
+        )
 
     def get_context_data(self, **kwargs):
         """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
         context["game_team"] = get_object_or_404(
-            GameTeam, id=self.kwargs["game_team"],
+            GameTeam,
+            id=self.kwargs["game_team"],
         )
         context["page_title"] = "Редактирование номеров игроков команды"
         return context

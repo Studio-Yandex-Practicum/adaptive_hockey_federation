@@ -19,6 +19,7 @@ def create_game_teams(sender, instance, created, **kwargs):
     GameTeam.objects.filter(game=instance).delete()
     for team in queryset_teams:
         game_team = GameTeam(
+            id=team.id,
             name=team.name,
             discipline_name=team.discipline_name.name,
             game=instance,
@@ -37,6 +38,7 @@ def create_game_players(sender, instance, created, **kwargs):
         all_players = []
         for player in queryset_players:
             game_player = GamePlayer(
+                id=player.id,
                 name=player.name,
                 last_name=player.surname,
                 number=player.number,
