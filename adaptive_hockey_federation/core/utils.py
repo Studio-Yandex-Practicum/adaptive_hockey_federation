@@ -2,12 +2,6 @@ import os
 from datetime import datetime
 from typing import Any, List, Optional
 
-from django.conf import settings
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db.models import QuerySet
-from openpyxl import Workbook
-from openpyxl.worksheet.worksheet import Worksheet
-
 from core.constants import AgeLimits, FileConstants, TimeFormat
 from core.settings.openpyxl_settings import (
     ALIGNMENT_CENTER,
@@ -20,6 +14,11 @@ from core.settings.openpyxl_settings import (
     TITLE_FONT,
     TITLE_HEIGHT,
 )
+from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db.models import QuerySet
+from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 
 def generate_file_name(filename: str, prefix: str) -> str:

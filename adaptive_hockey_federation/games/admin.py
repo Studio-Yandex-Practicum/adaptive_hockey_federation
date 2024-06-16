@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib import admin
-
-from games.constants import NumericalValues, Errors
-from games.models import Game, GameTeam, GamePlayer
+from games.constants import Errors, NumericalValues
+from games.models import Game, GamePlayer, GameTeam
 from main.models import Team
 
 

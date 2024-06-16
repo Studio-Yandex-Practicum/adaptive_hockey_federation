@@ -1,7 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.postgres.search import SearchVector
 from django.views.generic.list import ListView
-
 from main.models import Player
 from main.schemas.main_schema import get_main_table_data
 

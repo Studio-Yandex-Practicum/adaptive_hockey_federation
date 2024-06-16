@@ -1,5 +1,3 @@
-from rest_framework import serializers
-
 from games.models import Game, GameTeam
 from main.models import (
     Diagnosis,
@@ -10,6 +8,7 @@ from main.models import (
     Player,
     Team,
 )
+from rest_framework import serializers
 
 
 class NosologySerializers(serializers.ModelSerializer):

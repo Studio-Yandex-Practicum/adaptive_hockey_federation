@@ -1,9 +1,8 @@
 import re
 
 import phonenumbers
-from faker.providers.phone_number.ru_RU import Provider
-
 from core.config.base_settings import PHONENUMBER_DEFAULT_REGION
+from faker.providers.phone_number.ru_RU import Provider
 from users.constants import REGEX_AREA_CODE_IS_SEVEN_HUNDRED
 
 

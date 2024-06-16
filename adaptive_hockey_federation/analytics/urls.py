@@ -1,6 +1,5 @@
-from django.urls import include, path
-
 from analytics import views
+from django.urls import include, path
 
 app_name = "analytics"
 

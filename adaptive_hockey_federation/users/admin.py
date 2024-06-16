@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import GroupAdmin as DjangoGroupAdmin
 from django.contrib.auth.models import Group, Permission
-
 from users.forms import GroupAdminForm
 from users.models import ProxyGroup, User
 

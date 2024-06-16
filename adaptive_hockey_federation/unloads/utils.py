@@ -1,6 +1,5 @@
-from django.db.models import Q
-
 from analytics.schema import ANALYTICS_SEARCH_FIELDS
+from django.db.models import Q
 from main.schemas.player_schema import SEARCH_FIELDS
 
 

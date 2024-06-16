@@ -2,6 +2,9 @@ import json
 import subprocess
 
 from django.db import connection
+from main import models
+from main.models import (DisciplineLevel, DisciplineName, Player, StaffMember,
+                         StaffTeamMember, Team)
 
 from adaptive_hockey_federation.core.config.dev_settings import (
     FILE_MODEL_MAP, RESOURSES_ROOT)

@@ -1,13 +1,5 @@
 from typing import TYPE_CHECKING
 
-from django.db import models
-from django.db.models.signals import post_delete
-from django.dispatch.dispatcher import receiver
-from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-from phonenumber_field.modelfields import PhoneNumberField
-from phonenumber_field.validators import validate_international_phonenumber
-
 from core.constants import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -16,6 +8,13 @@ from core.constants import (
     MainConstantsStr,
 )
 from core.validators import fio_validator, validate_date_birth
+from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
+from phonenumber_field.validators import validate_international_phonenumber
 from users.models import User
 from users.validators import zone_code_without_seven_hundred
 

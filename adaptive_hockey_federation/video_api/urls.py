@@ -1,5 +1,4 @@
 from django.urls import path
-
 from video_api.views import (
     receiving_data_game,
     receiving_data_player,

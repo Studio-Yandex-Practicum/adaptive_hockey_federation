@@ -1,10 +1,9 @@
 from drf_yasg.utils import swagger_auto_schema
+from games.models import Game
+from main.models import Player
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
-from games.models import Game
-from main.models import Player
 from video_api.serializers import GameSerializer, PlayerSerializer
 
 

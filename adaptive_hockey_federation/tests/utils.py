@@ -5,7 +5,6 @@ from typing import Any
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import Client
-
 from users.models import User
 
 

@@ -1,12 +1,11 @@
 from typing import Any
 
-from django import forms
-from django.core.exceptions import ValidationError
-from django.forms import ModelMultipleChoiceField
-
 from competitions.models import CHAR_FIELD_LENGTH, Competition
 from competitions.validators import date_not_before_today
 from core.constants import FORM_HELP_TEXTS
+from django import forms
+from django.core.exceptions import ValidationError
+from django.forms import ModelMultipleChoiceField
 from main.forms import CityChoiceField, CustomMultipleChoiceField
 from main.models import DisciplineName, Team
 

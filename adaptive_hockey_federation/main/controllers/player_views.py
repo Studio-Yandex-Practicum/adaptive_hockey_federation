@@ -1,5 +1,7 @@
 from typing import Any
 
+from core.constants import FileConstants
+from core.utils import is_uploaded_file_valid
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -10,25 +12,17 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
-from core.constants import FileConstants
-from core.utils import is_uploaded_file_valid
+from games.models import Game, GamePlayer
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
-from main.models import (
-    Diagnosis,
-    DisciplineLevel,
-    DisciplineName,
-    Player,
-)
+from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
     get_player_fields,
     get_player_fields_personal,
     get_player_table_data,
 )
-from games.models import Game, GamePlayer
 from unloads.utils import model_get_queryset
 
 
