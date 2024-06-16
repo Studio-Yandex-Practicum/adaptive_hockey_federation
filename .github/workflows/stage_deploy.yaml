@@ -117,5 +117,4 @@ jobs:
             # (здесь нужно заменить sleep на проверку готовности сервиса)
             sleep 60
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-            docker exec adaptive_hockey_federation python manage.py makemigrations
             docker exec adaptive_hockey_federation python manage.py migrate

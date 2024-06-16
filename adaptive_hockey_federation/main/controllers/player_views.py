@@ -4,7 +4,6 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Prefetch
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
@@ -22,7 +21,6 @@ from main.models import (
     DisciplineLevel,
     DisciplineName,
     Player,
-    Team,
 )
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
@@ -30,6 +28,7 @@ from main.schemas.player_schema import (
     get_player_fields_personal,
     get_player_table_data,
 )
+from games.models import Game, GamePlayer
 from unloads.utils import model_get_queryset
 
 
@@ -350,32 +349,34 @@ class PlayerGamesVideo(
     )
     context_object_name = "player"
 
-    def get_queryset(self) -> Player | None:  # type: ignore[override]
+    def get_object(self) -> Player:
+        """Получить объект по id или выбросить ошибку 404."""
+        return get_object_or_404(Player, id=self.kwargs["pk"])
+
+    def get_queryset(self) -> Game | None:  # type: ignore[override]
         """Получить набор QuerySet с играми команды игрока."""
-        teams_games = Prefetch(
-            "team",
-            queryset=Team.objects.prefetch_related("game_teams"),
+        player = self.get_object()
+        game_player = (
+            GamePlayer.objects.select_related("game_team")
+            .filter(name=player.name, last_name=player.surname)
+            .first()
         )
-        player = Player.objects.prefetch_related(teams_games).filter(
-            id=self.kwargs["pk"],
-        )
-        if not player.exists():
-            raise Http404("Игрока не существует")
-        return player.first()
+
+        if not game_player:
+            raise Http404("Игрок не принимает участие в играх")
+        games = Game.objects.filter(game_teams__id=game_player.game_team.id)
+
+        return games
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
-        player = context["player"]
+        player_games = context["player"]
         data_key = ("pk", "name", "video_link")
-        table_data = []
-        for team in player.team.all():
-            table_data.extend(
-                [
-                    {key: getattr(game, key) for key in data_key}
-                    for game in team.game_teams.all()
-                ],
-            )
+        table_data = [
+            {key: getattr(game, key) for key in data_key}
+            for game in player_games
+        ]
 
         context["table_head"] = {
             "pk": "Nr.",
