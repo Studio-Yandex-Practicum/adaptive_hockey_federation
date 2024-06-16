@@ -4,18 +4,17 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.urls import reverse_lazy
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.list import ListView
+from django.urls import reverse_lazy
 from django.views.generic import DetailView
-
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
 from games.constants import Errors, Literals, NumericalValues
 from games.forms import GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
-from games.models import Game, GameTeam, GamePlayer
+from games.models import Game, GamePlayer, GameTeam
 
 
 class GamesListView(
@@ -164,5 +163,4 @@ class GamesInfoView(
             team.players = players
 
         context["teams"] = teams
-        print(context["teams"])
         return context
