@@ -9,6 +9,9 @@ from main.models import (DisciplineLevel, DisciplineName, Player, StaffMember,
 from adaptive_hockey_federation.core.config.dev_settings import (
     FILE_MODEL_MAP, RESOURSES_ROOT)
 from adaptive_hockey_federation.parser.user_card import BaseUserInfo
+from main import models
+from main.models import (Diagnosis, DisciplineLevel, DisciplineName, Player, StaffMember,
+                         StaffTeamMember, Team, Nosology)
 
 MODELS_ONE_FIELD_NAME = ["main_city", "main_disciplinename", "main_nosology"]
 
@@ -181,6 +184,21 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     staff_member_id=item["staff_member_id"],
                 )
                 model_ins.save()
+
+            if key == "main_diagnosis":
+                nosology = None
+                if item.get("nosology_id"):
+                    try:
+                        nosology = Nosology.objects.get(pk=item["nosology_id"])
+                    except Nosology.DoesNotExist:
+                        print(f"Нозологии с id {item['nosology_id']} не существует.")
+                model_ins = models_name(
+                    id=item["id"],
+                    name=item["name"],
+                    nosology=nosology,
+                )
+
+                model_ins.save()
             if key == "main_team":
                 model_ins = models_name(
                     id=item["id"],
@@ -197,6 +215,12 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     team = Team.objects.get(pk=item["id"])
                     staff_team_member.team.add(team)
             if key == "main_player":
+                diagnosis = None
+                if item.get("diagnosis_id"):
+                    try:
+                        diagnosis = Diagnosis.objects.get(pk=item["diagnosis_id"])
+                    except Diagnosis.DoesNotExist:
+                        print(f"Диагноз с id {item.get('diagnosis_id')} отсутсвует.")
                 model_ins = models_name(
                     id=item["id"],
                     surname=item["surname"],
@@ -210,6 +234,7 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                     is_captain=item["is_captain"],
                     is_assistent=item["is_assistent"],
                     identity_document=item["identity_document"],
+                    diagnosis=diagnosis,
                     diagnosis_id=item["diagnosis_id"],
                     discipline_name_id=disciplines[item["discipline_id"]][
                         "discipline_name_id"
@@ -223,5 +248,6 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
                 player = Player.objects.get(pk=item["player_id"])
                 team = Team.objects.get(pk=item["team_id"])
                 player.team.add(team)
+
         except Exception as e:
             print(f"Ошибка вставки данных {e} -> {item}")

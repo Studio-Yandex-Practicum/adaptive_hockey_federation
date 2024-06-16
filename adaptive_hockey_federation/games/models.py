@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
+
 from games.constants import NumericalValues
 
 

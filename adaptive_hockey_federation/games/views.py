@@ -10,6 +10,7 @@ from django.views.generic import DetailView
 from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from django.views.generic.list import ListView
+
 from games.constants import Errors, Literals, NumericalValues
 from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
@@ -53,8 +54,8 @@ class GamesListView(
                     "pk": game.pk,
                     "name": game.name,
                     "video_link": game.video_link,
-                    "first_team": first_team.name,
-                    "second_team": second_team.name,
+                    "first_team": first_team.name if first_team else None,
+                    "second_team": second_team.name if second_team else None,
                 },
             )
         context["table_head"] = {
@@ -183,10 +184,9 @@ class EditTeamPlayersNumbersView(
     def form_valid(self, form):
         """Обработка валидной формы."""
         form.save()
-        game_id = form.game_team.game.id
         return redirect(reverse_lazy(
-            "games:game_info", kwargs={"game_id": game_id},
-        ),)
+            "games:game_info", kwargs={"game_id": form.game_team.game.id},
+        ))
 
     def get_context_data(self, **kwargs):
         """Метод для получения словаря context в шаблоне страницы."""
