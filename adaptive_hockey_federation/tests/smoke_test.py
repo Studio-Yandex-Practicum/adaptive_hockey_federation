@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 import pytest
 from django.test import Client
-
 from tests.base import BaseTestClass, UrlTestMixin
 from tests.url_schema import (ADMIN_APP_LABELS_URLS, ADMIN_AUTH_GROUP_302,
                               ADMIN_AUTH_URLS, ADMIN_CITY_URL_302,

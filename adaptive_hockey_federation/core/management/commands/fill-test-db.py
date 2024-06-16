@@ -1,16 +1,11 @@
 from random import randint
 
-from django.core.management.base import BaseCommand
-
 from core.constants import STAFF_POSITION_CHOICES, Role
-from main.data_factories.factories import (
-    CompetitionFactory,
-    DiagnosisFactory,
-    DocumentFactory,
-    PlayerFactory,
-    StaffTeamMemberFactory,
-    TeamFactory,
-)
+from django.core.management.base import BaseCommand
+from main.data_factories.factories import (CompetitionFactory,
+                                           DiagnosisFactory, DocumentFactory,
+                                           PlayerFactory,
+                                           StaffTeamMemberFactory, TeamFactory)
 from main.data_factories.utils import updates_for_players
 from main.models import Player
 from unloads.factories import UnloadFactory

@@ -20,7 +20,7 @@
     <div style="width: 48%; margin-right: 2%;">
         {% if teams|length > 0 %}
         <h3>{{ teams.0.name }}</h3>
-        <table class="table-table" border="1" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
+        <table class="table-table" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
             <thead>
                 <tr>
                     <th>Имя игрока</th>
@@ -41,7 +41,8 @@
             </tbody>
         </table>
         <a href="{% url 'games:edit_team_players_numbers' game_team=teams.0.id %}" 
-           class="btn btn-secondary text-white" style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px;">
+           class="btn btn-secondary text-white"
+           style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px; margin-top: 5px;">
            Редактировать номера игроков
         </a>
         {% else %}
@@ -52,7 +53,7 @@
     <div style="width: 48%; margin-left: 2%;">
         {% if teams|length > 1 %}
         <h3>{{ teams.1.name }}</h3>
-        <table class="table-table" border="1" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
+        <table class="table-table" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
             <thead>
                 <tr>
                     <th>Имя игрока</th>
@@ -73,7 +74,8 @@
             </tbody>
         </table>
         <a href="{% url 'games:edit_team_players_numbers' game_team=teams.1.id %}" 
-           class="btn btn-secondary text-white" style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px;">
+           class="btn btn-secondary text-white"
+           style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px; margin-top: 5px;">
            Редактировать номера игроков
         </a>
         {% else %}

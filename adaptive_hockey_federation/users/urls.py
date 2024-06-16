@@ -1,12 +1,6 @@
 from django.urls import include, path
-
-from users.views import (
-    CreateUserView,
-    DeleteUserView,
-    PasswordSetView,
-    UpdateUserView,
-    UsersListView,
-)
+from users.views import (CreateUserView, DeleteUserView, PasswordSetView,
+                         UpdateUserView, UsersListView)
 
 app_name = "users"
 

@@ -3,12 +3,12 @@
 import core.constants
 import django.contrib.auth.models
 import django.core.validators
-from django.db import migrations, models
 import django.utils.timezone
 import phonenumber_field.modelfields
 import phonenumber_field.validators
 import users.managers
 import users.validators
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):

@@ -5,9 +5,8 @@ import core.validators
 import django.core.validators
 import django.db.models.deletion
 import django.db.models.functions.datetime
-from django.db import migrations, models
-
 import games.constants
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):

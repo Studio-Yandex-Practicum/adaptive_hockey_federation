@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Any
 
 from django.test import TestCase
-
 from main.data_factories.factories import DiagnosisFactory, PlayerFactory
 from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
 

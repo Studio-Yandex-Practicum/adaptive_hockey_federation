@@ -1,8 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from main.models import Player, Team
-
 from games.models import Game, GamePlayer, GameTeam
+from main.models import Player, Team
 
 
 @receiver(post_save, sender=Game, dispatch_uid="unique_signal")

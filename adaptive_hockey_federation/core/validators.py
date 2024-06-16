@@ -1,10 +1,9 @@
 import datetime
 
+from core.constants import AgeLimits
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.timezone import now as django_now
-
-from core.constants import AgeLimits
 
 
 def fio_validator() -> RegexValidator:

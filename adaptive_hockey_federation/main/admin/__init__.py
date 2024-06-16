@@ -1,24 +1,8 @@
-from main.admin.admin import (
-    CityAdmin,
-    DiagnosisAdmin,
-    DisciplineLevelAdmin,
-    DisciplineNameAdmin,
-    NosologyAdmin,
-    PlayerAdmin,
-    StaffMemberAdmin,
-    TeamAdmin,
-    admin,
-)
-from main.models import (
-    City,
-    Diagnosis,
-    DisciplineLevel,
-    DisciplineName,
-    Nosology,
-    Player,
-    StaffMember,
-    Team,
-)
+from main.admin.admin import (CityAdmin, DiagnosisAdmin, DisciplineLevelAdmin,
+                              DisciplineNameAdmin, NosologyAdmin, PlayerAdmin,
+                              StaffMemberAdmin, TeamAdmin, admin)
+from main.models import (City, Diagnosis, DisciplineLevel, DisciplineName,
+                         Nosology, Player, StaffMember, Team)
 
 admin.site.register(Diagnosis, DiagnosisAdmin)
 admin.site.register(DisciplineLevel, DisciplineLevelAdmin)

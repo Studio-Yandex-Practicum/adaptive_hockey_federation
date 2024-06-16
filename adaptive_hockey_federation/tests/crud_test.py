@@ -1,7 +1,6 @@
 from typing import Any
 
 import pytest
-
 from core.constants import Role
 from main.models import (City, Diagnosis, DisciplineLevel, DisciplineName,
                          Nosology, Player, StaffMember, StaffTeamMember, Team)

@@ -1,15 +1,12 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
 from main.models import Team
 from users.forms import CustomUserCreateForm, CustomUserUpdateForm
 from users.utilits.send_mails import send_password_reset_email

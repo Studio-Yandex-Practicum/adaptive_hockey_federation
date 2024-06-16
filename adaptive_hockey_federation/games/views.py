@@ -10,7 +10,6 @@ from django.views.generic import DetailView
 from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from django.views.generic.list import ListView
-
 from games.constants import Errors, Literals, NumericalValues
 from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
@@ -164,9 +163,10 @@ class EditTeamPlayersNumbersView(
     FormView,
 ):
     """Представление для редактирования номеров команды, участвующей в игре."""
-    template_name = 'main/games/player_number_edit.html'
+
+    template_name = "main/games/player_number_edit.html"
     form_class = EditTeamPlayersNumbersForm
-    permission_required = 'games.edit_player_number'
+    permission_required = "games.edit_player_number"
     permission_denied_message = Errors.PERMISSION_MISSING.format(
         action=Errors.CREATE_GAME,
     )
@@ -174,10 +174,10 @@ class EditTeamPlayersNumbersView(
     def get_form_kwargs(self):
         """Передача дополнительных аргументов в форму."""
         kwargs = super().get_form_kwargs()
-        game_team = get_object_or_404(GameTeam, id=self.kwargs['game_team'])
-        kwargs['game_team'] = game_team
-        if self.request.method == 'POST':
-            kwargs['data'] = self.request.POST
+        game_team = get_object_or_404(GameTeam, id=self.kwargs["game_team"])
+        kwargs["game_team"] = game_team
+        if self.request.method == "POST":
+            kwargs["data"] = self.request.POST
         return kwargs
 
     def form_valid(self, form):
@@ -185,14 +185,14 @@ class EditTeamPlayersNumbersView(
         form.save()
         game_id = form.game_team.game.id
         return redirect(reverse_lazy(
-            'games:game_info', kwargs={'game_id': game_id}
-        ))
+            "games:game_info", kwargs={"game_id": game_id},
+        ),)
 
     def get_context_data(self, **kwargs):
         """Метод для получения словаря context в шаблоне страницы."""
         context = super().get_context_data(**kwargs)
-        context['game_team'] = get_object_or_404(
-            GameTeam, id=self.kwargs['game_team']
+        context["game_team"] = get_object_or_404(
+            GameTeam, id=self.kwargs["game_team"],
         )
-        context['page_title'] = "Редактирование номеров игроков команды"
+        context["page_title"] = "Редактирование номеров игроков команды"
         return context

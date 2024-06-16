@@ -1,29 +1,15 @@
 import re
 from typing import Any
 
-from django import forms
-from django.core.exceptions import ValidationError
-from django.forms import (
-    ModelChoiceField,
-    ModelMultipleChoiceField,
-    MultipleChoiceField,
-    Select,
-    TextInput,
-)
-from django.shortcuts import get_object_or_404
-
 from core.constants import FORM_HELP_TEXTS, Role, StaffPosition
 from core.utils import max_date, min_date
-from main.models import (
-    City,
-    Diagnosis,
-    DisciplineName,
-    Nosology,
-    Player,
-    StaffMember,
-    StaffTeamMember,
-    Team,
-)
+from django import forms
+from django.core.exceptions import ValidationError
+from django.forms import (ModelChoiceField, ModelMultipleChoiceField,
+                          MultipleChoiceField, Select, TextInput)
+from django.shortcuts import get_object_or_404
+from main.models import (City, Diagnosis, DisciplineName, Nosology, Player,
+                         StaffMember, StaffTeamMember, Team)
 from users.models import User
 
 

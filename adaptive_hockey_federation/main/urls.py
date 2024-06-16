@@ -1,5 +1,4 @@
 from django.urls import include, path
-
 from main.controllers import main_views, player_views, staff_views, team_views
 
 app_name = "main"

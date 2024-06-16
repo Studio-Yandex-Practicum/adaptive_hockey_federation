@@ -2,20 +2,17 @@ import os
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
+from core.utils import export_excel
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
-
-from core.utils import export_excel
 from unloads.mapping import model_mapping
 from unloads.models import Unload
 from unloads.utils import model_get_queryset

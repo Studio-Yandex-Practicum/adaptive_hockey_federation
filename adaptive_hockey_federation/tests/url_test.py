@@ -2,12 +2,11 @@ from http import HTTPStatus
 from typing import Any
 
 import pytest
-from django.contrib.auth.models import Permission
-from django.test import Client, TestCase
-
 from competitions.models import Competition
 from core import constants
 from core.constants import Role
+from django.contrib.auth.models import Permission
+from django.test import Client, TestCase
 from main.data_factories.factories import (CompetitionFactory,
                                            DiagnosisFactory, PlayerFactory)
 from main.models import City, Diagnosis, DisciplineName, Player, Team

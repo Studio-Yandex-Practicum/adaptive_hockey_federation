@@ -2,13 +2,13 @@ import json
 import subprocess
 
 from django.db import connection
+from main import models
+from main.models import (DisciplineLevel, DisciplineName, Player, StaffMember,
+                         StaffTeamMember, Team)
 
 from adaptive_hockey_federation.core.config.dev_settings import (
     FILE_MODEL_MAP, RESOURSES_ROOT)
 from adaptive_hockey_federation.parser.user_card import BaseUserInfo
-from main import models
-from main.models import (DisciplineLevel, DisciplineName, Player, StaffMember,
-                         StaffTeamMember, Team)
 
 MODELS_ONE_FIELD_NAME = ["main_city", "main_disciplinename", "main_nosology"]
 

@@ -1,26 +1,17 @@
-from django.contrib.auth.mixins import (
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-)
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
-from main.forms import (
-    StaffMemberForm,
-    StaffTeamMemberEditForm,
-    StaffTeamMemberForm,
-)
+from main.forms import (StaffMemberForm, StaffTeamMemberEditForm,
+                        StaffTeamMemberForm)
 from main.models import StaffMember, StaffTeamMember
-from main.schemas.staff_schema import (
-    STAFF_SEARCH_FIELDS,
-    add_pisition_in_context,
-    get_staff_fields,
-    get_staff_table_data,
-)
+from main.schemas.staff_schema import (STAFF_SEARCH_FIELDS,
+                                       add_pisition_in_context,
+                                       get_staff_fields, get_staff_table_data)
 
 
 class StaffMemberListView(

@@ -1,6 +1,5 @@
-from django.urls import reverse
-
 from core.constants import STAFF_POSITION_CHOICES, StaffPosition
+from django.urls import reverse
 from main.controllers.utils import get_player_href
 
 TEAM_SEARCH_FIELDS = {
