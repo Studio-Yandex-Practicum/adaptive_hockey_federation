@@ -5,6 +5,12 @@
     {% for head_item in table_head.values %}
       <th>{{ head_item }}</th>
     {% endfor %}
+    <th>
+      <div class="cell__buttons">
+        {% include 'base/active_edit_icon.html' %}
+        {% include 'base/active_delete_icon.html' %}
+      </div>
+    </th>
   </tr>
   </thead>
   <tbody>

@@ -37,7 +37,16 @@ class GamesListView(
 
     def get_queryset(self) -> QuerySet[Any]:
         """Метод для получения набора QuerySet."""
-        return Game.objects.all().prefetch_related("game_teams")
+        queryset = super().get_queryset().prefetch_related("game_teams")
+        search_params = self.request.GET.dict()
+        search_column = search_params.get("search_column")
+        search = search_params.get("search")
+        if search_column and search:
+            if search_column == "name":
+                queryset = queryset.filter(name__icontains=search)
+            elif search_column == "team":
+                queryset = queryset.filter(game_teams__name__icontains=search)
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Метод для получения словаря context в шаблоне страницы."""
