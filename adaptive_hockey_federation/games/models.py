@@ -1,11 +1,10 @@
+from competitions.models import Competition
+from core.constants import UserConstans
+from core.validators import validate_game_date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
-
-from competitions.models import Competition
-from core.constants import UserConstans
-from core.validators import validate_game_date
 from games.constants import NumericalValues
 
 
@@ -18,7 +17,9 @@ class Game(models.Model):
     )
     date = models.DateTimeField(
         verbose_name=_("Дата игры"),
-        validators=[validate_game_date],  # type: ignore[list-item]
+        validators=[
+            validate_game_date,
+        ],
     )
     competition = models.ForeignKey(
         Competition,
@@ -145,4 +146,4 @@ class GamePlayer(models.Model):
 
     def __str__(self):
         """Метод, использующий поле name для строкового представления."""
-        return self.name
+        return f"{self.name} {self.last_name}"
