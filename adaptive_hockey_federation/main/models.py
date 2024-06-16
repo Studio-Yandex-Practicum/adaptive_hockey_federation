@@ -1,8 +1,12 @@
 from typing import TYPE_CHECKING
 
-from core.constants import (GENDER_CHOICES, PLAYER_POSITION_CHOICES,
-                            STAFF_POSITION_CHOICES, MainConstantsInt,
-                            MainConstantsStr)
+from core.constants import (
+    GENDER_CHOICES,
+    PLAYER_POSITION_CHOICES,
+    STAFF_POSITION_CHOICES,
+    MainConstantsInt,
+    MainConstantsStr,
+)
 from core.validators import fio_validator, validate_date_birth
 from django.db import models
 from django.db.models.signals import post_delete

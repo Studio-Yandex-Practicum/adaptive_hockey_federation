@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404

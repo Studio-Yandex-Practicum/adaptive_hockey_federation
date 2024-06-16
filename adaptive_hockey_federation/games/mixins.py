@@ -1,7 +1,9 @@
 from typing import Any
 
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.urls import reverse_lazy
 from games.constants import GAME_TITLE_MAPPING, Literals
 from games.models import Game

@@ -1,6 +1,8 @@
 from core.constants import StaffPosition
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.db.models import Value
 from django.db.models.functions import Concat
 from django.shortcuts import get_object_or_404, redirect, render
@@ -11,8 +13,12 @@ from django.views.generic.list import ListView
 from main.forms import StaffTeamMemberAddToTeamForm, TeamFilterForm, TeamForm
 from main.models import City, Player, StaffTeamMember, Team
 from main.permissions import CustomPermissionMixin, TeamEditPermissionsMixin
-from main.schemas.team_schema import (TEAM_TABLE_HEAD, get_players_table,
-                                      get_staff_table, get_team_table_data)
+from main.schemas.team_schema import (
+    TEAM_TABLE_HEAD,
+    get_players_table,
+    get_staff_table,
+    get_team_table_data,
+)
 from unloads.utils import model_get_queryset
 
 

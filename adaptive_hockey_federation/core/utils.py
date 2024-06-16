@@ -3,11 +3,17 @@ from datetime import datetime
 from typing import Any, List, Optional
 
 from core.constants import AgeLimits, FileConstants, TimeFormat
-from core.settings.openpyxl_settings import (ALIGNMENT_CENTER, HEADERS_BORDER,
-                                             HEADERS_FILL, HEADERS_FONT,
-                                             HEADERS_HEIGHT, ROWS_FILL,
-                                             TITLE_FILL, TITLE_FONT,
-                                             TITLE_HEIGHT)
+from core.settings.openpyxl_settings import (
+    ALIGNMENT_CENTER,
+    HEADERS_BORDER,
+    HEADERS_FILL,
+    HEADERS_FONT,
+    HEADERS_HEIGHT,
+    ROWS_FILL,
+    TITLE_FILL,
+    TITLE_FONT,
+    TITLE_HEIGHT,
+)
 from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models import QuerySet

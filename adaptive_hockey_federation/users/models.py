@@ -2,8 +2,11 @@ from typing import Iterable
 
 from core.constants import GROUPS_BY_ROLE, ROLES_CHOICES, Role, UserConstans
 from core.validators import fio_validator
-from django.contrib.auth.models import (AbstractBaseUser, Group,
-                                        PermissionsMixin)
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    Group,
+    PermissionsMixin,
+)
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.validators import EmailValidator

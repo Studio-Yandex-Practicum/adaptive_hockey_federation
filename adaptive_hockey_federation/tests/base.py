@@ -11,12 +11,22 @@ from django.db.models import Model
 from django.shortcuts import get_object_or_404
 from django.test import Client, TestCase
 from factory.django import DjangoModelFactory  # type: ignore
-from main.data_factories.factories import (CompetitionFactory,
-                                           DiagnosisFactory, DocumentFactory,
-                                           PlayerFactory,
-                                           StaffTeamMemberFactory, TeamFactory)
-from main.models import (Diagnosis, DisciplineName, Document, Player,
-                         StaffTeamMember, Team)
+from main.data_factories.factories import (
+    CompetitionFactory,
+    DiagnosisFactory,
+    DocumentFactory,
+    PlayerFactory,
+    StaffTeamMemberFactory,
+    TeamFactory,
+)
+from main.models import (
+    Diagnosis,
+    DisciplineName,
+    Document,
+    Player,
+    StaffTeamMember,
+    Team,
+)
 from tests.fixture_user import test_role_user
 from tests.url_test import TEST_GROUP_NAME
 from tests.utils import render_url

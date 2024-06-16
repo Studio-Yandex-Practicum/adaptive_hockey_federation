@@ -2,21 +2,33 @@ from typing import Any
 
 import pytest
 from core.constants import Role
-from main.models import (City, Diagnosis, DisciplineLevel, DisciplineName,
-                         Nosology, Player, StaffMember, StaffTeamMember, Team)
+from main.models import (
+    City,
+    Diagnosis,
+    DisciplineLevel,
+    DisciplineName,
+    Nosology,
+    Player,
+    StaffMember,
+    StaffTeamMember,
+    Team,
+)
 from tests.base import ModelTestBaseClass
 from tests.model_schemas.city import CITY_MODEL_TEST_SCHEMA
 from tests.model_schemas.diagnosis import DIAGNOSIS_MODEL_TEST_SCHEMA
-from tests.model_schemas.discipline_level import \
-    DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA
-from tests.model_schemas.discipline_name import \
-    DISCIPLINE_NAME_MODEL_TEST_SCHEMA
+from tests.model_schemas.discipline_level import (
+    DISCIPLINE_LEVEL_MODEL_TEST_SCHEMA,
+)
+from tests.model_schemas.discipline_name import (
+    DISCIPLINE_NAME_MODEL_TEST_SCHEMA,
+)
 from tests.model_schemas.group import GROUP_MODEL_TEST_SCHEMA
 from tests.model_schemas.nosology import NOSOLOGY_MODEL_TEST_SCHEMA
 from tests.model_schemas.player import PLAYER_MODEL_TEST_SCHEMA
 from tests.model_schemas.staff_member import STAFF_MEMBER_MODEL_TEST_SCHEMA
-from tests.model_schemas.staff_team_member import \
-    STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA
+from tests.model_schemas.staff_team_member import (
+    STAFF_TEAM_MEMBER_MODEL_TEST_SCHEMA,
+)
 from tests.model_schemas.team import TEAM_MODEL_TEST_SCHEMA
 from tests.model_schemas.user import USER_MODEL_TEST_SCHEMA
 from users.factories import UserFactory

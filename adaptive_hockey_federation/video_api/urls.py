@@ -1,6 +1,10 @@
 from django.urls import path
-from video_api.views import (receiving_data_game, receiving_data_player,
-                             send_data_game, send_data_player)
+from video_api.views import (
+    receiving_data_game,
+    receiving_data_player,
+    send_data_game,
+    send_data_player,
+)
 
 urlpatterns = [
     path("send_player/", send_data_player, name="send_data_player"),

@@ -1,8 +1,10 @@
-from tests.model_schemas.fields_validation_schemas import (CORRECT_CREATE,
-                                                           CORRECT_UPDATE,
-                                                           LONG_150,
-                                                           LONGER_THEN_150,
-                                                           NULL)
+from tests.model_schemas.fields_validation_schemas import (
+    CORRECT_CREATE,
+    CORRECT_UPDATE,
+    LONG_150,
+    LONGER_THEN_150,
+    NULL,
+)
 
 GROUP_MODEL_TEST_SCHEMA = {
     CORRECT_CREATE: {

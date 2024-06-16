@@ -181,7 +181,8 @@ class EditTeamPlayersNumbersForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.formset = EditTeamPlayersNumbersFormSet(
             queryset=GamePlayer.objects.filter(
-                game_team=self.game_team).order_by("last_name", "name"),
+                game_team=self.game_team,
+            ).order_by("last_name", "name"),
             data=data if self.is_bound else None,
         )
 

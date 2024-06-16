@@ -6,9 +6,15 @@ from main.data_factories.factories import PlayerFactory
 from main.models import City, DisciplineName, Player, Team
 from tests.base import BaseTestClass
 from tests.fixture_user import test_email, test_password, test_role_user
-from tests.url_schema import (PLAYER_GET_URLS, PLAYER_POST_URLS, TEAM_GET_URLS,
-                              TEAM_POST_URLS, UNLOAD_URLS, USER_GET_URLS,
-                              USER_POST_URLS)
+from tests.url_schema import (
+    PLAYER_GET_URLS,
+    PLAYER_POST_URLS,
+    TEAM_GET_URLS,
+    TEAM_POST_URLS,
+    UNLOAD_URLS,
+    USER_GET_URLS,
+    USER_POST_URLS,
+)
 from tests.utils import UrlToTest
 from users.factories import UserFactory
 from users.models import User
@@ -286,8 +292,10 @@ class TestSpecialPermissions(BaseTestClass):
                 self.assertEqual(
                     response.status_code,
                     HTTPStatus.OK,
-                    msg=(f"Представителю команды должна "
-                         f"быть доступна {message}"),
+                    msg=(
+                        f"Представителю команды должна "
+                        f"быть доступна {message}"
+                    ),
                 )
 
     def test_agent_has_no_access(self):
@@ -328,6 +336,8 @@ class TestSpecialPermissions(BaseTestClass):
                 self.assertEqual(
                     response.status_code,
                     HTTPStatus.FORBIDDEN,
-                    msg=(f"Представителю команды НЕ должна "
-                         f"быть доступна {message}"),
+                    msg=(
+                        f"Представителю команды НЕ должна "
+                        f"быть доступна {message}"
+                    ),
                 )

@@ -2,8 +2,12 @@ from core.config.dev_settings import ADMIN_PAGE_ORDERING
 from django.contrib import admin
 from django.contrib.admin.sites import AdminSite
 from django.http import HttpRequest
-from main.admin.inlines import (DocumentInline, PlayerInline, PlayerTeamInline,
-                                StaffTeamMemberTeamInline)
+from main.admin.inlines import (
+    DocumentInline,
+    PlayerInline,
+    PlayerTeamInline,
+    StaffTeamMemberTeamInline,
+)
 from main.forms import PlayerForm, TeamForm
 from main.models import Diagnosis
 
@@ -192,8 +196,10 @@ class PlayerAdmin(admin.ModelAdmin):
         return obj.diagnosis.nosology.name
 
     def change_view(
-        self, request,
-        object_id, form_url="",
+        self,
+        request,
+        object_id,
+        form_url="",
         extra_context=None,
     ):
         """Переопределяет стандартный метод change_view."""
@@ -203,7 +209,8 @@ class PlayerAdmin(admin.ModelAdmin):
             flat=True,
         )
         extra_context["diagnosis_name"] = self.get_object(
-            request, object_id,
+            request,
+            object_id,
         ).diagnosis.name
         return super().change_view(request, object_id, form_url, extra_context)
 
