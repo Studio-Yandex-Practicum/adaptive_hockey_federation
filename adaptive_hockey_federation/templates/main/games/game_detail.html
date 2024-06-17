@@ -6,15 +6,16 @@
 {% endblock title %}
 
 {% block content %}
-<h1>Детали игры</h1>
-<p style="font-size: 1.2em; font-weight: bold;">
-    <h4>Название: {{ object.name }}</h4>
-</p>
-<p style="font-size: 1.2em; font-weight: bold;">
-    <h7>Дата: {{ object.date }}</h7>
-</p>
-<p>Ссылка на видео: <a href="{{ object.video_link }}">{{ object.video_link }}</a></p>
-<p>Ссылка на соревнование: <a href="{% url 'competitions:competition_id' object.competition_id %}">{{ object.competition }}</a></p>
+    <h1>Детали игры</h1>
+
+    <div style="margin-bottom: 20px;">
+        <h4 style="margin: 0;">Название: {{ object.name }}</h4>
+        <h7 style="margin: 0;">Дата: {{ object.date }}</h7>
+    </div>
+
+    <p>Ссылка на видео: <a href="{{ object.video_link }}">{{ object.video_link }}</a></p>
+    <p>Ссылка на соревнование: <a href="{% url 'competitions:competition_id' object.competition_id %}">{{ object.competition }}</a></p>
+
 
 <div style="display: flex; justify-content: space-between; padding: 20px;">
     <div style="width: 48%; margin-right: 2%;">
@@ -40,7 +41,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.0.id %}" 
+        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.0.id %}"
            class="btn btn-secondary text-white"
            style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px; margin-top: 5px;">
            Редактировать номера игроков
@@ -73,7 +74,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.1.id %}" 
+        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.1.id %}"
            class="btn btn-secondary text-white"
            style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px; margin-top: 5px;">
            Редактировать номера игроков
@@ -82,5 +83,98 @@
         <p>К сожалению, информация о второй команде недоступна.</p>
         {% endif %}
     </div>
-</div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <form id="video-recognition-form" action="{% url 'video_recognition' object.pk %}" method="post">
+            {% csrf_token %}
+            <button type="button" id="submit-button" style="padding: 15px 30px; font-size: 1.2em; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Отправить видео на распознание
+            </button>
+        </form>
+        <div id="loading-animation" style="display: none; margin-top: 20px;">
+            <div class="spinner"></div>
+            <p>Обработка видео...</p>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content" style="position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <span id="close-button" class="close" style="position: absolute; right: 10px; top: 10px; font-size: 24px; cursor: pointer;">&times;</span>
+            <h2>Результат распознавания видео</h2>
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
+    <style>
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #4CAF50;
+            animation: spin 1s ease infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        document.getElementById('submit-button').addEventListener('click', function() {
+            var form = document.getElementById('video-recognition-form');
+            var loadingAnimation = document.getElementById('loading-animation');
+            var modal = document.getElementById('modal');
+            var modalMessage = document.getElementById('modal-message');
+            var formData = new FormData(form);
+
+            // Показываем анимацию
+            form.style.display = 'none';
+            loadingAnimation.style.display = 'block';
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            }).then(data => {
+                console.log('Success:', data);
+                // Скрываем анимацию
+                loadingAnimation.style.display = 'none';
+                // Показываем модальное окно с сообщением
+                modalMessage.textContent = 'Видео успешно отправлено на распознавание!';
+                modal.style.display = 'block';
+            }).catch(error => {
+                console.error('Error:', error);
+                // В случае ошибки можно вернуть форму и скрыть анимацию
+                form.style.display = 'block';
+                loadingAnimation.style.display = 'none';
+            });
+        });
+
+        // Закрытие модального окна
+        document.getElementById('close-button').addEventListener('click', function() {
+            var modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        });
+
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(event) {
+            var modal = document.getElementById('modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+    </script>
 {% endblock content %}

@@ -1,10 +1,21 @@
+import os
+
+import environ
+import requests
+from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from games.models import Game
 from main.models import Player
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from video_api.serializers import GameSerializer, PlayerSerializer
+from video_api.serializers import (
+    GameSerializer,
+    PlayerSerializer,
+    VideoSerializer,
+)
+
+env = environ.Env()
 
 
 @swagger_auto_schema(method="post", request_body=PlayerSerializer)
@@ -64,5 +75,19 @@ def receiving_data_game(request, pk=None):
     else:
         games = Game.objects.all()
         serializer = GameSerializer(games, many=True)
+
+    return Response(serializer.data)
+
+
+@swagger_auto_schema(method="post", request_body=VideoSerializer)
+@api_view(["POST"])
+def video_recognition(request, pk=None):
+    """Обработка POST-запроса для создания новой команды."""
+    game = get_object_or_404(Game, pk=pk)
+    serializer = VideoSerializer(game)
+
+    # TODO указать головной url, а ендпоинты уже прописывать в методах
+    url = os.getenv("URL")
+    requests.post(url, json=serializer.data)
 
     return Response(serializer.data)

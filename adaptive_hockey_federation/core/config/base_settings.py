@@ -143,7 +143,7 @@ SWAGGER_SETTINGS = {
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "video_api.permissions.HasAPIDocsKey",
+        "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_RENDERER_CLASSES": (

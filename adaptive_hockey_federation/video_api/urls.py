@@ -4,6 +4,7 @@ from video_api.views import (
     receiving_data_player,
     send_data_game,
     send_data_player,
+    video_recognition,
 )
 
 urlpatterns = [
@@ -20,5 +21,10 @@ urlpatterns = [
         "get_game/<int:pk>/",
         receiving_data_game,
         name="receiving_data_game_by_pk",
+    ),
+    path(
+        "video_recognition/<int:pk>/",
+        video_recognition,
+        name="video_recognition",
     ),
 ]
