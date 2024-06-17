@@ -1,93 +1,24 @@
-import os
-
-import environ
-import requests
-from django.shortcuts import get_object_or_404
-from drf_yasg.utils import swagger_auto_schema
 from games.models import Game
-from main.models import Player
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from video_api.serializers import (
-    GameSerializer,
-    PlayerSerializer,
-    VideoSerializer,
-)
-
-env = environ.Env()
+from rest_framework import generics
+from video_api.serializers import GameFeatureSerializer
+from service.a_hockey_requests import send_request_to_video_processing_service
 
 
-@swagger_auto_schema(method="post", request_body=PlayerSerializer)
-@api_view(["POST"])
-def send_data_player(request):
-    """Обработка POST-запроса для создания нового игрока."""
-    serializer = PlayerSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class VideoRecognitionView(generics.RetrieveAPIView):
+    """Отправка запроса на эндпоинт /process для обработки видео с игрой."""
 
+    queryset = Game.objects.all()
+    serializer_class = GameFeatureSerializer
 
-@swagger_auto_schema(
-    method="get",
-    responses={200: PlayerSerializer(many=True)},
-)
-@api_view(["GET"])
-def receiving_data_player(request, pk=None):
-    """Обработка GET-запроса для получения данных игрока."""
-    if pk is not None:
-        try:
-            player = Player.objects.get(pk=pk)
-        except Player.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = PlayerSerializer(player)
-    else:
-        players = Player.objects.all()
-        serializer = PlayerSerializer(players, many=True)
-
-    return Response(serializer.data)
-
-
-@swagger_auto_schema(method="post", request_body=GameSerializer)
-@api_view(["POST"])
-def send_data_game(request):
-    """Обработка POST-запроса для создания новой игры."""
-    serializer = GameSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@swagger_auto_schema(method="get", responses={200: GameSerializer(many=True)})
-@api_view(["GET"])
-def receiving_data_game(request, pk=None):
-    """Обработка GET-запроса для получения данных игры."""
-    if pk is not None:
-        try:
-            game = Game.objects.get(pk=pk)
-        except Game.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = GameSerializer(game)
-    else:
-        games = Game.objects.all()
-        serializer = GameSerializer(games, many=True)
-
-    return Response(serializer.data)
-
-
-@swagger_auto_schema(method="post", request_body=VideoSerializer)
-@api_view(["POST"])
-def video_recognition(request, pk=None):
-    """Обработка POST-запроса для создания новой команды."""
-    game = get_object_or_404(Game, pk=pk)
-    serializer = VideoSerializer(game)
-
-    # TODO указать головной url, а ендпоинты уже прописывать в методах
-    url = os.getenv("URL")
-    requests.post(url, json=serializer.data)
-
-    return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        """Переопределяем метод для отправки запросов к серсиву."""
+        response = self.retrieve(request, *args, **kwargs)
+        service_status = send_request_to_video_processing_service(
+            "/process",
+            response.data,
+        )
+        # Временно эллипсис, что бы линтеры пропускали.
+        # TODO дописать логику когда будет докручен сервис по обработке видео
+        if service_status != 200:
+            pass
+        return response
