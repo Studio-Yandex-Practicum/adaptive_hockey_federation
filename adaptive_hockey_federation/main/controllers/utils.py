@@ -1,6 +1,5 @@
-from django.urls import reverse
-
 from core.constants import FileConstants
+from django.urls import reverse
 from main.models import Player, Team
 
 

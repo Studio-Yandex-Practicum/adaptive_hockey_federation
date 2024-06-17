@@ -4,18 +4,22 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.urls import reverse_lazy
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.list import ListView
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import DetailView
-
+from django.views.generic.edit import (
+    CreateView,
+    DeleteView,
+    FormView,
+    UpdateView,
+)
+from django.views.generic.list import ListView
 from games.constants import Errors, Literals, NumericalValues
-from games.forms import GameForm, GameUpdateForm
+from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
-from games.models import Game, GameTeam, GamePlayer
+from games.models import Game, GamePlayer, GameTeam
 
 
 class GamesListView(
@@ -37,7 +41,16 @@ class GamesListView(
 
     def get_queryset(self) -> QuerySet[Any]:
         """Метод для получения набора QuerySet."""
-        return Game.objects.all().prefetch_related("game_teams")
+        queryset = super().get_queryset().prefetch_related("game_teams")
+        search_params = self.request.GET.dict()
+        search_column = search_params.get("search_column")
+        search = search_params.get("search")
+        if search_column and search:
+            if search_column == "name":
+                queryset = queryset.filter(name__icontains=search)
+            elif search_column == "team":
+                queryset = queryset.filter(game_teams__name__icontains=search)
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Метод для получения словаря context в шаблоне страницы."""
@@ -55,8 +68,8 @@ class GamesListView(
                     "pk": game.pk,
                     "name": game.name,
                     "video_link": game.video_link,
-                    "first_team": first_team.name,
-                    "second_team": second_team.name,
+                    "first_team": first_team.name if first_team else None,
+                    "second_team": second_team.name if second_team else None,
                 },
             )
         context["table_head"] = {
@@ -155,4 +168,48 @@ class GamesInfoView(
             team.players = players
 
         context["teams"] = teams
+        return context
+
+
+class EditTeamPlayersNumbersView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    FormView,
+):
+    """Представление для редактирования номеров команды, участвующей в игре."""
+
+    template_name = "main/games/player_number_edit.html"
+    form_class = EditTeamPlayersNumbersForm
+    permission_required = "games.edit_player_number"
+    permission_denied_message = Errors.PERMISSION_MISSING.format(
+        action=Errors.CREATE_GAME,
+    )
+
+    def get_form_kwargs(self):
+        """Передача дополнительных аргументов в форму."""
+        kwargs = super().get_form_kwargs()
+        game_team = get_object_or_404(GameTeam, id=self.kwargs["game_team"])
+        kwargs["game_team"] = game_team
+        if self.request.method == "POST":
+            kwargs["data"] = self.request.POST
+        return kwargs
+
+    def form_valid(self, form):
+        """Обработка валидной формы."""
+        form.save()
+        return redirect(
+            reverse_lazy(
+                "games:game_info",
+                kwargs={"game_id": form.game_team.game.id},
+            ),
+        )
+
+    def get_context_data(self, **kwargs):
+        """Метод для получения словаря context в шаблоне страницы."""
+        context = super().get_context_data(**kwargs)
+        context["game_team"] = get_object_or_404(
+            GameTeam,
+            id=self.kwargs["game_team"],
+        )
+        context["page_title"] = "Редактирование номеров игроков команды"
         return context

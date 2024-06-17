@@ -2,22 +2,31 @@ import copy
 from http import HTTPStatus
 from typing import Any, Iterable
 
+from competitions.models import Competition
+from core import constants
+from core.constants import Role
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Model
 from django.shortcuts import get_object_or_404
 from django.test import Client, TestCase
 from factory.django import DjangoModelFactory  # type: ignore
-
-from competitions.models import Competition
-from core import constants
-from core.constants import Role
-from main.data_factories.factories import (CompetitionFactory,
-                                           DiagnosisFactory, DocumentFactory,
-                                           PlayerFactory,
-                                           StaffTeamMemberFactory, TeamFactory)
-from main.models import (Diagnosis, DisciplineName, Document, Player,
-                         StaffTeamMember, Team)
+from main.data_factories.factories import (
+    CompetitionFactory,
+    DiagnosisFactory,
+    DocumentFactory,
+    PlayerFactory,
+    StaffTeamMemberFactory,
+    TeamFactory,
+)
+from main.models import (
+    Diagnosis,
+    DisciplineName,
+    Document,
+    Player,
+    StaffTeamMember,
+    Team,
+)
 from tests.fixture_user import test_role_user
 from tests.url_test import TEST_GROUP_NAME
 from tests.utils import render_url

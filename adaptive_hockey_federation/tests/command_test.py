@@ -1,5 +1,4 @@
 import pytest
-
 from main.data_factories.factories import TeamFactory
 from main.models import Team
 from users.factories import UserFactory

@@ -3,11 +3,9 @@ from datetime import date, timedelta
 from io import BytesIO
 
 import factory
+from competitions.models import Competition
 from django.core.files.base import File
 from django.db.models import Count
-from PIL import Image
-
-from competitions.models import Competition
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -21,6 +19,7 @@ from main.models import (
     StaffTeamMember,
     Team,
 )
+from PIL import Image
 from users.models import User
 
 from .utils import check_len, get_random_objects

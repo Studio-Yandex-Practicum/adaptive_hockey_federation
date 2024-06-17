@@ -2,7 +2,6 @@ import datetime
 
 from django import forms
 from django.db.models.functions import ExtractYear
-
 from main.models import City, DisciplineName, Player
 
 

@@ -2,10 +2,10 @@ from typing import Any
 
 from django import forms
 from django.db import transaction
-from django.db.models import QuerySet, Q
-
+from django.db.models import Q, QuerySet
+from django.forms import modelformset_factory
 from games.constants import Errors, Literals, NumericalValues
-from games.models import Game, GameTeam
+from games.models import Game, GamePlayer, GameTeam
 from main.forms import CustomMultipleChoiceField
 from main.models import Team
 
@@ -145,3 +145,51 @@ class GameUpdateForm(GameForm):
             required=False,
             help_text=Literals.GAME_AVAILABLE_TEAMS,
         )
+
+
+class GamePlayerNumberForm(forms.ModelForm):
+    """Форма для редактирования номера игрока."""
+
+    class Meta:
+        model = GamePlayer
+        fields = ["number"]
+
+
+EditTeamPlayersNumbersFormSet = modelformset_factory(
+    GamePlayer,
+    form=GamePlayerNumberForm,
+    extra=0,
+    can_delete=True,
+)
+
+
+class EditTeamPlayersNumbersForm(forms.Form):
+    """Форма для редактирования номеров игроков команды."""
+
+    def __init__(self, *args, **kwargs):
+        """
+        Инициализирует форму для редактирования номеров игроков команды.
+
+        Описание:
+        - Извлекает объект game_team из именованных аргументов.
+        - Извлекает данные для заполнения формы, если они переданы.
+        - Инициализирует форму и формсет EditTeamPlayersNumbersFormSet
+        для игроков из указанной команды.
+        """
+        self.game_team = kwargs.pop("game_team")
+        data = kwargs.pop("data", None)
+        super().__init__(*args, **kwargs)
+        self.formset = EditTeamPlayersNumbersFormSet(
+            queryset=GamePlayer.objects.filter(
+                game_team=self.game_team,
+            ).order_by("last_name", "name"),
+            data=data if self.is_bound else None,
+        )
+
+    def is_valid(self):
+        """Проверка валидности формы и формсета."""
+        return super().is_valid() and self.formset.is_valid()
+
+    def save(self):
+        """Сохранение изменений формсета."""
+        self.formset.save()

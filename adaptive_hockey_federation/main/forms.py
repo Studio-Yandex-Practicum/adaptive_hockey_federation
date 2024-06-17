@@ -1,6 +1,8 @@
 import re
 from typing import Any
 
+from core.constants import FORM_HELP_TEXTS, Role, StaffPosition
+from core.utils import max_date, min_date
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import (
@@ -11,9 +13,6 @@ from django.forms import (
     TextInput,
 )
 from django.shortcuts import get_object_or_404
-
-from core.constants import FORM_HELP_TEXTS, Role, StaffPosition
-from core.utils import max_date, min_date
 from main.models import (
     City,
     Diagnosis,

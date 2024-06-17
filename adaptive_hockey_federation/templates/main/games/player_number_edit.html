@@ -1,0 +1,54 @@
+{% extends "base/base.html" %}
+{% load user_filters %}
+{% block title %}
+  {{ page_title }}
+{% endblock title %}
+
+{% block content %}
+  <h2 class="text-center mb-4">{{ page_title }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="container text-center">
+      <div class="full-container">
+        <h4 class="text-center mb-4">Команда: {{ game_team.name }}</h4>
+        <table class="table-table">
+          <tbody>
+          {{ form.formset.management_form }}
+          {% for form in form.formset.forms %}
+            <tr>
+              <th>{{ form.instance.last_name }} {{ form.instance.name }} </th>
+              <td class="base-wrapper">
+                {{ form.id }}
+                {% if form.errors %}
+                  {{ form.number|addclass:'base-input-errors' }}
+                  {{ form.errors }}
+                {% else %}
+                  {{ form.number|addclass:'base-input' }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col text-center text-white flex justify-start">
+            <button
+                type="submit"
+                class="btn btn-secondary text-white"
+                style="background-color: #64C2D1; border: 1px solid #fff;"
+            >
+              Сохранить
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  {% if form.formset.non_form_errors %}
+    <div class="alert alert-danger">
+      {{ form.formset.non_form_errors }}
+    </div>
+  {% endif %}
+{% endblock %}

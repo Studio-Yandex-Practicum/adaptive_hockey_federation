@@ -1,3 +1,13 @@
+from competitions.forms import (
+    CompetitionForm,
+    CompetitionTeamForm,
+    CompetitionUpdateForm,
+)
+from competitions.models import Competition, Team
+from competitions.schema import (
+    get_competitions_table_data,
+    get_competitions_table_head,
+)
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -21,17 +31,6 @@ from django.views.generic.edit import (
     UpdateView,
 )
 from django.views.generic.list import ListView
-
-from competitions.forms import (
-    CompetitionForm,
-    CompetitionTeamForm,
-    CompetitionUpdateForm,
-)
-from competitions.models import Competition, Team
-from competitions.schema import (
-    get_competitions_table_data,
-    get_competitions_table_head,
-)
 from main.controllers.team_views import CityListMixin
 from main.controllers.utils import get_team_href
 from users.utilits.send_mails import send_welcome_mail

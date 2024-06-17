@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from games.models import Game, GameTeam, GamePlayer
-from main.models import Team, Player
+from games.models import Game, GamePlayer, GameTeam
+from main.models import Player, Team
 
 
 @receiver(post_save, sender=Game, dispatch_uid="unique_signal")
@@ -12,7 +12,7 @@ def create_game_teams(sender, instance, created, **kwargs):
     Для последующего использования сигнала при обновлении объекта Game
     реализовано удаление старых GameTeam, которые ссылались на этот Game.
     """
-    teams = instance.game_teams.all()
+    teams = instance.teams
     queryset_teams = list(
         map(lambda x: Team.objects.get(id=x), teams),
     )
@@ -34,7 +34,7 @@ def create_game_teams(sender, instance, created, **kwargs):
 def create_game_players(sender, instance, created, **kwargs):
     """Сигнал для автоматического создания GamePlayer при создании GameTeam."""
     if created:
-        queryset_players = instance.game_players.all()
+        queryset_players = instance.players
         all_players = []
         for player in queryset_players:
             game_player = GamePlayer(

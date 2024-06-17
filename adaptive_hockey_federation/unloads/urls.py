@@ -1,5 +1,4 @@
 from django.urls import include, path
-
 from unloads import views
 
 app_name = "unloads"

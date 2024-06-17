@@ -1,5 +1,7 @@
 from typing import Iterable
 
+from core.constants import GROUPS_BY_ROLE, ROLES_CHOICES, Role, UserConstans
+from core.validators import fio_validator
 from django.contrib.auth.models import (
     AbstractBaseUser,
     Group,
@@ -14,9 +16,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from phonenumber_field.validators import validate_international_phonenumber
-
-from core.constants import GROUPS_BY_ROLE, ROLES_CHOICES, Role, UserConstans
-from core.validators import fio_validator
 from users.managers import CustomUserManager
 from users.validators import zone_code_without_seven_hundred
 

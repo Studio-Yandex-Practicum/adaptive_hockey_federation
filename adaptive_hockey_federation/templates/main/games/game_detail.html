@@ -16,62 +16,72 @@
     <p>Ссылка на видео: <a href="{{ object.video_link }}">{{ object.video_link }}</a></p>
     <p>Ссылка на соревнование: <a href="{% url 'competitions:competition_id' object.competition_id %}">{{ object.competition }}</a></p>
 
-    <div style="display: flex; justify-content: space-between; padding: 20px;">
-        <div style="width: 48%; margin-right: 2%;">
-            {% if teams|length > 0 %}
-                <h3>{{ teams.0.name }}</h3>
-                <table class="table-table" border="1" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
-                    <thead>
-                        <tr>
-                            <th>Имя игрока</th>
-                            <th>Номер игрока</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for player in teams.0.players %}
-                            <tr>
-                                <td>{{ player.last_name }} {{ player.name }}</td>
-                                <td>{{ player.number }}</td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="2">В этой команде нет игроков.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>К сожалению, информация о первой команде недоступна.</p>
-            {% endif %}
-        </div>
 
-        <div style="width: 48%; margin-left: 2%;">
-            {% if teams|length > 1 %}
-                <h3>{{ teams.1.name }}</h3>
-                <table class="table-table" border="1" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
-                    <thead>
-                        <tr>
-                            <th>Имя игрока</th>
-                            <th>Номер игрока</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for player in teams.1.players %}
-                            <tr>
-                                <td>{{ player.last_name }} {{ player.name }}</td>
-                                <td>{{ player.number }}</td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="2">В этой команде нет игроков.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>К сожалению, информация о второй команде недоступна.</p>
-            {% endif %}
-        </div>
+<div style="display: flex; justify-content: space-between; padding: 20px;">
+    <div style="width: 48%; margin-right: 2%;">
+        {% if teams|length > 0 %}
+        <h3>{{ teams.0.name }}</h3>
+        <table class="table-table" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
+            <thead>
+                <tr>
+                    <th>Имя игрока</th>
+                    <th>Номер игрока</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in teams.0.players %}
+                <tr>
+                    <td>{{ player.last_name }} {{ player.name }}</td>
+                    <td>{{ player.number }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">В этой команде нет игроков.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.0.id %}"
+           class="btn btn-secondary text-white"
+           style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px; margin-top: 5px;">
+           Редактировать номера игроков
+        </a>
+        {% else %}
+        <p>К сожалению, информация о первой команде недоступна.</p>
+        {% endif %}
+    </div>
+
+    <div style="width: 48%; margin-left: 2%;">
+        {% if teams|length > 1 %}
+        <h3>{{ teams.1.name }}</h3>
+        <table class="table-table" cellpadding="5" cellspacing="0" style="width: 100%; margin: 0 5px;">
+            <thead>
+                <tr>
+                    <th>Имя игрока</th>
+                    <th>Номер игрока</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in teams.1.players %}
+                <tr>
+                    <td>{{ player.last_name }} {{ player.name }}</td>
+                    <td>{{ player.number }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">В этой команде нет игроков.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'games:edit_team_players_numbers' game_team=teams.1.id %}"
+           class="btn btn-secondary text-white"
+           style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px; margin-top: 5px;">
+           Редактировать номера игроков
+        </a>
+        {% else %}
+        <p>К сожалению, информация о второй команде недоступна.</p>
+        {% endif %}
     </div>
 
     <div style="text-align: center; margin-top: 20px;">

@@ -5,7 +5,6 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.urls import reverse_lazy
-
 from games.constants import GAME_TITLE_MAPPING, Literals
 from games.models import Game
 

@@ -2,14 +2,14 @@
 
 import core.constants
 import core.validators
-from django.conf import settings
 import django.core.validators
-from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 import phonenumber_field.modelfields
 import phonenumber_field.validators
 import users.validators
+from django.conf import settings
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):

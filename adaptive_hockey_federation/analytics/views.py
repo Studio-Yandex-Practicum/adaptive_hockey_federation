@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from dateutil.relativedelta import relativedelta
-
 from analytics.forms import AnalyticsFilterForm
 from core.constants import GENDER_CHOICES
 from core.permissions import AdminRequiredMixin
+from dateutil.relativedelta import relativedelta
 from main.controllers.player_views import PlayersListView
 from main.models import Nosology, Player, Team
 from unloads.utils import model_get_queryset

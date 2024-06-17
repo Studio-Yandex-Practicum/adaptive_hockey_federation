@@ -1,8 +1,7 @@
 from random import randint
 
-from django.core.management.base import BaseCommand
-
 from core.constants import STAFF_POSITION_CHOICES, Role
+from django.core.management.base import BaseCommand
 from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,

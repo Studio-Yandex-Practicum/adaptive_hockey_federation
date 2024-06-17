@@ -1,21 +1,19 @@
 import os
+
 import environ
 import requests
-
+from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
+from games.models import Game
+from main.models import Player
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-
-from games.models import Game
-from main.models import Player
 from video_api.serializers import (
     GameSerializer,
     PlayerSerializer,
     VideoSerializer,
 )
-
 
 env = environ.Env()
 
@@ -88,6 +86,7 @@ def video_recognition(request, pk=None):
     game = get_object_or_404(Game, pk=pk)
     serializer = VideoSerializer(game)
 
+    # TODO указать головной url, а ендпоинты уже прописывать в методах
     url = os.getenv("URL")
     requests.post(url, json=serializer.data)
 

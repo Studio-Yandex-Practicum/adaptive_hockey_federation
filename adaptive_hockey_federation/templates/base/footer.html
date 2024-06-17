@@ -31,10 +31,7 @@
         {% if view_name == 'games:games' %}
           {% include "main/games/game_button_create.html" %}
         {% endif %}
-        {% if view_name == 'unloads:unloads' %}
-          {% url 'unloads:data_unloads' page_name='unloads' as unloads_unload_url %}
-          {% include "base/button.html" with url_name=unloads_unload_url name="Выгрузить" %}
-        {% elif view_name == 'main:players' %}
+        {% if view_name == 'main:players' %}
           {% url 'unloads:data_unloads' page_name='players' as player_unload_url %}
           {% include "base/button.html" with url_name=player_unload_url name="Выгрузить" %}
         {% elif view_name == 'analytics:analytics' %}

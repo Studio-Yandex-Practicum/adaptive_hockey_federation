@@ -1,5 +1,4 @@
 import pytest
-
 from core.constants import Role
 
 test_password = "admin"

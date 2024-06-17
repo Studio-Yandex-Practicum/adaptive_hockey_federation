@@ -1,3 +1,4 @@
+from core.constants import StaffPosition
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -9,8 +10,6 @@ from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
-from core.constants import StaffPosition
 from main.forms import StaffTeamMemberAddToTeamForm, TeamFilterForm, TeamForm
 from main.models import City, Player, StaffTeamMember, Team
 from main.permissions import CustomPermissionMixin, TeamEditPermissionsMixin
