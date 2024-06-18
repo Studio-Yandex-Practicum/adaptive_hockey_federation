@@ -158,3 +158,6 @@ REST_FRAMEWORK = {
 }
 
 API_DOCS_KEY = env("API_DOCS_KEY", default="8f2d9e1b2c4e6f")
+
+# Базовый урл сервиса по обработке видео
+PROCESSING_SERVICE_BASE_URL = env('PROCESSING_SERVICE_BASE_URL', default='http://127.0.0.1:8010/')
