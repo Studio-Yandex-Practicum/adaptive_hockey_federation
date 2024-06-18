@@ -13,9 +13,10 @@ class VideoRecognitionView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         """Переопределяем метод для отправки запросов к серсиву."""
         response = self.retrieve(request, *args, **kwargs)
+        request_data_to_service = {"json": response.data}
         service_status = send_request_to_video_processing_service(
             "/process",
-            response.data,
+            request_data_to_service,
         )
         # Временно эллипсис, что бы линтеры пропускали.
         # TODO дописать логику когда будет докручен сервис по обработке видео
