@@ -1,4 +1,3 @@
-import os
 from typing import Any
 from urllib.parse import urljoin
 
@@ -13,7 +12,7 @@ env = environ.Env()
 def send_request_to_video_processing_service(
     path: str,
     request_data: dict[str, Any],
-    base_url: str = os.getenv(
+    base_url: str = env(
         "PROCESSING_SERVICE_BACE_URL",
         "http://127.0.0.1:8010/",
     ),
