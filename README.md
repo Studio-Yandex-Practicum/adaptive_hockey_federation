@@ -205,8 +205,9 @@ Poetry - это инструмент для управления зависим�
 Если у Вас уже установлен менеджер пакетов pip, то можно установить командой:
 
 
-
+```bash
 >  *pip install poetry==1.5.0*
+```
 
 
 
@@ -216,7 +217,9 @@ Poetry - это инструмент для управления зависим�
 
 
 
+```bash
 >  *curl -sSL https://install.python-poetry.org | python -*
+```
 
 
 
@@ -224,7 +227,9 @@ Poetry - это инструмент для управления зависим�
 
 
 
+```pwsh
 >  *(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -*
+```
 
 
 
@@ -236,7 +241,9 @@ Poetry - это инструмент для управления зависим�
 
 
 
+```bash
 > poetry --version
+```
 
 
 
@@ -260,7 +267,9 @@ P.S.: Если при попытке проверить версию возни�
 
 
 
+```bash
 > poetry config virtualenvs.in-project true
+```
 
 
 
@@ -276,7 +285,9 @@ P.S.: Если при попытке проверить версию возни�
 
 
 
+```bash
 > poetry install
+```
 
 
 
@@ -292,7 +303,9 @@ P.S.: Если при попытке проверить версию возни�
 
 
 
+```bash
 > poetry add <package_name>
+```
 
 
 
@@ -300,7 +313,9 @@ _Пример использования:_
 
 
 
+```bash
 > poetry add starlette
+```
 
 
 
@@ -314,7 +329,9 @@ _Пример использования:_
 
 
 
+```bash
 > poetry add <package_name> --dev
+```
 
 
 
@@ -322,7 +339,9 @@ _Пример использования:_
 
 
 
+```bash
 > poetry add pytest --dev
+```
 
 
 
@@ -348,7 +367,9 @@ _Пример использования:_
 
 
 
+```bash
 > poetry shell
+```
 
 
 
@@ -358,7 +379,9 @@ _Пример использования:_
 
 
 
+```bash
 > poetry run <script_name>.py
+```
 
 
 
@@ -366,6 +389,7 @@ _Примеры:_
 
 
 
+```bash
 > poetry run python script_name>.py
 
 >
@@ -375,6 +399,7 @@ _Примеры:_
 >
 
 > poetry run black
+```
 
 
 
@@ -382,7 +407,9 @@ _Примеры:_
 
 
 
+```bash
 > python src\run_bot.py
+```
 
 
 
@@ -394,7 +421,9 @@ _Примеры:_
 
 
 
+```pwsh
 > source .venv/Scripts/activate
+```
 
 
 
@@ -402,7 +431,9 @@ _Примеры:_
 
 
 
+```bash
 > source .venv/bin/activate
+```
 
 
 
@@ -418,7 +449,7 @@ _Примеры:_
 
 #### Активировать виртуальное окружение
 
-```shell
+```bash
 
 poetry  shell
 
@@ -428,7 +459,7 @@ poetry  shell
 
 #### Добавить зависимость
 
-```shell
+```bash
 
 poetry  add <package_name>
 
@@ -438,7 +469,7 @@ poetry  add <package_name>
 
 #### Обновить зависимости
 
-```shell
+```bash
 
 poetry  update
 
@@ -462,7 +493,7 @@ poetry  update
 
 
 
-```shell
+```bash
 
 pre-commit  --version
 
@@ -472,7 +503,7 @@ pre-commit  --version
 
 
 
-```shell
+```bash
 
 pre-commit install
 
@@ -505,7 +536,7 @@ pre-commit install
 
 
 
-```shell
+```bash
 
 git  clone  https://github.com/Studio-Yandex-Practicum/adaptive_hockey_federation.git
 
@@ -517,7 +548,7 @@ git  clone  https://github.com/Studio-Yandex-Practicum/adaptive_hockey_federatio
 
 
 
-```shell
+```bash
 
 cd  adaptive_hockey_federation
 
@@ -564,7 +595,7 @@ make help
 
 
 
-```shell
+```bash
 
 docker  build  -t  adaptive-hockey-federation  .
 
@@ -578,7 +609,7 @@ docker  run  --name  adaptive-hockey-federation  -it  -p  8000:8000  adaptive-ho
 
 
 
-```shell
+```bash
 
 docker-compose  up  -d  --build
 
@@ -648,7 +679,7 @@ python3 manage.py fill-db -f
 
 Переходим в файл по следующему пути ``` /a_hockey-main/app/src/app.py ``` и в последней строке меняем порт Uvicorn на 8010
 
-```
+```python
 if __name__ == "__main__":
     setup_logging(loglevel="INFO")
     uvicorn.run(app, host="0.0.0.0", port=8010)
@@ -656,12 +687,12 @@ if __name__ == "__main__":
 
 Из корневой директории проекта выполняем следующие команды для сборки образа и запуска контейнера:
 
-```
+```bash
 make image_video
 make start_video
 ```
 
-Доступ к серверу будет возможен по адрсу ``` http://127.0.0.1:8010 ```
+Доступ к серверу будет возможен по адресу ``` http://127.0.0.1:8010 ```
 
 
 
@@ -673,7 +704,7 @@ make start_video
 
 Все тесты запускаются командой:
 
-```shell
+```bash
 
 pytest
 
@@ -685,32 +716,21 @@ pytest
 
 
 
-```shell
+```bash
 
-make  run_tests
+make pytest
 
 ```
+
+
 
 Выборочно тесты запускаются с указанием выбранного файла:
 
-```shell
+```bash
 
-pytest  test_start.py
-
-```
-
-
-
-Или
-
-
-
-```shell
-
-make  run_unit_tests
+pytest test_start.py
 
 ```
-
 
 
 #### Написание тестов
@@ -751,7 +771,7 @@ make  run_unit_tests
 
 Раздел будет обновляться.
 
-```sell
+```bash
 http://127.0.0.1:8000/api/docs/
 ```
 Для корректного выполнения запросов из Swagger необходимов нажать кнопку ```Authorize```
