@@ -84,12 +84,6 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы Game",
         )
         parser.add_argument(
-            "-gt",
-            "--gameteams",
-            action="store_true",
-            help="Фикстуры для таблицы Game",
-        )
-        parser.add_argument(
             "-un",
             "--unload",
             action="store_true",
