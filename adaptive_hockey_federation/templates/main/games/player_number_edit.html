@@ -21,9 +21,13 @@
                 {{ form.id }}
                 {% if form.errors %}
                   {{ form.number|addclass:'base-input-errors' }}
-                  {{ form.errors }}
+                  {{ form.gameplayer_id|addclass:'base-input-errors' }}
+                  {% for error in form.errors.values %}
+                  {{ error }}
+                  {% endfor %}
                 {% else %}
                   {{ form.number|addclass:'base-input' }}
+                  {{ form.gameplayer_id|addclass:'base-input' }}
                 {% endif %}
               </td>
             </tr>
