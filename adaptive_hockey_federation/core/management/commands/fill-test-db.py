@@ -2,17 +2,10 @@ from random import randint
 
 from core.constants import STAFF_POSITION_CHOICES, Role
 from django.core.management.base import BaseCommand
-from main.data_factories.factories import (
-    CompetitionFactory,
-    DiagnosisFactory,
-    DocumentFactory,
-    PlayerFactory,
-    StaffTeamMemberFactory,
-    TeamFactory,
-    GameFactory,
-    GameTeamFactory,
-    GamePlayerFactory,
-)
+from main.data_factories.factories import (CompetitionFactory,
+                                           DiagnosisFactory, DocumentFactory,
+                                           GameFactory, PlayerFactory,
+                                           StaffTeamMemberFactory, TeamFactory)
 from main.data_factories.utils import updates_for_players
 from main.models import Player
 from unloads.factories import UnloadFactory
@@ -92,15 +85,9 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "-gt",
-            "--game_team",
+            "--gameteams",
             action="store_true",
-            help="Фикстуры для таблицы Game_team",
-        )
-        parser.add_argument(
-            "-gp",
-            "--game_player",
-            action="store_true",
-            help="Фикстуры для таблицы Game_player",
+            help="Фикстуры для таблицы Game",
         )
         parser.add_argument(
             "-un",
@@ -126,8 +113,6 @@ class Command(BaseCommand):
         document = options.get("document", False)
         competition = options.get("competition", False)
         unload = options.get("unload", False)
-        game_team = options.get("game_team", False)
-        game_player = options.get("game_player", False)
         game = options.get("game", False)
         amount = options.get("amount")
 
@@ -195,20 +180,8 @@ class Command(BaseCommand):
         if game:
             GameFactory.create_batch(amount)
             return self.stdout.write(
-                self.style.SUCCESS(f"{amount}, фикстуры для Game созданы."),
-            )
-        if game_team:
-            GameTeamFactory.create_batch(amount)
-            return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount}, фикстуры для Game_team созданы.",
-                ),
-            )
-        if game_player:
-            GamePlayerFactory.create_batch(amount)
-            return self.stdout.write(
-                self.style.SUCCESS(
-                    f"{amount}, фикстуры для Game_player созданы.",
+                    f"{amount} фикстур для таблицы Game созданы."
                 ),
             )
         if unload:
