@@ -19,6 +19,7 @@ from main.models import (
     StaffTeamMember,
     Team,
 )
+from games.models import Game, GamePlayer, GameTeam
 from PIL import Image
 from users.models import User
 
@@ -273,3 +274,79 @@ class DocumentFactory(factory.django.DjangoModelFactory):
         image.save(file_obj, EXT_IMAGE)
         file_obj.seek(0)
         self.file.save(f"{self.name}.png", File(file_obj))
+
+
+class GameFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания игр."""
+
+    class Meta:
+        model = Game
+        skip_postgeneration_save = True
+
+    name = factory.Faker("sentence", locale="ru_RU")
+    date = factory.Faker("date_time_this_year", before_now=True)
+    video_link = factory.Faker("url")
+
+    @factory.lazy_attribute
+    def competition(self):
+        """Получить случайное соревование."""
+        return get_random_objects(Competition)
+
+
+class GameTeamFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания команд, участвующих в игре."""
+
+    class Meta:
+        model = GameTeam
+
+    team = factory.SubFactory(TeamFactory)
+    game = factory.SubFactory(GameFactory)
+
+    @factory.lazy_attribute
+    def id(self):
+        """Получить id команды."""
+        return self.team.id
+
+    @factory.lazy_attribute
+    def name(self):
+        """Получить название команды."""
+        return self.team.name
+
+    @factory.lazy_attribute
+    def discipline_name(self):
+        """Получить дисциплину команды."""
+        return self.team.discipline_name
+
+
+class GamePlayerFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания игроков, участвующих в игре."""
+
+    class Meta:
+        model = GamePlayer
+
+    player = factory.SubFactory(PlayerFactory)
+
+    @factory.lazy_attribute
+    def id(self):
+        """Получить id игрока."""
+        return self.player.id
+
+    @factory.lazy_attribute
+    def name(self):
+        """Получить имя игрока."""
+        return self.player.name
+
+    @factory.lazy_attribute
+    def last_name(self):
+        """Получить фамилии игрока."""
+        return self.player.surname
+
+    @factory.lazy_attribute
+    def number(self):
+        """Получить номер игрока."""
+        return self.player.number
+
+    @factory.lazy_attribute
+    def game_team(self):
+        """Получить название команды игрока."""
+        return self.player.team
