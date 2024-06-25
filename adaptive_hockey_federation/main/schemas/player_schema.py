@@ -26,11 +26,7 @@ def get_player_table_data(context):
             "discipline_level": (
                 player.discipline_level if player.discipline_level else None
             ),
-            "team": (
-                ", ".join([team.name for team in player.team.all()])
-                if player.team.exists()
-                else "Отсутствует"
-            ),
+            "team": ([team.name for team in player.team.all()]),
             "url": reverse("main:player_id", args=[player.id]),
             "id": player.pk,
         }

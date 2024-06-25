@@ -1,3 +1,5 @@
+import random
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from games.models import Game, GamePlayer, GameTeam
@@ -12,11 +14,12 @@ def create_game_teams(sender, instance, created, **kwargs):
     Для последующего использования сигнала при обновлении объекта Game
     реализовано удаление старых GameTeam, которые ссылались на этот Game.
     """
-    teams = instance.teams
+    teams = instance.competition.teams.all()
     queryset_teams = list(
-        map(lambda x: Team.objects.get(id=x), teams),
+        map(lambda x: Team.objects.get(id=x.id), teams),
     )
     GameTeam.objects.filter(game=instance).delete()
+    queryset_teams = random.sample(queryset_teams, 2)
     for team in queryset_teams:
         game_team = GameTeam(
             id=team.id,
