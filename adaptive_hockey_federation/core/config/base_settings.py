@@ -161,3 +161,21 @@ API_DOCS_KEY = env("API_DOCS_KEY", default="8f2d9e1b2c4e6f")
 
 # Базовый урл сервиса по обработке видео
 PROCESSING_SERVICE_BASE_URL = env('PROCESSING_SERVICE_BASE_URL', default='http://127.0.0.1:8010/')
+
+# config redis
+
+HOST = 'localhost'
+PORT = '6379'
+REDIS_DATABASES = 0
+
+# config celery
+
+CELERY_BROKER_URL = f'redis://{HOST}:{PORT}/{REDIS_DATABASES}'
+# ttl 10 min
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': 3600
+}
+CELERY_RESULT_BACKEND = f'redis://{HOST}:{PORT}/{REDIS_DATABASES}'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

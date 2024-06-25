@@ -35,6 +35,12 @@ django-extensions = "^3.2.3"
 factory-boy = "^3.3.0"
 types-Pillow = "*"
 
+django-rq = "^2.10.2"
+rq-dashboard = "^0.7.0.2"
+redis = "^5.0.6"
+celery = "^5.4.0"
+django-celery-beat = "^2.6.0"
+flower = "^2.0.1"
 [tool.poetry.group.test.dependencies]
 django-stubs = "^4.2.4"
 
