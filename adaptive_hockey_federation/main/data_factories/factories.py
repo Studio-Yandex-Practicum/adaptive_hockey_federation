@@ -1,5 +1,6 @@
 import random
-from datetime import date, timedelta
+import pytz
+from datetime import date, timedelta, datetime
 from io import BytesIO
 
 import factory
@@ -7,9 +8,19 @@ from competitions.models import Competition
 from django.core.files.base import File
 from django.db.models import Count
 from games.models import Game
-from main.models import (GENDER_CHOICES, PLAYER_POSITION_CHOICES, City,
-                         Diagnosis, DisciplineName, Document, Nosology, Player,
-                         StaffMember, StaffTeamMember, Team)
+from main.models import (
+    GENDER_CHOICES,
+    PLAYER_POSITION_CHOICES,
+    City,
+    Diagnosis,
+    DisciplineName,
+    Document,
+    Nosology,
+    Player,
+    StaffMember,
+    StaffTeamMember,
+    Team,
+)
 from PIL import Image
 from users.models import User
 
@@ -274,6 +285,8 @@ class GameFactory(factory.django.DjangoModelFactory):
         skip_postgeneration_save = True
 
     name = factory.Faker("sentence", locale="ru_RU")
-    date = factory.Faker("date_time_this_year", before_now=True)
+    date = factory.LazyFunction(
+        lambda: datetime.now(pytz.timezone("Europe/Moscow")),
+    )
     video_link = factory.Faker("url")
     competition = factory.SubFactory(CompetitionFactory)
