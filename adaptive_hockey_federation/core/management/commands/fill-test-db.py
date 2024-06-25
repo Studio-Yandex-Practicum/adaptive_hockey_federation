@@ -2,10 +2,15 @@ from random import randint
 
 from core.constants import STAFF_POSITION_CHOICES, Role
 from django.core.management.base import BaseCommand
-from main.data_factories.factories import (CompetitionFactory,
-                                           DiagnosisFactory, DocumentFactory,
-                                           GameFactory, PlayerFactory,
-                                           StaffTeamMemberFactory, TeamFactory)
+from main.data_factories.factories import (
+    CompetitionFactory,
+    DiagnosisFactory,
+    DocumentFactory,
+    GameFactory,
+    PlayerFactory,
+    StaffTeamMemberFactory,
+    TeamFactory,
+)
 from main.data_factories.utils import updates_for_players
 from main.models import Player
 from unloads.factories import UnloadFactory
@@ -175,7 +180,7 @@ class Command(BaseCommand):
             GameFactory.create_batch(amount)
             return self.stdout.write(
                 self.style.SUCCESS(
-                    f"{amount} фикстур для таблицы Game созданы."
+                    f"{amount} фикстур для таблицы Game созданы.",
                 ),
             )
         if unload:
