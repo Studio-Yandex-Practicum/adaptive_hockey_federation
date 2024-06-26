@@ -188,7 +188,10 @@ class EditTeamPlayersNumbersView(
     def get_form_kwargs(self):
         """Передача дополнительных аргументов в форму."""
         kwargs = super().get_form_kwargs()
-        game_team = get_object_or_404(GameTeam, id=self.kwargs["game_team"])
+        game_team = get_object_or_404(
+            GameTeam,
+            gameteam_id=self.kwargs["game_team"],
+        )
         kwargs["game_team"] = game_team
         if self.request.method == "POST":
             kwargs["data"] = self.request.POST
@@ -209,7 +212,7 @@ class EditTeamPlayersNumbersView(
         context = super().get_context_data(**kwargs)
         context["game_team"] = get_object_or_404(
             GameTeam,
-            id=self.kwargs["game_team"],
+            gameteam_id=self.kwargs["game_team"],
         )
         context["page_title"] = "Редактирование номеров игроков команды"
         return context
