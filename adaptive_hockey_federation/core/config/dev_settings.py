@@ -86,5 +86,6 @@ ADMIN_PAGE_ORDERING = {
         "City",
         "Nosology",
         "Diagnosis",
+        "GameDataPlayer",
     ],
 }

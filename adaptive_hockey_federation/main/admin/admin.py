@@ -215,6 +215,14 @@ class PlayerAdmin(admin.ModelAdmin):
         return super().change_view(request, object_id, form_url, extra_context)
 
 
+class GameDataPlayerAdmin(admin.ModelAdmin):
+    """Модель хранения JSON данных игроков для нарезки видео."""
+
+    list_display = ("player", "created_at")
+    search_fields = ("player__name",)
+    list_filter = ("created_at",)
+
+
 class TeamAdmin(admin.ModelAdmin):
     """Модель команд для административной панели Django."""
 

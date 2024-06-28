@@ -2,7 +2,7 @@ class SelectManipulation {
   constructor(id_select_available, id_select_current) {
     this.select_available = document.getElementById(id_select_available);
     this.select_current = document.getElementById(id_select_current);
-    
+
     this.cache = null;
 
     this.addEventListeners();
