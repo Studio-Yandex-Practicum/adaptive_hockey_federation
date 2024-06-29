@@ -30,5 +30,5 @@ def send_request_to_video_processing_service(
             **request_data,
             **kwargs,
         )
-        return response.status_code
+        return response
     raise AttributeError(f"Http метод: {http_method} не обслуживается")

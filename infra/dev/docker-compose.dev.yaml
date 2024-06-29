@@ -17,5 +17,19 @@ services:
     ports:
       - 5432:5432
 
+  redis:
+    image: redis:7.0.5-alpine
+    container_name: redis
+    restart: always
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - HOST=localhost
+      - DATABASES=0
+      - PORT=6379
+    ports:
+      - 6379:6379
+
+
 volumes:
   postgres_db_data:
