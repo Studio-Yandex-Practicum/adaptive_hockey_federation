@@ -10,7 +10,7 @@ env.read_env(env_dir)
 
 os.environ.setdefault(
     "DJANGO_SETTINGS_MODULE",
-    f"core.config.{env('SETTINGS_LEVEL')}_settings",
+    f"core.config.{env('SETTINGS_LEVEL', default='dev')}_settings",
 )
 
 app = Celery("core")

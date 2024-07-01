@@ -18,6 +18,7 @@ from phonenumber_field.validators import validate_international_phonenumber
 from users.models import User
 from users.validators import zone_code_without_seven_hundred
 
+
 if TYPE_CHECKING:
     from django.db.models import QuerySet
 
@@ -440,14 +441,14 @@ class GameDataPlayer(models.Model):
     player = models.ForeignKey(
         Player,
         on_delete=models.CASCADE,
-        related_name="game_data_players",
     )
-    data = models.JSONField(verbose_name=_("Данные игры"))
+    data = models.JSONField(default=dict, verbose_name=_("Данные игры"))
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = _("JSON данные игрока для нарезки видео")
         verbose_name_plural = _("JSON данные игроков для нарезки видео")
+        default_related_name = "game_data_player"
 
     def __str__(self):
         """Возвращает строку, содержащую имя игрока и дату создания."""

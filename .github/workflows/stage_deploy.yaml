@@ -105,6 +105,8 @@ jobs:
             echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
             echo EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }} >> .env
 
+            # Добавить копирование переменных с конфигами для Celery и Redis
+
             cd infra/stage/
             sudo systemctl stop adaptive_hockey_federation.service
             docker system prune --force
