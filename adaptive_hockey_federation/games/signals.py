@@ -1,9 +1,12 @@
+from pathlib import Path
+import json
 import random
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from games.models import Game, GamePlayer, GameTeam
 from main.models import Player, Team
+from video_api.tasks import get_player_video_frames
 
 
 @receiver(post_save, sender=Game, dispatch_uid="unique_signal")
@@ -31,6 +34,31 @@ def create_game_teams(sender, instance, created, **kwargs):
             team=team,
         )
         game_team.save()
+
+    # Моковая реализация запуска воркера по отправке запроса на
+    # обработку видео и сохранение фреймов игрока в бд
+    # TODO для реального запроса к дс-ам данные запрашиваются в бд,
+    # сериализуются и оптравляются в воркер
+    # TODO необходимо пересмотреть логику создания объекта игры,
+    # конкретно изменение
+    # номеров игроков. Оно должно происходить до того
+    # как объект игры попадёт в бд.
+    if created:
+        # пример тестовых данных для запроса берется из сервиса дс-ов
+        test_data = (
+            Path(__file__).resolve().parent.parent.parent
+            / "a_hockey-main/app/src/test/test_query_process.json"
+        )
+
+        with open(test_data, "r") as file:
+            data_from_json = json.load(file)
+            request_data = {"json": data_from_json}
+
+        get_player_video_frames.apply_async(
+            args=["/process", request_data],
+            queue="process_queue",
+            priority=255,
+        )
 
 
 @receiver(post_save, sender=GameTeam, dispatch_uid="unique_signal")

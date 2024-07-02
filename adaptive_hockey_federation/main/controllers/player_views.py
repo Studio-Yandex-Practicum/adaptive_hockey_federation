@@ -24,6 +24,7 @@ from main.schemas.player_schema import (
     get_player_table_data,
 )
 from unloads.utils import model_get_queryset
+from video_api.tasks import create_player_video
 
 
 class PlayersListView(
@@ -351,6 +352,7 @@ class PlayerGamesVideo(
         """Получить набор QuerySet с играми команды игрока."""
         player = self.get_object()
         game_player = (
+            # TODO модели поправили. Исправить фильтрацию по pk
             GamePlayer.objects.select_related("game_team")
             .filter(name=player.name, last_name=player.surname)
             .first()
@@ -366,9 +368,18 @@ class PlayerGamesVideo(
         """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         player_games = context["player"]
-        data_key = ("pk", "name", "video_link")
+        # Моковое вкрапления запроса видео моментов от менеджера
+
+        data_key = ("pk", "name", "video_link", "__ref__")
+        ref_params = {
+            "name": "Запросить",
+            "type": "button",
+        }
         table_data = [
-            {key: getattr(game, key) for key in data_key}
+            {
+                key: (ref_params if key == "__ref__" else getattr(game, key))
+                for key in data_key
+            }
             for game in player_games
         ]
 
@@ -376,9 +387,28 @@ class PlayerGamesVideo(
             "pk": "Nr.",
             "name": "Название",
             "video_link": "Ссылка на видео",
+            "unload_file": "Видео моменты с игроком",
         }
+        # костыль
+        context["player"] = {"player_id": f'{self.kwargs["pk"]}'}
         context["table_data"] = table_data
         return context
+
+
+def unload_player_game_video(request, **kwargs):
+    # мок версия запроса видео с моментами игрока от менеджера
+    # TODO Должна быть проверка видео на я.диске если его нет
+    # проверять есть ли фреймы с игроком в бд если нет
+    # запускать полный цикл тасков
+
+    create_player_video.apply_async(
+        args=["Обработка с высоким приоритетом"],
+        queue="slice_player_video_queue",
+        priority=0,
+    )
+    # TODO видео будет автоматически загрузаться пользователю по готовности.
+    # Возможно нужно ресерчить тему WebSockets, SSE
+    return render(request, "main/player_id/MOCK_player_id_video_response.html")
 
 
 def player_id_deleted(request):

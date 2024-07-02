@@ -1,4 +1,5 @@
 from games.models import Game, GamePlayer
+from main.models import Player
 from rest_framework import serializers
 
 
@@ -46,3 +47,38 @@ class GameFeatureSerializer(serializers.ModelSerializer):
         """Метод токена."""
         # TODO: заглушка для отправки токена
         return "y0_AgAAAAA8cbR4AAtjkQAAAAD9CA6QAAA7HIEFePpA7qKzGdujIAwVc_JH9w"
+
+
+class TrackingSerializer(serializers.Serializer):
+    """Сериализатор, обрабатывающий tracking с фреймами."""
+
+    player_id = serializers.PrimaryKeyRelatedField(
+        queryset=Player.objects.all(),
+    )
+    team_id = serializers.IntegerField()
+    frames = serializers.ListField(
+        child=serializers.IntegerField(),
+    )
+    boxes = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.IntegerField(),
+        ),
+    )
+    time = serializers.ListField(
+        child=serializers.CharField(max_length=50),
+    )
+    predicted_number = serializers.SerializerMethodField()
+
+    def get_predicted_number(self, obj):
+        """Данные predicted_number могут быть как str так и int."""
+        return obj.predicted_number
+
+
+class GameDataPlayerSerializer(serializers.Serializer):
+    """Сериалатор для маршалинга ответа от сервиса дс-ов."""
+
+    # должно быть serializers.PrimaryKeyRelatedField()
+    game_id = serializers.IntegerField()
+    tracking = TrackingSerializer(
+        many=True,
+    )

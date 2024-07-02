@@ -2,7 +2,6 @@ from typing import Any
 from urllib.parse import urljoin
 
 import requests
-from rest_framework import status
 from django.conf import settings
 
 
@@ -12,7 +11,7 @@ def send_request_to_video_processing_service(
     base_url: str = settings.PROCESSING_SERVICE_BASE_URL,
     http_method: str = "post",
     **kwargs: dict[Any, Any],
-) -> status:
+) -> requests.Response:
     """
     Отправка запросов к эндпоинтам сервиса по обработке видео с играми.
 
@@ -23,7 +22,6 @@ def send_request_to_video_processing_service(
     сигатурой соответствующего http метода.
     """
     endpoint = urljoin(base_url, path)
-
     if hasattr(requests, http_method.lower()):
         response = getattr(requests, http_method)(
             endpoint,
