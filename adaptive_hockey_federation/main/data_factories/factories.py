@@ -15,6 +15,7 @@ from main.models import (
     Diagnosis,
     DisciplineName,
     Document,
+    GameDataPlayer,
     Nosology,
     Player,
     StaffMember,
@@ -290,3 +291,19 @@ class GameFactory(factory.django.DjangoModelFactory):
     )
     video_link = factory.Faker("url")
     competition = factory.SubFactory(CompetitionFactory)
+
+
+class GameDataPlayerFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания данных JSON игрока."""
+
+    class Meta:
+        model = GameDataPlayer
+
+    player = factory.SubFactory(PlayerFactory)
+    data = factory.LazyFunction(
+        lambda: {
+            "game_link": factory.Faker("url"),
+            "player_number": random.randint(1, 99),
+            "frames": [random.randint(5000, 10000) for _ in range(3)],
+        },
+    )
