@@ -435,26 +435,6 @@ class Player(BasePerson):
         return f"{self.__str__()} ({self.position})"
 
 
-class GameDataPlayer(models.Model):
-    """Модель хранения JSON данных игроков для нарезки видео."""
-
-    player = models.ForeignKey(
-        Player,
-        on_delete=models.CASCADE,
-    )
-    data = models.JSONField(default=dict, verbose_name=_("Данные игры"))
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = _("JSON данные игрока для нарезки видео")
-        verbose_name_plural = _("JSON данные игроков для нарезки видео")
-        default_related_name = "game_data_player"
-
-    def __str__(self):
-        """Возвращает строку, содержащую имя игрока и дату создания."""
-        return f"{self.player.name} - {self.created_at}"
-
-
 class Document(BaseUniqueName):
     """Модель Документы для загрузки."""
 

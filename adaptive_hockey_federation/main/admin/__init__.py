@@ -3,7 +3,6 @@ from main.admin.admin import (
     DiagnosisAdmin,
     DisciplineLevelAdmin,
     DisciplineNameAdmin,
-    GameDataPlayerAdmin,
     NosologyAdmin,
     PlayerAdmin,
     StaffMemberAdmin,
@@ -15,7 +14,6 @@ from main.models import (
     Diagnosis,
     DisciplineLevel,
     DisciplineName,
-    GameDataPlayer,
     Nosology,
     Player,
     StaffMember,
@@ -27,7 +25,6 @@ admin.site.register(DisciplineLevel, DisciplineLevelAdmin)
 admin.site.register(DisciplineName, DisciplineNameAdmin)
 admin.site.register(Nosology, NosologyAdmin)
 admin.site.register(Player, PlayerAdmin)
-admin.site.register(GameDataPlayer, GameDataPlayerAdmin)
 admin.site.register(StaffMember, StaffMemberAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(City, CityAdmin)
