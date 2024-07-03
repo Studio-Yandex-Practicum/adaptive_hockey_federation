@@ -115,6 +115,25 @@ class DataExportView(LoginRequiredMixin, View):
                     "role",
                     "date_joined",
                 ]
+            elif model_name == "Player":
+                excluded_fields = ["id"]
+                fields_order = [
+                    "surname",
+                    "name",
+                    "patronymic",
+                    "diagnosis",
+                    "discipline_name",
+                    "discipline_level",
+                    "birthday",
+                    "addition_date",
+                    "gender",
+                    "level_revision",
+                    "position",
+                    "number",
+                    "is_captain",
+                    "is_assistent",
+                    "identity_document",
+                ]
             else:
                 excluded_fields = []
                 fields_order = []

@@ -15,6 +15,7 @@ from core.settings.openpyxl_settings import (
     TITLE_HEIGHT,
 )
 from django.conf import settings
+from main.models import Player
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models import QuerySet
 from openpyxl import Workbook
@@ -130,6 +131,14 @@ def add_data_to_worksheet(ws, queryset, fields):
             else:
                 if hasattr(value, "__str__"):
                     value = value.__str__()
+
+            if isinstance(obj, Player):
+                field_map = {
+                    "is_captain": "да" if obj.is_captain else "",
+                    "is_assistent": "да" if obj.is_assistent else "",
+                }
+                if field in field_map:
+                    value = field_map[field]
 
             row.append(value)
 
