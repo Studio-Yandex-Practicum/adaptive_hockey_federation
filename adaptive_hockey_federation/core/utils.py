@@ -135,7 +135,7 @@ def add_data_to_worksheet(ws, queryset, fields):
             if isinstance(obj, Player):
                 field_map = {
                     "is_captain": "да" if obj.is_captain else "",
-                    "is_assistent": "да" if obj.is_assistent else ""
+                    "is_assistent": "да" if obj.is_assistent else "",
                 }
                 if field in field_map:
                     value = field_map[field]
