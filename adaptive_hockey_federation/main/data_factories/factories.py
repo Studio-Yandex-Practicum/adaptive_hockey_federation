@@ -7,7 +7,7 @@ import factory
 from competitions.models import Competition
 from django.core.files.base import File
 from django.db.models import Count
-from games.models import Game
+from games.models import Game, GameDataPlayer
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -15,7 +15,6 @@ from main.models import (
     Diagnosis,
     DisciplineName,
     Document,
-    GameDataPlayer,
     Nosology,
     Player,
     StaffMember,
@@ -300,6 +299,7 @@ class GameDataPlayerFactory(factory.django.DjangoModelFactory):
         model = GameDataPlayer
 
     player = factory.SubFactory(PlayerFactory)
+    game = factory.SubFactory(GameFactory)
     data = factory.LazyFunction(
         lambda: {
             "game_link": factory.Faker("url"),

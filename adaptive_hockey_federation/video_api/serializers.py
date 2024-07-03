@@ -77,8 +77,9 @@ class TrackingSerializer(serializers.Serializer):
 class GameDataPlayerSerializer(serializers.Serializer):
     """Сериалатор для маршалинга ответа от сервиса дс-ов."""
 
-    # должно быть serializers.PrimaryKeyRelatedField()
-    game_id = serializers.IntegerField()
+    game_id = serializers.PrimaryKeyRelatedField(
+        queryset=Game.objects.all(),
+    )
     tracking = TrackingSerializer(
         many=True,
     )

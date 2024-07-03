@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from games.constants import Errors, NumericalValues
-from games.models import Game, GamePlayer, GameTeam
+from games.models import Game, GamePlayer, GameTeam, GameDataPlayer
 from main.models import Team
 
 
@@ -117,3 +117,19 @@ class GamePlayerAdmin(admin.ModelAdmin):
     list_filter = ("game_team",)
     search_fields = ("name",)
     ordering = ["name"]
+
+
+@admin.register(GameDataPlayer)
+class GameDataPlayerAdmin(admin.ModelAdmin):
+    """Модель хранения JSON данных игроков для нарезки видео."""
+
+    list_display = (
+        "player",
+        "game",
+        "created_at",
+    )
+    search_fields = (
+        "player__name",
+        "game__name",
+    )
+    list_filter = ("created_at",)
