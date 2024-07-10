@@ -210,6 +210,21 @@ class PlayerIdView(
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
+    def has_video_games(self):
+        """Функция для проверки наличия видео, связанных с игроком."""
+        player = self.get_object()
+        game_player = GamePlayer.objects.filter(
+            name=player.name,
+            last_name=player.surname,
+        ).first()
+        if game_player:
+            games_with_video = Game.objects.filter(
+                game_teams__id=game_player.game_team.id,
+                video_link__isnull=False,
+            )
+            return games_with_video.exists()
+        return False
+
     def get_context_data(self, **kwargs):
         """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
@@ -218,6 +233,7 @@ class PlayerIdView(
         context["player_fields_personal"] = get_player_fields_personal(player)
         context["player_fields"] = get_player_fields(player)
         context["player_documents"] = player_documents
+        context["has_video_games"] = self.has_video_games()
         return context
 
 
@@ -344,22 +360,22 @@ class PlayerGamesVideo(
     )
     context_object_name = "player"
 
-    def get_object(self) -> Player:
+    def get_object(self):
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
-    def get_queryset(self) -> Game | None:  # type: ignore[override]
+    def get_queryset(self):
         """Получить набор QuerySet с играми команды игрока."""
-        player = self.get_object()
-        game_player = (
-            # TODO модели поправили. Исправить фильтрацию по pk
-            GamePlayer.objects.select_related("game_team")
-            .filter(name=player.name, last_name=player.surname)
-            .first()
-        )
+        player = self.get_object()  # Получаем объект игрока по pk из URL
+        game_player = GamePlayer.objects.filter(
+            name=player.name,
+            last_name=player.surname,
+        ).first()
 
         if not game_player:
             raise Http404("Игрок не принимает участие в играх")
+
+        # Фильтруем игры, в которых участвует команда игрока
         games = Game.objects.filter(game_teams__id=game_player.game_team.id)
 
         return games
