@@ -38,6 +38,7 @@ class Literals(StrEnum):
     GAME_VIDEO_LINK = "Ссылка на видео"
     GAME_FIRST_TEAM = "Команда 1"
     GAME_SECOND_TEAM = "Команда 2"
+    GAME_COMPETITION = "Соревнование"  # New
 
 
 class NumericalValues(IntEnum):
