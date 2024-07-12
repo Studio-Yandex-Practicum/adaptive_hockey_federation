@@ -10,6 +10,7 @@ from main.data_factories.factories import (
     PlayerFactory,
     StaffTeamMemberFactory,
     TeamFactory,
+    GameDataPlayerFactory,
 )
 from main.data_factories.utils import updates_for_players
 from main.models import Player
@@ -95,6 +96,12 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы Unloads",
         )
         parser.add_argument(
+            "-json",
+            "--json-player-data",
+            action="store_true",
+            help="Фикстуры для таблицы JSON Player Data",
+        )
+        parser.add_argument(
             "-a",
             "--amount",
             type=int,
@@ -112,6 +119,7 @@ class Command(BaseCommand):
         document = options.get("document", False)
         competition = options.get("competition", False)
         unload = options.get("unload", False)
+        json_player_data = options.get("json_player_data", False)
         game = options.get("game", False)
         amount = options.get("amount")
 
@@ -188,5 +196,12 @@ class Command(BaseCommand):
             return self.stdout.write(
                 self.style.SUCCESS(
                     f"{AMOUNT_UNLOADS} фикстуры для Unloads созданы.",
+                ),
+            )
+        if json_player_data:
+            GameDataPlayerFactory.create_batch(amount)
+            return self.stdout.write(
+                self.style.SUCCESS(
+                    f"{amount} фикстур для таблицы JSON Player Data созданы.",
                 ),
             )

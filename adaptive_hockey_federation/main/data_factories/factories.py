@@ -302,7 +302,7 @@ class GameDataPlayerFactory(factory.django.DjangoModelFactory):
     game = factory.SubFactory(GameFactory)
     data = factory.LazyFunction(
         lambda: {
-            "game_link": factory.Faker("url"),
+            "game_link": "https://disk.yandex.ru/i/JLh__1IbAfmK-Q",
             "player_number": random.randint(1, 99),
             "frames": [random.randint(5000, 10000) for _ in range(3)],
         },
