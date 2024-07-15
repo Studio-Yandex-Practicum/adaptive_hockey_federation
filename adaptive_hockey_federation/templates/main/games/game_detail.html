@@ -82,21 +82,21 @@
         {% else %}
         <p>К сожалению, информация о второй команде недоступна.</p>
         {% endif %}
-    </div>
 
-    <div style="text-align: center; margin-top: 20px;">
-        <form id="video-recognition-form" action="{% url 'video_recognition' object.pk %}" method="post">
-            {% csrf_token %}
-            <button type="button" id="submit-button" style="padding: 15px 30px; font-size: 1.2em; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                Отправить видео на распознание
-            </button>
-        </form>
-        <div id="loading-animation" style="display: none; margin-top: 20px;">
-            <div class="spinner"></div>
-            <p>Обработка видео...</p>
+        <div style="text-align: center; margin-top: 20px;">
+            <form id="video-recognition-form" action="{% url 'video_recognition' object.pk %}" method="post">
+                {% csrf_token %}
+                <button type="button" id="submit-button" style="padding: 15px 30px; font-size: 1.2em; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Отправить видео на распознание
+                </button>
+            </form>
+            <div id="loading-animation" style="display: none; margin-top: 20px;">
+                <div class="spinner"></div>
+                <p>Обработка видео...</p>
+            </div>
         </div>
-    </div>
 
+    </div>
     <!-- Модальное окно -->
     <div id="modal" class="modal" style="display: none;">
         <div class="modal-content" style="position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
