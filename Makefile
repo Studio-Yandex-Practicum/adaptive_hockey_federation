@@ -111,6 +111,7 @@ fill-test-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --document
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --competition --amount 10
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --unload
+	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --game --amount 10
 
 
 # Прогон тестов с помощью pytest.

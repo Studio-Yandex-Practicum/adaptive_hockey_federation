@@ -1,11 +1,13 @@
 import random
-from datetime import date, timedelta
+import pytz
+from datetime import date, timedelta, datetime
 from io import BytesIO
 
 import factory
 from competitions.models import Competition
 from django.core.files.base import File
 from django.db.models import Count
+from games.models import Game, GameDataPlayer
 from main.models import (
     GENDER_CHOICES,
     PLAYER_POSITION_CHOICES,
@@ -273,3 +275,35 @@ class DocumentFactory(factory.django.DjangoModelFactory):
         image.save(file_obj, EXT_IMAGE)
         file_obj.seek(0)
         self.file.save(f"{self.name}.png", File(file_obj))
+
+
+class GameFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания игр."""
+
+    class Meta:
+        model = Game
+        skip_postgeneration_save = True
+
+    name = factory.Faker("sentence", locale="ru_RU")
+    date = factory.LazyFunction(
+        lambda: datetime.now(pytz.timezone("Europe/Moscow")),
+    )
+    video_link = factory.Faker("url")
+    competition = factory.SubFactory(CompetitionFactory)
+
+
+class GameDataPlayerFactory(factory.django.DjangoModelFactory):
+    """Фабрика для создания данных JSON игрока."""
+
+    class Meta:
+        model = GameDataPlayer
+
+    player = factory.SubFactory(PlayerFactory)
+    game = factory.SubFactory(GameFactory)
+    data = factory.LazyFunction(
+        lambda: {
+            "game_link": factory.Faker("url"),
+            "player_number": random.randint(1, 99),
+            "frames": [random.randint(5000, 10000) for _ in range(3)],
+        },
+    )

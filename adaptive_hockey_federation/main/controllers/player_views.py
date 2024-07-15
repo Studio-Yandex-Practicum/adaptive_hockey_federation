@@ -24,6 +24,7 @@ from main.schemas.player_schema import (
     get_player_table_data,
 )
 from unloads.utils import model_get_queryset
+from video_api.tasks import create_player_video
 
 
 class PlayersListView(
@@ -209,6 +210,21 @@ class PlayerIdView(
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
+    def has_video_games(self):
+        """Функция для проверки наличия видео, связанных с игроком."""
+        player = self.get_object()
+        game_player = GamePlayer.objects.filter(
+            name=player.name,
+            last_name=player.surname,
+        ).first()
+        if game_player:
+            games_with_video = Game.objects.filter(
+                game_teams__id=game_player.game_team.id,
+                video_link__isnull=False,
+            )
+            return games_with_video.exists()
+        return False
+
     def get_context_data(self, **kwargs):
         """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
@@ -217,6 +233,7 @@ class PlayerIdView(
         context["player_fields_personal"] = get_player_fields_personal(player)
         context["player_fields"] = get_player_fields(player)
         context["player_documents"] = player_documents
+        context["has_video_games"] = self.has_video_games()
         return context
 
 
@@ -343,21 +360,22 @@ class PlayerGamesVideo(
     )
     context_object_name = "player"
 
-    def get_object(self) -> Player:
+    def get_object(self):
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
-    def get_queryset(self) -> Game | None:  # type: ignore[override]
+    def get_queryset(self):
         """Получить набор QuerySet с играми команды игрока."""
-        player = self.get_object()
-        game_player = (
-            GamePlayer.objects.select_related("game_team")
-            .filter(name=player.name, last_name=player.surname)
-            .first()
-        )
+        player = self.get_object()  # Получаем объект игрока по pk из URL
+        game_player = GamePlayer.objects.filter(
+            name=player.name,
+            last_name=player.surname,
+        ).first()
 
         if not game_player:
             raise Http404("Игрок не принимает участие в играх")
+
+        # Фильтруем игры, в которых участвует команда игрока
         games = Game.objects.filter(game_teams__id=game_player.game_team.id)
 
         return games
@@ -366,9 +384,18 @@ class PlayerGamesVideo(
         """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
         player_games = context["player"]
-        data_key = ("pk", "name", "video_link")
+        # Моковое вкрапления запроса видео моментов от менеджера
+
+        data_key = ("pk", "name", "video_link", "__ref__")
+        ref_params = {
+            "name": "Запросить",
+            "type": "button",
+        }
         table_data = [
-            {key: getattr(game, key) for key in data_key}
+            {
+                key: (ref_params if key == "__ref__" else getattr(game, key))
+                for key in data_key
+            }
             for game in player_games
         ]
 
@@ -376,9 +403,28 @@ class PlayerGamesVideo(
             "pk": "Nr.",
             "name": "Название",
             "video_link": "Ссылка на видео",
+            "unload_file": "Видео моменты с игроком",
         }
+        # костыль
+        context["player"] = {"player_id": f'{self.kwargs["pk"]}'}
         context["table_data"] = table_data
         return context
+
+
+def unload_player_game_video(request, **kwargs):
+    # мок версия запроса видео с моментами игрока от менеджера
+    # TODO Должна быть проверка видео на я.диске если его нет
+    # проверять есть ли фреймы с игроком в бд если нет
+    # запускать полный цикл тасков
+
+    create_player_video.apply_async(
+        args=["Обработка с высоким приоритетом"],
+        queue="slice_player_video_queue",
+        priority=0,
+    )
+    # TODO видео будет автоматически загрузаться пользователю по готовности.
+    # Возможно нужно ресерчить тему WebSockets, SSE
+    return render(request, "main/player_id/MOCK_player_id_video_response.html")
 
 
 def player_id_deleted(request):

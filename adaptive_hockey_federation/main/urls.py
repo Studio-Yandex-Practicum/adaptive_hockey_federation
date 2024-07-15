@@ -39,6 +39,11 @@ players_urlpatterns = [
         player_views.player_id_deleted,
         name="player_id_deleted",
     ),
+    path(
+        "<int:player_id>/unload/game_video/<int:game_id>/",
+        player_views.unload_player_game_video,
+        name="unload_player_video",
+    ),
 ]
 
 teams_urlpatterns = [

@@ -6,6 +6,7 @@ from main.data_factories.factories import (
     CompetitionFactory,
     DiagnosisFactory,
     DocumentFactory,
+    GameFactory,
     PlayerFactory,
     StaffTeamMemberFactory,
     TeamFactory,
@@ -82,6 +83,12 @@ class Command(BaseCommand):
             help="Фикстуры для таблицы Competition",
         )
         parser.add_argument(
+            "-g",
+            "--game",
+            action="store_true",
+            help="Фикстуры для таблицы Game",
+        )
+        parser.add_argument(
             "-un",
             "--unload",
             action="store_true",
@@ -105,7 +112,9 @@ class Command(BaseCommand):
         document = options.get("document", False)
         competition = options.get("competition", False)
         unload = options.get("unload", False)
+        game = options.get("game", False)
         amount = options.get("amount")
+
         if test_users:
             users_amount = sum(USERS.values())
             for role, amount in USERS.items():
@@ -165,6 +174,13 @@ class Command(BaseCommand):
             return self.stdout.write(
                 self.style.SUCCESS(
                     f"{amount} фикстур для таблицы Competition созданы!",
+                ),
+            )
+        if game:
+            GameFactory.create_batch(amount)
+            return self.stdout.write(
+                self.style.SUCCESS(
+                    f"{amount} фикстур для таблицы Game созданы.",
                 ),
             )
         if unload:

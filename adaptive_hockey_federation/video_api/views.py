@@ -12,6 +12,8 @@ class VideoRecognitionView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         """Переопределяем метод для отправки запросов к серсиву."""
+        # TODO неясна необхомость в api представлении, т.к. мы используем
+        # либо сигналы либо менеджер заказывает через сайт нарезку с игроком
         response = self.retrieve(request, *args, **kwargs)
         request_data_to_service = {"json": response.data}
         service_status = send_request_to_video_processing_service(

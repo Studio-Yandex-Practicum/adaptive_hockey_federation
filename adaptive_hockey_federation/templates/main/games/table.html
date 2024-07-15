@@ -24,7 +24,14 @@
             {% if cell_name == "name" %}
               <a href="{% url 'games:game_info' game_id=table_string.pk %}">{{ cell_value }}</a>
             {% else %}
-              {{ cell_value }}
+              {% if cell_name == '__ref__'%}
+                <a href="{% url 'main:unload_player_video' player_id=player.player_id game_id=table_string.pk %}" class="btn btn-secondary text-white"
+                  style="background-color: #64C2D1; border: 1px solid #fff;" role={{ cell_value.type }}>
+                  {{ cell_value.name }}
+                </a>
+              {% else %}
+                {{ cell_value }}
+              {%endif%}
             {% endif %}
           {% endif %}
         </td>

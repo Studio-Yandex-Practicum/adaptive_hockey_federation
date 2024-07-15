@@ -18,6 +18,7 @@ from phonenumber_field.validators import validate_international_phonenumber
 from users.models import User
 from users.validators import zone_code_without_seven_hundred
 
+
 if TYPE_CHECKING:
     from django.db.models import QuerySet
 
