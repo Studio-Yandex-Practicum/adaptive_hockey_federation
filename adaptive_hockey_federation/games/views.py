@@ -41,7 +41,11 @@ class GamesListView(
 
     def get_queryset(self) -> QuerySet[Any]:
         """Метод для получения набора QuerySet."""
-        queryset = super().get_queryset().prefetch_related("game_teams")
+        queryset = (
+            super()
+            .get_queryset()
+            .prefetch_related("game_teams", "competition")
+        )
         search_params = self.request.GET.dict()
         search_column = search_params.get("search_column")
         search = search_params.get("search")
@@ -66,6 +70,9 @@ class GamesListView(
             table_data.append(
                 {
                     "pk": game.pk,
+                    "competition": (
+                        game.competition.title if game.competition else None
+                    ),
                     "name": game.name,
                     "video_link": game.video_link,
                     "first_team": first_team.name if first_team else None,
@@ -74,6 +81,7 @@ class GamesListView(
             )
         context["table_head"] = {
             "pk": Literals.GAME_NUMBER,
+            "competition": Literals.GAME_COMPETITION,
             "name": Literals.GAME_NAME,
             "video_link": Literals.GAME_VIDEO_LINK,
             "first_team": Literals.GAME_FIRST_TEAM,
