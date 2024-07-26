@@ -26,8 +26,6 @@ help:
 	@echo "	start-db        - $(SHELL_GREEN)Команда для запуска локального контейнера postgres.$(SHELL_NC)."
 	@echo "	stop-db         - $(SHELL_GREEN)Команда для остановки локального контейнера postgres.$(SHELL_NC)."
 	@echo "	clear-db        - $(SHELL_GREEN)Команда для очистки volume локального контейнера postgres.$(SHELL_NC)."
-	@echo "	image_video     - $(SHELL_GREEN)Команда для сборки образа сервера DS-ов.$(SHELL_NC)."
-	@echo "	start_video     - $(SHELL_GREEN)Команда для запуска контейнера сервера DS-ов.$(SHELL_NC)."
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)."
 	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных реальными данными из json фикстур.$(SHELL_NC)."
 	@echo "	fill-test-db    - $(SHELL_GREEN)Команда для заполнения базы данных тестовыми данными при помощи фабрик генерации данных.$(SHELL_NC)."
@@ -118,16 +116,6 @@ fill-test-db:
 # Прогон тестов с помощью pytest.
 pytest:
 	cd $(DJANGO_DIR) && pytest
-
-
-# Сборка Docker образа сервера DS.
-image_video:
-	cd $(DS_DOCK_FILE) && docker build --tag hockey .
-
-
-# Запуск контейнера сервера DS.
-start_video:
-	cd $(DS_DOCK_FILE) && docker run --rm -p 8010:8010 --name video hockey
 
 
 .PHONY: help
