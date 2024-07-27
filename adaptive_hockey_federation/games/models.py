@@ -141,8 +141,8 @@ class GamePlayer(models.Model):
             ),
             models.UniqueConstraint(
                 fields=["id", "name", "last_name", "number", "game_team"],
-                name='player_number_must_be_unique'
-            )
+                name="player_number_must_be_unique",
+            ),
         ]
 
     def __str__(self):
