@@ -140,8 +140,14 @@ class GamePlayer(models.Model):
                 f"be_{NumericalValues.GAME_MAX_PLAYER_NUMBER}_or_less",
             ),
             models.UniqueConstraint(
-                fields=["id", "name", "last_name", "number", "game_team"],
                 name="player_number_must_be_unique",
+                fields=[
+                    "id",
+                    "name",
+                    "last_name",
+                    "number",
+                    "game_team",
+                ],
             ),
         ]
 
