@@ -123,11 +123,6 @@ class GamePlayer(models.Model):
 
     class Meta:
         default_related_name = "game_players"
-        unique_together = (
-            "name",
-            "number",
-            "game_team",
-        )
         verbose_name = "Игрок, участвующий в игре"
         verbose_name_plural = "Игроки, участвующие в игре"
         constraints = [
@@ -144,6 +139,10 @@ class GamePlayer(models.Model):
                 name=f"player_number_must_"
                 f"be_{NumericalValues.GAME_MAX_PLAYER_NUMBER}_or_less",
             ),
+            models.UniqueConstraint(
+                fields=["id", "name", "last_name", "number", "game_team"],
+                name='player_number_must_be_unique'
+            )
         ]
 
     def __str__(self):
