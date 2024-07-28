@@ -1,23 +1,24 @@
 import time
 import json
 from pathlib import Path
-from celery_singleton import Singleton
+
+from django.db import transaction
+from celery import current_app
 from celery.signals import task_success, worker_process_init
+from celery_singleton import Singleton
+
 from core.celery import app
-from service.a_hockey_requests import send_request_to_video_processing_service
+from service.a_hockey_requests import send_request_to_process_video
 from service.video_processing import slicing_video_with_player_frames
 from games.models import GameDataPlayer
 from .serializers import GameDataPlayerSerializer
-from celery import current_app
-from django.db import transaction
 
 
 @app.task(base=Singleton)
 def get_player_video_frames(*args, **kwargs):
     """Таск для запуска обработки видео."""
     print("Добавлен новый объект игры, запускаем воркер")
-    path, data = args[0], args[1]
-    response = send_request_to_video_processing_service(path, data)
+    response = send_request_to_process_video(kwargs.get("data"))
     return response.content
 
 
