@@ -162,18 +162,18 @@ REST_FRAMEWORK = {
 API_DOCS_KEY = env("API_DOCS_KEY", default="8f2d9e1b2c4e6f")
 
 # Базовый урл сервиса по обработке видео
-PROCESSING_SERVICE_BASE_URL = env("PROCESSING_SERVICE_BASE_URL", default="http://127.0.0.1:8010/")
+PROCESSING_SERVICE_BASE_URL = env('PROCESSING_SERVICE_BASE_URL', default='http://127.0.0.1:8010/')
 
 # Celery config
 
 CELERY_BROKER_URL = f'redis://{env("CELERY_BROKER_HOST", default="localhost")}:{env("CELERY_BROKER_PORT", default="6379")}/{env("REDIS_BROKER_DATABASE_LEVEL", default=0)}' # noqa E501
 CELERY_BROKER_TRANSPORT_OPTIONS = {
-    "visibility_timeout": env("CELERY_VISIBILITY_TIMEOUT", default=360)
+    'visibility_timeout': env('CELERY_VISIBILITY_TIMEOUT', default=360)
 }
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
-CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 MESSAGE_TAGS = {
     messages.DEBUG: "alert-secondary",
