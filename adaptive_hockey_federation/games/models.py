@@ -102,6 +102,11 @@ class GamePlayer(models.Model):
         verbose_name=_("Фамилия игрока"),
         max_length=UserConstans.NAME_MAX_LENGTH,
     )
+    patronymic = models.CharField(
+        verbose_name=_("Отчество игрока"),
+        max_length=UserConstans.NAME_MAX_LENGTH,
+        blank=True,
+    )
     number = models.PositiveSmallIntegerField(
         verbose_name=_("Номер игрока"),
         validators=[
@@ -142,9 +147,9 @@ class GamePlayer(models.Model):
             models.UniqueConstraint(
                 name="player_number_must_be_unique",
                 fields=[
-                    "id",
                     "name",
                     "last_name",
+                    "patronymic",
                     "number",
                     "game_team",
                 ],
