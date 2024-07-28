@@ -2,12 +2,13 @@ from typing import Any
 
 from core.constants import FileConstants
 from core.utils import is_uploaded_file_valid
+from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
 from django.http import Http404, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -422,9 +423,19 @@ def unload_player_game_video(request, **kwargs):
         queue="slice_player_video_queue",
         priority=0,
     )
+
+    messages.add_message(
+        request,
+        messages.INFO,
+        "Видео находится в обработке, пожалуйста дождитесь скачивания.",
+    )
+
     # TODO видео будет автоматически загрузаться пользователю по готовности.
     # Возможно нужно ресерчить тему WebSockets, SSE
-    return render(request, "main/player_id/MOCK_player_id_video_response.html")
+    return redirect(
+        "main:player_id_games_video",
+        pk=kwargs["player_id"],
+    )
 
 
 def player_id_deleted(request):
