@@ -1,6 +1,8 @@
+from django.conf import settings
+from rest_framework import serializers
+
 from games.models import Game, GamePlayer
 from main.models import Player
-from rest_framework import serializers
 
 
 class GameFeatureSerializer(serializers.ModelSerializer):
@@ -45,8 +47,7 @@ class GameFeatureSerializer(serializers.ModelSerializer):
 
     def get_token(self, obj):
         """Метод токена."""
-        # TODO: заглушка для отправки токена
-        return "y0_AgAAAAA8cbR4AAtjkQAAAAD9CA6QAAA7HIEFePpA7qKzGdujIAwVc_JH9w"
+        return settings.YANDEX_DISK_OAUTH_TOKEN
 
 
 class TrackingSerializer(serializers.Serializer):

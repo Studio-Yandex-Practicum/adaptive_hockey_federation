@@ -55,7 +55,7 @@ def create_game_teams(sender, instance, created, **kwargs):
             request_data = {"json": data_from_json}
 
         get_player_video_frames.apply_async(
-            args=["/process", request_data],
+            kwargs={"data": request_data},
             queue="process_queue",
             priority=255,
         )
