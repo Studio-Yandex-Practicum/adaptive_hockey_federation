@@ -72,6 +72,7 @@ def create_game_players(sender, instance, created, **kwargs):
                 id=player.id,
                 name=player.name,
                 last_name=player.surname,
+                patronymic=player.patronymic,
                 number=player.number,
                 game_team=instance,
             )
