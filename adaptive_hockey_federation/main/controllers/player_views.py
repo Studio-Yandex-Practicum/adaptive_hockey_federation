@@ -424,10 +424,12 @@ def unload_player_game_video(request, **kwargs):
         priority=0,
     )
 
+    video_name = Game.objects.get(pk=kwargs["game_id"]).name
     messages.add_message(
         request,
         messages.INFO,
-        "Видео находится в обработке, пожалуйста дождитесь скачивания.",
+        f"Видео по игре «{video_name}» находится в обработке. "
+        "Пожалуйста дождитесь скачивания.",
     )
 
     # TODO видео будет автоматически загрузаться пользователю по готовности.
