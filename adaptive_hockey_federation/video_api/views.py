@@ -1,27 +1,34 @@
+from requests.exceptions import RequestException
+
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.exceptions import APIException
+
 from games.models import Game
-from rest_framework import generics
+from service.a_hockey_requests import (
+    check_api_health_status,
+    send_request_to_process_video,
+)
 from video_api.serializers import GameFeatureSerializer
-from service.a_hockey_requests import send_request_to_video_processing_service
 
 
-class VideoRecognitionView(generics.RetrieveAPIView):
-    """Отправка запроса на эндпоинт /process для обработки видео с игрой."""
+class VideoRecognitionView(APIView):
+    """Представление для обработки видео."""
 
-    queryset = Game.objects.all()
-    serializer_class = GameFeatureSerializer
+    def post(self, request, *args, **kwargs):
+        """Отправка запроса к сервису по обработке видео."""
+        try:
+            check_api_health_status()
 
-    def get(self, request, *args, **kwargs):
-        """Переопределяем метод для отправки запросов к серсиву."""
-        # TODO неясна необхомость в api представлении, т.к. мы используем
-        # либо сигналы либо менеджер заказывает через сайт нарезку с игроком
-        response = self.retrieve(request, *args, **kwargs)
-        request_data_to_service = {"json": response.data}
-        service_status = send_request_to_video_processing_service(
-            "/process",
-            request_data_to_service,
-        )
-        # Временно эллипсис, что бы линтеры пропускали.
-        # TODO дописать логику когда будет докручен сервис по обработке видео
-        if service_status != 200:
-            pass
-        return response
+            game = get_object_or_404(Game, id=kwargs.get("pk"))
+            serializer = GameFeatureSerializer(game)
+
+            response = send_request_to_process_video(serializer.data)
+            return Response(response, status=status.HTTP_200_OK)
+        except RequestException as error:
+            raise APIException(
+                str(error),
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
