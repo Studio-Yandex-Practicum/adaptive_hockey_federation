@@ -441,25 +441,18 @@ def unload_player_game_video(request, **kwargs):
         player_id = kwargs["player_id"]
         media_data_path = os.path.join(
             settings.MEDIA_ROOT,
-            "game_videos",
+            "player_game_video",
             f"player_{player_id}",
         )
         os.makedirs(media_data_path, exist_ok=True)
 
         error = download_file(game.video_link, media_data_path)
 
-        if error:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                error,
-            )
-        else:
-            messages.add_message(
-                request,
-                messages.INFO,
-                f"Файл сохранен в папке {media_data_path}.",
-            )
+        messages.add_message(
+            request,
+            messages.ERROR if error else messages.INFO,
+            error or f"Файл сохранен в папке {media_data_path}.",
+        )
 
     # TODO видео будет автоматически загрузаться пользователю по готовности.
     # Возможно нужно ресерчить тему WebSockets, SSE
