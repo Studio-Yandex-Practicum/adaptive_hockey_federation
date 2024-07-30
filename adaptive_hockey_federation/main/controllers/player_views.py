@@ -1,7 +1,7 @@
+import os
 from typing import Any
 
-from core.constants import FileConstants
-from core.utils import is_uploaded_file_valid
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -13,6 +13,10 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+
+from core.constants import FileConstants
+from core.utils import is_uploaded_file_valid
+from core.ydisk_utils.utils import download_file
 from games.models import Game, GamePlayer
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
@@ -418,19 +422,44 @@ def unload_player_game_video(request, **kwargs):
     # проверять есть ли фреймы с игроком в бд если нет
     # запускать полный цикл тасков
 
-    create_player_video.apply_async(
-        args=["Обработка с высоким приоритетом"],
-        queue="slice_player_video_queue",
-        priority=0,
-    )
+    # TODO Заменить ссылку с игрой на ссылку с игроком.
+    game = Game.objects.get(pk=kwargs["game_id"])
+    if not game.video_link:
+        create_player_video.apply_async(
+            args=["Обработка с высоким приоритетом"],
+            queue="slice_player_video_queue",
+            priority=0,
+        )
 
-    video_name = Game.objects.get(pk=kwargs["game_id"]).name
-    messages.add_message(
-        request,
-        messages.INFO,
-        f"Видео по игре «{video_name}» находится в обработке. "
-        "Пожалуйста дождитесь скачивания.",
-    )
+        messages.add_message(
+            request,
+            messages.INFO,
+            f"Видео по игре «{game.name}» находится в обработке. "
+            "Пожалуйста дождитесь скачивания.",
+        )
+    else:
+        player_id = kwargs["player_id"]
+        media_data_path = os.path.join(
+            settings.MEDIA_ROOT,
+            "game_videos",
+            f"player_{player_id}",
+        )
+        os.makedirs(media_data_path, exist_ok=True)
+
+        error = download_file(game.video_link, media_data_path)
+
+        if error:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                error,
+            )
+        else:
+            messages.add_message(
+                request,
+                messages.INFO,
+                f"Файл сохранен в папке {media_data_path}.",
+            )
 
     # TODO видео будет автоматически загрузаться пользователю по готовности.
     # Возможно нужно ресерчить тему WebSockets, SSE
