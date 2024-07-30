@@ -23,6 +23,9 @@ class Errors(StrEnum):
     CREATE_GAME = "создание игры"
     DELETE_GAME = "удаление игры"
     GAME_LIST_VIEW = "просмотр списка игр"
+    UNIQUE_PLAYER_NUMBERS_IN_TEAM = (
+        "В команде должны быть уникальные номера игроков!"
+    )
 
 
 class Literals(StrEnum):

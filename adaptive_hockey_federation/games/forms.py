@@ -4,6 +4,7 @@ from django import forms
 from django.db import transaction
 from django.db.models import Q, QuerySet
 from django.forms import modelformset_factory
+
 from games.constants import Errors, Literals, NumericalValues
 from games.models import Game, GamePlayer, GameTeam
 from main.forms import CustomMultipleChoiceField
@@ -155,9 +156,33 @@ class GamePlayerNumberForm(forms.ModelForm):
         fields = ["number"]
 
 
+class TeamPlayersNumbersFormSet(forms.BaseModelFormSet):
+    """
+    Формсет для валидации номеров игроков команды.
+
+    Если игроки имеют одинаковые номера, вызывается исключение.
+    """
+
+    def clean(self):
+        """Метод для валидации номеров игроков команды."""
+        if any(self.errors):
+            return
+        numbers = set()
+        for form in self.forms:
+            if self.can_delete and self._should_delete_form(form):
+                continue
+            number = form.cleaned_data.get("number")
+            if number in numbers:
+                raise forms.ValidationError(
+                    Errors.UNIQUE_PLAYER_NUMBERS_IN_TEAM,
+                )
+            numbers.add(number)
+
+
 EditTeamPlayersNumbersFormSet = modelformset_factory(
     GamePlayer,
     form=GamePlayerNumberForm,
+    formset=TeamPlayersNumbersFormSet,
     extra=0,
     can_delete=True,
 )
