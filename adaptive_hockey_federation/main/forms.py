@@ -1,8 +1,6 @@
 import re
 from typing import Any
 
-from core.constants import FORM_HELP_TEXTS, Role, StaffPosition
-from core.utils import max_date, min_date
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import (
@@ -13,6 +11,9 @@ from django.forms import (
     TextInput,
 )
 from django.shortcuts import get_object_or_404
+
+from core.constants import FORM_HELP_TEXTS, Role, StaffPosition
+from core.utils import max_date, min_date
 from main.models import (
     City,
     Diagnosis,
@@ -231,6 +232,31 @@ class PlayerUpdateForm(PlayerForm):
         if self.instance.pk:
             self.fields["nosology"].initial = self.instance.diagnosis.nosology
             self.fields["diagnosis"].initial = self.instance.diagnosis
+
+    def clean_number(self):
+        """
+        Метод, выполняющий валидацию номера игрока.
+
+        Если номер игрока уже присвоен другому игроку в выбранной команде,
+        то выбрасывается исключение.
+        """
+        number = self.cleaned_data["number"]
+        selected_teams = self.cleaned_data.get(
+            "team",
+            self.instance.team.all(),
+        )
+
+        if (
+            Player.objects.filter(number=number, team__in=selected_teams)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise ValidationError(
+                "Этот номер уже используется другим игроком "
+                "в выбранной команде.",
+            )
+
+        return number
 
 
 class CityChoiceField(ModelChoiceField):
