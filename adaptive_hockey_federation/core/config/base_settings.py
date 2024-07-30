@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from django.contrib.messages import constants as messages
+
 import environ
 
 env = environ.Env()
@@ -173,3 +175,11 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 YANDEX_DISK_OAUTH_TOKEN = env("YANDEX_DISK_OAUTH_TOKEN", default="ya_oauth_token")
+
+MESSAGE_TAGS = {
+    messages.DEBUG: "alert-secondary",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
+}
