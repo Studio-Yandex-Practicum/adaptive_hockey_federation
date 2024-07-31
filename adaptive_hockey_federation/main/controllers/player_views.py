@@ -14,7 +14,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from core.constants import FileConstants
+from core.constants import Directory, FileConstants
 from core.utils import is_uploaded_file_valid
 from core.ydisk_utils.utils import download_file
 from games.models import Game, GamePlayer
@@ -438,20 +438,22 @@ def unload_player_game_video(request, **kwargs):
             "Пожалуйста дождитесь скачивания.",
         )
     else:
-        player_id = kwargs["player_id"]
+        player = str(Player.objects.get(pk=kwargs["player_id"]))
         media_data_path = os.path.join(
             settings.MEDIA_ROOT,
-            "player_game_video",
-            f"player_{player_id}",
+            Directory.PLAYER_VIDEO_DIR,
+            str(game),
         )
         os.makedirs(media_data_path, exist_ok=True)
+        # TODO уточнить тип видео файла
+        video_file = os.path.join(media_data_path, f"{player}.mp4")
 
-        error = download_file(game.video_link, media_data_path)
+        error = download_file(game.video_link, video_file)
 
         messages.add_message(
             request,
             messages.ERROR if error else messages.INFO,
-            error or f"Файл сохранен в папке {media_data_path}.",
+            error or f"Видео сохранено в файле {video_file}.",
         )
 
     # TODO видео будет автоматически загрузаться пользователю по готовности.
