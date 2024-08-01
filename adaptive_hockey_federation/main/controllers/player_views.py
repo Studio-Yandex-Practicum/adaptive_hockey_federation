@@ -448,12 +448,12 @@ def unload_player_game_video(request, **kwargs):
         # TODO уточнить тип видео файла
         video_file = os.path.join(media_data_path, f"{player}.mp4")
 
-        error = download_file(game.video_link, video_file)
+        error_message = download_file(game.video_link, video_file)
 
         messages.add_message(
             request,
-            messages.ERROR if error else messages.INFO,
-            error or f"Видео сохранено в файле {video_file}.",
+            messages.ERROR if error_message else messages.INFO,
+            error_message or f"Видео сохранено в файле {video_file}.",
         )
 
     # TODO видео будет автоматически загрузаться пользователю по готовности.
