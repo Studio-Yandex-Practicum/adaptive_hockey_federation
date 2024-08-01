@@ -1798,7 +1798,27 @@ files = [
     {file = "wrapt-1.16.0.tar.gz", hash = "sha256:5f370f952971e7d17c7d1ead40e49f32345a7f7a5373571ef44d800d06b1899d"},
 ]
 
+[[package]]
+name = "yadisk"
+version = "3.1.0"
+description = "Библиотека-клиент REST API Яндекс.Диска / Yandex.Disk REST API client library"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "yadisk-3.1.0-py3-none-any.whl", hash = "sha256:cddc3a07f541bb005f135e8fbeff6980797494e54b6703c26830ca64d38e00e1"},
+    {file = "yadisk-3.1.0.tar.gz", hash = "sha256:7228fad42007e1ff8becc48ca9bfa357398f68fa50fe597672d4bf92d99e6685"},
+]
+
+[package.extras]
+aiohttp = ["aiohttp"]
+async-defaults = ["aiofiles", "httpx"]
+async-files = ["aiofiles"]
+httpx = ["httpx"]
+pycurl = ["pycurl"]
+requests = ["requests"]
+sync-defaults = ["requests"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a393586128906a53342df8a2fd7ac37eba13861dc6d9a257093c8f7018210141"
+content-hash = "122db5fb7ede430f81f68633f7ce72398f4d400ebef1c4e50d3d013b2e1708ef"

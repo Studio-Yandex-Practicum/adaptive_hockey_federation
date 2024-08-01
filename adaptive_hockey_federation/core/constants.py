@@ -180,4 +180,5 @@ SEARCH_ALIAS = {
 class Directory:
     """Директории."""
 
+    PLAYER_VIDEO_DIR = "player_video"
     UNLOAD_DIR = "unloads_data"
