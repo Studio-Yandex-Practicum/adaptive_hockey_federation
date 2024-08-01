@@ -163,19 +163,11 @@ class PlayerForm(forms.ModelForm):
             self.fields["nosology"].initial = self.instance.diagnosis.nosology
             self.fields["diagnosis"].initial = self.instance.diagnosis
 
-    def save_m2m(self):
-        """Метод, сохраняющий M2M связи между игроком и командами."""
-        self.instance.team.through.objects.filter(
-            team__in=self.cleaned_data["team"],
-        ).delete()
-        self.instance.team.set(self.cleaned_data["team"])
-
     def save(self, commit=True):
         """Метод создает и сохраняет объект игрока в базе данных."""
         instance = super().save(commit=False)
         if commit:
             instance.save()
-            self.save_m2m()
         return instance
 
     def clean_identity_document(self):
@@ -215,13 +207,13 @@ class PlayerUpdateForm(PlayerForm):
         Расширяет team и available_teams кастомными полями выбора.
         """
         super(PlayerUpdateForm, self).__init__(*args, **kwargs)
-        if queryset := self.instance.team.all():
-            self.fields["team"] = CustomModelMultipleChoiceField(
-                queryset=queryset,
-                required=True,
-                help_text=FORM_HELP_TEXTS["player_teams"],
-                label="Команды",
-            )
+        queryset = self.instance.team.all()
+        self.fields["team"] = CustomModelMultipleChoiceField(
+            queryset=queryset,
+            required=True,
+            help_text=FORM_HELP_TEXTS["player_teams"],
+            label="Команды",
+        )
         queryset_available = Team.objects.all().difference(queryset)
         self.fields["available_teams"] = CustomModelMultipleChoiceField(
             queryset=queryset_available,
@@ -257,6 +249,21 @@ class PlayerUpdateForm(PlayerForm):
             )
 
         return number
+
+    def save(self, commit=True):
+        """
+        Метод сохраняет объект игрока в базе данных.
+
+        Сохраняется информация о командах игрока.
+        """
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+            instance.team.through.objects.filter(
+                team__in=self.cleaned_data["team"],
+            ).delete()
+            instance.team.set(self.cleaned_data["team"])
+        return instance
 
 
 class CityChoiceField(ModelChoiceField):
