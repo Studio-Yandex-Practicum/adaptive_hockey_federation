@@ -26,6 +26,8 @@ logger.addHandler(console_handler)
 def download_file(video_link: str, media_data_path: str) -> str | None:
     """Скачать файл с Yandex Disk."""
     error_message: str | None = None
+    # TODO Это нужно будет сделать в виде воркера. Сейчас у нас непонятно,
+    # скачался файл или нет.
     client = yadisk.Client(token=settings.YANDEX_DISK_OAUTH_TOKEN)
 
     with client:

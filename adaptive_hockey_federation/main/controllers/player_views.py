@@ -445,7 +445,6 @@ def unload_player_game_video(request, **kwargs):
             str(game),
         )
         os.makedirs(media_data_path, exist_ok=True)
-        # TODO уточнить тип видео файла
         video_file = os.path.join(media_data_path, f"{player}.mp4")
 
         error_message = download_file(game.video_link, video_file)
