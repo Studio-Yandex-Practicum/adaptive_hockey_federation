@@ -1,9 +1,11 @@
 from typing import Any, Union
 
+from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
+from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -16,10 +18,13 @@ from django.views.generic.edit import (
     UpdateView,
 )
 from django.views.generic.list import ListView
+
 from games.constants import Errors, Literals, NumericalValues
 from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
 from games.models import Game, GamePlayer, GameTeam
+from video_api.tasks import get_player_video_frames
+from video_api.serializers import GameFeatureSerializer
 
 
 class GamesListView(
@@ -224,3 +229,28 @@ class EditTeamPlayersNumbersView(
         )
         context["page_title"] = "Редактирование номеров игроков команды"
         return context
+
+
+@login_required
+def send_game_video_to_process(request, **kwargs):
+    """
+    Вью функция дли запуска задачи в celery для отправки видео на обработку.
+
+    Функция обрабатывает запрос с кнопки, добавляет задачу в очередь и
+    отображает сообщение об успешном выполнении.
+    """
+    game_id = kwargs.get("game_id")
+
+    # TODO Реализация может быть изменена, как функционал celery будет дописан.
+    game = get_object_or_404(Game, id=game_id)
+    game_data = GameFeatureSerializer(game).data
+    get_player_video_frames.apply_async(data=game_data)
+
+    messages.add_message(
+        request,
+        messages.INFO,
+        "Видео отправлено на обработку, ждите оповещение "
+        "о готовности на электронную почту.",
+    )
+
+    return redirect("games:game_info", game_id=game_id)
