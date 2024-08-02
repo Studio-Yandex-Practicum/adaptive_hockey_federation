@@ -152,6 +152,7 @@ class PlayerIDCreateView(
         context["file_resolution"] = ", ".join(
             ["." + res for res in FileConstants.FILE_RESOLUTION],
         )
+        context["help_text_role"] = "Команды игрока"
         return context
 
     def get_success_url(self):
