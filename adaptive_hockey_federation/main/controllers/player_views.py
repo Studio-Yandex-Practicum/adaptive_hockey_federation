@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.http import Http404, JsonResponse
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -18,10 +18,11 @@ from core.constants import Directory, FileConstants
 from core.utils import is_uploaded_file_valid
 from core.ydisk_utils.utils import download_file
 from games.models import Game, GamePlayer
+from main.controllers.mixins import DiagnosisListMixin
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
 from main.mixins import FileUploadMixin
-from main.models import Diagnosis, DisciplineLevel, DisciplineName, Player
+from main.models import Player
 from main.permissions import PlayerIdPermissionsMixin
 from main.schemas.player_schema import (
     get_player_fields,
@@ -88,15 +89,6 @@ class PlayersListView(
         context["table_head"] = table_head
         context["table_data"] = get_player_table_data(context)
         return context
-
-
-class DiagnosisListMixin:
-    """Миксин для использования в видах редактирования и создания команд."""
-
-    @staticmethod
-    def get_diagnosis():
-        """Возвращает список диагнозов из БД."""
-        return Diagnosis.objects.values_list("name", flat=True)
 
 
 class PlayerIDCreateView(
@@ -467,29 +459,3 @@ def unload_player_game_video(request, **kwargs):
 def player_id_deleted(request):
     """View для отображения информации об успешном удалении игрока."""
     return render(request, "main/player_id/player_id_deleted.html")
-
-
-def load_discipline_levels(request):
-    """
-    Представление для получения списка уровней дисциплин по ID дисциплины.
-
-    Используется в формах создания/редактирования данных игрока.
-    """
-    discipline_level_id = request.GET.get("discipline_level_id")
-    try:
-        discipline_statuses = DisciplineLevel.objects.filter(
-            discipline_name_id=discipline_level_id,
-        ).all()
-    except ValueError:
-        return JsonResponse([], safe=False)
-    else:
-        return JsonResponse(
-            list(discipline_statuses.values("id", "name")),
-            safe=False,
-        )
-
-
-def filter_duscipline_search(request):
-    """Представления для поиска, получения списка дисциплин."""
-    disciplines = DisciplineName.objects.all().values("name")
-    return JsonResponse(list(disciplines), safe=False)
