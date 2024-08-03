@@ -1,5 +1,11 @@
 from django.urls import include, path
-from main.controllers import main_views, player_views, staff_views, team_views
+from main.controllers import (
+    ajax,
+    main_views,
+    player_views,
+    staff_views,
+    team_views,
+)
 
 app_name = "main"
 
@@ -121,12 +127,12 @@ staffs_urlpatterns = [
 ajax_urlpatterns = [
     path(
         "load-discipline-levels/",
-        player_views.load_discipline_levels,
+        ajax.load_discipline_levels,
         name="ajax_load_discipline_levels",
     ),
     path(
         "filter-discipline-search/",
-        player_views.filter_duscipline_search,
+        ajax.filter_discipline_search,
         name="ajax_filter_discipline_search",
     ),
 ]

@@ -7,7 +7,7 @@
 
 {% block content %}
 <h2 class="text-center mb-4">{{ page_title }}</h2>
-<form id="playerForm" method="post" enctype="multipart/form-data" data-discipline-level="{% url "main:ajax_load_discipline_levels" %}">
+<form id="playerForm" method="post" enctype="multipart/form-data" data-discipline-level="{% url 'main:ajax_load_discipline_levels' %}">
     {% csrf_token %}
     <div class="container text-center">
         <div class="full-container">
@@ -39,7 +39,7 @@
         </div>
         <h4 class="text-center mb-4">Документы</h4>
         {% if errormessage %}
-            <h6 class="text-center mb-6" style="color:red">{{ errormessage }}</h4>
+            <h6 class="text-center mb-6" style="color:red">{{ errormessage }}</h6>
         {% endif %}
         <table class="table-table">
             <thead>
