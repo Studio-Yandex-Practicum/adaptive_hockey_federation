@@ -2,22 +2,22 @@
   <ul class="pagination justify-content-center mb-0 mt-1">
     {% if page_obj.has_previous %}
       <li class="page-item">
-        <a class="page-link pg-list bi bi-chevron-double-left" href="?page=1{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="First"></a>
+        <a class="page-link pg-list bi bi-chevron-double-left border-2" href="?page=1{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="First"></a>
       </li>
       <li class="page-item">
-        <a class="page-link pg-list bi bi bi-chevron-left" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="Previous"></a>
+        <a class="page-link pg-list bi bi-chevron-left border-2" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="Previous"></a>
       </li>
     {% endif %}
 
     {% for num in paginator.page_range %}
       {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
         {% if page_obj.number == num %}
-          <li class="page-item page-num page-num-selected page-link pg-list-active">
+          <li class="page-item page-num page-num-selected page-link pg-list-active border-2">
             {{ num }}
           </li>
         {% else %}
           <li class="page-item page-num pg-list">
-            <a class="page-link pg-list"
+            <a class="page-link pg-list border-2"
             href="?page={{ num }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}"
             >
             {{ num }}</a>
@@ -28,10 +28,10 @@
 
     {% if page_obj.has_next %}
       <li class="page-item">
-        <a class="page-link pg-list bi bi-chevron-right" href="?page={{ page_obj.next_page_number }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="Next"></a>
+        <a class="page-link pg-list bi bi-chevron-right border-2" href="?page={{ page_obj.next_page_number }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="Next"></a>
       </li>
       <li class="page-item">
-        <a class="page-link pg-list bi bi-chevron-double-right" href="?page={{ paginator.num_pages }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="Last"></a>
+        <a class="page-link pg-list bi bi-chevron-double-right border-2" href="?page={{ paginator.num_pages }}{% if request.GET.search_column %}&search_column={{ request.GET.search_column }}&search={{ request.GET.search }}&year={{ request.GET.year }}&month={{ request.GET.month }}&day={{ request.GET.day }}&gender={{ request.GET.gender }}&active={{ request.GET.active }}{% endif %}" aria-label="Last"></a>
       </li>
     {% endif %}
   </ul>
