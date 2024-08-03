@@ -35,6 +35,10 @@ show_return_button = [
     "competition_update",
     "competition_id",
     "game_create",
+    "staff_id_team_edit",
+    "staff_id_team_create",
+    "edit_team_players_numbers",
+    "game_edit",
 ]
 
 
