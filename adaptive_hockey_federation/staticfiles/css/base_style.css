@@ -72,8 +72,8 @@ li {
 }
 
 .pg-list-active {
-  background-color: #269FBD;
-  color: black;
+  background-color: rgb(2, 157, 183);
+  color: #340061;
   font-size: 18px;
 }
 
@@ -81,14 +81,15 @@ li {
   width: 500px;
   height: 650px;
 }
+
 .pg-list-active:hover {
-  background-color: #269FBD;
-  color: black;
+  background-color: rgb(2, 157, 183);
+  color: #340061;
   font-size: 18px;
 }
 
 .pg-list {
-  background-color: #269FBD;
+  background-color: rgb(2, 157, 183);
   color: white;
   font-size: 18px;
 }
@@ -98,14 +99,14 @@ li {
   color: #fff;
 }
 
-.drawler_menu{
+.drawler_menu, .drawler_menu:focus {
   color: #ffffff;
-  background-color: #64C2D1;
+  background-color: rgb(2, 157, 183);
   border-radius: 6px;
 }
 
 .drawler_menu:hover {
-  color: #ECF1F5;
+  color: #fff;
   background-color: #340061;
 }
 
