@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from django.contrib.messages import constants as messages
-
 import environ
+from django.contrib.messages import constants as messages
 
 env = environ.Env()
 
@@ -173,6 +172,7 @@ CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 YANDEX_DISK_OAUTH_TOKEN = env("YANDEX_DISK_OAUTH_TOKEN", default="ya_oauth_token")
 
