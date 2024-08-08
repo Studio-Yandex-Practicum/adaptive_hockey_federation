@@ -17,6 +17,7 @@ no_search_pages = [
     "competition_add",
     "competition_update",
     "competition_id",
+    "game_info",
 ]
 
 show_return_button = [
