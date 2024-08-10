@@ -1,7 +1,5 @@
 FROM python:3.11
 
-RUN apt update && apt install -y libgl1-mesa-glx
-
 WORKDIR /app
 
 COPY requirements/develop.txt .
