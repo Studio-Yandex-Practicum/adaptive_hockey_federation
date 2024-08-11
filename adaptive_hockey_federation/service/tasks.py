@@ -19,7 +19,10 @@ def mock_ds_process() -> JSONResponse:
     logger.info("Start mock_ds_process")
     sleep(DELAY)
     current_directory = os.path.dirname(os.path.abspath(__file__))
-    test_response_file = os.path.join(current_directory, "test_response.json")
+    test_response_file = os.path.join(
+        current_directory,
+        "test_response.json.txt",
+    )
     with open(test_response_file, "r") as file:
         response = json.load(file)
     logger.info("End mock_ds_process")
