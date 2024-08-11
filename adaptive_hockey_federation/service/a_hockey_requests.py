@@ -1,9 +1,13 @@
+import logging
 from typing import Any
 from urllib.parse import urljoin
 
 import requests
 from requests.exceptions import RequestException
 from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 def check_api_health_status() -> None:
@@ -40,6 +44,8 @@ def send_request_to_process_video(
         )
         return response.json()
     except RequestException as error:
-        raise RequestException(
-            f"Возникла ошибка при попытке обработать видео: {error}",
-        ) from error
+        logger.error(error)
+        return {
+            "message": "Возникла ошибка при попытке обработать видео: "
+            f"{error}",
+        }
