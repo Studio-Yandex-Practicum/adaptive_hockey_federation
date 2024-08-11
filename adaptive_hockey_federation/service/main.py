@@ -1,5 +1,3 @@
-import logging
-
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel
@@ -8,8 +6,6 @@ from . import tasks
 
 
 app = FastAPI()
-
-logger = logging.getLogger(__name__)
 
 
 class RequestData(BaseModel):
@@ -47,10 +43,8 @@ def version() -> JSONResponse:
 @app.post("/process")
 async def process(request_data: RequestData) -> JSONResponse:
     """Имитация распознавания видео."""
-    logger.warning(">>>>>>>>>>> process")
     task = tasks.mock_ds_process.delay()
     response = task.get()
-    logger.warning("<<<<<<<<<<<< process")
     return JSONResponse(content=response)
 
 
