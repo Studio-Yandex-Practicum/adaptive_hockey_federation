@@ -33,6 +33,7 @@ help:
 	@echo "	fill-test-db    - $(SHELL_GREEN)Команда для заполнения базы данных тестовыми данными при помощи фабрик генерации данных.$(SHELL_NC)."
 	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)."
 	@echo "	shell           - $(SHELL_GREEN)Команда для запуска Django-shell_plus.$(SHELL_NC)."
+	@echo "	ds-mock         - $(SHELL_GREEN)Команда для запуска имитации DS сервера (порт 8010).$(SHELL_NC)."
 	@echo "	help            - $(SHELL_GREEN)Команда вызова справки.$(SHELL_NC)."
 	@echo "$(SHELL_YELLOW)Для запуска исполнения команд используйте данные ключи совместно с командой 'make', например 'make init-app'."
 	@echo "При запуске команды 'make' без aкакого либо ключа, происходит вызов справки.$(SHELL_NC)."
@@ -91,7 +92,8 @@ clear-db:
 run:
 	( \
 		trap 'kill 0' EXIT; \
-		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) worker -P solo -l info & \
+#		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) worker -P solo -l info -E & \
+		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) worker -l info & \
 		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) flower & \
 		cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver \
 	)
@@ -123,6 +125,11 @@ fill-test-db:
 # Прогон тестов с помощью pytest.
 pytest:
 	cd $(DJANGO_DIR) && pytest
+
+
+# Локальный запуск сервера разработки и Celery.
+ds-mock:
+	fastapi dev --port 8010 $(DJANGO_DIR)/service/main.py
 
 
 .PHONY: help
