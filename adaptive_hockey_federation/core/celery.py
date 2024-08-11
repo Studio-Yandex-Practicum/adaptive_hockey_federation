@@ -1,7 +1,6 @@
 import os
 
 from celery import Celery
-from kombu import Queue
 from .config.base_settings import env, BASE_DIR
 
 
@@ -22,8 +21,3 @@ app.autodiscover_tasks()
 app.conf.broker_transport_options = {
     "queue_order_strategy": "priority",
 }
-
-app.conf.task_queues = (
-    Queue("process_queue"),
-    Queue("slice_player_video_queue"),
-)
