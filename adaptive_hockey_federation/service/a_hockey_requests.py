@@ -3,9 +3,8 @@ from typing import Any
 from urllib.parse import urljoin
 
 import requests
-from requests.exceptions import RequestException
 from django.conf import settings
-
+from requests.exceptions import ConnectionError, RequestException
 
 logger = logging.getLogger(__name__)
 
@@ -37,15 +36,16 @@ def send_request_to_process_video(
     :returns: Результат обработки видео.
     :raises RequestException: Если возникла ошибка при обработке видео.
     """
+    logger.debug("Отправка запроса к серверу DS.")
     try:
         response = requests.post(
             urljoin(settings.PROCESSING_SERVICE_BASE_URL, "/process"),
             json=data,
         )
         return response.json()
-    except RequestException as error:
-        logger.error(error)
+    except ConnectionError as error:
+        logger.error(f"Ошибка подключения к серверу распознавания: {error}")
         return {
             "message": "Возникла ошибка при попытке обработать видео: "
-            f"{error}",
+            "Ошибка подключения к серверу распознавания.",
         }
