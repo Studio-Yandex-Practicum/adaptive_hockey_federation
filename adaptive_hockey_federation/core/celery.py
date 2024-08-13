@@ -16,7 +16,9 @@ app = Celery("core")
 
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
-app.autodiscover_tasks()
+# app.autodiscover_tasks()
+# TODO удалить вместе с mock_ds_server
+app.autodiscover_tasks(["service.mock_ds_server"])
 
 app.conf.broker_transport_options = {
     "queue_order_strategy": "priority",
