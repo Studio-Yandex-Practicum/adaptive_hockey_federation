@@ -28,8 +28,7 @@ def get_player_video_frames(*args, **kwargs):
 
 @app.task()
 def create_player_video(*args, **kwargs):
-    # TODO моковая реализация, должно передаваться данные
-    # необходимые для нарезки видео с игроком
+    # TODO Перенести сюда нарезку видео как задачу
     time.sleep(10)
     args = args[0]
     game_link = "https://disk.yandex.ru/i/JLh__1IbAfmK-Q"
@@ -42,7 +41,8 @@ def create_player_video(*args, **kwargs):
 
 
 def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
-    # result - получает результат работы из sender
+    # TODO AlexanderPU предлагаю пересмотреть эту фукнцию и реализовать
+    # сохранение данных от мокового сервера
     result = kwargs.get("result")
     parse_data = json.loads(result)
 
