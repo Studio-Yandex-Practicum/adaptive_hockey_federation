@@ -12,18 +12,17 @@ from core.celery import app
 from games.models import GameDataPlayer
 from service.a_hockey_requests import send_request_to_process_video
 from service.video_processing import slicing_video_with_player_frames
-from .serializers import GameDataPlayerSerializer
+from .serializers import GameDataPlayerSerializerMock
 
 
 logger = logging.getLogger(__name__)
 
 
 @app.task(base=Singleton)
-def get_player_video_frames(*args, **kwargs):
+def get_player_video_frames(data):
     """Таск для запуска обработки видео."""
-    logger.warning("Добавлен новый объект игры, запускаем воркер")
-    response = send_request_to_process_video(kwargs.get("data"))
-    return response
+    logger.info("Добавлен новый объект игры, запускаем воркер")
+    return send_request_to_process_video(data)
 
 
 @app.task()
@@ -44,9 +43,10 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
     # TODO AlexanderPU предлагаю пересмотреть эту фукнцию и реализовать
     # сохранение данных от мокового сервера
     result = kwargs.get("result")
-    parse_data = json.loads(result)
 
-    serializer = GameDataPlayerSerializer(data=parse_data)
+    # TODO уточнить структуру ответа DS
+    # TODO НЕ РАБОТАЕТ!
+    serializer = GameDataPlayerSerializerMock(data=result, many=True)
     if serializer.is_valid():
         object_data = serializer.validated_data
         # В тестовом запросе индекс у игры 0, изменить
@@ -63,7 +63,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                     game=game,
                     data=json.dumps(track),
                 )
-                print(
+                logger.info(
                     (
                         f"Cоздаем видео для игрока "
                         f"{player.get_name_and_position()}"
@@ -76,7 +76,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                     queue="slice_player_video_queue",
                     priority=255,
                 )
-    print(serializer.errors)
+    logger.error(serializer.errors)
     # Задача ничего не возвращает.
     # Возможно из-за способа её вызова через worker_process_init
 
