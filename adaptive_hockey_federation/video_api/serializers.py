@@ -42,10 +42,12 @@ class GameFeatureSerializer(serializers.ModelSerializer):
         Сортировка в соответствии с порядком команд в поле team_ids.
         """
         game_players = GamePlayer.objects.filter(game_team__game=obj)
-        team_players = list(
+        team_players: list[tuple[int, int]] = list(
             game_players.values_list("game_team_id", field_name),
         )
-        teams = {team_id: [] for team_id in self.get_team_ids(obj)}
+        teams: dict[int, list[int]] = {
+            team_id: [] for team_id in self.get_team_ids(obj)
+        }
         for team_id, field in team_players:
             teams[team_id].append(field)
         return list(teams.values())
