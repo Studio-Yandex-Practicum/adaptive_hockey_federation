@@ -92,7 +92,6 @@ clear-db:
 run:
 	( \
 		trap 'kill 0' EXIT; \
-#		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) worker -P solo -l info -E & \
 		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) worker -l info & \
 		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) flower & \
 		cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver \
