@@ -125,5 +125,12 @@ jobs:
 
             echo "adaptive_hockey_federation.service is active"
 
+            while [ "$( docker container inspect -f '{{.State.Running}}' adaptive_hockey_federation )" != "true" ]; do
+              echo "Waiting for adaptive_hockey_federation container to be running..."
+              sleep 2
+            done
+
+            echo "adaptive_hockey_federation container is running"
+
             docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
             docker exec adaptive_hockey_federation python manage.py migrate
