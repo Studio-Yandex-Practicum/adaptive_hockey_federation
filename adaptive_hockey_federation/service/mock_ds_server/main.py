@@ -43,7 +43,11 @@ def version() -> JSONResponse:
 @app.post("/process")
 async def process(request_data: RequestData) -> JSONResponse:
     """Имитация распознавания видео."""
-    task = tasks.mock_ds_process.delay()
+    task = tasks.mock_ds_process.apply_async(
+        kwargs={
+            "data": dict(request_data),
+        },
+    )
     response = task.get()
     return JSONResponse(content=response)
 
