@@ -36,7 +36,7 @@ def send_request_to_process_video(
     :returns: Результат обработки видео.
     :raises RequestException: Если возникла ошибка при обработке видео.
     """
-    logger.debug("Отправка запроса к серверу DS.")
+    logger.info("Отправка запроса к серверу DS.")
     try:
         response = requests.post(
             urljoin(settings.PROCESSING_SERVICE_BASE_URL, "/process"),
