@@ -9,7 +9,8 @@ from celery_singleton import Singleton
 from django.db import transaction
 
 from core.celery import app
-from games.models import GameDataPlayer
+from games.models import Game, GameDataPlayer, GamePlayer
+from main.models import Player
 from service.a_hockey_requests import send_request_to_process_video
 from service.video_processing import slicing_video_with_player_frames
 from .serializers import GameDataPlayerSerializerMock
@@ -19,44 +20,47 @@ logger = logging.getLogger(__name__)
 
 
 @app.task(base=Singleton)
-def get_player_video_frames(data):
+def get_player_video_frames(*args, **kwargs):
     """Таск для запуска обработки видео."""
     logger.info("Добавлен новый объект игры, запускаем воркер")
-    return send_request_to_process_video(data)
+    return send_request_to_process_video(kwargs["data"])
 
 
 @app.task()
 def create_player_video(*args, **kwargs):
     # TODO Перенести сюда нарезку видео как задачу
+    logger.info(f"Нарезка видео. {args}")
     time.sleep(10)
-    args = args[0]
     game_link = "https://disk.yandex.ru/i/JLh__1IbAfmK-Q"
     output_file = (
         Path(__file__).resolve().parent.parent / "service/test_video/test.mp4"
     )
-    frames = [i for i in range(15000, 15430, 5)]
-    slicing_video_with_player_frames(game_link, output_file, frames)
+    slicing_video_with_player_frames(game_link, output_file, kwargs["frames"])
     return f"Видео обработано. {args}"
 
 
 def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
-    # TODO AlexanderPU предлагаю пересмотреть эту фукнцию и реализовать
-    # сохранение данных от мокового сервера
+    """
+    Сохранение параметров видео игроков от сервера DS.
+
+    Вызов таски нарезки видео.
+    """
     result = kwargs.get("result")
+    task_params = sender.request.kwargs["data"]
 
     # TODO уточнить структуру ответа DS
-    # TODO НЕ РАБОТАЕТ!
     serializer = GameDataPlayerSerializerMock(data=result, many=True)
     if serializer.is_valid():
         object_data = serializer.validated_data
-        # В тестовом запросе индекс у игры 0, изменить
-        # на любой другой индекс игры в бд
-        game = object_data["game_id"]
-        tracking = object_data["tracking"]
+        game = Game.objects.get(pk=task_params["game_id"])
         with transaction.atomic():
-            for track in tracking:
-                player = track["player_id"]
-                del track["player_id"]
+            for track in object_data:
+                player_id = GamePlayer.objects.get(
+                    game_team__game=game,
+                    game_team_id=track["team"],
+                    number=track["number"],
+                ).id
+                player = Player.objects.get(pk=player_id)
                 # TODO возможно следует использовать bulk_create
                 GameDataPlayer.objects.update_or_create(
                     player=player,
@@ -71,14 +75,17 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                 )
                 # TODO в args передают аргументы
                 # нужные для нарезки видео с игроком
+                # create_player_video(
                 create_player_video.apply_async(
                     args=["Обработка с низким приоритетом"],
-                    queue="slice_player_video_queue",
-                    priority=255,
+                    kwargs={
+                        "frames": track["frames"],
+                        # "queue": "slice_player_video_queue",
+                        # "priority": 255,
+                    },
                 )
-    logger.error(serializer.errors)
-    # Задача ничего не возвращает.
-    # Возможно из-за способа её вызова через worker_process_init
+    else:
+        logger.error(serializer.errors)
 
 
 @worker_process_init.connect
