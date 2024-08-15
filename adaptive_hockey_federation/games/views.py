@@ -247,7 +247,11 @@ def send_game_video_to_process(request, **kwargs):
 
     game = get_object_or_404(Game, id=game_id)
     game_data = GameFeatureSerializer(game).data
-    response = get_player_video_frames.apply_async([game_data])
+    response = get_player_video_frames.apply_async(
+        kwargs={
+            "data": game_data,
+        },
+    )
 
     if response.ready() and "message" in response:
         messages.add_message(
