@@ -65,14 +65,14 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                     logger.warning(
                         f"Игрок с номером {track['number']} "
                         f"команды {track['team']} "
-                        f"в игре {game} не найден.",
+                        f"в игре {task_params['game_id']} не найден.",
                     )
                     continue
                 except GamePlayer.MultipleObjectsReturned:
                     logger.warning(
                         f"В команде {track['team']} "
                         f"несколько игроков с номером {track['number']} "
-                        f"участвовало в игре {game}.",
+                        f"участвовало в игре {task_params['game_id']}.",
                     )
                     continue
                 player = Player.objects.get(pk=game_player.id)
