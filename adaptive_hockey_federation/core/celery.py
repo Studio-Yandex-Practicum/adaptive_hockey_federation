@@ -24,14 +24,3 @@ app.autodiscover_tasks(["service.mock_ds_server"])
 app.conf.broker_transport_options = {
     "queue_order_strategy": "priority",
 }
-
-# TODO может очереди нужны?
-# app.conf.task_routes = ([
-#     ("video_api.tasks.get_player_video_frames", {"queue": "process_queue"}),
-#     (
-#         "video_api.tasks.create_player_video",
-#         {"queue": "slice_player_video_queue"},
-#     ),
-# TODO удалить вместе с mock_ds_server
-#     ("service.mock_ds_server.tasks.*", {"queue": "mock_ds_server"}),
-# ],)
