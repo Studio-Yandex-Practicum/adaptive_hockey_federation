@@ -55,12 +55,27 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
         game = Game.objects.get(pk=task_params["game_id"])
         with transaction.atomic():
             for track in object_data:
-                player_id = GamePlayer.objects.get(
-                    game_team__game=game,
-                    game_team_id=track["team"],
-                    number=track["number"],
-                ).id
-                player = Player.objects.get(pk=player_id)
+                try:
+                    game_player = GamePlayer.objects.get(
+                        game_team__game=game,
+                        game_team_id=track["team"],
+                        number=track["number"],
+                    )
+                except GamePlayer.DoesNotExist:
+                    logger.warning(
+                        f"Игрок с номером {track['number']} "
+                        f"команды {track['team']} "
+                        f"в игре {game} не найден.",
+                    )
+                    continue
+                except GamePlayer.MultipleObjectsReturned:
+                    logger.warning(
+                        f"В команде {track['team']} "
+                        f"несколько игроков с номером {track['number']} "
+                        f"участвовало в игре {game}.",
+                    )
+                    continue
+                player = Player.objects.get(pk=game_player.id)
                 # TODO возможно следует использовать bulk_create
                 GameDataPlayer.objects.update_or_create(
                     player=player,
@@ -80,8 +95,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                     args=["Обработка с низким приоритетом"],
                     kwargs={
                         "frames": track["frames"],
-                        # "queue": "slice_player_video_queue",
-                        # "priority": 255,
+                        "priority": 255,
                     },
                 )
     else:
