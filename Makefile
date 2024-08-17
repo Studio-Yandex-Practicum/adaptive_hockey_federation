@@ -128,7 +128,8 @@ pytest:
 
 # Локальный запуск сервера разработки и Celery.
 ds-mock:
-	fastapi dev --port 8010 $(DJANGO_DIR)/service/mock_ds_server/main.py
+	cd $(DJANGO_DIR)/service/mock_ds_server && $(CELERY_RUN) -A worker.app worker -l info & \
+	cd $(DJANGO_DIR)/service/mock_ds_server && fastapi dev --port 8010 main.py
 
 
 .PHONY: help

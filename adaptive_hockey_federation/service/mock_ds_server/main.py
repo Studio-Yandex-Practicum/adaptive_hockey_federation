@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel
 
-from . import tasks
-
+from worker import mock_ds_process
 
 app = FastAPI()
 
@@ -43,7 +42,7 @@ def version() -> JSONResponse:
 @app.post("/process")
 async def process(request_data: RequestData) -> JSONResponse:
     """Имитация распознавания видео."""
-    task = tasks.mock_ds_process.apply_async(
+    task = mock_ds_process.apply_async(
         kwargs={
             "data": dict(request_data),
         },
