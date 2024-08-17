@@ -80,7 +80,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                 GameDataPlayer.objects.update_or_create(
                     player=player,
                     game=game,
-                    data=json.dumps(track),
+                    defaults={"data": json.dumps(track)},
                 )
                 logger.info(
                     (
