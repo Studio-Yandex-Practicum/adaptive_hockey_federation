@@ -26,4 +26,5 @@ app.conf.broker_transport_options = {
 app.conf.task_queues = (
     Queue("process_queue"),
     Queue("slice_player_video_queue"),
+    Queue("download_game_video_queue"),
 )

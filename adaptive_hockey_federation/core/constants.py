@@ -180,5 +180,16 @@ SEARCH_ALIAS = {
 class Directory:
     """Директории."""
 
+    GAMES = "games"
     PLAYER_VIDEO_DIR = "player_video"
     UNLOAD_DIR = "unloads_data"
+
+
+class YadiskDirectory(StrEnum):
+    """Директории на Яндекс.Диске."""
+
+    GAMES = "games"
+    PLAYER_GAMES = "player_games"
+
+
+PLAYER_GAME_NAME = "{surname}_{name[0]}_{patronymic[0]}_{game_name}.mp4"
