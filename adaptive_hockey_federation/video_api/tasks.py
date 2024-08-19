@@ -1,6 +1,6 @@
 import json
 import logging
-import time
+import os
 from pathlib import Path
 
 from celery import current_app
@@ -27,15 +27,29 @@ def get_player_video_frames(*args, **kwargs):
 
 
 @app.task()
-def create_player_video(*args, **kwargs):
-    # TODO Перенести сюда нарезку видео как задачу
-    logger.info(f"Нарезка видео. {args}")
-    time.sleep(10)
-    game_link = "https://disk.yandex.ru/i/JLh__1IbAfmK-Q"
-    output_file = (
-        Path(__file__).resolve().parent.parent / "service/test_video/test.mp4"
-    )
-    slicing_video_with_player_frames(game_link, output_file, kwargs["frames"])
+
+def create_player_video(
+    input_file,
+    output_file,
+    player_id,
+    game_id,
+    *args,
+    **kwargs,
+):
+    """Таск для нарезки видео с моментами игрока."""
+    # Мок реализация фреймов для нарезки видео с моментами игрока.
+    # Пока подставляются тестовые фреймы.
+    # TODO удалить мок реализацию, как в бд появятся фреймы по игрокам.
+
+    if os.path.exists(output_file):
+        return
+
+    frames = [i for i in range(15000, 15430, 5)]
+    # frames = GameDataPlayer.objects.filter(
+    #     player_id=player_id, game_id=game_id
+    # ).first().data
+
+    slicing_video_with_player_frames(input_file, output_file, frames)
     return f"Видео обработано. {args}"
 
 

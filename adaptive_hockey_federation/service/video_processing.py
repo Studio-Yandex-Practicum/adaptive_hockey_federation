@@ -18,7 +18,7 @@ def slicing_video_with_player_frames(input_file, output_file, frames, fps=25):
     cap = cv2.VideoCapture(input_file)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fourcc = cv2.VideoWriter_fourcc("X", "V", "I", "D")
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     output = cv2.VideoWriter(output_file, fourcc, fps, (width, height))
 
     for fr in range(len(frames)):  # frames - список фреймов с игроком
