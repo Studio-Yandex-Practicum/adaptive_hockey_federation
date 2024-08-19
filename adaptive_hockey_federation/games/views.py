@@ -250,6 +250,7 @@ def send_game_video_to_process(request, **kwargs):
     response = get_player_video_frames.apply_async(
         kwargs={
             "data": game_data,
+            "user_email": request.user.email,
         },
     )
 

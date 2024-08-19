@@ -5,6 +5,7 @@ import sys
 from competitions.models import Competition
 from core.config import dev_settings
 from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -97,4 +98,29 @@ def send_welcome_mail(
         logger.error(
             "Произошла ошибка при отправке электронного письма"
             f" на {curator_email}: {e}",
+        )
+
+
+def send_info_mail(
+    subject: str,
+    context: str,
+    user_email: str,
+) -> None:
+    """Отправка информационного письма."""
+    try:
+        send_mail(
+            subject,
+            context,
+            dev_settings.EMAIL_HOST_USER,
+            [user_email],
+            fail_silently=False,
+        )
+    except Exception as e:
+        logger.error(
+            "Произошла ошибка при отправке электронного письма"
+            f" на {user_email}: {e}",
+        )
+    else:
+        logger.info(
+            f"Электронное письмо успешно отправлено на адрес {user_email}",
         )
