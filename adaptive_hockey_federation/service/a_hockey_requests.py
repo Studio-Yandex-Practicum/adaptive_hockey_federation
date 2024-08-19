@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 import requests
 from django.conf import settings
-from requests.exceptions import ConnectionError, RequestException
+from requests.exceptions import RequestException
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +41,10 @@ def send_request_to_process_video(
         response = requests.post(
             urljoin(settings.PROCESSING_SERVICE_BASE_URL, "/process"),
             json=data,
+            timeout=(0.5, None),
         )
         return response.json()
-    except ConnectionError as error:
+    except RequestException as error:
         logger.error(f"Ошибка подключения к серверу распознавания: {error}")
         return {
             "message": "Возникла ошибка при попытке обработать видео: "
