@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from pathlib import Path
 
 from celery import current_app
 from celery.signals import task_success, worker_process_init
@@ -27,7 +26,6 @@ def get_player_video_frames(*args, **kwargs):
 
 
 @app.task()
-
 def create_player_video(
     input_file,
     output_file,
