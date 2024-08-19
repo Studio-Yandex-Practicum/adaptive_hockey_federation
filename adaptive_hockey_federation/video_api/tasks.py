@@ -111,3 +111,12 @@ def on_pool_process_init(**kwargs):
         bulk_create_gamedataplayer_objects,
         sender=current_app.tasks[get_player_video_frames.name],
     )
+
+
+# TODO оправить письмо при завершении обработки видео
+# @worker_process_init.connect
+# def mail_success_video_process(**kwargs):
+#     task_success.connect(
+#         create_player_video,
+#         sender=current_app.tasks[],
+#     )
