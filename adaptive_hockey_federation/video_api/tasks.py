@@ -1,32 +1,33 @@
-import os
 import json
+import logging
+import os
 
-from django.db import transaction
 from celery import current_app
 from celery.signals import task_success, worker_process_init
 from celery_singleton import Singleton
+from django.db import transaction
 
 from core.celery import app
+from games.models import Game, GameDataPlayer, GamePlayer
+from main.models import Player
 from service.a_hockey_requests import send_request_to_process_video
 from service.video_processing import slicing_video_with_player_frames
-from games.models import GameDataPlayer
-from .serializers import GameDataPlayerSerializer
+from users.utilits.send_mails import send_info_mail
+from .serializers import GameDataPlayerSerializerMock
+
+
+logger = logging.getLogger(__name__)
 
 
 @app.task(base=Singleton)
 def get_player_video_frames(*args, **kwargs):
     """Таск для запуска обработки видео."""
-    print("Добавлен новый объект игры, запускаем воркер")
-    response = send_request_to_process_video(kwargs.get("data"))
-    return response.content
+    logger.info("Добавлен новый объект игры, запускаем воркер")
+    return send_request_to_process_video(kwargs["data"])
 
 
 @app.task()
 def create_player_video(
-    input_file,
-    output_file,
-    player_id,
-    game_id,
     *args,
     **kwargs,
 ):
@@ -35,41 +36,63 @@ def create_player_video(
     # Пока подставляются тестовые фреймы.
     # TODO удалить мок реализацию, как в бд появятся фреймы по игрокам.
 
+    input_file = kwargs["input_file"]
+    output_file = kwargs["output_file"]
+    # player = kwargs["player"]
+    # game = kwargs["game"]
+    frames = kwargs["frames"]
     if os.path.exists(output_file):
         return
-
-    frames = [i for i in range(15000, 15430, 5)]
-    # frames = GameDataPlayer.objects.filter(
-    #     player_id=player_id, game_id=game_id
-    # ).first().data
 
     slicing_video_with_player_frames(input_file, output_file, frames)
     return f"Видео обработано. {args}"
 
 
 def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
-    # result - получает результат работы из sender
-    result = kwargs.get("result")
-    parse_data = json.loads(result)
+    """
+    Сохранение параметров видео игроков от сервера DS.
 
-    serializer = GameDataPlayerSerializer(data=parse_data)
+    Вызов таски нарезки видео.
+    """
+    result = kwargs.get("result")
+    task_params = sender.request.kwargs["data"]
+    user_email = sender.request.kwargs["user_email"]
+
+    # TODO уточнить структуру ответа DS
+    serializer = GameDataPlayerSerializerMock(data=result, many=True)
     if serializer.is_valid():
         object_data = serializer.validated_data
-        # В тестовом запросе индекс у игры 0, изменить
-        # на любой другой индекс игры в бд
-        game = object_data["game_id"]
-        tracking = object_data["tracking"]
+        game = Game.objects.get(pk=task_params["game_id"])
         with transaction.atomic():
-            for track in tracking:
-                player = track["player_id"]
-                del track["player_id"]
+            for track in object_data:
+                try:
+                    game_player = GamePlayer.objects.get(
+                        game_team__game=game,
+                        game_team_id=track["team"],
+                        number=track["number"],
+                    )
+                except GamePlayer.DoesNotExist:
+                    logger.warning(
+                        f"Игрок с номером {track['number']} "
+                        f"команды {track['team']} "
+                        f"в игре {task_params['game_id']} не найден.",
+                    )
+                    continue
+                except GamePlayer.MultipleObjectsReturned:
+                    logger.warning(
+                        f"В команде {track['team']} "
+                        f"несколько игроков с номером {track['number']} "
+                        f"участвовало в игре {task_params['game_id']}.",
+                    )
+                    continue
+                player = Player.objects.get(pk=game_player.id)
                 # TODO возможно следует использовать bulk_create
                 GameDataPlayer.objects.update_or_create(
                     player=player,
                     game=game,
-                    data=json.dumps(track),
+                    defaults={"data": json.dumps(track)},
                 )
-                print(
+                logger.info(
                     (
                         f"Cоздаем видео для игрока "
                         f"{player.get_name_and_position()}"
@@ -77,14 +100,29 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                 )
                 # TODO в args передают аргументы
                 # нужные для нарезки видео с игроком
+                # create_player_video(
+                # TODO заменить название исходного файла
+                # видео с игрой нужно скачать
+                # ссылка на видео с игрой task_params["game_link"]
+                input_file = "input_file.mp4"
+                output_file = (
+                    f"video_game_{task_params['game_id']}_"
+                    f"player_{game_player.id}.mp4"
+                )
                 create_player_video.apply_async(
                     args=["Обработка с низким приоритетом"],
-                    queue="slice_player_video_queue",
-                    priority=255,
+                    kwargs={
+                        "input_file": input_file,
+                        "output_file": output_file,
+                        "player": str(player),
+                        "game": game.name,
+                        "user_email": user_email,
+                        "frames": track["frames"],
+                        "priority": 255,
+                    },
                 )
-    print(serializer.errors)
-    # Задача ничего не возвращает.
-    # Возможно из-за способа её вызова через worker_process_init
+    else:
+        logger.error(serializer.errors)
 
 
 @worker_process_init.connect
@@ -95,4 +133,25 @@ def on_pool_process_init(**kwargs):
     task_success.connect(
         bulk_create_gamedataplayer_objects,
         sender=current_app.tasks[get_player_video_frames.name],
+    )
+
+
+def send_success_mail(sender=None, **kwargs):
+    """Вызывает функцию отправки письма о готовности видео с игроком."""
+    player = sender.request.kwargs["player"]
+    game = sender.request.kwargs["game"]
+    user_email = sender.request.kwargs["user_email"]
+    send_info_mail(
+        "Обработка видео завершена",
+        f'Завершена обработка видео игрока {player} в игре "{game}".',
+        user_email,
+    )
+
+
+@worker_process_init.connect
+def mail_success_video_process(**kwargs):
+    """Обработка сигнала task_success таски create_player_video."""
+    task_success.connect(
+        send_success_mail,
+        sender=current_app.tasks[create_player_video.name],
     )

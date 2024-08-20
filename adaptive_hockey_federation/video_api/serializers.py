@@ -31,25 +31,45 @@ class GameFeatureSerializer(serializers.ModelSerializer):
             "token",
         ]
 
+    def sort_player_by_team(
+        self,
+        obj: Game,
+        field_name: str,
+    ) -> list[list[int]]:
+        """
+        Метод для сортировки игроков по командам.
+
+        Сортировка в соответствии с порядком команд в поле team_ids.
+        """
+        game_players = GamePlayer.objects.filter(game_team__game=obj)
+        team_players: list[tuple[int, int]] = list(
+            game_players.values_list("game_team_id", field_name),
+        )
+        teams: dict[int, list[int]] = {
+            team_id: [] for team_id in self.get_team_ids(obj)
+        }
+        for team_id, field in team_players:
+            teams[team_id].append(field)
+        return list(teams.values())
+
     def get_team_ids(self, obj):
         """Метод получения ID команд."""
-        return list(obj.game_teams.values_list("id", flat=True))
+        return list(obj.game_teams.values_list("gameteam_id", flat=True))
 
     def get_player_ids(self, obj):
         """Метод получения ID игроков."""
-        game_players = GamePlayer.objects.filter(game_team__game=obj)
-        return list(game_players.values_list("id", flat=True))
+        return self.sort_player_by_team(obj, "id")
 
     def get_player_numbers(self, obj):
         """Метод получения номеров игроков."""
-        game_players = GamePlayer.objects.filter(game_team__game=obj)
-        return list(game_players.values_list("number", flat=True))
+        return self.sort_player_by_team(obj, "number")
 
     def get_token(self, obj):
         """Метод токена."""
         return settings.YANDEX_DISK_OAUTH_TOKEN
 
 
+# TODO возможно верный сериализатор DS. Уточнить структуру ответа DS
 class TrackingSerializer(serializers.Serializer):
     """Сериализатор, обрабатывающий tracking с фреймами."""
 
@@ -75,6 +95,7 @@ class TrackingSerializer(serializers.Serializer):
         return obj.predicted_number
 
 
+# TODO возможно верный сериализатор DS. Уточнить структуру ответа DS
 class GameDataPlayerSerializer(serializers.Serializer):
     """Сериалатор для маршалинга ответа от сервиса дс-ов."""
 
@@ -83,4 +104,16 @@ class GameDataPlayerSerializer(serializers.Serializer):
     )
     tracking = TrackingSerializer(
         many=True,
+    )
+
+
+# TODO уточнить структуру ответа DS
+class GameDataPlayerSerializerMock(serializers.Serializer):
+    """Сериализатор заглушка ответа DS."""
+
+    number = serializers.IntegerField()
+    team = serializers.IntegerField()
+    counter = serializers.IntegerField()
+    frames = serializers.ListField(
+        child=serializers.IntegerField(),
     )

@@ -1,9 +1,12 @@
+import logging
 from typing import Any
 from urllib.parse import urljoin
 
 import requests
-from requests.exceptions import RequestException
 from django.conf import settings
+from requests.exceptions import RequestException
+
+logger = logging.getLogger(__name__)
 
 
 def check_api_health_status() -> None:
@@ -33,13 +36,17 @@ def send_request_to_process_video(
     :returns: Результат обработки видео.
     :raises RequestException: Если возникла ошибка при обработке видео.
     """
+    logger.info("Отправка запроса к серверу DS.")
     try:
         response = requests.post(
             urljoin(settings.PROCESSING_SERVICE_BASE_URL, "/process"),
             json=data,
+            timeout=(0.5, None),
         )
         return response.json()
     except RequestException as error:
-        raise RequestException(
-            f"Возникла ошибка при попытке обработать видео: {error}",
-        ) from error
+        logger.error(f"Ошибка подключения к серверу распознавания: {error}")
+        return {
+            "message": "Возникла ошибка при попытке обработать видео: "
+            "Ошибка подключения к серверу распознавания.",
+        }

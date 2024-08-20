@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Union
 
 from django.contrib import messages
@@ -25,6 +26,9 @@ from games.mixins import GameCreateUpdateMixin
 from games.models import Game, GamePlayer, GameTeam
 from video_api.tasks import get_player_video_frames
 from video_api.serializers import GameFeatureSerializer
+
+
+logger = logging.getLogger(__name__)
 
 
 class GamesListView(
@@ -241,16 +245,27 @@ def send_game_video_to_process(request, **kwargs):
     """
     game_id = kwargs.get("game_id")
 
-    # TODO Реализация может быть изменена, как функционал celery будет дописан.
     game = get_object_or_404(Game, id=game_id)
     game_data = GameFeatureSerializer(game).data
-    get_player_video_frames.apply_async(data=game_data)
-
-    messages.add_message(
-        request,
-        messages.INFO,
-        "Видео отправлено на обработку, ждите оповещение "
-        "о готовности на электронную почту.",
+    response = get_player_video_frames.apply_async(
+        kwargs={
+            "data": game_data,
+            "user_email": request.user.email,
+        },
     )
+
+    if response.ready() and "message" in response:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            response["message"],
+        )
+    else:
+        messages.add_message(
+            request,
+            messages.INFO,
+            "Видео отправлено на обработку, ждите оповещение "
+            "о готовности на электронную почту.",
+        )
 
     return redirect("games:game_info", game_id=game_id)
