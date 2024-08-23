@@ -63,6 +63,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
     if serializer.is_valid():
         object_data = serializer.validated_data
         game = Game.objects.get(pk=task_params["game_id"])
+        gamedata_players_to_create = []
         with transaction.atomic():
             for track in object_data:
                 try:
@@ -86,11 +87,12 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                     )
                     continue
                 player = Player.objects.get(pk=game_player.id)
-                # TODO возможно следует использовать bulk_create
-                GameDataPlayer.objects.update_or_create(
-                    player=player,
-                    game=game,
-                    defaults={"data": json.dumps(track)},
+                gamedata_players_to_create.append(
+                    GameDataPlayer(
+                        player=player,
+                        game=game,
+                        data=json.dumps(track),
+                    )
                 )
                 logger.info(
                     (
@@ -121,6 +123,8 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                         "priority": 255,
                     },
                 )
+        if gamedata_players_to_create:
+            GameDataPlayer.objects.bulk_create(gamedata_players_to_create)
     else:
         logger.error(serializer.errors)
 
