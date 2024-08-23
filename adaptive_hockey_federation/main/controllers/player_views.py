@@ -529,7 +529,7 @@ def unload_player_game_video(request, **kwargs):
     )
 
     # TODO видео будет автоматически загрузаться пользователю по готовности.
-    # Возможно нужно ресерчить тему WebSockets, SSE
+    # Возможно нужно ресерчить тему WebSockets, SSE (Task 3/3)
     return redirect(
         "main:player_id_games_video",
         pk=player_id,

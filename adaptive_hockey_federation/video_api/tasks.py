@@ -35,6 +35,7 @@ def create_player_video(
     # Мок реализация фреймов для нарезки видео с моментами игрока.
     # Пока подставляются тестовые фреймы.
     # TODO удалить мок реализацию, как в бд появятся фреймы по игрокам.
+    # (! future update)
 
     input_file = kwargs["input_file"]
     output_file = kwargs["output_file"]
@@ -58,7 +59,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
     task_params = sender.request.kwargs["data"]
     user_email = sender.request.kwargs["user_email"]
 
-    # TODO уточнить структуру ответа DS
+    # TODO уточнить структуру ответа DS (Task 1/3)
     serializer = GameDataPlayerSerializerMock(data=result, many=True)
     if serializer.is_valid():
         object_data = serializer.validated_data
@@ -92,7 +93,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                         player=player,
                         game=game,
                         data=json.dumps(track),
-                    )
+                    ),
                 )
                 logger.info(
                     (

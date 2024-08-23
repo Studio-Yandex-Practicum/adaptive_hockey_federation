@@ -415,8 +415,8 @@ class Player(BasePerson):
                     "surname",
                     "patronymic",
                     "birthday",
-                    'position',
-                    'number'
+                    "position",
+                    "number",
                 ],
             ),
         ]
