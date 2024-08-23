@@ -407,8 +407,6 @@ class Player(BasePerson):
         default_related_name = "players"
         verbose_name = "Игрок"
         verbose_name_plural = "Игроки"
-        # TODO Раскомментировать, когда будет ручное добавление игроков
-        # ограничение на дублирование записей
         constraints = [
             models.UniqueConstraint(
                 name="player_unique",
@@ -417,8 +415,8 @@ class Player(BasePerson):
                     "surname",
                     "patronymic",
                     "birthday",
-                    # 'position',
-                    # 'number'
+                    'position',
+                    'number'
                 ],
             ),
         ]
