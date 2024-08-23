@@ -103,10 +103,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                 # TODO в args передают аргументы
                 # нужные для нарезки видео с игроком
                 # create_player_video(
-                # TODO заменить название исходного файла
-                # видео с игрой нужно скачать
-                # ссылка на видео с игрой task_params["game_link"]
-                input_file = "input_file.mp4"
+                input_file = f'{task_params["game_link"]}.mp4'
                 output_file = (
                     f"video_game_{task_params['game_id']}_"
                     f"player_{game_player.id}.mp4"
