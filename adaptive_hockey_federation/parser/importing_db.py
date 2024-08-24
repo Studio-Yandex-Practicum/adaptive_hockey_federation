@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-from django.db import connection
+from django.db import connection, transaction
 from main import models
 from main.models import (DisciplineLevel, DisciplineName, Player, StaffMember,
                          StaffTeamMember, Team)
@@ -155,10 +155,15 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
     models_name = getattr(models, FILE_MODEL_MAP[key])
     if key == "main_player":
         disciplines = parse_disciplines(FIXSTURES_DIR)
+    max_id = 0
     for item in data:
+        max_id = max(max_id, item["id"])
         try:
             if key in MODELS_ONE_FIELD_NAME:
-                model_ins = models_name(id=item["id"], name=item["name"])
+                model_ins = models_name(
+                    id=item["id"],
+                    name=item["name"]
+                )
                 model_ins.save()
             if key == "main_staffmember":
                 model_ins = models_name(
@@ -251,3 +256,6 @@ def importing_real_data_db(FIXSTURES_DIR, file_name: str) -> None:
 
         except Exception as e:
             print(f"Ошибка вставки данных {e} -> {item}")
+    cursor = connection.cursor()
+    cursor = cursor.execute(f"ALTER SEQUENCE {key}_id_seq RESTART WITH {max_id+1};")
+    transaction.commit()
