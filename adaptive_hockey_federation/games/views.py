@@ -1,6 +1,8 @@
 import logging
-from typing import Any, Union
+from dataclasses import dataclass
+from typing import Any
 
+from celery import exceptions as celery_exceptions
 from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -29,6 +31,14 @@ from video_api.serializers import GameFeatureSerializer
 
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class Message:
+    """Сообщение с уровнем важности."""
+
+    level: int
+    text: str
 
 
 class GamesListView(
@@ -108,16 +118,6 @@ class GameCreateView(GameCreateUpdateMixin, CreateView):
     permission_denied_message = Errors.PERMISSION_MISSING.format(
         action=Errors.CREATE_GAME,
     )
-
-    def post(
-        self,
-        request: HttpRequest,
-        *args: Any,
-        **kwargs: Any,
-    ) -> Union[HttpResponseRedirect, HttpResponse]:
-        """Метод для обработки POST-запроса."""
-        self.game_teams = request.POST.get("game_teams")
-        return super().post(request, *args, **kwargs)
 
 
 class GameEditView(GameCreateUpdateMixin, UpdateView):
@@ -235,8 +235,42 @@ class EditTeamPlayersNumbersView(
         return context
 
 
+def send_game_video_to_process(
+    game_id: int,
+    user_email: str = None,
+) -> Message:
+    """Функция формирует данные для запроса к серверу DS."""
+    game = get_object_or_404(Game, id=game_id)
+    game_data = GameFeatureSerializer(game).data
+    task = get_player_video_frames.apply_async(
+        kwargs={
+            "data": game_data,
+            "user_email": user_email,
+        },
+    )
+
+    try:
+        # TODO наверное, не лучший способ поймать ошибку доступа к серверу DS
+        response = task.get(timeout=0.2)
+    except celery_exceptions.TimeoutError:
+        message = Message(
+            messages.INFO,
+            "Видео отправлено на обработку, ждите оповещение "
+            "о готовности на электронную почту.",
+        )
+    else:
+        message = Message(
+            messages.ERROR,
+            response["message"],
+        )
+    return message
+
+
 @login_required
-def send_game_video_to_process(request, **kwargs):
+def send_game_video_to_process_view(
+    request: HttpRequest,
+    **kwargs: int,
+) -> HttpResponseRedirect | HttpResponse:
     """
     Вью функция дли запуска задачи в celery для отправки видео на обработку.
 
@@ -245,27 +279,21 @@ def send_game_video_to_process(request, **kwargs):
     """
     game_id = kwargs.get("game_id")
 
-    game = get_object_or_404(Game, id=game_id)
-    game_data = GameFeatureSerializer(game).data
-    response = get_player_video_frames.apply_async(
-        kwargs={
-            "data": game_data,
-            "user_email": request.user.email,
-        },
-    )
-
-    if response.ready() and "message" in response:
-        messages.add_message(
-            request,
-            messages.ERROR,
-            response["message"],
+    if not Game.objects.get(pk=game_id).video_link:
+        message = Message(
+            messages.WARNING,
+            "Ссылка на видео с игрой не указана.",
         )
     else:
-        messages.add_message(
-            request,
-            messages.INFO,
-            "Видео отправлено на обработку, ждите оповещение "
-            "о готовности на электронную почту.",
+        message = send_game_video_to_process(
+            game_id=game_id,
+            user_email=request.user.email,
         )
+
+    messages.add_message(
+        request,
+        message.level,
+        message.text,
+    )
 
     return redirect("games:game_info", game_id=game_id)
