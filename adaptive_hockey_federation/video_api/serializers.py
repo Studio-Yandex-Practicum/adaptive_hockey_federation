@@ -69,7 +69,7 @@ class GameFeatureSerializer(serializers.ModelSerializer):
         return settings.YANDEX_DISK_OAUTH_TOKEN
 
 
-# TODO возможно верный сериализатор DS. Уточнить структуру ответа DS
+# TODO возможно верный сериализатор DS. Уточнить структуру ответа DS (Task 1/3)
 class TrackingSerializer(serializers.Serializer):
     """Сериализатор, обрабатывающий tracking с фреймами."""
 
@@ -95,7 +95,7 @@ class TrackingSerializer(serializers.Serializer):
         return obj.predicted_number
 
 
-# TODO возможно верный сериализатор DS. Уточнить структуру ответа DS
+# TODO возможно верный сериализатор DS. Уточнить структуру ответа DS (Task 1/3)
 class GameDataPlayerSerializer(serializers.Serializer):
     """Сериалатор для маршалинга ответа от сервиса дс-ов."""
 
@@ -107,7 +107,7 @@ class GameDataPlayerSerializer(serializers.Serializer):
     )
 
 
-# TODO уточнить структуру ответа DS
+# TODO уточнить структуру ответа DS (Task 1/3)
 class GameDataPlayerSerializerMock(serializers.Serializer):
     """Сериализатор заглушка ответа DS."""
 

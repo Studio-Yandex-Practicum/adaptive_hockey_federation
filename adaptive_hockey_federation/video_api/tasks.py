@@ -35,6 +35,7 @@ def create_player_video(
     # Мок реализация фреймов для нарезки видео с моментами игрока.
     # Пока подставляются тестовые фреймы.
     # TODO удалить мок реализацию, как в бд появятся фреймы по игрокам.
+    # (! future update)
 
     input_file = kwargs["input_file"]
     output_file = kwargs["output_file"]
@@ -58,11 +59,12 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
     task_params = sender.request.kwargs["data"]
     user_email = sender.request.kwargs["user_email"]
 
-    # TODO уточнить структуру ответа DS
+    # TODO уточнить структуру ответа DS (Task 1/3)
     serializer = GameDataPlayerSerializerMock(data=result, many=True)
     if serializer.is_valid():
         object_data = serializer.validated_data
         game = Game.objects.get(pk=task_params["game_id"])
+        gamedata_players_to_create = []
         with transaction.atomic():
             for track in object_data:
                 try:
@@ -86,11 +88,12 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                     )
                     continue
                 player = Player.objects.get(pk=game_player.id)
-                # TODO возможно следует использовать bulk_create
-                GameDataPlayer.objects.update_or_create(
-                    player=player,
-                    game=game,
-                    defaults={"data": json.dumps(track)},
+                gamedata_players_to_create.append(
+                    GameDataPlayer(
+                        player=player,
+                        game=game,
+                        data=json.dumps(track),
+                    ),
                 )
                 logger.info(
                     (
@@ -101,10 +104,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                 # TODO в args передают аргументы
                 # нужные для нарезки видео с игроком
                 # create_player_video(
-                # TODO заменить название исходного файла
-                # видео с игрой нужно скачать
-                # ссылка на видео с игрой task_params["game_link"]
-                input_file = "input_file.mp4"
+                input_file = f'{task_params["game_link"]}.mp4'
                 output_file = (
                     f"video_game_{task_params['game_id']}_"
                     f"player_{game_player.id}.mp4"
@@ -121,6 +121,8 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
                         "priority": 255,
                     },
                 )
+        if gamedata_players_to_create:
+            GameDataPlayer.objects.bulk_create(gamedata_players_to_create)
     else:
         logger.error(serializer.errors)
 

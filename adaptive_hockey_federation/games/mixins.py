@@ -34,4 +34,4 @@ class GameCreateUpdateMixin(LoginRequiredMixin, PermissionRequiredMixin):
     #         "games:game_id", kwargs={"pk": self.object.pk}
     #     )
     # TODO: раскомментировать, когда появится контроллер для просмотра
-    #  игры
+    #  игры (! future update)
