@@ -40,6 +40,7 @@ show_return_button = [
     "staff_id_team_create",
     "edit_team_players_numbers",
     "game_edit",
+    "game_info",
 ]
 
 
