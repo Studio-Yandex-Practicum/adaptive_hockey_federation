@@ -3,7 +3,6 @@ from django.dispatch import receiver
 
 from games.models import Game, GamePlayer, GameTeam
 
-# from games.views import send_game_video_to_process
 from main.models import Player, Team
 
 
