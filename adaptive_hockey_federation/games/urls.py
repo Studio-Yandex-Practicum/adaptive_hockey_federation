@@ -28,8 +28,8 @@ games_urlpattern = [
     ),
     path(
         "<int:game_id>/process/",
-        views.send_game_video_to_process,
-        name="send_game_video_to_process",
+        views.send_game_video_to_process_view,
+        name="send_game_video_to_process_view",
     ),
 ]
 

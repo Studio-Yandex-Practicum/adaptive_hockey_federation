@@ -11,7 +11,7 @@
 
     <div style="margin-bottom: 20px;">
         <h4 style="margin: 0;">Название: {{ object.name }}</h4>
-        <h7 style="margin: 0;">Дата: {{ object.date }}</h7>
+        <h6 style="margin: 0;">Дата: {{ object.date }}</h6>
     </div>
 
     <p>Ссылка на видео: <a href="{{ object.video_link }}">{{ object.video_link }}</a></p>
@@ -83,10 +83,11 @@
                 {% else %}
                 <p>К сожалению, информация о второй команде недоступна.</p>
                 {% endif %}
+            </div>
        </div>
     </div>
     <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'games:send_game_video_to_process' game_id=object.pk %}"
+        <a href="{% url 'games:send_game_video_to_process_view' game_id=object.pk %}"
            class="btn btn-secondary text-white"
            style="font-size: 1.2em; background-color: #4CAF50; border: none;"
         >
