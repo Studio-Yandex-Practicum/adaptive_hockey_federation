@@ -37,6 +37,10 @@
 
 
 
+1.6. [Спецификация требований от аналитиков](docs/specification_of_analysts.pdf)
+
+
+
 2. [О проекте](#project)
 
 
