@@ -12,7 +12,6 @@ from yadisk.exceptions import (
     ResourceIsLockedError,
 )
 
-from core.celery import app
 from core.constants import YadiskDirectory
 
 
@@ -91,7 +90,6 @@ def check_player_game_exists_on_disk(player_game_file_name: str) -> bool:
     return check_file_exists_on_disk(player_game_path_on_disk)
 
 
-@app.task
 def download_file_by_link_task(
     video_link: str,
     media_data_path: str,

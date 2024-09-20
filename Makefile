@@ -3,8 +3,6 @@ PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 MANAGE_DIR := $(PROJECT_DIR)/adaptive_hockey_federation/manage.py
 DJANGO_DIR := $(PROJECT_DIR)/adaptive_hockey_federation
 POETRY_RUN := poetry run python
-CELERY_RUN := poetry run celery
-CELERY_APP := core
 DJANGO_RUN := $(POETRY_RUN) $(MANAGE_DIR)
 DEV_DOCK_FILE := $(PROJECT_DIR)/infra/dev/docker-compose.dev.yaml
 DS_DOCK_FILE := $(PROJECT_DIR)/a_hockey-main/app/
@@ -92,8 +90,6 @@ clear-db:
 run:
 	( \
 		trap 'kill 0' EXIT; \
-		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) worker -l info & \
-		cd $(DJANGO_DIR) && $(CELERY_RUN) -A $(CELERY_APP) flower & \
 		cd $(PROJECT_DIR) && $(DJANGO_RUN) runserver \
 	)
 
@@ -128,7 +124,6 @@ pytest:
 
 # Локальный запуск сервера разработки и Celery.
 ds-mock:
-	cd $(DJANGO_DIR)/service/mock_ds_server && $(CELERY_RUN) -A worker.app worker -l info & \
 	cd $(DJANGO_DIR)/service/mock_ds_server && fastapi dev --port 8010 main.py
 
 

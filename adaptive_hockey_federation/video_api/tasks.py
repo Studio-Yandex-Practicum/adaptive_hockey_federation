@@ -2,12 +2,8 @@ import json
 import logging
 import os
 
-from celery import current_app
-from celery.signals import task_success, worker_process_init
-from celery_singleton import Singleton
 from django.db import transaction
 
-from core.celery import app
 from games.models import Game, GameDataPlayer, GamePlayer
 from main.models import Player
 from service.a_hockey_requests import send_request_to_process_video
@@ -19,14 +15,12 @@ from .serializers import GameDataPlayerSerializerMock
 logger = logging.getLogger(__name__)
 
 
-@app.task(base=Singleton)
-def get_player_video_frames(*args, **kwargs):
+def get_player_video_frames(data):
     """Таск для запуска обработки видео."""
     logger.info("Добавлен новый объект игры, запускаем воркер")
-    return send_request_to_process_video(kwargs["data"])
+    return send_request_to_process_video(data)
 
 
-@app.task()
 def create_player_video(
     *args,
     **kwargs,
@@ -125,7 +119,6 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
         logger.error(serializer.errors)
 
 
-@worker_process_init.connect
 def on_pool_process_init(**kwargs):
     # Что бы отрабатывал сигнал task_success
     # https://github.com/celery/celery/issues/2343
@@ -148,7 +141,6 @@ def send_success_mail(sender=None, **kwargs):
     )
 
 
-@worker_process_init.connect
 def mail_success_video_process(**kwargs):
     """Обработка сигнала task_success таски create_player_video."""
     task_success.connect(

@@ -1,8 +1,6 @@
 import logging
 from dataclasses import dataclass
 from typing import Any
-
-from celery import exceptions as celery_exceptions
 from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -26,10 +24,11 @@ from games.constants import Errors, Literals, NumericalValues
 from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
 from games.models import Game, GamePlayer, GameTeam
-from video_api.tasks import get_player_video_frames
+from core.logging import configure_logging
+from service.a_hockey_requests import send_request_to_process_video
 from video_api.serializers import GameFeatureSerializer
 
-
+configure_logging()
 logger = logging.getLogger(__name__)
 
 
@@ -242,27 +241,19 @@ def send_game_video_to_process(
     """Функция формирует данные для запроса к серверу DS."""
     game = get_object_or_404(Game, id=game_id)
     game_data = GameFeatureSerializer(game).data
-    task = get_player_video_frames.apply_async(
-        kwargs={
-            "data": game_data,
-            "user_email": user_email,
-        },
-    )
+    kwargs = {
+        "data": game_data,
+        "user_email": user_email
+    }
 
-    try:
-        # TODO наверное, не лучший способ поймать ошибку доступа к серверу DS
-        response = task.get(timeout=0.2)
-    except celery_exceptions.TimeoutError:
-        message = Message(
-            messages.INFO,
-            "Видео отправлено на обработку, ждите оповещение "
-            "о готовности на электронную почту.",
-        )
-    else:
-        message = Message(
-            messages.ERROR,
-            response["message"],
-        )
+    logger.info("Отправляем видео на обработку")
+    response = send_request_to_process_video(kwargs["data"])
+    # response["message"] = "Видео отправлено на обработку"
+    message = Message(
+        messages.INFO,
+        "Видео отправлено на обработку, ждите оповещение "
+        "о готовности на электронную почту.",
+    )
     return message
 
 
