@@ -162,7 +162,7 @@ PROCESSING_SERVICE_BASE_URL = env('PROCESSING_SERVICE_BASE_URL', default='http:/
 
 API_DOCS_KEY = env("API_DOCS_KEY", default="8f2d9e1b2c4e6f")
 
-YANDEX_DISK_OAUTH_TOKEN = env("YANDEX_DISK_OAUTH_TOKEN", default="ya_oauth_token")
+YANDEX_DISK_OAUTH_TOKEN = env("YANDEX_DISK_OAUTH_TOKEN")  # , default="ya_oauth_token")
 
 MESSAGE_TAGS = {
     messages.DEBUG: "alert-secondary",
