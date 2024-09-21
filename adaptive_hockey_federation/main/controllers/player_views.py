@@ -35,6 +35,7 @@ from main.schemas.player_schema import (
     get_player_fields_personal,
     get_player_table_data,
 )
+from service.a_hockey_requests import check_api_health_status
 from unloads.utils import model_get_queryset
 from video_api.tasks import create_player_video, get_player_video_frames
 from video_api.serializers import GameFeatureSerializer
@@ -515,10 +516,25 @@ def unload_player_game_video(request, **kwargs):
                 "main:player_id_games_video",
                 pk=player_id,
             )
+        try:
+            check_api_health_status()
+        except RequestException:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                "Сервис по обработке видео недоступен",
+
+            )
+            return redirect(
+                "main:player_id_games_video",
+                pk=player_id,
+            )
+
         frames = get_player_video_frames(game_data)
         player_frames = [
             frame["frames"] for frame in frames if frame["number"
                                                          ] == player.number]
+
         create_player_video(input_file=game_path,
                             output_file=player_game_frames_path,
                             frames=player_frames[0])

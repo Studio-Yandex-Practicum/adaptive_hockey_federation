@@ -1,15 +1,15 @@
-import json
+# import json
 import logging
 import os
 
-from django.db import transaction
+# from django.db import transaction
 
-from games.models import Game, GameDataPlayer, GamePlayer
-from main.models import Player
+# from games.models import Game, GameDataPlayer, GamePlayer
+# from main.models import Player
 from service.a_hockey_requests import send_request_to_process_video
 from service.video_processing import slicing_video_with_player_frames
 # from users.utilits.send_mails import send_info_mail
-from .serializers import GameDataPlayerSerializerMock
+# from .serializers import GameDataPlayerSerializerMock
 
 
 logger = logging.getLogger(__name__)
@@ -41,84 +41,83 @@ def create_player_video(
     slicing_video_with_player_frames(input_file, output_file, frames)
     return f"Видео обработано. {args}"
 
+# TODO раскомментировать после добавления celery
+# def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
+#     """
+#     Сохранение параметров видео игроков от сервера DS.
+#     Вызов таски нарезки видео.
+#     """
+#     result = kwargs.get("result")
+#     task_params = sender.request.kwargs["data"]
+#     user_email = sender.request.kwargs["user_email"]
 
-def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
-    """
-    Сохранение параметров видео игроков от сервера DS.
+#     # TODO уточнить структуру ответа DS
+#     serializer = GameDataPlayerSerializerMock(data=result, many=True)
+#     if serializer.is_valid():
+#         object_data = serializer.validated_data
+#         game = Game.objects.get(pk=task_params["game_id"])
+#         with transaction.atomic():
+#             for track in object_data:
+#                 try:
+#                     game_player = GamePlayer.objects.get(
+#                         game_team__game=game,
+#                         game_team_id=track["team"],
+#                         number=track["number"],
+#                     )
+#                 except GamePlayer.DoesNotExist:
+#                     logger.warning(
+#                         f"Игрок с номером {track['number']} "
+#                         f"команды {track['team']} "
+#                         f"в игре {task_params['game_id']} не найден.",
+#                     )
+#                     continue
+#                 except GamePlayer.MultipleObjectsReturned:
+#                     logger.warning(
+#                         f"В команде {track['team']} "
+#                         f"несколько игроков с номером {track['number']} "
+#                         f"участвовало в игре {task_params['game_id']}.",
+#                     )
+#                     continue
+#                 player = Player.objects.get(pk=game_player.id)
+#                 # TODO возможно следует использовать bulk_create
+#                 GameDataPlayer.objects.update_or_create(
+#                     player=player,
+#                     game=game,
+#                     defaults={"data": json.dumps(track)},
+#                 )
+#                 logger.info(
+#                     (
+#                         f"Cоздаем видео для игрока "
+#                         f"{player.get_name_and_position()}"
+#                     ),
+#                 )
+#                 # TODO в args передают аргументы
+#                 # нужные для нарезки видео с игроком
+#                 # create_player_video(
+#                 # TODO заменить название исходного файла
+#                 # видео с игрой нужно скачать
+#                 # ссылка на видео с игрой task_params["game_link"]
+#                 input_file = "input_file.mp4"
+#                 output_file = (
+#                     f"video_game_{task_params['game_id']}_"
+#                     f"player_{game_player.id}.mp4"
+#                 )
+#                 create_player_video.apply_async(
+#                     args=["Обработка с низким приоритетом"],
+#                     kwargs={
+#                         "input_file": input_file,
+#                         "output_file": output_file,
+#                         "player": str(player),
+#                         "game": game.name,
+#                         "user_email": user_email,
+#                         "frames": track["frames"],
+#                         "priority": 255,
+#                     },
+#                 )
+#     else:
+#         logger.error(serializer.errors)
 
-    Вызов таски нарезки видео.
-    """
-    result = kwargs.get("result")
-    task_params = sender.request.kwargs["data"]
-    user_email = sender.request.kwargs["user_email"]
-
-    # TODO уточнить структуру ответа DS
-    serializer = GameDataPlayerSerializerMock(data=result, many=True)
-    if serializer.is_valid():
-        object_data = serializer.validated_data
-        game = Game.objects.get(pk=task_params["game_id"])
-        with transaction.atomic():
-            for track in object_data:
-                try:
-                    game_player = GamePlayer.objects.get(
-                        game_team__game=game,
-                        game_team_id=track["team"],
-                        number=track["number"],
-                    )
-                except GamePlayer.DoesNotExist:
-                    logger.warning(
-                        f"Игрок с номером {track['number']} "
-                        f"команды {track['team']} "
-                        f"в игре {task_params['game_id']} не найден.",
-                    )
-                    continue
-                except GamePlayer.MultipleObjectsReturned:
-                    logger.warning(
-                        f"В команде {track['team']} "
-                        f"несколько игроков с номером {track['number']} "
-                        f"участвовало в игре {task_params['game_id']}.",
-                    )
-                    continue
-                player = Player.objects.get(pk=game_player.id)
-                # TODO возможно следует использовать bulk_create
-                GameDataPlayer.objects.update_or_create(
-                    player=player,
-                    game=game,
-                    defaults={"data": json.dumps(track)},
-                )
-                logger.info(
-                    (
-                        f"Cоздаем видео для игрока "
-                        f"{player.get_name_and_position()}"
-                    ),
-                )
-                # TODO в args передают аргументы
-                # нужные для нарезки видео с игроком
-                # create_player_video(
-                # TODO заменить название исходного файла
-                # видео с игрой нужно скачать
-                # ссылка на видео с игрой task_params["game_link"]
-                input_file = "input_file.mp4"
-                output_file = (
-                    f"video_game_{task_params['game_id']}_"
-                    f"player_{game_player.id}.mp4"
-                )
-                create_player_video.apply_async(
-                    args=["Обработка с низким приоритетом"],
-                    kwargs={
-                        "input_file": input_file,
-                        "output_file": output_file,
-                        "player": str(player),
-                        "game": game.name,
-                        "user_email": user_email,
-                        "frames": track["frames"],
-                        "priority": 255,
-                    },
-                )
-    else:
-        logger.error(serializer.errors)
-
-# TODO функция не работает без celery
+# TODO раскомментировать после добавления celery
 # def on_pool_process_init(**kwargs):
 #     # Что бы отрабатывал сигнал task_success
 #     # https://github.com/celery/celery/issues/2343
@@ -129,7 +128,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
 #     )
 
 
-# TODO функция не работает без celery
+# TODO раскомментировать после добавления celery
 # def send_success_mail(sender=None, **kwargs):
 #     """Вызывает функцию отправки письма о готовности видео с игроком."""
 #     player = sender.request.kwargs["player"]
@@ -142,7 +141,7 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
 #     )
 
 
-# TODO функция не работает без celery
+# TODO раскомментировать после добавления celery
 # def mail_success_video_process(**kwargs):
 #     """Обработка сигнала task_success таски create_player_video."""
 #     task_success.connect(
