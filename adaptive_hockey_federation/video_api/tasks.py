@@ -15,10 +15,10 @@ from .serializers import GameDataPlayerSerializerMock
 logger = logging.getLogger(__name__)
 
 
-def get_player_video_frames(data):
+def get_player_video_frames(game_data):
     """Таск для запуска обработки видео."""
     logger.info("Добавлен новый объект игры, запускаем воркер")
-    return send_request_to_process_video(data)
+    return send_request_to_process_video(game_data)
 
 
 def create_player_video(
