@@ -8,7 +8,7 @@ from games.models import Game, GameDataPlayer, GamePlayer
 from main.models import Player
 from service.a_hockey_requests import send_request_to_process_video
 from service.video_processing import slicing_video_with_player_frames
-from users.utilits.send_mails import send_info_mail
+# from users.utilits.send_mails import send_info_mail
 from .serializers import GameDataPlayerSerializerMock
 
 
@@ -118,32 +118,34 @@ def bulk_create_gamedataplayer_objects(sender=None, **kwargs):
     else:
         logger.error(serializer.errors)
 
-
-def on_pool_process_init(**kwargs):
-    # Что бы отрабатывал сигнал task_success
-    # https://github.com/celery/celery/issues/2343
-    # https://django.fun/docs/celery/5.1/userguide/signals/#worker-process-init
-    task_success.connect(
-        bulk_create_gamedataplayer_objects,
-        sender=current_app.tasks[get_player_video_frames.name],
-    )
-
-
-def send_success_mail(sender=None, **kwargs):
-    """Вызывает функцию отправки письма о готовности видео с игроком."""
-    player = sender.request.kwargs["player"]
-    game = sender.request.kwargs["game"]
-    user_email = sender.request.kwargs["user_email"]
-    send_info_mail(
-        "Обработка видео завершена",
-        f'Завершена обработка видео игрока {player} в игре "{game}".',
-        user_email,
-    )
+# TODO функция не работает без celery
+# def on_pool_process_init(**kwargs):
+#     # Что бы отрабатывал сигнал task_success
+#     # https://github.com/celery/celery/issues/2343
+#     # https://django.fun/docs/celery/5.1/userguide/signals/#worker-process-init
+#     task_success.connect(
+#         bulk_create_gamedataplayer_objects,
+#         sender=current_app.tasks[get_player_video_frames.name],
+#     )
 
 
-def mail_success_video_process(**kwargs):
-    """Обработка сигнала task_success таски create_player_video."""
-    task_success.connect(
-        send_success_mail,
-        sender=current_app.tasks[create_player_video.name],
-    )
+# TODO функция не работает без celery
+# def send_success_mail(sender=None, **kwargs):
+#     """Вызывает функцию отправки письма о готовности видео с игроком."""
+#     player = sender.request.kwargs["player"]
+#     game = sender.request.kwargs["game"]
+#     user_email = sender.request.kwargs["user_email"]
+#     send_info_mail(
+#         "Обработка видео завершена",
+#         f'Завершена обработка видео игрока {player} в игре "{game}".',
+#         user_email,
+#     )
+
+
+# TODO функция не работает без celery
+# def mail_success_video_process(**kwargs):
+#     """Обработка сигнала task_success таски create_player_video."""
+#     task_success.connect(
+#         send_success_mail,
+#         sender=current_app.tasks[create_player_video.name],
+#     )

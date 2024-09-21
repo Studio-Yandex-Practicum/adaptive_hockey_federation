@@ -2,8 +2,6 @@ import logging
 from dataclasses import dataclass
 from requests.exceptions import RequestException
 from typing import Any
-# TODO раскоментировать после добавления celery
-# from celery import exceptions as celery_exceptions
 from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -249,32 +247,8 @@ def send_game_video_to_process(
     game_data = GameFeatureSerializer(game).data
     kwargs = {
         "data": game_data,
-        "user_email": user_email
+        "user_email": user_email,
     }
-    # TODO раскомментировать после добавления celery
-    # task = get_player_video_frames.apply_async(
-    #     kwargs={
-    #         "data": game_data,
-    #         "user_email": user_email,
-    #     },
-    # )
-
-    # try:
-    #     # TODO наверное, не лучший способ поймать ошибку доступа к серверу DS
-    #     response = task.get(timeout=0.2)
-    # except celery_exceptions.TimeoutError:
-    #     message = Message(
-    #         messages.INFO,
-    #         "Видео отправлено на обработку, ждите оповещение "
-    #         "о готовности на электронную почту.",
-    #     )
-    # else:
-    #     message = Message(
-    #         messages.ERROR,
-    #         response["message"],
-    #     )
-
-    #
     try:
         check_api_health_status()
     except RequestException as error:

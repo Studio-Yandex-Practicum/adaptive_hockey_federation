@@ -14,7 +14,6 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from celery import chain
 
 from requests.exceptions import RequestException
 
@@ -474,38 +473,15 @@ def unload_player_game_video(request, **kwargs):
     if check_player_game_exists_on_disk(player_game_file_name):
         # Проверяем есть ли видео с моментами игрока на я.диске.
 
-        process_chain = chain(
-            # TODO реализовать таску по отправке ссылки пользователю
-        )
+        # process_chain = chain(
+        # TODO реализовать таску по отправке ссылки пользователю
+        # )
 
         message_text = "Ссылка для скачивания видео отправлена на почту."
     elif GameDataPlayer.objects.filter(player=player, game=game).exists():
         # Проверяем если ли фреймы с игроком в бд. Если есть, то:
 
-        process_chain = chain(
-            download_file_by_link_task.si(game.video_link, game_path).set(
-                queue="download_game_video_queue",
-            ),
-            create_player_video.si(
-                game_path,
-                player_game_frames_path,
-                player.id,
-                game.id,
-            ).set(queue="slice_player_video_queue"),
-            # TODO реализовать таску по загрузке видео с игроком на Я.диск
-            # TODO реализовать таску по отправке ссылки пользователю
-        )
-
-        message_text = (
-            "Видео находится в обработке. "
-            "Ссылка для скачивания видео будет отправлена на почту."
-        )
-    else:
-        # TODO раскомментировать после добавления celery
-        # Если нет ни видео, не фреймов, то запускаем полный цикл тасков.
-
         # process_chain = chain(
-        #     # get_player_video_frames.si().set(queue="process_queue"),
         #     download_file_by_link_task.si(game.video_link, game_path).set(
         #         queue="download_game_video_queue",
         #     ),
@@ -518,6 +494,15 @@ def unload_player_game_video(request, **kwargs):
         #     # TODO реализовать таску по загрузке видео с игроком на Я.диск
         #     # TODO реализовать таску по отправке ссылки пользователю
         # )
+
+        message_text = (
+            "Видео находится в обработке. "
+            "Ссылка для скачивания видео будет отправлена на почту."
+        )
+    else:
+        # Если нет ни видео, не фреймов, то запускаем полный цикл тасков.
+        #     # TODO реализовать таску по загрузке видео с игроком на Я.диск
+        #     # TODO реализовать таску по отправке ссылки пользователю
         try:
             download_file_by_link_task(game.video_link, game_path)
         except RequestException as e:
@@ -530,7 +515,6 @@ def unload_player_game_video(request, **kwargs):
                 "main:player_id_games_video",
                 pk=player_id,
             )
-        print(GameDataPlayer.objects.filter(player=player, game=game))
         frames = get_player_video_frames(game_data)
         player_frames = [
             frame["frames"] for frame in frames if frame["number"
@@ -542,8 +526,6 @@ def unload_player_game_video(request, **kwargs):
             "Видео находится в обработке. "
             "Ссылка для скачивания видео будет отправлена на почту."
         )
-
-    # process_chain.apply_async()
 
     messages.add_message(
         request,
