@@ -26,8 +26,6 @@ pytest-subtests = "^0.12.1"
 djangorestframework = "^3.15.1"
 drf-yasg = "^1.21.7"
 
-celery = {extras = ["redis"], version = "^5.4.0"}
-celery-singleton = "^0.3.1"
 yadisk = "^3.1.0"
 [tool.poetry.group.dev.dependencies]
 setuptools = "^70.0.0"
@@ -38,7 +36,6 @@ django-extensions = "^3.2.3"
 factory-boy = "^3.3.0"
 types-Pillow = "*"
 
-flower = "^2.0.1"
 opencv-python = "^4.10.0.84"
 fastapi = {extras = ["standard"], version = "^0.112.0"}
 [tool.poetry.group.test.dependencies]

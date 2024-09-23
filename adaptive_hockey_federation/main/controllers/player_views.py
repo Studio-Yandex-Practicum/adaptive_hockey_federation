@@ -14,7 +14,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from celery import chain
+
+from requests.exceptions import RequestException
 
 from core.constants import Directory, FileConstants, PLAYER_GAME_NAME
 from core.utils import is_uploaded_file_valid
@@ -34,8 +35,10 @@ from main.schemas.player_schema import (
     get_player_fields_personal,
     get_player_table_data,
 )
+from service.a_hockey_requests import check_api_health_status
 from unloads.utils import model_get_queryset
-from video_api.tasks import create_player_video
+from video_api.tasks import create_player_video, get_player_video_frames
+from video_api.serializers import GameFeatureSerializer
 
 
 class PlayersListView(
@@ -438,7 +441,7 @@ def unload_player_game_video(request, **kwargs):
     player_id = kwargs["player_id"]
     player = get_object_or_404(Player, pk=player_id)
     game = get_object_or_404(Game, pk=kwargs["game_id"])
-
+    game_data = GameFeatureSerializer(game).data
     player_game_file_name = PLAYER_GAME_NAME.format(
         surname=player.surname,
         name=player.name,
@@ -471,27 +474,27 @@ def unload_player_game_video(request, **kwargs):
     if check_player_game_exists_on_disk(player_game_file_name):
         # Проверяем есть ли видео с моментами игрока на я.диске.
 
-        process_chain = chain(
-            # TODO реализовать таску по отправке ссылки пользователю
-        )
+        # process_chain = chain(
+        # TODO реализовать таску по отправке ссылки пользователю
+        # )
 
         message_text = "Ссылка для скачивания видео отправлена на почту."
     elif GameDataPlayer.objects.filter(player=player, game=game).exists():
         # Проверяем если ли фреймы с игроком в бд. Если есть, то:
 
-        process_chain = chain(
-            download_file_by_link_task.si(game.video_link, game_path).set(
-                queue="download_game_video_queue",
-            ),
-            create_player_video.si(
-                game_path,
-                player_game_frames_path,
-                player.id,
-                game.id,
-            ).set(queue="slice_player_video_queue"),
-            # TODO реализовать таску по загрузке видео с игроком на Я.диск
-            # TODO реализовать таску по отправке ссылки пользователю
-        )
+        # process_chain = chain(
+        #     download_file_by_link_task.si(game.video_link, game_path).set(
+        #         queue="download_game_video_queue",
+        #     ),
+        #     create_player_video.si(
+        #         game_path,
+        #         player_game_frames_path,
+        #         player.id,
+        #         game.id,
+        #     ).set(queue="slice_player_video_queue"),
+        #     # TODO реализовать таску по загрузке видео с игроком на Я.диск
+        #     # TODO реализовать таску по отправке ссылки пользователю
+        # )
 
         message_text = (
             "Видео находится в обработке. "
@@ -499,28 +502,46 @@ def unload_player_game_video(request, **kwargs):
         )
     else:
         # Если нет ни видео, не фреймов, то запускаем полный цикл тасков.
+        #     # TODO реализовать таску по загрузке видео с игроком на Я.диск
+        #     # TODO реализовать таску по отправке ссылки пользователю
+        try:
+            download_file_by_link_task(game.video_link, game_path)
+        except RequestException as e:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                f"Произошла ошибка при скачивании видео: {e}",
+            )
+            return redirect(
+                "main:player_id_games_video",
+                pk=player_id,
+            )
+        try:
+            check_api_health_status()
+        except RequestException:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                "Сервис по обработке видео недоступен",
 
-        process_chain = chain(
-            # get_player_video_frames.si().set(queue="process_queue"),
-            download_file_by_link_task.si(game.video_link, game_path).set(
-                queue="download_game_video_queue",
-            ),
-            create_player_video.si(
-                game_path,
-                player_game_frames_path,
-                player.id,
-                game.id,
-            ).set(queue="slice_player_video_queue"),
-            # TODO реализовать таску по загрузке видео с игроком на Я.диск
-            # TODO реализовать таску по отправке ссылки пользователю
-        )
+            )
+            return redirect(
+                "main:player_id_games_video",
+                pk=player_id,
+            )
 
+        frames = get_player_video_frames(game_data)
+        player_frames = [
+            frame["frames"] for frame in frames if frame["number"
+                                                         ] == player.number]
+
+        create_player_video(input_file=game_path,
+                            output_file=player_game_frames_path,
+                            frames=player_frames[0])
         message_text = (
             "Видео находится в обработке. "
             "Ссылка для скачивания видео будет отправлена на почту."
         )
-
-    process_chain.apply_async()
 
     messages.add_message(
         request,

@@ -42,12 +42,15 @@ def version() -> JSONResponse:
 @app.post("/process")
 async def process(request_data: RequestData) -> JSONResponse:
     """Имитация распознавания видео."""
-    task = mock_ds_process.apply_async(
-        kwargs={
-            "data": dict(request_data),
-        },
-    )
-    response = task.get()
+    #  TODO раскомментировать после добавления celery
+    # task = mock_ds_process.apply_async(
+    #     kwargs={
+    #         "data": dict(request_data),
+    #     },
+    # )
+    # response = task.get()
+    data = {"data": request_data.model_dump()}
+    response = mock_ds_process(**data)
     return JSONResponse(content=response)
 
 
@@ -57,3 +60,9 @@ def clean() -> JSONResponse:
     return JSONResponse(
         content={"Removed": "OK", "Objects": 0, "Size": "0 Mb"},
     )
+
+
+@app.get("/health")
+def health() -> JSONResponse:
+    """Проверка статуса DS сервера."""
+    return JSONResponse(content={"status": "OK", "version": 1.0})

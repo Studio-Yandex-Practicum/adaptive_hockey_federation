@@ -1,19 +1,15 @@
+import logging
 import random
 from time import sleep
 
-from celery import Celery
-from celery.utils.log import get_task_logger
-
 from constants import DELAY, FRAMES_QUANTITY, MAX_FRAMES, MIN_FRAMES
+from adaptive_hockey_federation.core.logging import configure_logging
+
+logger = logging.getLogger(__name__)
+
+configure_logging()
 
 
-app = Celery(__name__)
-app.config_from_object("celeryconfig")
-
-logger = get_task_logger(__name__)
-
-
-@app.task(name="mock_ds_process")
 def mock_ds_process(*args, **kwargs) -> list[dict[str, int | list[int]]]:
     logger.info("Старт заглушки DS сервера")
     sleep(DELAY)
