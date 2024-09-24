@@ -85,7 +85,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image for Production
-        if: github.ref == 'refs/heads/master'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -93,3 +92,89 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy changes on server
+    runs-on: ubuntu-latest
+    environment:
+      name: stage_deploy
+    needs: [pytest, code_style_pep8, build_and_push]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      - name: Create folder for deploy
+        run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+
+      - name: Copy dev folder to VPS
+        run: |
+          scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+
+      - name: Execute commands on VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.TEST_RSA_SECRET_KEY }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+            rm .env
+            touch .env
+
+            echo HOST=${{ secrets.HOST }} >> .env
+            echo PORT=${{ secrets.PORT }} >> .env
+            echo IMAGE_COMPOSE=${{ secrets.IMAGE_COMPOSE }} >> .env
+            echo ST=${{ secrets.ST }} >> .env
+
+            echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+            echo DEBUG=${{ secrets.DEBUG }} >> .env
+            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+            echo CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }} >> .env
+
+            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+            echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+            echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+
+            echo EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }} >> .env
+            echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+            echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
+            echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+            echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+            echo EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }} >> .env
+
+            # TODO Добавить копирование переменных с конфигами для Celery и Redis
+
+            cd infra/prod/
+            sudo systemctl stop adaptive_hockey_federation.service
+            docker system prune --force
+
+            # Installing defend service for app
+            sudo cp -f /home/production/adaptive_hockey_federation/infra/prod/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
+            sudo systemctl daemon-reload
+            sudo systemctl start adaptive_hockey_federation.service
+
+            sudo systemctl is-active --quiet adaptive_hockey_federation.service
+            until [ $? -eq 0 ]; do
+              echo "Waiting for adaptive_hockey_federation.service to be active..."
+              sleep 5
+              sudo systemctl is-active --quiet adaptive_hockey_federation.service
+            done
+
+            echo "adaptive_hockey_federation.service is active"
+
+            docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+            docker exec adaptive_hockey_federation python manage.py migrate
