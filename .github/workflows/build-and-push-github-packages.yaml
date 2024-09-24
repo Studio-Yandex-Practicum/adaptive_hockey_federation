@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - dev
+      - feature/convert_ci-cd_to_the_prod
 
 env:
   REGISTRY: ghcr.io
