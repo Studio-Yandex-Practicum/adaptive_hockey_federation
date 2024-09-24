@@ -11,8 +11,8 @@ FROM python:3.11-slim-bullseye
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-COPY --from=builder /app /app
+# COPY --from=builder /app /app
 COPY adaptive_hockey_federation/ ./
-ENTRYPOINT ["/entrypoint.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["/app/.venv/bin/gunicorn", "adaptive_hockey_federation.wsgi:application", "--bind", "0:8000" ]
