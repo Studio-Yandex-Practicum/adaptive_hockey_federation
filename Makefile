@@ -31,6 +31,8 @@ help:
 	@echo "	run             - $(SHELL_GREEN)Команда для локального запуска проекта.$(SHELL_NC)."
 	@echo "	fill-db         - $(SHELL_GREEN)Команда для заполнения базы данных реальными данными из json фикстур.$(SHELL_NC)."
 	@echo "	fill-test-db    - $(SHELL_GREEN)Команда для заполнения базы данных тестовыми данными при помощи фабрик генерации данных.$(SHELL_NC)."
+	@echo "	export-db       - $(SHELL_GREEN)Команда для экспорта данных из БД в JSON файл.$(SHELL_NC)."
+	@echo "	import-db       - $(SHELL_GREEN)Команда для импорта данных из JSON файла в БД.$(SHELL_NC)."
 	@echo "	pytest          - $(SHELL_GREEN)Команда для прогона юнит тестов pytest.$(SHELL_NC)."
 	@echo "	shell           - $(SHELL_GREEN)Команда для запуска Django-shell_plus.$(SHELL_NC)."
 	@echo "	ds-mock         - $(SHELL_GREEN)Команда для запуска имитации DS сервера (порт 8010).$(SHELL_NC)."
@@ -119,6 +121,16 @@ fill-test-db:
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --unload
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --game --amount 10
 	cd $(PROJECT_DIR) && $(DJANGO_RUN) fill-test-db --json-player-data --amount 10
+
+
+# Экспорт данных из бд
+export-db:
+	cd $(DJANGO_DIR) && $(DJANGO_RUN) export-db
+
+
+# Импорт данных в бд
+import-db:
+	cd $(DJANGO_DIR) && $(DJANGO_RUN) import-db
 
 
 # Прогон тестов с помощью pytest.

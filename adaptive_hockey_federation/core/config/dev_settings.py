@@ -29,12 +29,15 @@ DATABASES = {
 }
 
 DJANGO_SUPERUSER_USERNAME = env("DJANGO_SUPERUSER_USERNAME", default="admin")
-DJANGO_SUPERUSER_EMAIL = env("DJANGO_SUPERUSER_EMAIL", default="admin@admin.ru")
+DJANGO_SUPERUSER_EMAIL = env(
+    "DJANGO_SUPERUSER_EMAIL", default="admin@admin.ru"
+)
 DJANGO_SUPERUSER_PASSWORD = env("DJANGO_SUPERUSER_PASSWORD", default="admin")
 
 FIXSTURES_DIR = BASE_DIR / "core" / "fixtures"
 JSON_PARSER_FILE = "data.json"
 FIXSTURES_FILE = FIXSTURES_DIR / JSON_PARSER_FILE
+DB_DUMP_FILE = FIXSTURES_DIR / "db_dump.json"
 RESOURSES_ROOT = BASE_DIR / "resourses"
 
 # Важен порядок ключей для вставки/удаления
