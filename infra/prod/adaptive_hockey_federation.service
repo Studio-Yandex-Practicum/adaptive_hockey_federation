@@ -1,0 +1,31 @@
+[Unit]
+
+Description=adaptive_hockey_federation
+Requires=docker.service
+After=docker.service
+
+[Service]
+
+Restart=always
+RestartSec=5
+TimeOutStartSec=1200
+User=production
+
+WorkingDirectory=/home/production/adaptive_hockey_federation/infra/prod/
+
+ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env down
+ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull
+
+# compose up
+ExecStart=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env up
+
+# Call when daemon allready stop
+ExecStop=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env down
+
+# Call when daemon already start
+ExecStartPost=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env ps
+
+
+[Install]
+
+WantedBy=multi-user.target
