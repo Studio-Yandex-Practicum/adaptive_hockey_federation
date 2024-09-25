@@ -93,34 +93,33 @@ jobs:
   #         tags: ${{ steps.meta.outputs.tags }}
   #         labels: ${{ steps.meta.outputs.labels }}
 
-  deploy:
-    name: Deploy changes on server
-    runs-on: ubuntu-latest
-    environment:
-      name: prod_deploy
-    # needs: [pytest, code_style_pep8, build_and_push]
-    steps:
+    deploy:
+      name: Deploy changes on server
+      runs-on: ubuntu-latest
+      environment:
+        name: prod_deploy
+      # needs: pytest
+      steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: feature/convert_ci-cd_to_the_prod
+        # with:
+        #   ref: dev
 
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-
-          # Указываем параметры команды ssh-keyscan:
-          ssh-keyscan -H ${{ secrets.HOST }} -t rsa > ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-
           echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+          chmod 600 ~/.ssh/id_rsa
+      - name: Create folder for deploy
+        run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
         run: |
-          # scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
-          # scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
 
       - name: Execute commands on VPS
         uses: appleboy/ssh-action@master
@@ -129,7 +128,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.TEST_RSA_SECRET_KEY }}
           script: |
-            cd prodiction/${{ env.DEPLOY_PATH }}
+            cd ${{ env.DEPLOY_PATH }}
             rm .env
             touch .env
 
