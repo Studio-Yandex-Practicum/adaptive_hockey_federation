@@ -109,17 +109,17 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/authorized_keys
           chmod 644 ~/.ssh/known_hosts
           echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
       - name: Create folder for deploy
-        run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p prodiction/${{ env.DEPLOY_PATH }}/infra
+        run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
         run: |
-          # scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:prodiction/${{ env.DEPLOY_PATH }}/infra/
-          # scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:prodiction/${{ env.DEPLOY_PATH }}/infra/
+          # scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          # scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
 
       - name: Execute commands on VPS
         uses: appleboy/ssh-action@master
