@@ -9,6 +9,7 @@ env:
     REGISTRY: ghcr.io
     IMAGE_NAME: ${{ github.repository }}
     DEPLOY_PATH: adaptive_hockey_federation
+    USERNAME: production
 
 defaults:
   run:
@@ -113,22 +114,23 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
           echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
       - name: Check SSH key
         run: ssh-keygen -lf ~/.ssh/id_rsa
+
       - name: Create folder for deploy
-      #   # run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
-        run: ssh -vvv production@84.201.161.166 mkdir -p ${{ env.DEPLOY_PATH }}/infra
+        run: ssh -vvv ${{ env.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       - name: Copy dev folder to VPS
         run: |
-          scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
-          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ env.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ env.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
 
       - name: Execute commands on VPS
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          username: ${{ env.USERNAME }}
           key: ${{ secrets.TEST_RSA_SECRET_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
@@ -158,8 +160,6 @@ jobs:
             echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
             echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
             echo EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }} >> .env
-
-            # TODO Добавить копирование переменных с конфигами для Celery и Redis
 
             cd infra/prod/
             sudo systemctl stop adaptive_hockey_federation.service
