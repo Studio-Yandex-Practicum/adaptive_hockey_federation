@@ -109,7 +109,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/authorized_keys
+          ssh-keyscan -f ${{ secrets.HOST }} > ~/.ssh/authorized_keys
           chmod 644 ~/.ssh/known_hosts
           echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
