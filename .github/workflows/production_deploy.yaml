@@ -109,24 +109,14 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan -H jetrai.online > ~/.ssh/known_hosts
+          ssh-keyscan -H 84.201.161.166 > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          echo ${{ secrets.TEST_RSA_SECRET_KEY }} > ~/.ssh/id_rsa
+          echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
       - name: Create folder for deploy
       #   # run: ssh -vvv ${{ secrets.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
-        run: ssh -vvv production@jetrai.online mkdir -p ${{ env.DEPLOY_PATH }}/infra
-      # - name: Copy docker-compose.yml via ssh
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: jetrai.online
-      #     username: production
-      #     key: ${{ secrets.TEST_RSA_SECRET_KEY }}
-      #     # passphrase: ${{ secrets.SSH_PASSPHRASE }}
-      #     source: "infra/"
-      #     target: ${{ env.DEPLOY_PATH }}
-      #     overwrite: true
-      #     strip_components: 1
+        run: ssh -vvv production@84.201.161.166 mkdir -p ${{ env.DEPLOY_PATH }}/infra
+
       - name: Copy dev folder to VPS
         run: |
           scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
