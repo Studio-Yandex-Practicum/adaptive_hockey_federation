@@ -115,7 +115,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "/infra/"
+          source: "infra"
           target: "${{ env.DEPLOY_PATH }}"
           overwrite: true
           # strip_components: 1
