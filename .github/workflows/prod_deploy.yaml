@@ -104,23 +104,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up SSH
-        run: |
-          # mkdir -p ~/.ssh
-          # chmod 700 ~/.ssh
-          # ssh-keyscan -H 84.201.161.166 > ~/.ssh/known_hosts
-          # chmod 644 ~/.ssh/known_hosts
-          # echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          # chmod 600 ~/.ssh/id_rsa
-          install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} > ~/.ssh/known_hosts
+      - name: Copy docker-compose.yml via ssh
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          source: "infra/"
+          target: ${{ env.DEPLOY_PATH }}
+          overwrite: true
+          strip_components: 1
+
+      # - name: Set up SSH
+      #   run: |
+      #     mkdir -p ~/.ssh
+      #     chmod 700 ~/.ssh
+      #     ssh-keyscan -H 84.201.161.166 > ~/.ssh/known_hosts
+      #     chmod 644 ~/.ssh/known_hosts
+      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
       
       # - name: Check SSH key
       #   run: ssh-keygen -lf ~/.ssh/id_rsa
 
-      - name: Create folder for deploy
-        run: ssh -vvv ${{ env.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
+      # - name: Create folder for deploy
+      #   run: ssh -vvv ${{ env.USERNAME }}@${{ secrets.HOST }} mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
       # - name: Copy dev folder to VPS
       #   run: |
