@@ -111,7 +111,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "infra/prod"
-          target: "${{ env.DEPLOY_PATH }}/infra/prod"
+          target: "${{ env.DEPLOY_PATH }}/infra"
           overwrite: true
       #     # strip_components: 1
       - name: Copy nginx via ssh
@@ -122,7 +122,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "infra/nginx" 
-          target: "${{ env.DEPLOY_PATH }}/infra/nginx"
+          target: "${{ env.DEPLOY_PATH }}/infra"
           overwrite: true
       #     # strip_components: 1
   
