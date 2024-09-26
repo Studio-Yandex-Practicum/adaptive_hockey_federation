@@ -114,7 +114,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
       
       - name: Check SSH key
-        run: ssh-keygen -lf ~/.ssh/private.key
+        run: ssh-keygen -lf ~/.ssh/id_rsa
 
       - name: Create folder for deploy
         run: ssh -vvv ${{ env.USERNAME }}@84.201.161.166 mkdir -p ${{ env.DEPLOY_PATH }}/infra
