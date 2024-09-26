@@ -103,7 +103,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy infra via ssh
+      - name: Copy prod via ssh
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -111,7 +111,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "infra/prod" 
-          target: ${{ env.DEPLOY_PATH }}/infra
+          target: ${{ env.DEPLOY_PATH }}/infra/
           overwrite: true
           strip_components: 1
       - name: Copy nginx via ssh
@@ -122,7 +122,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "infra/nginx" 
-          target: ${{ env.DEPLOY_PATH }}/infra
+          target: ${{ env.DEPLOY_PATH }}/infra/
           overwrite: true
           strip_components: 1
   
