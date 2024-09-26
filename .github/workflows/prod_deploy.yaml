@@ -103,22 +103,15 @@ jobs:
       steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        # with:
-        #   ref: dev
-      - name: Configure SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.TEST_RSA_SECRET_KEY }}
+
       - name: Set up SSH
         run: |
-          cd ${{ github.workspace }}
-          ssh-keyscan -t rsa 84.201.161.166 >> ~/.ssh/known_hosts
-          # mkdir -p ~/.ssh
-          # chmod 700 ~/.ssh
-          # ssh-keyscan -H 84.201.161.166 > ~/.ssh/known_hosts
-          # chmod 644 ~/.ssh/known_hosts
-          # echo "${{ secrets.TEST_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
-          # chmod 600 ~/.ssh/id_rsa
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H 84.201.161.166 > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          echo "${{ secrets.PROD_RSA_SECRET_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
       
 
       # - name: Check SSH key
