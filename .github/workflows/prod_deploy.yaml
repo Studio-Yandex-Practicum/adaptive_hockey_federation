@@ -120,10 +120,10 @@ jobs:
       - name: Create folder for deploy
         run: ssh -vvv ${{ env.USERNAME }}@84.201.161.166 mkdir -p ${{ env.DEPLOY_PATH }}/infra
 
-      - name: Copy dev folder to VPS
-        run: |
-          scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ env.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
-          scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ env.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+      # - name: Copy dev folder to VPS
+      #   run: |
+      #     scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ env.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
+      #     scp -r $GITHUB_WORKSPACE/infra/nginx/ ${{ env.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
 
       # - name: Execute commands on VPS
       #   uses: appleboy/ssh-action@master
