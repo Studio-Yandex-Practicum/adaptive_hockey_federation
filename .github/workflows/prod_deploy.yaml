@@ -103,6 +103,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: delete stage & dev
+        run: |
+          rm -r infra/stage
+          rm -r infra/dev
+
       - name: Copy prod via ssh
         uses: appleboy/scp-action@master
         with:
@@ -110,21 +115,21 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "infra/prod"
-          target: "${{ env.DEPLOY_PATH }}/infra"
+          source: "/infra/"
+          target: "${{ env.DEPLOY_PATH }}"
           overwrite: true
-      #     # strip_components: 1
-      - name: Copy nginx via ssh
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "infra/nginx" 
-          target: "${{ env.DEPLOY_PATH }}/infra"
-          overwrite: true
-      #     # strip_components: 1
+          # strip_components: 1
+      # - name: Copy nginx via ssh
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USERNAME }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     passphrase: ${{ secrets.SSH_PASSPHRASE }}
+      #     source: "infra/nginx" 
+      #     target: "${{ env.DEPLOY_PATH }}/infra"
+      #     overwrite: true
+      #     strip_components: 1
   
 
 
