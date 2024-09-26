@@ -110,8 +110,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "./infra/prod/* ./infra/nginx/*"
-          target: /${{ env.DEPLOY_PATH }}/infra/
+          source: infra/prod infra/nginx
+          target: ${{ env.DEPLOY_PATH }}/infra
           overwrite: true
       #     # strip_components: 1
       # - name: Copy nginx via ssh
