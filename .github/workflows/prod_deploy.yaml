@@ -116,23 +116,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "infra"
-          target: "${{ env.DEPLOY_PATH }}/infra"
+          target: "${{ env.DEPLOY_PATH }}"
           overwrite: true
-          # strip_components: 1
-      # - name: Copy nginx via ssh
-      #   uses: appleboy/scp-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USERNAME }}
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     passphrase: ${{ secrets.SSH_PASSPHRASE }}
-      #     source: "infra/nginx" 
-      #     target: "${{ env.DEPLOY_PATH }}/infra"
-      #     overwrite: true
-      #     strip_components: 1
   
-
-
       # - name: Copy dev folder to VPS
       #   run: |
       #     scp -r $GITHUB_WORKSPACE/infra/prod/ ${{ env.USERNAME }}@${{ secrets.HOST }}:${{ env.DEPLOY_PATH }}/infra/
