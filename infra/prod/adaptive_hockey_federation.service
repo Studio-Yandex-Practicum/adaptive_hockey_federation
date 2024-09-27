@@ -14,7 +14,7 @@ User=production
 WorkingDirectory=/home/production/adaptive_hockey_federation/infra/prod/
 
 ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env down
-ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull site
+ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull adaptive_hockey_federation
 ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull db
 ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull swag
 

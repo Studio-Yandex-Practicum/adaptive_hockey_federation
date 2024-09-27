@@ -125,7 +125,5 @@ jobs:
 
           echo "adaptive_hockey_federation.service is active"
 
-          # docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-          # docker exec adaptive_hockey_federation python manage.py migrate
-          docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env exec adaptive_hockey_federation python manage.py collectstatic --noinput
-          docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env exec adaptive_hockey_federation python manage.py migrate
+          docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+          docker exec adaptive_hockey_federation python manage.py migrate
