@@ -125,5 +125,5 @@ jobs:
 
           echo "adaptive_hockey_federation.service is active"
 
-          sudo docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-          sudo docker exec adaptive_hockey_federation python manage.py migrate
+          docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+          docker exec adaptive_hockey_federation python manage.py migrate
