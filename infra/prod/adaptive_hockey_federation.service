@@ -13,10 +13,10 @@ User=production
 
 WorkingDirectory=/home/production/adaptive_hockey_federation/infra/prod/
 
-ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env down
-ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull site
-ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull db
-ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull swag
+ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env down
+ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull site
+ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull db
+ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull swag
 
 # compose up
 ExecStart=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env up
@@ -25,7 +25,7 @@ ExecStart=docker compose -f docker-compose.prod.yaml --env-file /home/production
 ExecStop=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env down
 
 # Call when daemon already start
-ExecStartPost=docker container ps
+ExecStartPost=echo "Service started"
 
 [Install]
 
