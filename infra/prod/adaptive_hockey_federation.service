@@ -25,7 +25,7 @@ ExecStart=docker compose -f docker-compose.prod.yaml --env-file /home/production
 ExecStop=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env down
 
 # Call when daemon already start
-ExecStartPost=echo "Service started"
+ExecStartPost=
 
 [Install]
 
