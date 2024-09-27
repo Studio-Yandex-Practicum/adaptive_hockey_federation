@@ -93,7 +93,7 @@ jobs:
         source: "infra"
         target: "${{ env.DEPLOY_PATH }}"
         overwrite: true
-
+        
     - name: Execute commands on VPS
       uses: appleboy/ssh-action@master
       with:
@@ -103,7 +103,6 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd ${{ env.DEPLOY_PATH }}
-          rm .env
           touch .env
 
           echo "${{ secrets.ENV_FILE }}" > .env
