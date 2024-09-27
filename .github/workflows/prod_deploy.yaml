@@ -92,7 +92,7 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "infra"
         target: "${{ env.DEPLOY_PATH }}"
-        overwrite: true
+        rm: true
         
     - name: Execute commands on VPS
       uses: appleboy/ssh-action@master
