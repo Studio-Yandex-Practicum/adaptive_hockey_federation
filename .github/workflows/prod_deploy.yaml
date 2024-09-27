@@ -108,47 +108,23 @@ jobs:
 
           echo "${{ secrets.ENV_FILE }}" > .env
 
-      #       echo HOST=${{ secrets.HOST }} >> .env
-      #       echo PORT=${{ secrets.PORT }} >> .env
-      #       echo IMAGE_COMPOSE=${{ secrets.IMAGE_COMPOSE }} >> .env
-      #       echo ST=${{ secrets.ST }} >> .env
+          cd infra/prod/
+          sudo systemctl stop adaptive_hockey_federation.service
+          docker system prune --force
 
-      #       echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-      #       echo DEBUG=${{ secrets.DEBUG }} >> .env
-      #       echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
-      #       echo CSRF_TRUSTED_ORIGINS=${{ secrets.CSRF_TRUSTED_ORIGINS }} >> .env
+            # Installing defend service for app
+          sudo cp -f /home/production/adaptive_hockey_federation/infra/prod/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
+          sudo systemctl daemon-reload
+          sudo systemctl start adaptive_hockey_federation.service
 
-      #       echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
-      #       echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-      #       echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-      #       echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-      #       echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-      #       echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          sudo systemctl is-active --quiet adaptive_hockey_federation.service
+          until [ $? -eq 0 ]; do
+            echo "Waiting for adaptive_hockey_federation.service to be active..."
+            sleep 5
+            sudo systemctl is-active --quiet adaptive_hockey_federation.service
+          done
 
-      #       echo EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }} >> .env
-      #       echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
-      #       echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
-      #       echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
-      #       echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
-      #       echo EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }} >> .env
+          echo "adaptive_hockey_federation.service is active"
 
-      #       cd infra/prod/
-      #       sudo systemctl stop adaptive_hockey_federation.service
-      #       docker system prune --force
-
-      #       # Installing defend service for app
-      #       sudo cp -f /home/production/adaptive_hockey_federation/infra/prod/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
-      #       sudo systemctl daemon-reload
-      #       sudo systemctl start adaptive_hockey_federation.service
-
-      #       sudo systemctl is-active --quiet adaptive_hockey_federation.service
-      #       until [ $? -eq 0 ]; do
-      #         echo "Waiting for adaptive_hockey_federation.service to be active..."
-      #         sleep 5
-      #         sudo systemctl is-active --quiet adaptive_hockey_federation.service
-      #       done
-
-      #       echo "adaptive_hockey_federation.service is active"
-
-      #       docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-      #       docker exec adaptive_hockey_federation python manage.py migrate
+          docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+          docker exec adaptive_hockey_federation python manage.py migrate
