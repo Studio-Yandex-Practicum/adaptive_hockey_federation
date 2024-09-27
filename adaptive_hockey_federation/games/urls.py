@@ -26,11 +26,6 @@ games_urlpattern = [
         views.GamesInfoView.as_view(),
         name="game_info",
     ),
-    path(
-        "<int:game_id>/process/",
-        views.send_game_video_to_process_view,
-        name="send_game_video_to_process_view",
-    ),
 ]
 
 urlpatterns = [

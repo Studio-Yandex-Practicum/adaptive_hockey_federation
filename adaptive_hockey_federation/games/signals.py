@@ -34,10 +34,6 @@ def create_game_teams(sender, instance, created, **kwargs):
     # конкретно изменение
     # номеров игроков. Оно должно происходить до того
     # как объект игры попадёт в бд.
-    # TODO отправлять видео на распознавание до изменения номеров игроков
-    # нелогично.
-    # if created and instance.video_link:
-    #     send_game_video_to_process(instance.id)
 
 
 @receiver(post_save, sender=GameTeam, dispatch_uid="unique_signal")
