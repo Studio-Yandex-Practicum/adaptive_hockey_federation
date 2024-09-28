@@ -1,9 +1,10 @@
 name: Production deploy
 
 on:
-  push:
-    branches:
-      - feature/convert_ci-cd_to_the_prod
+  workflow_run:
+    workflows: [pytest, Build and push Docker image]
+    types: completed
+    branches: feature/convert_ci-cd_to_the_prod
 
 env:
     REGISTRY: ghcr.io
