@@ -1,10 +1,6 @@
 name: CI
 
-# on: [pull_request]
-on: 
-  push:
-    branches:
-    - feature/convert_ci-cd_to_the_prod
+on: [pull_request]
 
 jobs:
   pytest:
