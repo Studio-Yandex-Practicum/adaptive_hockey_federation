@@ -113,7 +113,6 @@ jobs:
           sudo systemctl stop adaptive_hockey_federation.service
           docker system prune --force
 
-            # Installing defend service for app
           sudo cp -f /home/production/adaptive_hockey_federation/infra/prod/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
           sudo systemctl daemon-reload
           sudo systemctl start adaptive_hockey_federation.service
