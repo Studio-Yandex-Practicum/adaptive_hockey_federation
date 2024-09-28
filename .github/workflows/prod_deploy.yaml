@@ -1,9 +1,13 @@
 name: Production deploy
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - Build and push Docker image
+    types:
+      - completed
     branches:
-      - feature/convert_ci-cd_to_the_prod
+      - master
 env:
     REGISTRY: ghcr.io
     IMAGE_NAME: ${{ github.repository }}
