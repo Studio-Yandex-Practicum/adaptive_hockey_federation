@@ -3,7 +3,7 @@ name: Production deploy
 on:
   push:
     branches:
-      - master
+      - feature/convert_ci-cd_to_the_prod
 
 env:
     REGISTRY: ghcr.io
