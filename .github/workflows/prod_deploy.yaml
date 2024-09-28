@@ -3,7 +3,7 @@ name: Production deploy
 on:
   push:
     branches:
-      - feature/convert_ci-cd_to_the_prod
+      - dev
 env:
     REGISTRY: ghcr.io
     IMAGE_NAME: ${{ github.repository }}
@@ -82,7 +82,7 @@ jobs:
         rm -r infra/stage
         rm -r infra/dev
 
-    - name: Copy prod via ssh
+    - name: Copy infra via ssh
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -124,5 +124,5 @@ jobs:
 
           echo "adaptive_hockey_federation.service is active"
 
-          docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-          docker exec adaptive_hockey_federation python manage.py migrate
+          # docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+          # docker exec adaptive_hockey_federation python manage.py migrate
