@@ -14,34 +14,34 @@ defaults:
     working-directory: .
 
 jobs:
-  # pytest:
-  #   runs-on: ubuntu-latest
-  #   name: pytest
+  pytest:
+    runs-on: ubuntu-latest
+    name: pytest
 
-  #   steps:
-  #     - name: Install Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: 3.11
+    steps:
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
 
-  #     - name: Install Poetry
-  #       uses: snok/install-poetry@v1
-  #       with:
-  #         poetry-version: 1.5.0
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          poetry-version: 1.5.0
 
-  #     - name: Check out the repo
-  #       uses: actions/checkout@v4
+      - name: Check out the repo
+        uses: actions/checkout@v4
 
-  #     - name: Install dependencies
-  #       run: |
-  #         poetry install
-  #     - name: pytest
-  #       run: |
-  #         poetry run pytest
-  #       working-directory: adaptive_hockey_federation
+      - name: Install dependencies
+        run: |
+          poetry install
+      - name: pytest
+        run: |
+          poetry run pytest
+        working-directory: adaptive_hockey_federation
 
   build_and_push:
-    # needs: pytest
+    needs: pytest
     runs-on: ubuntu-latest
 
     steps:
@@ -70,62 +70,62 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
 
-  # deploy:
-  #   name: Deploy changes on server
-  #   runs-on: ubuntu-latest
-  #   needs: [pytest, build_and_push]
-  #   environment:
-  #     name: prod_deploy
-  #   steps:
-  #   - name: Checkout repository
-  #     uses: actions/checkout@v4
+  deploy:
+    name: Deploy changes on server
+    runs-on: ubuntu-latest
+    needs: [pytest, build_and_push]
+    environment:
+      name: prod_deploy
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-  #   - name: Delete stage & dev
-  #     run: |
-  #       rm -r infra/stage
-  #       rm -r infra/dev
+    - name: Delete stage & dev
+      run: |
+        rm -r infra/stage
+        rm -r infra/dev
 
-  #   - name: Copy infra via ssh
-  #     uses: appleboy/scp-action@master
-  #     with:
-  #       host: ${{ secrets.HOST }}
-  #       username: ${{ secrets.USERNAME }}
-  #       key: ${{ secrets.SSH_PRIVATE_KEY }}
-  #       passphrase: ${{ secrets.SSH_PASSPHRASE }}
-  #       source: "infra/"
-  #       target: "${{ env.DEPLOY_PATH }}/infra"
-  #       rm: true
-  #       strip_components: 1
+    - name: Copy infra via ssh
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        source: "infra/"
+        target: "${{ env.DEPLOY_PATH }}/infra"
+        rm: true
+        strip_components: 1
         
-  #   - name: Execute commands on VPS
-  #     uses: appleboy/ssh-action@master
-  #     with:
-  #       host: ${{ secrets.HOST }}
-  #       username: ${{ secrets.USERNAME }}
-  #       key: ${{ secrets.SSH_PRIVATE_KEY }}
-  #       passphrase: ${{ secrets.SSH_PASSPHRASE }}
-  #       script: |
-  #         cd ${{ env.DEPLOY_PATH }}
-  #         touch .env
+    - name: Execute commands on VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd ${{ env.DEPLOY_PATH }}
+          touch .env
 
-  #         echo "${{ secrets.ENV_FILE }}" > .env
+          echo "${{ secrets.ENV_FILE }}" > .env
 
-  #         cd infra/prod/
-  #         sudo systemctl stop adaptive_hockey_federation.service
-  #         docker system prune --force
+          cd infra/prod/
+          sudo systemctl stop adaptive_hockey_federation.service
+          docker system prune --force
 
-  #         sudo cp -f /home/production/adaptive_hockey_federation/infra/prod/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
-  #         sudo systemctl daemon-reload
-  #         sudo systemctl start adaptive_hockey_federation.service
+          sudo cp -f /home/production/adaptive_hockey_federation/infra/prod/adaptive_hockey_federation.service /etc/systemd/system/adaptive_hockey_federation.service
+          sudo systemctl daemon-reload
+          sudo systemctl start adaptive_hockey_federation.service
 
-  #         sudo systemctl is-active --quiet adaptive_hockey_federation.service
-  #         until [ $? -eq 0 ]; do
-  #           echo "Waiting for adaptive_hockey_federation.service to be active..."
-  #           sleep 5
-  #           sudo systemctl is-active --quiet adaptive_hockey_federation.service
-  #         done
+          sudo systemctl is-active --quiet adaptive_hockey_federation.service
+          until [ $? -eq 0 ]; do
+            echo "Waiting for adaptive_hockey_federation.service to be active..."
+            sleep 5
+            sudo systemctl is-active --quiet adaptive_hockey_federation.service
+          done
 
-  #         echo "adaptive_hockey_federation.service is active"
+          echo "adaptive_hockey_federation.service is active"
 
-  #         docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
-  #         docker exec adaptive_hockey_federation python manage.py migrate
+          docker exec adaptive_hockey_federation python manage.py collectstatic --noinput
+          docker exec adaptive_hockey_federation python manage.py migrate
