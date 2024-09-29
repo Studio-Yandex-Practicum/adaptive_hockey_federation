@@ -10,17 +10,19 @@ INTERNAL_IPS = [
 
 DATABASES = {
     "default": {
-        "ENGINE": env("DB_ENGINE", default="django.db.backends.postgresql"),
-        "NAME": env("POSTGRES_DB", default="postgres_db"),
-        "USER": env("POSTGRES_USER", default="postgres_user"),
-        "PASSWORD": env("POSTGRES_PASSWORD", default="postgres_password"),
-        "HOST": env("DB_HOST", default="localhost"),
-        "PORT": env("DB_PORT", default="5432"),
+        "ENGINE": env("DB_ENGINE"),
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
-
+# TODO: возможно удаления т.к относится к parser
 FIXSTURES_DIR = BASE_DIR / "core" / "fixtures"
+# TODO: возможно удаления т.к относится к parser
 JSON_PARSER_FILE = "data.json"
+# TODO: возможно удаления т.к относится к parser
 FIXSTURES_FILE = FIXSTURES_DIR / JSON_PARSER_FILE
 RESOURSES_ROOT = BASE_DIR / "resourses"
 

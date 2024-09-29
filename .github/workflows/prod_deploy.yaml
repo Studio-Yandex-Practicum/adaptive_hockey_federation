@@ -1,17 +1,22 @@
 name: Production deploy
 
 on:
-  workflow_run:
-    workflows:
-      - Build and push Docker image
-    types:
-      - completed
+  # workflow_run:
+  #   workflows:
+  #     - Build and push Docker image
+  #   types:
+  #     - completed
+  #   branches:
+  #     - master
+  push:
     branches:
-      - master
+      - feature/convert_ci-cd_to_the_prod
     
 
 env:
     DEPLOY_PATH: adaptive_hockey_federation
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{ github.repository }}
 
 defaults:
   run:
@@ -44,10 +49,38 @@ jobs:
           poetry run pytest
         working-directory: adaptive_hockey_federation
 
+  build_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image for Production
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infra/prod/prod.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
 
   deploy:
     name: Deploy changes on server
-    needs: pytest
+    needs: [pytest, build_and_push]
     runs-on: ubuntu-latest
     environment:
       name: prod_deploy
