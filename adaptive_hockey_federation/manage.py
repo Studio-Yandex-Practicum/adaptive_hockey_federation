@@ -3,21 +3,13 @@
 
 import os
 import sys
-import environ
-
-
-env = environ.Env()
-
-DEBUG = os.environ.get("DEBUG")
-
-switch_prod_dev = {"True": "dev", "False": "prod"}
 
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault(
         "DJANGO_SETTINGS_MODULE",
-        f"core.config.{switch_prod_dev[str(DEBUG)]}_settings")
+        "core.config.dev_settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
