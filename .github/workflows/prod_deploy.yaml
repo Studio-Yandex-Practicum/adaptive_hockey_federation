@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/convert_ci-cd_to_the_prod
+
 env:
     REGISTRY: ghcr.io
     IMAGE_NAME: ${{ github.repository }}
@@ -71,8 +72,8 @@ jobs:
 
   deploy:
     name: Deploy changes on server
+    needs: [pytest, build]
     runs-on: ubuntu-latest
-    needs: pytest
     environment:
       name: prod_deploy
     steps:
