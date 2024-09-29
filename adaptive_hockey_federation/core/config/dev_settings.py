@@ -1,4 +1,4 @@
-from . base_settings import *
+from .base_settings import *
 
 ROOT_DIR = BASE_DIR.parent
 
