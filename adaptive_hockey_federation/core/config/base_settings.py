@@ -1,5 +1,4 @@
 from pathlib import Path
-from re import DEBUG
 
 import environ
 from django.contrib.messages import constants as messages
