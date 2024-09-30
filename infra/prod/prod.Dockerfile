@@ -9,4 +9,4 @@ COPY . .
 
 WORKDIR /app/adaptive_hockey_federation
 
-CMD ["gunicorn", "core.wsgi:application", "--bind", "0:8000" ]
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0:8000", "--workers", "5"]
