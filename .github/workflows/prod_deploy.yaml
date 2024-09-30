@@ -1,18 +1,10 @@
 name: Production deploy
 
 on:
-  # workflow_run:
-  #   workflows:
-  #     - Build and push Docker image
-  #   types:
-  #     - completed
-  #   branches:
-  #     - master
   push:
     branches:
-      - feature/convert_ci-cd_to_the_prod
+      - feature-convert_ci-cd_to_the_prod
     
-
 env:
     DEPLOY_PATH: adaptive_hockey_federation
     REGISTRY: ghcr.io
