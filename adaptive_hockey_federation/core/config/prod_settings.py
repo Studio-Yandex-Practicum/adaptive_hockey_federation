@@ -4,6 +4,8 @@ ROOT_DIR = BASE_DIR.parent
 
 env.read_env(ROOT_DIR / ".env")
 
+DEBUG = False
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]

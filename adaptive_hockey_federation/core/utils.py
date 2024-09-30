@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
+from re import DEBUG
 from typing import Any, List, Optional
+
 
 from core.constants import AgeLimits, FileConstants, TimeFormat
 from core.settings.openpyxl_settings import (
@@ -179,3 +181,12 @@ def save_workbook(wb, filename):
     wb.save(file_path)
 
     return filename_with_timestamp
+
+
+def switch_prod_dev() -> str:
+    DEBUG = os.environ.get("DEBUG", default=False)
+    print(f"DEBUG: {DEBUG}")
+    if DEBUG:
+        return "dev"
+    else:
+        return "prod"
