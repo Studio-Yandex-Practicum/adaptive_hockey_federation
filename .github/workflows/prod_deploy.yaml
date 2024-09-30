@@ -3,7 +3,7 @@ name: Production deploy
 on:
   push:
     branches:
-      - feature/convert_ci-cd_to_the_prod
+      - master
     
 env:
     DEPLOY_PATH: adaptive_hockey_federation
@@ -18,7 +18,6 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     name: pytest
-
     steps:
       - name: Install Python
         uses: actions/setup-python@v4
