@@ -1,15 +1,12 @@
 import logging
 from dataclasses import dataclass
-from requests.exceptions import RequestException
+
 from typing import Any
-from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
@@ -26,11 +23,7 @@ from games.forms import EditTeamPlayersNumbersForm, GameForm, GameUpdateForm
 from games.mixins import GameCreateUpdateMixin
 from games.models import Game, GamePlayer, GameTeam
 from core.logging import configure_logging
-from service.a_hockey_requests import send_request_to_process_video
-from service.a_hockey_requests import check_api_health_status
-# TODO раскоментировать после добавления celery
-# from video_api.tasks import get_player_video_frames
-from video_api.serializers import GameFeatureSerializer
+
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -236,67 +229,3 @@ class EditTeamPlayersNumbersView(
         )
         context["page_title"] = "Редактирование номеров игроков команды"
         return context
-
-
-def send_game_video_to_process(
-    game_id: int,
-    user_email: str = None,
-) -> Message:
-    """Функция формирует данные для запроса к серверу DS."""
-    game = get_object_or_404(Game, id=game_id)
-    game_data = GameFeatureSerializer(game).data
-    kwargs = {
-        "data": game_data,
-        "user_email": user_email,
-    }
-    try:
-        check_api_health_status()
-    except RequestException as error:
-        message = Message(
-            messages.ERROR,
-            "Сервис по обработке видео недоступен",
-        )
-        logger.error(f"Ошибка подключения к серверу распознавания: {error}")
-        return message
-
-    logger.info("Отправляем видео на обработку")
-    send_request_to_process_video(kwargs["data"])
-    message = Message(
-        messages.INFO,
-        "Видео отправлено на обработку, ждите оповещение "
-        "о готовности на электронную почту.",
-    )
-    return message
-
-
-@login_required
-def send_game_video_to_process_view(
-    request: HttpRequest,
-    **kwargs: int,
-) -> HttpResponseRedirect | HttpResponse:
-    """
-    Вью функция дли запуска задачи в celery для отправки видео на обработку.
-
-    Функция обрабатывает запрос с кнопки, добавляет задачу в очередь и
-    отображает сообщение об успешном выполнении.
-    """
-    game_id = kwargs.get("game_id")
-
-    if not Game.objects.get(pk=game_id).video_link:
-        message = Message(
-            messages.WARNING,
-            "Ссылка на видео с игрой не указана.",
-        )
-    else:
-        message = send_game_video_to_process(
-            game_id=game_id,
-            user_email=request.user.email,
-        )
-
-    messages.add_message(
-        request,
-        message.level,
-        message.text,
-    )
-
-    return redirect("games:game_info", game_id=game_id)

@@ -4,7 +4,7 @@ from typing import Any, List, Optional
 
 
 from core.constants import AgeLimits, FileConstants, TimeFormat
-from core.settings.openpyxl_settings import (
+from core.config.openpyxl.settings import (
     ALIGNMENT_CENTER,
     HEADERS_BORDER,
     HEADERS_FILL,

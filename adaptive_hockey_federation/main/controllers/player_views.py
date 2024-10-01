@@ -1,29 +1,20 @@
-import os
 from typing import Any
 
-from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from requests.exceptions import RequestException
 
-from core.constants import Directory, FileConstants, PLAYER_GAME_NAME
+from core.constants import FileConstants
 from core.utils import is_uploaded_file_valid
-from core.ydisk_utils.utils import (
-    download_file_by_link_task,
-    check_player_game_exists_on_disk,
-)
-from games.models import Game, GamePlayer, GameDataPlayer
+from games.models import Game, GamePlayer
 from main.controllers.mixins import DiagnosisListMixin
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
@@ -35,10 +26,7 @@ from main.schemas.player_schema import (
     get_player_fields_personal,
     get_player_table_data,
 )
-from service.a_hockey_requests import check_api_health_status
 from unloads.utils import model_get_queryset
-from video_api.tasks import create_player_video, get_player_video_frames
-from video_api.serializers import GameFeatureSerializer
 
 
 class PlayersListView(
@@ -415,146 +403,6 @@ class PlayerGamesVideo(
         context["player"] = {"player_id": f'{self.kwargs["pk"]}'}
         context["table_data"] = table_data
         return context
-
-
-@login_required
-def unload_player_game_video(request, **kwargs):
-    """
-    Обрабатывает запрос на получение видео с моментами игрока из игры.
-
-    Функция выполняет следующие шаги:
-    1. Получает игрока и игру по идентификаторам.
-    2. Формирует путь для сохранения видео игры и обработки моментов с игроком.
-    3. Проверяет наличие уже существующего видео с моментами игрока на я.диске:
-       - Если видео уже существует, возвращает ссылку на его скачивание.
-       - Если видео отсутствует, проверяет наличие фреймов игрока в бд:
-         - Если фреймы есть, запускает процесс скачивания видео игры, нарезки
-           моментов с игроком, загрузки видео на я.диск и отправки ссылки
-           пользователю.
-         - Если фреймов нет, запускает полный процесс обработки, включая
-           получение данных с сервера, скачивание видео игры, нарезку моментов,
-           загрузку видео и отправку ссылки пользователю.
-    4. Отправляет сообщение пользователю с информацией о статусе обработки
-        видео и ссылки на его скачивание.
-    5. Перенаправляет пользователя на страницу с видео игрока.
-    """
-    player_id = kwargs["player_id"]
-    player = get_object_or_404(Player, pk=player_id)
-    game = get_object_or_404(Game, pk=kwargs["game_id"])
-    game_data = GameFeatureSerializer(game).data
-    player_game_file_name = PLAYER_GAME_NAME.format(
-        surname=player.surname,
-        name=player.name,
-        patronymic=player.patronymic,
-        game_name=game.name,
-    )
-
-    # Директория для скаченных видео с играми.
-    games_dir = os.path.join(
-        settings.MEDIA_ROOT,
-        Directory.GAMES,
-    )
-    os.makedirs(games_dir, exist_ok=True)
-    game_path = os.path.join(
-        games_dir,
-        f"{game.name}.mp4",
-    )
-
-    # Директория для обработанных моментов с игроком.
-    player_games_dir = os.path.join(
-        settings.MEDIA_ROOT,
-        Directory.PLAYER_VIDEO_DIR,
-    )
-    os.makedirs(player_games_dir, exist_ok=True)
-    player_game_frames_path = os.path.join(
-        player_games_dir,
-        player_game_file_name,
-    )
-
-    if check_player_game_exists_on_disk(player_game_file_name):
-        # Проверяем есть ли видео с моментами игрока на я.диске.
-
-        # process_chain = chain(
-        # TODO реализовать таску по отправке ссылки пользователю
-        # )
-
-        message_text = "Ссылка для скачивания видео отправлена на почту."
-    elif GameDataPlayer.objects.filter(player=player, game=game).exists():
-        # Проверяем если ли фреймы с игроком в бд. Если есть, то:
-
-        # process_chain = chain(
-        #     download_file_by_link_task.si(game.video_link, game_path).set(
-        #         queue="download_game_video_queue",
-        #     ),
-        #     create_player_video.si(
-        #         game_path,
-        #         player_game_frames_path,
-        #         player.id,
-        #         game.id,
-        #     ).set(queue="slice_player_video_queue"),
-        #     # TODO реализовать таску по загрузке видео с игроком на Я.диск
-        #     # TODO реализовать таску по отправке ссылки пользователю
-        # )
-
-        message_text = (
-            "Видео находится в обработке. "
-            "Ссылка для скачивания видео будет отправлена на почту."
-        )
-    else:
-        # Если нет ни видео, не фреймов, то запускаем полный цикл тасков.
-        #     # TODO реализовать таску по загрузке видео с игроком на Я.диск
-        #     # TODO реализовать таску по отправке ссылки пользователю
-        try:
-            download_file_by_link_task(game.video_link, game_path)
-        except RequestException as e:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                f"Произошла ошибка при скачивании видео: {e}",
-            )
-            return redirect(
-                "main:player_id_games_video",
-                pk=player_id,
-            )
-        try:
-            check_api_health_status()
-        except RequestException:
-            messages.add_message(
-                request,
-                messages.ERROR,
-                "Сервис по обработке видео недоступен",
-
-            )
-            return redirect(
-                "main:player_id_games_video",
-                pk=player_id,
-            )
-
-        frames = get_player_video_frames(game_data)
-        player_frames = [
-            frame["frames"] for frame in frames if frame["number"
-                                                         ] == player.number]
-
-        create_player_video(input_file=game_path,
-                            output_file=player_game_frames_path,
-                            frames=player_frames[0])
-        message_text = (
-            "Видео находится в обработке. "
-            "Ссылка для скачивания видео будет отправлена на почту."
-        )
-
-    messages.add_message(
-        request,
-        messages.INFO,
-        message_text,
-    )
-
-    # TODO видео будет автоматически загрузаться пользователю по готовности.
-    # Возможно нужно ресерчить тему WebSockets, SSE
-    return redirect(
-        "main:player_id_games_video",
-        pk=player_id,
-    )
 
 
 def player_id_deleted(request):
