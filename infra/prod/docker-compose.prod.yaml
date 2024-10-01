@@ -6,34 +6,52 @@ services:
     container_name: db
     image: postgres:13.0-alpine
     restart: always
+    ports:
+      - 5432:${DB_PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - ../../.env
 
   site:
-    image: imageName
+    image: "${IMAGE_COMPOSE}"
+    container_name: adaptive_hockey_federation
     restart: always
     volumes:
-      - static_value:/app/static/
-      - media_value:/app/media/
+      - static_value:/app/adaptive_hockey_federation/static/
+      - ../../media:/app/adaptive_hockey_federation/media/
     env_file:
-      - ./.env
+      - ../../.env
     depends_on:
       - db
 
-  nginx:
-    image: nginx:1.21.3-alpine
-    ports:
-      - "80:80"
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1002
+      - PGID=1004
+      - TZ=Europe/Moscow
+      - URL=${HOST}
+      - VALIDATION=http
+      - STAGING=${ST}
     volumes:
-      - ../../nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ../nginx/nginx_stage.conf:/config/nginx/site-confs/default.conf
+      - swag_volume_stage:/config
       - static_value:/var/html/static/
-      - media_value:/var/html/media/
+      - ../../media:/var/html/media/
+    ports:
+      - 443:443
+      - 80:${PORT}
+    env_file:
+      - ../../.env
     depends_on:
       - site
+    restart: unless-stopped
 
 volumes:
   static_value:
-  media_value:
   postgres_data:
+  swag_volume_stage:
