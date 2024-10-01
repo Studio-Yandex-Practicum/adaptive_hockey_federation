@@ -1,5 +1,5 @@
 version: '3.8'
-name: ahf_stage
+name: ahf_prod
 
 services:
   db:
