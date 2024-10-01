@@ -41,6 +41,7 @@ jobs:
         working-directory: adaptive_hockey_federation
 
   build_and_push:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     needs: pytest
 
@@ -71,6 +72,7 @@ jobs:
 
 
   deploy:
+    if: github.ref == 'refs/heads/master'
     name: Deploy changes on server
     needs: [pytest, build_and_push]
     runs-on: ubuntu-latest
