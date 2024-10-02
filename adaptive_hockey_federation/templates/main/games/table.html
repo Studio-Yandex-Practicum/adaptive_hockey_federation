@@ -1,0 +1,54 @@
+{% load static %}
+<table class="table-table">
+  <thead>
+  <tr>
+    {% for head_item in table_head.values %}
+      <th>{{ head_item }}</th>
+    {% endfor %}
+    <th>
+      <div class="cell__buttons">
+        {% include 'base/active_edit_icon.html' %}
+        {% include 'base/active_delete_icon.html' %}
+      </div>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for table_string in table_data %}
+    <tr>
+      {% for cell_name, cell_value in table_string.items %}
+        <td class="rounded-md">
+          {% if cell_name == "video_link" %}
+            <a href="{{ cell_value }}" target="_blank">{{ cell_value }}</a>
+          {% else %}
+            {% if cell_name == "name" %}
+              <a href="{% url 'games:game_info' game_id=table_string.pk %}">{{ cell_value }}</a>
+            {% else %}
+              {% if cell_name == '__ref__'%}
+                <a href="{% url 'main:unload_player_video' player_id=player.player_id game_id=table_string.pk %}" class="btn btn-secondary text-white"
+                  style="background-color: #64C2D1; border: 1px solid #fff;" role={{ cell_value.type }}>
+                  {{ cell_value.name }}
+                </a>
+              {% else %}
+                {{ cell_value }}
+              {%endif%}
+            {% endif %}
+          {% endif %}
+        </td>
+      {% endfor %}
+      {% with request.resolver_match.view_name as view_name %}
+        {% if view_name == "games:games" %}
+          {% include "main/games/game_edit_delete_buttons.html" %}
+        {% else %}
+          <td>
+            <div class="cell__buttons">
+              {% include 'base/active_edit_icon.html' %}
+              {% include 'base/active_delete_icon.html' %}
+            </div>
+          </td>
+        {% endif %}
+      {% endwith %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

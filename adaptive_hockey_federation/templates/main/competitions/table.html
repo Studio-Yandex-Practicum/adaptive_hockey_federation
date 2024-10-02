@@ -1,0 +1,67 @@
+{% load static %}
+<table class="table-table">
+  <thead>
+    <tr>
+      {% for head_item in table_head.values %}
+      <th>{{ head_item }}</th>
+      {% endfor %}
+      {% if not user.is_agent %}
+        <th>
+          <div class="cell__buttons">
+            {% include 'base/active_edit_icon.html' %}
+            {% include 'base/active_delete_icon.html' %}
+          </div>
+        </th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for table_string in table_data %}
+    <tr>
+      {% for cell_name, cell_value in table_string.items %}
+        {% if cell_name == 'pk' %}
+          <td class="rounded-md">{{ cell_value }}</td>
+        {% elif cell_name == 'is_active' %}
+          <td class="rounded-md">
+            {% if cell_value %}
+              {% include "base/active_check_icon.html" %} <!-- Галочка -->
+            {% else %}
+            {% include "base/check_icon.html" %} <!-- Крестик -->
+            {% endif %}
+          </td>
+        {% elif forloop.counter0 == 0 and 'url' in table_string %}
+          <td class="border rounded-full table-li">
+            <a href="{{ table_string.url }}">{{ cell_value }} </a>
+          </td>
+        {% elif cell_name == '_ref_' %}
+          {% if cell_value.type == 'button' %}
+            <td class="rounded-md">
+              {% include 'base/cell_button.html' with url=cell_value.url name=cell_value.name %}
+            </td>
+          {% else %}
+            <td class="rounded-md">
+              <a href="{{ cell_value.url }}">{{ cell_value.name }} </a>
+            </td>
+          {% endif %}
+        {% elif cell_name != 'url' and cell_name != 'id' and cell_name != 'pk'%}
+          <td class="rounded-md">{{ cell_value }}</td>
+        {% endif %}
+      {% endfor %}
+      {% with request.resolver_match.view_name as view_name %}
+        {% if not user.is_agent %}
+          {% if view_name == 'competitions:competitions' %}
+            {% include "main/competitions/competition_edit_delete_buttons.html" %}
+          {% else %}
+            <td>
+              <div class="cell__buttons">
+                {% include 'base/active_edit_icon.html' %}
+                {% include 'base/active_delete_icon.html' %}
+              </div>
+            </td>
+          {% endif %}
+        {% endif %}
+      {% endwith %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

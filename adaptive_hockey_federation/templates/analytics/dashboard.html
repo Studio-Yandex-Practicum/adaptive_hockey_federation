@@ -1,0 +1,46 @@
+{% load static %}
+<div class="py-4 analitics-bg">
+    <div class="analitics-dashbord-wrapper">
+        <div class="d-flex flex-row justify-content-around analitics-dashbord-panel-item">
+            {% for metric in dashboard.primary %}
+                <div class="d-flex flex-column">
+                    <p class="analitics-dashbord-number">
+                        {{ metric.1 }}
+                    </p>
+                    <p class="analitics-dashbord-paragraph">
+                        {{ metric.0|title }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="d-flex flex-row justify-content-around py-4 analitics-dashbord-panel-item px-2">
+            {% for metric in dashboard.secondary %}
+                <div class="d-flex flex-column">
+                    <p class="analitics-dashbord-number">
+                        {{ metric.1|title }}
+                    </p>
+                    <p class="analitics-dashbord-paragraph">
+                        {{ metric.0 }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="analitics-grid pt-4">
+            {% for metric in dashboard.nosology %}
+                <div class="col rounded-2 px-2"
+                    data-bs-toggle="popover"
+                    data-bs-placement="top"
+                    data-bs-trigger="hover focus"
+                    data-bs-content="{{ metric.0 }}"
+                >
+                    <p class="analitics-dashbord-number">
+                        {{ metric.1|title }}
+                    </p>
+                    <p class="analitics-dashbord-paragraph">
+                        {{ metric.0|truncatechars:10 }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

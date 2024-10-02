@@ -1,0 +1,19 @@
+{% load static %}
+<td class="border rounded-md">
+  <div class="items__group">
+    <form action="{% url action_url table_string.pk %}" method="get">
+      <button class="btns-edit-del" type="submit"
+          {% if 'games.edit_game' in perms %} activate {% else %}
+              disabled {% endif %}>
+        {% include 'base/edit_icon.html' %}
+      </button>
+    </form>
+    <form action="{% url 'games:game_delete' table_string.pk %}" method="post">
+    {% csrf_token %}
+      <button class="btns-edit-del" type="submit" onclick="return confirm('{{ delete_message }}{{ table_string.name }} ?');"
+          {% if 'games.delete_game' in perms %} activate {% else %} disabled {% endif %}>
+        {% include 'base/delete_icon.html' %}
+      </button>
+    </form>
+  </div>
+</td>

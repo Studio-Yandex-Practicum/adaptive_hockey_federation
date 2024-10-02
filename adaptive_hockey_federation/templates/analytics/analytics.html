@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Аналитика
+{% endblock %}
+{% block content_navigation %}
+  <div class="full-container text-center">
+    {% include 'analytics/filters.html' with form=form %}
+  </div>
+{% endblock %}
+{% block content %}
+  <div class="full-container tw-px-2">
+    {% include 'analytics/dashboard.html' with dashboard=dashboard %}
+  </div>
+  <div class="full-container">
+    {% include 'analytics/table.html' with table_head=table_head table_data=table_data %}
+  </div>
+{% endblock %}
+{% block JavaScript %}
+<script>
+  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+  const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+</script>
+{% endblock %}

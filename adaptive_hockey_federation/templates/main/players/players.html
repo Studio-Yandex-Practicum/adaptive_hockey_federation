@@ -1,0 +1,7 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Список игроков
+{% endblock %}
+{% block content %}
+  {% include 'main/players/table.html' with table_head=table_head table_data=table_data %}
+{% endblock %}

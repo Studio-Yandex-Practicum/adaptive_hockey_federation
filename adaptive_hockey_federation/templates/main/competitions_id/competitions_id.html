@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+{% load user_filters %}
+{% block title %}
+  Профиль соревнования: {{ object.title }}
+{% endblock %}
+{% block content %}
+  <h1>{{ object.title }}</h1>
+  <p><b>Дата начала:</b> {{ object.date_start }}</p>
+  <p><b>Дата окончания:</b> {{ object.date_end }}</p>
+  <p><b>Город:</b> {{ object.city }}</p>
+  <p><b>Место проведения:</b> {{ object.location }}</p>
+  {% if not user.is_agent %}
+    <form
+      method="post"
+      {% if action_url %}
+        action="{% url action_url %}"
+        enctype="multipart/form-data"
+      {% endif %}
+    >
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="tw-w-full tw-flex tw-justify-center">
+        <div class="row my-1 tw-min-w-[70%] tw-max-w-[80%]">
+          <label for="{{ field.id_for_label }}">
+            {{ field.label }}
+              {% if field.field.required %}
+                <span class="required text-danger">*</span>
+              {% endif %}
+          </label>
+          {{ field|addclass:'form-control' }}
+          {% include 'main/competitions/competitions_team_search_field.html' %}
+          {% if field.errors %}
+            <small class="error">{{ field.errors|striptags  }}</small>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      <button type="submit" class="update_btn tw-rounded-lg">
+        Допустить
+      </button>
+    </form>
+  {% endif %}
+
+  <h2>Команды, участвующие в событии:</h2>
+  {% include "main/competitions_id/components/competition_teams_table.html" %}
+  {% if not user.is_agent %}
+    <h2>Доступные команды:</h2>
+    {% include "main/competitions_id/components/competitions_teams_table_available.html" with table_data=available_table_data %}
+  {% endif %}
+{% endblock %}

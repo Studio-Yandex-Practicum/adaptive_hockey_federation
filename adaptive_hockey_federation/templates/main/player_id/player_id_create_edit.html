@@ -1,0 +1,135 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load user_filters %}
+{% block title %}
+    {{ page_title }}
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">{{ page_title }}</h2>
+<form id="playerForm" method="post" enctype="multipart/form-data" data-discipline-level="{% url 'main:ajax_load_discipline_levels' %}">
+    {% csrf_token %}
+    <div class="container text-center">
+        <div class="full-container">
+            <h4 class="text-center mb-4">Личная информация</h4>
+            <table class="table-table">
+                <tbody>
+                  {% for field in form.visible_fields %}
+                    {% if field.name in 'surname name patronymic birthday identity_document '%} {% include "main/fields/text_input_field.html" %}
+                      {% elif  field.name in 'gender discipline_name discipline_level nosology' %} {% include "main/fields/select_field.html" %}
+                      {% elif  field.name in 'diagnosis' %} {% include "main/fields/diagnosis_field.html" %}
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+        <div class="full-container">
+            <h4 class="text-center mb-4">Игровая информация</h4>
+            <table class="table-table">
+              <tbody>
+                {% for field in form.visible_fields %}
+                  {% if field.name in "level_revision number"%} {% include "main/fields/text_input_field.html" %}
+                    {% elif  field.name in "team" %} {% include "main/fields/team_select_field_2_fields.html" %}
+                    {% elif  field.name in "is_captain is_assistent" %} {% include "main/fields/check_box_field.html" %}
+                    {% elif  field.name in "position" %} {% include "main/fields/select_field.html" %}
+                  {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+        <h4 class="text-center mb-4">Документы</h4>
+        {% if errormessage %}
+            <h6 class="text-center mb-6" style="color:red">{{ errormessage }}</h6>
+        {% endif %}
+        <table class="table-table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Файл</th>
+                    <th>Удалить</th>
+                </tr>
+            </thead>
+            <tbody id="fileUploadContainer">
+            {% if player_documents %}
+                {% for doc in player_documents %} {% include "main/fields/documents_field.html" %}{% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+        <button id="addFileButton" type="button" class="btn btn-primary">+</button>
+        {% if team_id %}
+          <input type="hidden" value="{{ team_id }}" name="team_id" >
+        {% endif %}
+        <!-- Save Button -->
+        <div class="container">
+            <div class="row">
+                <div class="col text-center text-white flex justify-start">
+                    <button
+                    type="submit"
+                    class="btn btn-secondary text-white"
+                    style="background-color: #64C2D1; border: 1px solid #fff;"
+                    >
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block JavaScript %}
+<script>
+let deleteButtons = document.querySelectorAll("#deleteFileButton");
+
+function addDeleteButtonEvent(button) {
+    button.addEventListener("click", function() {
+        const parentRow = this.closest("tr");
+        const a_tag = parentRow.querySelector("a");
+        if (a_tag) {
+            const fileName = a_tag.getAttribute("href");
+            let hiddenInput = document.createElement("input");
+            hiddenInput.style.display = "none";
+            hiddenInput.name = "deleted_file_path[]";
+            hiddenInput.value = fileName;
+            parentRow.appendChild(hiddenInput);
+        }
+        parentRow.style.display = "none";
+    });
+}
+
+function addNewFileField() {
+    let fileUploadContainer = document.getElementById('fileUploadContainer');
+    let newFileUpload = document.createElement("tr");
+    newFileUpload.classList.add("file-upload-container");
+    newFileUpload.classList.add("m-2");
+    newFileUpload.innerHTML = `
+            <td><input type="text" name="new_file_name[]" placeholder="Name" class="form-control"></td>
+            <td><input type="file" name="new_file_path[]" accept="{{ file_resolution }}" class="form-control"></td>
+        `;
+    const deleteButton = document.createElement("button");
+    deleteButton.id = "deleteFileButton";
+    deleteButton.type = "button";
+    deleteButton.className = "btn btn-danger";
+    deleteButton.textContent = "-";
+    addDeleteButtonEvent(deleteButton);
+
+    const newTd = document.createElement("td");
+    newTd.appendChild(deleteButton);
+    newFileUpload.appendChild(newTd);
+    fileUploadContainer.appendChild(newFileUpload);
+}
+
+deleteButtons.forEach(function(button) {
+    addDeleteButtonEvent(button);
+});
+
+document.getElementById('addFileButton').addEventListener('click', function() {
+    addNewFileField()
+});
+
+addNewFileField()
+    const mover = new SelectManipulation('id_available_teams', 'id_team');
+    const selectAllSelected = new SelectAllSelected('id_team');
+    const search_available_teams = new SearchValue('id_available_teams', 'selector-filter-available');
+    const search_current_teams = new SearchValue('id_team', 'selector-filter-current');
+</script>
+{% endblock %}

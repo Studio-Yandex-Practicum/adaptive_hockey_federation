@@ -1,0 +1,11 @@
+<form method="GET" class="analitics-filter">
+    <div class="filter-item__wrapper">
+        {% for field in form %}
+            <div class="filter-item">
+                <small>{{ field.label }}</small>
+                {{ field }}
+            </div>
+        {% endfor %}
+    </div>
+    <input class="btn analitics-button" type="submit" value="Применить">
+</form>

@@ -1,0 +1,77 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+  Профиль игрока
+{% endblock %}
+{% block content %}
+  <h2 class="text-center mb-4">Профиль игрока</h2>
+  <div class="container text-start">
+    <div class="row">
+      <div class="col-md-6">
+        <h4 class="text-center mb-4">Личная информация</h4>
+        <table class="table-table">
+          <tbody>
+            {% for field_name, field_value in player_fields_personal %}
+              <tr>
+                <th scope="row">{{ field_name }}:</th>
+                <td>
+                  {{ field_value }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-6">
+        <h4 class="text-center mb-4">Игровая информация</h4>
+        <table class="table-table">
+          <tbody>
+            {% for field_name, field_value in player_fields %}
+              <tr>
+                <th scope="row">{{ field_name }}:</th>
+                <td>
+                  {% if field_name == 'Капитан' or field_name == 'Ассистент' %}
+                    {% if field_value %}
+                      Да
+                    {% endif %}
+                  {% elif field_name == 'Команда' %}
+                    {% for team in field_value %}
+                      <a href="{{ team.url }}">{{ team.name }}</a>
+                      {% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                  {% else %}
+                    {{ field_value }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="container">
+          {% include 'main/player_id/video_games_button.html' with player=player %}
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h4 class="text-center mb-4">Документы</h4>
+        <table class="table-table">
+          <tbody>
+            {% for doc in player_documents %}
+              <tr>
+                <th scope="row">{{ doc.name }}</th>
+                <td>
+                  <a href="{{ doc.file.url }}" target="_blank">Просмотреть</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    {% include 'main/player_id/edit_delete_buttons.html' %}
+  </div>
+{% endblock content %}

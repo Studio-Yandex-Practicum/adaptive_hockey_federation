@@ -1,0 +1,15 @@
+{% load user_filters %}
+{% load static %}
+<tr>
+  <th>{{ field.label_tag }}</th>
+    <td class="base-wrapper">
+      {% if field.errors %}
+        {{ field |addclass:'base-select-errors'}}
+        {{ field.errors }}
+      {% else %}
+        {{ field |addclass:'base-select'}}
+      {% endif %}
+    </td>
+</tr>
+<script src="{% static 'js/jquery-select2.min.js' %}"></script>
+<script src="{% static 'js/player_form/discipline_levels.js' %}"></script>

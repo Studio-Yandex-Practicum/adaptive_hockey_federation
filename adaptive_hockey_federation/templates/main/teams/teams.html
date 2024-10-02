@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Список команд
+{% endblock %}
+{% block content_navigation %}
+  <div class="full-container text-center">
+    {% include 'main/teams/filters.html' with form=form_filter %}
+  </div>
+{% endblock %}
+{% block content %}
+  {% include 'main/teams/table.html' with table_head=table_head table_data=table_data %}
+{% endblock %}

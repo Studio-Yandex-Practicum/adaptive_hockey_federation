@@ -1,0 +1,8 @@
+{% extends 'base/base.html' %}
+{% block title %}
+  Видео игр
+{% endblock %}
+{% block content %}
+  {% include 'base/messages.html' %}
+  {% include 'main/games/table.html' with table_head=table_head table_data=table_data %}
+{% endblock %}

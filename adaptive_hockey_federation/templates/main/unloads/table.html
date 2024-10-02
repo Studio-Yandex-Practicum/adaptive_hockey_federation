@@ -1,0 +1,41 @@
+{% load static %}
+<table class="table-table">
+  <thead>
+    <tr>
+      {% for head_item in table_head.values %}
+      <th>{{ head_item }}</th>
+      {% endfor %}
+      <th>
+        <div class="cell__buttons">
+          {% include 'base/active_delete_icon.html' %}
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for table_string in table_data %}
+    <tr>
+      {% for cell_name, cell_value in table_string.items %}
+        <td class="rounded-md">
+          {% if cell_name == '_ref_' %}
+            {% include 'base/cell_button.html' with url=cell_value.url name=cell_value.name %}
+          {% else %}
+            {{ cell_value }}
+          {% endif %}
+        </td>
+      {% endfor %}
+      {% with request.resolver_match.view_name as view_name %}
+        {% if view_name == 'unloads:unloads' %}
+          {% include "main/unloads/unloads_delete.html" %}
+        {% else %}
+          <td>
+            <div class="cell__buttons">
+              {% include 'base/active_delete_icon.html' %}
+            </div>
+          </td>
+        {% endif %}
+      {% endwith %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

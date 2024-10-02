@@ -1,0 +1,9 @@
+<div class="dropdown">
+    <button class="border border-2 border-white p-2 px-4 drawler_menu dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        + Добавить
+    </button>
+    <ul class="dropdown-menu" style="background-color: #64C2D1" aria-labelledby="dropdownMenuButton1">
+      <li><a class="dropdown-item drawler_menu" style="color: #fff" href="{% url 'main:player_create' %}?team={{ team.id }}">Игрок</a></li>
+      <li><a class="dropdown-item drawler_menu" style="color: #fff" href="{% url 'main:staff_create' %}?team={{ team.id }}">Сотрудник</a></li>
+    </ul>
+</div>

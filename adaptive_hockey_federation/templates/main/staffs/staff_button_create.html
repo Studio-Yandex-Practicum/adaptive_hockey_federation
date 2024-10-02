@@ -1,0 +1,2 @@
+{% url 'main:staff_create' as staff_create_url %}
+{% include 'base/button_create.html' with button_url=staff_create_url name="Создать сотрудника" current_url_name=request.path %}

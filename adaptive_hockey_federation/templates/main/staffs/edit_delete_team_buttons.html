@@ -1,0 +1,28 @@
+{% if perms.users.change_staffteammember %}
+<div class="text-center">
+  <div style="display: flex; justify-content: center;">
+    <a
+      {% if staff.staff_position == 'тренер' %}
+        href="{% url 'main:staff_id_team_edit' staff.pk "coach" %}"
+      {% else %}
+        href="{% url 'main:staff_id_team_edit' staff.pk "pusher" %}"
+      {% endif %}
+        class="btn btn-secondary text-white" style="background-color: #64C2D1; border: 1px solid #fff; margin-right: 10px;">Редактировать</a>
+      {% if staff.staff_position == 'тренер' %}
+        <form action="{% url 'main:staff_id_team_delete' staff.pk "coach" %}" method="post" id="deleteForm">
+        {% else %}
+          <form action="{% url 'main:staff_id_team_delete' staff.pk "pusher" %}" method="post" id="deleteForm">
+        {% endif %}
+          {% csrf_token %}
+            <button type="submit" class="btn btn-danger"
+              {% if not perms.users.delete_staff %} disabled {% endif %}
+              {% if staff.name %}
+                onclick="return confirm('Вы точно хотите удалить сотрудника {{ staff.name }} {{ staff.surname }}?');"
+              {% else %}
+                onclick="return confirm('Вы точно хотите удалить {{ staff.staff_position }}а {{ staff.staff_member.name }} {{ staff.staff_member.surname }}?');"
+              {% endif %}>Удалить
+            </button>
+          </form>
+  </div>
+</div>
+{% endif %}

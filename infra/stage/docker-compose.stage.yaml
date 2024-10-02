@@ -1,0 +1,57 @@
+version: '3.8'
+name: ahf_stage
+
+services:
+  db:
+    container_name: db
+    image: postgres:13.0-alpine
+    restart: always
+    ports:
+      - 5432:${DB_PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ../../.env
+
+  site:
+    image: "${IMAGE_COMPOSE}"
+    container_name: adaptive_hockey_federation
+    restart: always
+    volumes:
+      - static_value:/app/adaptive_hockey_federation/static/
+      - ../../media:/app/adaptive_hockey_federation/media/
+    env_file:
+      - ../../.env
+    depends_on:
+      - db
+
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1002
+      - PGID=1004
+      - TZ=Europe/Moscow
+      - URL=${HOST}
+      - VALIDATION=http
+      - STAGING=${ST}
+    volumes:
+      - ../nginx/nginx_stage.conf:/config/nginx/site-confs/default.conf
+      - swag_volume_stage:/config
+      - static_value:/var/html/static/
+      - ../../media:/var/html/media/
+    ports:
+      - 443:443
+      - 80:${PORT}
+    env_file:
+      - ../../.env
+    depends_on:
+      - site
+    restart: unless-stopped
+
+volumes:
+  static_value:
+  postgres_data:
+  swag_volume_stage:

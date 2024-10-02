@@ -1,0 +1,33 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.8
+    hooks:
+      - id: ruff
+        exclude: migrations/|config/|tests/|.*settings(\.py|/)?
+        types_or: [ python ]
+      - id: ruff-format
+        exclude: migrations/|config/|tests/|.*settings(\.py|/)?
+        types_or: [ python ]
+
+  - repo: local
+    hooks:
+      - id: export-dev-dependencies
+        name: Export dev Dependencies
+        language: system
+        pass_filenames: false
+        entry: poetry export --without-hashes --with dev --output requirements/develop.txt
+        files: ^(pyproject.toml|poetry.lock)$
+      - id: export-prod-dependencies
+        name: Export prod Dependencies
+        language: system
+        pass_filenames: false
+        entry: poetry export --without-hashes --output requirements/production.txt
+        files: ^(pyproject.toml|poetry.lock)$

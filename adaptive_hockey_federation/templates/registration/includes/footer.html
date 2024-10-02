@@ -1,0 +1,10 @@
+{% load static %}
+<footer class="footer">
+  {% with request.resolver_match.view_name as view_name %}
+  {% if view_name == 'login'%}
+    <a class='button_out' href="https://paraicehockey.ru/">На сайт</a>
+  {% else %}
+    <a class='button_out' href="{% url 'login' %}">На страницу логина</a>
+  {% endif %}
+  {% endwith %}
+</footer>

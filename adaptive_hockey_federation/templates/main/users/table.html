@@ -1,0 +1,55 @@
+{% load static %}
+<div class="table-responsive scroll-class">
+  <table class="table-table">
+    <thead>
+      <tr>
+        {% for head_item in table_head.values %}
+        <th class="col">{{ head_item }}</th>
+        {% endfor %}
+        <th>
+          <div class="cell__buttons">
+            {% include 'base/active_edit_icon.html' %}
+            {% include 'base/active_delete_icon.html' %}
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for table_string in table_data %}
+      <tr>
+        {% for cell_name, cell_value in table_string.items %}
+          {% if forloop.counter0 == 0 and 'url' in table_string %}
+            <td class="rounded-md">
+              <a href="{{ table_string.url }}">{{ cell_value }} </a>
+            </td>
+          {% elif cell_name == '_ref_' %}
+            {% if cell_value.type == 'button' %}
+              <td class="rounded-md">
+                {% include 'main/users/cell_button.html' with url=cell_value.url name=cell_value.name %}
+              </td>
+            {% else %}
+              <td class="rounded-md">
+                <a href="{{ cell_value.url }}">{{ cell_value.name }} </a>
+              </td>
+            {% endif %}
+          {% elif cell_name != 'url' and cell_name != 'id'%}
+            <td class="rounded-md">{{ cell_value }}</td>
+          {% endif %}
+        {% endfor %}
+        {% with request.resolver_match.view_name as view_name %}
+        {% if view_name == 'users:users' %}
+        {% include "main/users/create_delete_buttons.html" %}
+        {% else %}
+        <td>
+          <div class="cell__buttons">
+            {% include 'base/active_edit_icon.html' %}
+            {% include 'base/active_delete_icon.html' %}
+          </div>
+        </td>
+        {% endif %}
+        {% endwith %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,34 @@
+[Unit]
+
+Description=adaptive_hockey_federation
+Requires=docker.service
+After=docker.service
+
+[Service]
+
+Restart=always
+RestartSec=5
+TimeOutStartSec=1200
+User=developer
+
+WorkingDirectory=/home/developer/adaptive_hockey_federation/infra/stage/
+
+ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env down
+ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull site
+ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull db
+ExecStartPre=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env pull swag
+
+
+# compose up
+ExecStart=docker compose -f docker-compose.stage.yaml --env-file /home/developer/adaptive_hockey_federation/.env up
+
+# Call when daemon allready stop
+# ExecStop=
+
+# Call when daemon already start
+ExecStartPost=
+
+
+[Install]
+
+WantedBy=multi-user.target

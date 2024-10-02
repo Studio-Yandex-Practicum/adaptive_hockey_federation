@@ -1,0 +1,70 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+  Профиль сотрудника команды
+{% endblock %}
+{% block content %}
+  <h2 class="text-center mb-4">Профиль сотрудника команды </h2>
+  <div class="container text-center">
+        <h4 class="text-center mb-4">Личная информация</h4>
+        <table class="table-table">
+          <tbody>
+            {% for field_name, field_value in staff_fields %}
+              <tr>
+                <th scope="row">{{ field_name }}:</th>
+                <td>
+                  {{ field_value }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% include 'main/staffs/edit_delete_buttons.html' with staff=staff %}
+        <div class="container">
+          <h4> Информация о состоянии в команде </h4>
+          <div class="row row-cols-2">
+            {% if team_fields_coach %}
+              <div class="col-6">
+                <h4 class="text-center mb-4">В должности тренера:</h4>
+                <table class="table-table">
+                  <tbody>
+                    {% for field_name, field_value in team_fields_coach %}
+                      <tr>
+                        <th scope="row">{{ field_name }}:</th>
+                        <td>
+                          {{ field_value }}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% include 'main/staffs/edit_delete_team_buttons.html' with staff=coach  %}
+              </div>
+            {% else%}
+              <div class="container">
+                {% include 'main/staffs/add_button.html' with position="coach"  %}
+              </div>
+            {% endif %}
+            {% if team_fields_pusher %}
+              <div class="col-6">
+                <h4 class="text-center mb-4">В должности пушер-тьютора:</h4>
+                <table class="table-table">
+                  <tbody>
+                    {% for field_name, field_value in team_fields_pusher  %}
+                      <tr>
+                        <th scope="row">{{ field_name }}:</th>
+                        <td>
+                          {{ field_value }}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% include 'main/staffs/edit_delete_team_buttons.html' with staff=pusher %}
+              </div>
+              {% else %}
+              {% include 'main/staffs/add_button.html' with position="pusher" %}
+          {% endif %}
+    </div>
+  </div>
+{% endblock content %}

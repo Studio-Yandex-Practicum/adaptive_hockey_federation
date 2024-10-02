@@ -1,0 +1,24 @@
+{% load static %}
+{% if user.is_staff %}
+  <td class="border rounded-md">
+    <div class="items__group">
+      <a href="{% url 'main:staff_id_team_edit' pk=table_string.id position=table_string.staff_position_slug %}">
+        <button class="btns-edit-del" type="submit"
+            {% if 'main.change_staff' in perms %} activate {% else %}
+                disabled {% endif %}>
+          {% include 'base/edit_icon.html' %}
+        </button>
+      </a>
+      <form action="{% url 'main:fire_staff_from_team' team_id=team.id staff_team_member_id=table_string.id %}"
+            method="post">
+        {% csrf_token %}
+        <button class="btns-edit-del" type="submit"
+            {% if 'main.delete_staff' in perms %} activate {% else %}
+                disabled {% endif %}
+                onclick="return confirm('Вы точно хотите отстранить сотрудника {{ table_string.name }}?');"></a>
+          {% include 'base/delete_icon.html' %}
+        </button>
+      </form>
+    </div>
+  </td>
+{% endif %}

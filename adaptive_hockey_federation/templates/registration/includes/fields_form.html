@@ -1,0 +1,8 @@
+{% load user_filters %}
+  <label for="{{ field.id_for_label }}">
+    {{ field.label }}
+      {% if field.field.required %}
+        <span class="required text-danger">*</span>
+      {% endif %}
+  </label>
+{{ field|addclass:'form-layout' }}

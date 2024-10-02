@@ -1,0 +1,31 @@
+<table class="table-table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Название</th>
+    <th>Город</th>
+    <th>Дисциплина</th>
+    {% if not user.is_agent %}
+      <th>Действие</th>
+    {% endif %}
+  </tr>
+  </thead>
+  <tbody>
+  {% for team in table_data %}
+    <tr>
+      <td>{{ team.id }}</td>
+      <td><a href="{{ team.name.url }}">{{ team.name.name }} </a></td>
+      <td>{{ team.city }}</td>
+      <td>{{ team.discipline_name }}</td>
+      {% if not user.is_agent %}
+        <td>
+          {% block action_button %}
+  {#          Здесь в шаблонах-потомках должна быть кнопка#}
+  {#          для удаления или добавления команды в соревнование.#}
+          {% endblock %}
+        </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

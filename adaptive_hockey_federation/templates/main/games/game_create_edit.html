@@ -1,0 +1,65 @@
+{% extends "base/base.html" %}
+{% load user_filters %}
+{% block title %}
+  {{ page_title }}
+{% endblock title %}
+
+{% block content %}
+  <h2 class="text-center mb-4">{{ page_title }}</h2>
+  <form id="gameForm" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container text-center">
+      <div class="full-container">
+        <h4 class="text-center mb-4">{{ object.name }}</h4>
+        <table class="table-table">
+          <tbody>
+          {% for field in form.visible_fields %}
+            {% if field.name in 'name video_link' %}
+              {% include "main/fields/text_input_field.html" %}
+            {% elif field.name in 'game_teams' %}
+              {% include "main/fields/team_select_field_2_fields.html" %}
+            {% elif field.name in 'competition' %}
+              {% include "main/fields/select_field.html" %}
+            {% elif field.name in 'date' %}
+              <tr>
+                <th>{{ field.label_tag }}</th>
+                <td class="base-wrapper">
+                  {% if field.errors %}
+                    {{ field |addclass:'base-date-errors'}}
+                    {{ field.errors }}
+                  {% else %}
+                    {{ field |addclass:'base-date'}}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Save Button -->
+      <div class="container">
+        <div class="row">
+          <div class="col text-center text-white flex justify-start">
+            <button
+                type="submit"
+                class="btn btn-secondary text-white"
+                style="background-color: #64C2D1; border: 1px solid #fff;"
+            >
+              Сохранить
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+{% endblock %}
+{% block JavaScript %}
+  <script>
+      const mover = new SelectManipulation('id_available_teams', 'id_game_teams');
+      const selectAllSelected = new SelectAllSelected('id_game_teams');
+      const search_available_teams = new SearchValue('id_available_teams', 'selector-filter-available');
+      const search_current_teams = new SearchValue('id_game_teams', 'selector-filter-current');
+  </script>
+{% endblock %}
