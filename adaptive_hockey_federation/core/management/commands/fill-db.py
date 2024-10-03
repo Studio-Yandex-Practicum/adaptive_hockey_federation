@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection, transaction
 from main.models import Diagnosis
 
-from adaptive_hockey_federation.core.config.dev_settings import (
+from core.config.dev_settings import (
     FILE_MODEL_MAP,
     FIXSTURES_DIR,
 )
