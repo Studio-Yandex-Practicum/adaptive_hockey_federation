@@ -87,6 +87,19 @@ jobs:
         rm -r infra/stage
         rm -r infra/dev
 
+    - name: Stopping old containers
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          if [ -d /home/${{ secrets.USERNAME }}/${{ env.DEPLOY_PATH }}/infra ]; then
+            sudo systemctl stop adaptive_hockey_federation.service
+            echo "Stopping old containers"
+          fi
+
     - name: Copy infra via ssh
       uses: appleboy/scp-action@master
       with:
