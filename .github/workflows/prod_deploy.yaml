@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-
 env:
     DEPLOY_PATH: adaptive_hockey_federation
     REGISTRY: ghcr.io
@@ -114,7 +113,6 @@ jobs:
         target: "${{ env.DEPLOY_PATH }}/infra"
         rm: true
         strip_components: 1
-
     - name: Execute commands on VPS
       uses: appleboy/ssh-action@master
       with:
