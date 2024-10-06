@@ -20,6 +20,7 @@ services:
     volumes:
       - static_value:/app/adaptive_hockey_federation/static/
       - ../../media:/app/adaptive_hockey_federation/media/
+      - ../../fixtures:/app/adaptive_hockey_federation/core/fixtures/
     env_file:
       - ../../.env
     depends_on:
