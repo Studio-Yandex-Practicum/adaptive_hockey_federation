@@ -184,3 +184,5 @@ media/
 # DS server
 a_hockey-main/
 adaptive_hockey_federation/service/test_video/
+
+db_dump.json
