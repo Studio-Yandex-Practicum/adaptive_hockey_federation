@@ -28,7 +28,6 @@ urlpatterns = [
     path("", include("competitions.urls", namespace="competitions")),
     path("", include("analytics.urls", namespace="analytics")),
     path("", include("unloads.urls", namespace="unloads")),
-    path("", include("games.urls", namespace="games")),
     path("__debug__/", include("debug_toolbar.urls")),
     path("auth/", include("django.contrib.auth.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
