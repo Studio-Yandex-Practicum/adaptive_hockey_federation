@@ -41,11 +41,6 @@
             {% url 'unloads:unloads' as url_name %}{% include "base/button.html" with name="Выгрузки" %}
           </li>
         {% endif %}
-      {% if not request.user.is_agent %}
-        <li class="nav-item py-2">
-          {% url 'games:games' as url_name %}{% include "base/button.html" with name="Игры" %}
-        </li>
-        {% endif %}
       </ul>
       <button
         onclick="toggle_visibility(false);"
