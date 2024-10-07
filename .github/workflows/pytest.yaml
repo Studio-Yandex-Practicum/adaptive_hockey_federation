@@ -1,6 +1,9 @@
-name: CI
+name: Pytest
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - dev
 
 jobs:
   pytest:

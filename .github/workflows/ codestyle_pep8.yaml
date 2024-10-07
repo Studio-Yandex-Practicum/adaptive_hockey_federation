@@ -1,4 +1,4 @@
-name: CI
+name: Codestyle_pep8
 
 on: [push, pull_request]
 

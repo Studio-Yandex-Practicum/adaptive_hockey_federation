@@ -1,7 +1,7 @@
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from adaptive_hockey_federation.core.config.dev_settings import DB_DUMP_FILE
+from core.config.dev_settings import DB_DUMP_FILE
 
 
 class Command(BaseCommand):
