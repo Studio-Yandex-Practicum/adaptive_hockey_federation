@@ -205,9 +205,6 @@ class PlayerUpdateForm(PlayerForm):
         instance = super().save(commit=False)
         if commit:
             instance.save()
-            instance.team.through.objects.filter(
-                team__in=self.cleaned_data["team"],
-            ).delete()
             instance.team.set(self.cleaned_data["team"])
         return instance
 
