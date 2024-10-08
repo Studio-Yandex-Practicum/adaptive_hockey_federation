@@ -1,20 +1,14 @@
-from typing import Any
-
+from core.constants import FileConstants
+from core.utils import is_uploaded_file_valid
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
-
-from core.constants import FileConstants
-from core.utils import is_uploaded_file_valid
-from games.models import Game, GamePlayer
 from main.controllers.mixins import DiagnosisListMixin
 from main.controllers.utils import errormessage
 from main.forms import PlayerForm, PlayerUpdateForm
@@ -204,21 +198,6 @@ class PlayerIdView(
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
 
-    def has_video_games(self):
-        """Функция для проверки наличия видео, связанных с игроком."""
-        player = self.get_object()
-        game_player = GamePlayer.objects.filter(
-            name=player.name,
-            last_name=player.surname,
-        ).first()
-        if game_player:
-            games_with_video = Game.objects.filter(
-                game_teams__id=game_player.game_team.id,
-                video_link__isnull=False,
-            )
-            return games_with_video.exists()
-        return False
-
     def get_context_data(self, **kwargs):
         """Получить словарь context для шаблона страницы."""
         context = super().get_context_data(**kwargs)
@@ -227,7 +206,6 @@ class PlayerIdView(
         context["player_fields_personal"] = get_player_fields_personal(player)
         context["player_fields"] = get_player_fields(player)
         context["player_documents"] = player_documents
-        context["has_video_games"] = self.has_video_games()
         return context
 
 
@@ -337,72 +315,6 @@ class PlayerIDDeleteView(
     def get_object(self, queryset=None):
         """Получить объект по id или выбросить ошибку 404."""
         return get_object_or_404(Player, id=self.kwargs["pk"])
-
-
-class PlayerGamesVideo(
-    LoginRequiredMixin,
-    PlayerIdPermissionsMixin,
-    ListView,
-):
-    """Список видео игр с участием игрока."""
-
-    model = Player
-    template_name = "main/player_id/player_id_video_games.html"
-    permission_required = "main.view_player"
-    permission_denied_message = (
-        "У Вас нет разрешения на просмотр видео игр с участием игрока."
-    )
-    context_object_name = "player"
-
-    def get_object(self):
-        """Получить объект по id или выбросить ошибку 404."""
-        return get_object_or_404(Player, id=self.kwargs["pk"])
-
-    def get_queryset(self):
-        """Получить набор QuerySet с играми команды игрока."""
-        player = self.get_object()  # Получаем объект игрока по pk из URL
-        game_player = GamePlayer.objects.filter(
-            name=player.name,
-            last_name=player.surname,
-        ).first()
-
-        if not game_player:
-            raise Http404("Игрок не принимает участие в играх")
-
-        # Фильтруем игры, в которых участвует команда игрока
-        games = Game.objects.filter(game_teams__id=game_player.game_team.id)
-
-        return games
-
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        """Получить словарь context для шаблона страницы."""
-        context = super().get_context_data(**kwargs)
-        player_games = context["player"]
-        # Моковое вкрапления запроса видео моментов от менеджера
-
-        data_key = ("pk", "name", "video_link", "__ref__")
-        ref_params = {
-            "name": "Запросить",
-            "type": "button",
-        }
-        table_data = [
-            {
-                key: (ref_params if key == "__ref__" else getattr(game, key))
-                for key in data_key
-            }
-            for game in player_games
-        ]
-
-        context["table_head"] = {
-            "pk": "Nr.",
-            "name": "Название",
-            "video_link": "Ссылка на видео",
-            "unload_file": "Видео моменты с игроком",
-        }
-        # костыль
-        context["player"] = {"player_id": f'{self.kwargs["pk"]}'}
-        context["table_data"] = table_data
-        return context
 
 
 def player_id_deleted(request):

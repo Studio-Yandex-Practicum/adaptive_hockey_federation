@@ -319,8 +319,8 @@ class TestUrls(TestCase):
                 )
 
 
-
 # TODO: Тут тоже у нас не все тесты есть,
 # TODO: я так понял, что у нас есть тесты для Аутентификации,
 # TODO: User, Team, Player, Unload, Competition и главной страницы.
-# TODO: Нужно сделать для Analytics, Games, Staffs.
+# TODO: Нужно сделать для Analytics, Staffs.
+# TODO: Нужно сделать для Analytics, Staffs.

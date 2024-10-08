@@ -36,11 +36,6 @@ players_urlpatterns = [
         name="player_id_delete",
     ),
     path(
-        "<int:pk>/games_video/",
-        player_views.PlayerGamesVideo.as_view(),
-        name="player_id_games_video",
-    ),
-    path(
         "deleted/",
         player_views.player_id_deleted,
         name="player_id_deleted",
