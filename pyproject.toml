@@ -54,7 +54,6 @@ build-backend = "poetry.core.masonry.api"
 target-version = "py311"
 exclude = [
     "config",
-    "adaptive_hockey_federation/parser/*",
     "*migrations/*",
     ".bzr",
     ".direnv",
@@ -141,9 +140,6 @@ inline-quotes = "double"
 
 [tool.django-stubs]
 django_settings_module = "adaptive_hockey_federation.core.config.dev_settings"
-
-[tool.poetry.scripts]
-parser = "adaptive_hockey_federation.parser.parser:parsing_file"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "adaptive_hockey_federation.core.config.test_settings"
