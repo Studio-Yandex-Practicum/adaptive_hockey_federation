@@ -28,6 +28,7 @@ from main.models import (
     StaffTeamMember,
     Team,
 )
+from main.validators import validate_registr_diagnosis
 from users.models import User
 
 
@@ -142,7 +143,10 @@ class PlayerForm(forms.ModelForm):
     def clean_diagnosis(self):
         """Метод, выполняющий валидацию поля с диагнозом."""
         nosology = self.cleaned_data.get("nosology")
-        diagnosis = self.cleaned_data.get("diagnosis")
+        diagnosis = validate_registr_diagnosis(
+            self.cleaned_data.get("diagnosis"),
+        )
+
         if Diagnosis.objects.filter(name=diagnosis).exists():
             diagnos = Diagnosis.objects.get(name=diagnosis)
             if diagnos.nosology != nosology:
@@ -205,9 +209,6 @@ class PlayerUpdateForm(PlayerForm):
         instance = super().save(commit=False)
         if commit:
             instance.save()
-            instance.team.through.objects.filter(
-                team__in=self.cleaned_data["team"],
-            ).delete()
             instance.team.set(self.cleaned_data["team"])
         return instance
 

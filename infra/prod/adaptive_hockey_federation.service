@@ -8,14 +8,12 @@ After=docker.service
 
 Restart=always
 RestartSec=5
-TimeOutStartSec=1200
+TimeoutStartSec=1200
 User=production
 
 WorkingDirectory=/home/production/adaptive_hockey_federation/infra/prod/
 
 ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env pull
-ExecStartPre=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env down
-
 
 # compose up
 ExecStart=docker compose -f docker-compose.prod.yaml --env-file /home/production/adaptive_hockey_federation/.env up

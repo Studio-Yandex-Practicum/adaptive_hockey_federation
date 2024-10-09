@@ -126,7 +126,7 @@ class AgeLimits(IntEnum):
     """Возростные лимиты."""
 
     MIN_AGE_PLAYER = 6
-    MAX_AGE_PLAYER = 18
+    MAX_AGE_PLAYER = 25
 
 
 FORM_HELP_TEXTS = {
