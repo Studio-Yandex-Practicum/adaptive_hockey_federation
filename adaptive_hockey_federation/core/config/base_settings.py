@@ -30,7 +30,6 @@ DEFAULT_APPS = [
 EXTERNAL_APPS = [
     "phonenumber_field",
     "rest_framework",
-    "drf_yasg",
 ]
 
 LOCAL_APPS = [
