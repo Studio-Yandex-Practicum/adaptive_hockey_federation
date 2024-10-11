@@ -56,7 +56,7 @@ class Command(BaseCommand):
                             "name": item["name"],
                             "city_id": item["city_id"],
                             "discipline_name_id": item["discipline_name_id"],
-                            "curator_id": 1,
+                            "curator_id": None,
                         }
                         instance = model(**team_data)
                     elif table_name == "main_player":
